@@ -1,13 +1,6 @@
-##SDF in different deb packages
-
-SDF ships different Ubuntu debian packages following the [official packaging guidelines](https://www.debian.org/doc/manuals/maint-guide/). 
-
- * Use SDF as an application: for the users that just use the SDF library, please install the package called ***libsdformat2***.
- * Use SDF to develop software: for users that neeed SDF headers and libraries, please install ***libsdformat2-dev***. 
-
 #Download and Install SDF
 
-### Ubuntu Debians
+## Ubuntu
 
 ~~~
 sudo apt-get install libsdformat2-dev
@@ -61,5 +54,7 @@ sudo apt-get install build-essential libtinyxml-dev libboost-all-dev cmake mercu
 
 If you need to uninstall SDF or switch back to a debian-based install of SDF when you currently have installed SDF from source, navigate to your source code directory's build folders and run make uninstall:
 
-        cd ~/sdf_source/sdformat/build
-        sudo make uninstall
+~~~
+cd ~/sdf_source/sdformat/build
+sudo make uninstall
+~~~
