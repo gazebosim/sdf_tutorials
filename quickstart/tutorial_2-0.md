@@ -158,7 +158,7 @@ cd sdf_tutorial
 
 Copy the code into a file and name it `check_sdf.cc`. Along with it, add a `CMakeLists.txt` file and copy the following into it:
 
-```make
+```
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 find_package(SDFormat REQUIRED)
