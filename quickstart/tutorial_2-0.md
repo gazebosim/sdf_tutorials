@@ -1,6 +1,6 @@
 # SDF Quickstart Guide
 
-This guide will walk you through sdformat's [API](http://sdformat.org/api), showing you the basics on how to use it to parse your SDFs. So let's get started with some code examples! You'll find the API quite regular, making it very easy to pick up.
+This guide will walk you through sdformat's [API](http://sdformat.org/api), showing you the basics on how to use it to parse your SDFs. You'll find the API quite regular, making it very easy to pick up.
 
 ## Prerequisites
 
@@ -145,7 +145,7 @@ std::cout << "Joint " << jointName << " connects " << parentLinkName
 
 ```
 
-As you might guess, we're getting the `name` attribute of the current `joint_element` and then retrieving its `parent` and `child` elements' values. Note all `Get()` method's use cases. It is a template method, that returns the given attribute value or the element value itself (that is, the plain text in between tags) if called with no arguments. To this end, it has been specialized to parse such value accordingly into primitive types (i.e. `double`), common std types (i.e. `std::string`) or [`ignition::math`](http://ignitionrobotics.org/libraries/math) types for the most complex ones (like poses).
+As you might guess, we're getting the `name` attribute of the current `joint_element` and then retrieving its `parent` and `child` elements' values. It is interesting to note all `Get()` method's use cases: `Get()` is a template method that returns the given attribute value or the element value itself (that is, the plain text in between tags) if called with no arguments. To this end, it has been specialized to parse such value accordingly into primitive types (i.e. `double`), common std types (i.e. `std::string`) or [`ignition::math`](http://ignitionrobotics.org/libraries/math) types for the most complex ones (like poses).
 
 ### Building the code
 
@@ -185,13 +185,9 @@ You can find plenty of SDF samples to play with [here](http://models.gazebosim.o
 Found husky model!
 Found base_link link in husky model!
 Found back_left_wheel link in husky model!
-Link back_left_wheel is at -0.256 0.285475 0.035 0 -0 0 in parent frame
 Found back_right_wheel link in husky model!
-Link back_right_wheel is at -0.256 -0.285475 0.035 0 -0 0 in parent frame
 Found front_left_wheel link in husky model!
-Link front_left_wheel is at 0.256 0.285475 0.035 0 -0 0 in parent frame
 Found front_right_wheel link in husky model!
-Link front_right_wheel is at 0.256 -0.285475 0.035 0 -0 0 in parent frame
 Found back_left_joint joint in husky model!
 Joint back_left_joint connects base_link link to back_left_wheel link
 Found back_right_joint joint in husky model!
