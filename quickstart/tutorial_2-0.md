@@ -17,9 +17,11 @@ Consider the code below:
 
 #include <sdf/sdf.hh>
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char* argv[])
+{
   // check arguments
-  if (argc < 2) {
+  if (argc < 2)
+  {
     std::cerr << "Usage: " << argv[0]
               << " <sdf-path>" << std::endl;
     return -1;
@@ -29,14 +31,16 @@ int main(int argc, const char* argv[]) {
   // load and check sdf file
   sdf::SDFPtr sdfElement(new sdf::SDF());
   sdf::init(sdfElement);
-  if (!sdf::readFile(sdfPath, sdfElement)) {
+  if (!sdf::readFile(sdfPath, sdfElement))
+  {
     std::cerr << sdfPath << " is not a valid SDF file!" << std::endl;
     return -2;
   }
 
   // start parsing model
   const sdf::ElementPtr rootElement = sdfElement->Root();
-  if (!rootElement->HasElement("model")) {
+  if (!rootElement->HasElement("model"))
+  {
     std::cerr << sdfPath << " is not a model SDF file!" << std::endl;
     return -3;
   }
@@ -46,7 +50,8 @@ int main(int argc, const char* argv[]) {
 
   // parse model links
   sdf::ElementPtr linkElement = modelElement->GetElement("link");
-  while (linkElement) {
+  while (linkElement)
+  {
     const std::string linkName = linkElement->Get<std::string>("name");
     std::cout << "Found " << linkName << " link in "
               << modelName << " model!" << std::endl;
@@ -55,7 +60,8 @@ int main(int argc, const char* argv[]) {
 
   // parse model joints
   sdf::ElementPtr jointElement = modelElement->GetElement("joint");
-  while (jointElement) {
+  while (jointElement)
+  {
     const std::string jointName = jointElement->Get<std::string>("name");
     std::cout << "Found " << jointName << " joint in "
               << modelName << " model!" << std::endl;
@@ -90,7 +96,8 @@ This is the main entrypoint to the API: any SDF tree, either in a file  or as a 
 ----------------
 
 ```c++
-if (!sdf::readFile(sdfPath, sdfElement)) {
+if (!sdf::readFile(sdfPath, sdfElement))
+{
   std::cerr << sdfPath << " is not a valid SDF file!" << std::endl;
   return -2;
 }
@@ -102,7 +109,8 @@ Given an `sdf_path` , `sdf::readFile` will attempt to parse such file into our `
 
 ```c++
 const sdf::ElementPtr rootElement = sdfElement->Root();
-if (!rootElement->HasElement("model")) {
+if (!rootElement->HasElement("model"))
+{
   std::cerr << sdfPath << " is not a model SDF file!" << std::endl;
   return -3;
 }
@@ -116,7 +124,8 @@ Next, you'll notice a pattern for iterating through an element children of the s
 
 ```c++
 sdf::ElementPtr linkElement = modelElement->GetElement("link");
-while (linkElement) {
+while (linkElement)
+{
     // parse link element
     linkElement = linkElement->GetNextElement("link");
 }
@@ -179,7 +188,7 @@ cmake ..
 make
 ```
 
-You can find plenty of SDF samples to play with [here](http://models.gazebosim.org/). Just fetch the `model.sdf` of your model of choice and give it a more meaningful name. For example, running `./build/check_sdf` on the `husky.sdf` file (`husky/model.sdf` on the site) will generate the following output:
+You can find plenty of SDF samples to play with [here](http://models.gazebosim.org/). Just fetch the `model.sdf` of your model of choice and give it a more meaningful name. For example, running `./check_sdf` on the `husky.sdf` file (`husky/model.sdf` on the site) will generate the following output:
 
 ```
 Found husky model!
