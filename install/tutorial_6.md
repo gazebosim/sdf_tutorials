@@ -18,11 +18,11 @@ If you have previously installed from source, be sure you are installing to the 
 
 Install prerequisites.  A clean Ubuntu system will need:
 
-build tools, ruby for building xml schemas, tinyxml, and boost:
+### build tools, ruby for building xml schemas, tinyxml, and boost:
 
     sudo apt-get install ruby-dev build-essential libtinyxml-dev libboost-all-dev cmake mercurial pkg-config
 
-ignition-math4:
+### ignition-math4:
 
 for Ubuntu distros earlier than bionic, the OSRF package repository should be used:
 
