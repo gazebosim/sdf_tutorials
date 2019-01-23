@@ -18,17 +18,21 @@ If you have previously installed from source, be sure you are installing to the 
 
 Install prerequisites.  A clean Ubuntu system will need:
 
-    # build tools, tinyxml, and boost
-    sudo apt-get install build-essential libtinyxml-dev libboost-all-dev cmake mercurial pkg-config
-    # ruby, which is needed to build the xml schemas
-    sudo apt-get install ruby-dev
-    # ignition-math4
-    # for Ubuntu distros earlier than bionic, the OSRF package repository should be used
+build tools, ruby for building xml schemas, tinyxml, and boost:
+
+    sudo apt-get install ruby-dev build-essential libtinyxml-dev libboost-all-dev cmake mercurial pkg-config
+
+ignition-math4:
+
+for Ubuntu distros earlier than bionic, the OSRF package repository should be used:
+
     sudo apt-get install lsb-release
     sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
     sudo apt-get update
-    # for Ubuntu bionic and later, skip to here
+
+for Ubuntu bionic and later, skip to here:
+
     sudo apt-get install libignition-math4-dev
 
 ## Build And Install SDFormat
