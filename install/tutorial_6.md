@@ -2,9 +2,7 @@
 
 ## Ubuntu
 
-~~~
-sudo apt-get install libsdformat6-dev
-~~~
+    sudo apt-get install libsdformat6-dev
 
 # Compiling From Source (Ubuntu)
 
@@ -20,9 +18,7 @@ If you have previously installed from source, be sure you are installing to the 
 
 Install prerequisites.  A clean Ubuntu system will need:
 
-~~~
-sudo apt-get install build-essential libtinyxml-dev libboost-all-dev cmake mercurial pkg-config
-~~~
+    sudo apt-get install build-essential libtinyxml-dev libboost-all-dev cmake mercurial pkg-config
 
 ## Build And Install SDFormat
 
@@ -54,7 +50,5 @@ sudo apt-get install build-essential libtinyxml-dev libboost-all-dev cmake mercu
 
 If you need to uninstall SDF or switch back to a debian-based install of SDF when you currently have installed SDF from source, navigate to your source code directory's build folders and run make uninstall:
 
-~~~
-cd ~/sdf_source/sdformat/build
-sudo make uninstall
-~~~
+    cd ~/sdf_source/sdformat/build
+    sudo make uninstall
