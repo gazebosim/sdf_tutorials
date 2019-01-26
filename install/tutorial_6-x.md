@@ -86,4 +86,6 @@ shell scripts for setting the necessary environment variables.
 If you need to uninstall SDF or switch back to a debian-based install of SDF when you currently have installed SDF from source, navigate to your source code directory's build folders and run make uninstall:
 
     cd ~/sdf_source/sdformat/build
-    sudo make uninstall
+    # make uninstall will work as the root user in a docker container
+    # otherwise you may need to use `sudo make uninstall`
+    make uninstall
