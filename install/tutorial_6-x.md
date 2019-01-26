@@ -37,6 +37,24 @@ for Ubuntu bionic and later, skip to here:
 
 ## Build And Install SDFormat
 
+This section describes how to install SDFormat into `/usr`,
+which greatly simplifies the process of linking to and loading `libsdformat`
+by downstream software.
+This may be suitable for use inside a docker container,
+but care should be taken when installing to `/usr` since installing the
+debian packages would overwrite the version that you built from source,
+and it can be very difficult to debug problems that arise from this system state.
+It is often safer to install to a local folder and set the `LD_LIBRARY_PATH`
+and other environment variables appropriately.
+To simplify this type of installation, a
+[catkin workspace](http://gazebosim.org/tutorials?tut=install_from_source&cat=install#Installinacatkinworkspace)
+or
+[colcon workspace](https://index.ros.org/doc/ros2/Tutorials/Colcon-Tutorial/)
+may be used along with the corresponding build tools that generate
+shell scripts for setting the necessary environment variables.
+
+### Installing into `/usr`
+
 1. Clone the repository into a directory in your home folder:
 
         mkdir ~/sdf_source
@@ -59,7 +77,9 @@ for Ubuntu bionic and later, skip to here:
 
         cmake .. -DCMAKE_INSTALL_PREFIX=/usr
         make -j4
-        sudo make install
+        # make install will work as the root user in a docker container
+        # otherwise you may need to use `sudo make install`
+        make install
 
 ## Uninstalling Source-based Install ##
 
