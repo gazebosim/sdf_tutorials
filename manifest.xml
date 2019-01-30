@@ -24,9 +24,9 @@
       <skill>beginner</skill>
     </tutorial>
 
-    <tutorial title="Representing Coordinate Transformations with <pose>" ref='specify_pose'>
+    <tutorial title="Specifying pose" ref='specify_pose'>
       <markdown version="6.x">specify_pose/tutorial.md</markdown>
-      <description>.</description>
+      <description>Specifying pose in SDFormat.</description>
       <tags>
         <tag>pose</tag>
       </tags>
