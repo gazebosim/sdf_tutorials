@@ -1,4 +1,4 @@
-# Specifying relative position and orientation using the pose element
+# Specifying pose in SDFormat
 
 A fundamental tool for robot modeling is the ability to concisely and
 intuitively express relative position and orientation of model components
