@@ -3,6 +3,7 @@
 A fundamental tool for robot modeling is the ability to concisely and
 intuitively express relative position and orientation of model components
 in 3-D.
+
 The SDFormat specification has the `<pose/>` element which accepts 3 numbers
 to represent a position vector `[x y z]`, followed by 3 numbers to express the
 orientation as roll-pitch-yaw angles in radians.
