@@ -10,8 +10,12 @@ orientation as roll-pitch-yaw angles in radians.
 
     <pose>x y z roll pitch yaw</pose>
 
-The roll angle corresponds to rotations about the X axis, the pitch angle
-to rotations about the Y axis, and the yaw angle to rotations about the Z axis.
+The roll angle corresponds to right-hand rotations about the X axis, the pitch
+angle to rotations about the Y axis, and the yaw angle to rotations about the
+Z axis, as shown in the following figure.
+
+[[file:roll-pitch-yaw.svg|400px]]
+
 These angles are a form of Euler angles and are more concise than
 quaternions and rotation matrices, which makes them preferable for a
 human-readable text format like SDFormat.
