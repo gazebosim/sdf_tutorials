@@ -9,9 +9,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="106.13223mm"
-   height="123.86113mm"
-   viewBox="0 0 376.05909 438.87802"
+   width="107.13223mm"
+   height="124.86113mm"
+   viewBox="0 0 379.6024 442.42133"
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
@@ -163,7 +163,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
      inkscape:cx="-207.57993"
-     inkscape:cy="202.20485"
+     inkscape:cy="202.20486"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -172,9 +172,9 @@
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
-     fit-margin-top="0"
+     fit-margin-top="1"
      fit-margin-left="0"
-     fit-margin-right="0"
+     fit-margin-right="1"
      fit-margin-bottom="0"
      showborder="true" />
   <metadata
@@ -193,7 +193,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-197.9627,-171.39967)">
+     transform="translate(-197.9627,-167.85637)">
     <path
        style="fill:none;fill-rule:evenodd;stroke:#00b000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
        d="m 339.41126,451.32144 0,-217.1828"
