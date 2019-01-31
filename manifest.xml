@@ -43,6 +43,12 @@
       <tutorials>
         <tutorial>install</tutorial>
         <tutorial>quickstart</tutorial>
+      </tutorials>
+    </category>
+
+    <category title="SDF Specification" skill="beginner" ref="specification">
+      <description>This series of tutorials describes the SDF specification.</description>
+      <tutorials>
         <tutorial>specify_pose</tutorial>
       </tutorials>
     </category>
