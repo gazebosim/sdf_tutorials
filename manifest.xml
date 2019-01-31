@@ -33,6 +33,15 @@
       <skill>beginner</skill>
     </tutorial>
 
+    <tutorial title="Model kinematics" ref='spec_model_kinematics'>
+      <markdown version="6.x">spec_model_kinematics/tutorial.md</markdown>
+      <description>Specifying model kinematics with links and joints in SDFormat.</description>
+      <tags>
+        <tag>pose</tag>
+      </tags>
+      <skill>beginner</skill>
+    </tutorial>
+
   </tutorials>
 
   <!-- *************************************** -->
@@ -50,6 +59,7 @@
       <description>This series of tutorials describes the SDF specification.</description>
       <tutorials>
         <tutorial>specify_pose</tutorial>
+        <tutorial>spec_model_kinematics</tutorial>
       </tutorials>
     </category>
 
