@@ -14,7 +14,7 @@ The roll angle corresponds to right-hand rotations about the X axis, the pitch
 angle to rotations about the Y axis, and the yaw angle to rotations about the
 Z axis, as shown in the following figure.
 
-[[file:roll-pitch-yaw.svg|400px]]
+[[file:roll-pitch-yaw.svg|200px]]
 
 These angles are a form of Euler angles and are more concise than
 quaternions and rotation matrices, which makes them preferable for a
