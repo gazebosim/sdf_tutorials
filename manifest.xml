@@ -25,7 +25,7 @@
     </tutorial>
 
     <tutorial title="Specifying pose" ref='specify_pose'>
-      <markdown version="6.x">specify_pose/tutorial.md</markdown>
+      <markdown version="1.4">specify_pose/tutorial.md</markdown>
       <description>Specifying pose in SDFormat.</description>
       <tags>
         <tag>pose</tag>
