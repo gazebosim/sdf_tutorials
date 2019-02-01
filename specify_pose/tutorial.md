@@ -36,7 +36,7 @@ see Footnote [2] for more information about software implementations).
 <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 
 $$
-    R_{AD}
+    R_{rpy}
     =
     \begin{bmatrix}
       \cos(y) & -\sin(y) & 0 \\\
@@ -57,7 +57,6 @@ $$
     \end{bmatrix}
 $$
 
-$$ R\_{AD} = R\_{AB} * R\_{BC} * R\_{CD} $$
 
 ## Footnotes
 
