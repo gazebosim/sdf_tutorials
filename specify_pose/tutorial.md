@@ -15,23 +15,9 @@ as shown in the following figure:
 
 [[file:roll-pitch-yaw.svg|200px]]
 
-These angles are a form of Euler angles and are more concise than
-quaternions and rotation matrices, which makes them preferable for a
-human-readable text format like SDFormat.
-See Footnote [1] for a software utitlity for converting between these
-different representations of orientation.
-
-There are many different conventions for expressing orientation with Euler
-angles as a sequence of 3 angular rotations about specified axes.
-One must specify the axes in a specific order and clarify whether the rotations
-are relative to the world frame axes (extrinsic) or the body frame axes
-(intrinsic).
 The convention used by the SDFormat specification is an extrinsic X-Y-Z rotation
 by roll, pitch, and yaw angles (r, p, y), which is equivalent to the rotation
-sequence expressed by the multiplication of the following rotation matrices
-(duplicated from
-[drake::math::RollPitchYaw](https://github.com/RobotLocomotion/drake/blob/246b2c038/math/roll_pitch_yaw.h#L19-L31),
-see Footnote [2] for more information about software implementations).
+sequence expressed by the multiplication of the following rotation matrices.
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 
@@ -57,6 +43,10 @@ $$
     \end{bmatrix}
 $$
 
+See Footnote [1] for a software utitlity for converting between
+different representations of orientation.
+
+See Footnote [2] for more information about software implementations.
 
 ## Footnotes
 
