@@ -4,15 +4,14 @@ A fundamental tool for robot modeling is the ability to concisely and
 intuitively express relative position and orientation of model components
 in 3-D.
 
-The SDFormat specification has the `<pose/>` element which accepts 3 numbers
-to represent a position vector `[x y z]`, followed by 3 numbers to express the
-orientation as roll-pitch-yaw angles in radians.
+The SDFormat specification has the `<pose/>` element which accepts 6 numbers
+in total:
 
     <pose>x y z roll pitch yaw</pose>
 
-The roll angle corresponds to right-hand rotations about the X axis, the pitch
-angle to rotations about the Y axis, and the yaw angle to rotations about the
-Z axis, as shown in the following figure.
+The elements `x y z` define a position vector (in meters), and the elements
+`roll, pitch, yaw` are Euler angles (in radians) that specify the orientation,
+as shown in the following figure:
 
 [[file:roll-pitch-yaw.svg|200px]]
 
