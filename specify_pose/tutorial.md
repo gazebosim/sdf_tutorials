@@ -48,7 +48,7 @@ different representations of orientation.
 
 See [2] for more information about software implementations.
 
-## Footnotes
+## See Also
 
 [1] For a command-line utility to convert between roll/pitch/yaw angles,
     quaternions, and rotation matrices , please see the `quaternion_from_euler`
