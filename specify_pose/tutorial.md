@@ -10,7 +10,7 @@ in total:
     <pose>x y z roll pitch yaw</pose>
 
 The elements `x y z` define a position vector (in meters), and the elements
-`roll, pitch, yaw` are Euler angles (in radians) that specify the orientation,
+`roll pitch yaw` are Euler angles (in radians) that specify the orientation,
 as shown in the following figure:
 
 [[file:roll-pitch-yaw.svg|200px]]
@@ -43,10 +43,10 @@ $$
     \end{bmatrix}
 $$
 
-See Footnote [1] for a software utitlity for converting between
+See [1] for a software utitlity for converting between
 different representations of orientation.
 
-See Footnote [2] for more information about software implementations.
+See [2] for more information about software implementations.
 
 ## Footnotes
 
