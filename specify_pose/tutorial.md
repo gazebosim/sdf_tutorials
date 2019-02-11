@@ -58,6 +58,8 @@ See [2] for more information about software implementations.
 [2] Software implementations for converting between this Euler angle convention
     and quaternions can be found in the
     [drake::math::RollPitchYaw](https://github.com/RobotLocomotion/drake/blob/246b2c038/math/roll_pitch_yaw.h#L19-L31)
-    C++ class and the
+    C++ class, the
     [ignition::math::Quaternion](https://bitbucket.org/ignitionrobotics/ign-math/src/ignition-math4_4.0.0/include/ignition/math/Quaternion.hh#Quaternion.hh-308:398)
+    C++ class, and the
+    [urdf::Rotation](https://github.com/ros/urdfdom_headers/blob/1.0.3/urdf_model/include/urdf_model/pose.h#L103-L155)
     C++ class.
