@@ -43,8 +43,8 @@ $$
 
 For a command-line utility to convert between roll-pitch-yaw angles,
 quaternions, and rotation matrices, please see the
-[quaternion_from_euler](https://bitbucket.org/ignitionrobotics/ign-math/src/ign-math4/examples/quaternion_from_euler.cc)
-and [quaternion_to_euler](https://bitbucket.org/ignitionrobotics/ign-math/src/ign-math4/examples/quaternion_to_euler.cc)
+[quaternion\_from\_euler](https://bitbucket.org/ignitionrobotics/ign-math/src/ign-math4/examples/quaternion_from_euler.cc)
+and [quaternion\_to\_euler](https://bitbucket.org/ignitionrobotics/ign-math/src/ign-math4/examples/quaternion_to_euler.cc)
 example programs in ignition math.
 
 Software implementations for converting between this Euler angle convention and
