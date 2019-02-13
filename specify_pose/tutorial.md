@@ -37,8 +37,6 @@ $$
     \end{bmatrix}
 $$
 
-where $r = roll, y = yaw, p = pitch$.
-
 [[file:roll-pitch-yaw.svg|200px]]
 
 ## See Also
