@@ -24,6 +24,15 @@
       <skill>beginner</skill>
     </tutorial>
 
+    <tutorial title="Specifying pose" ref='specify_pose'>
+      <markdown version="1.4">specify_pose/tutorial.md</markdown>
+      <description>Specifying pose in SDFormat.</description>
+      <tags>
+        <tag>pose</tag>
+      </tags>
+      <skill>beginner</skill>
+    </tutorial>
+
   </tutorials>
 
   <!-- *************************************** -->
@@ -34,6 +43,13 @@
       <tutorials>
         <tutorial>install</tutorial>
         <tutorial>quickstart</tutorial>
+      </tutorials>
+    </category>
+
+    <category title="SDF Specification" skill="beginner" ref="specification">
+      <description>This series of tutorials describes the SDF specification.</description>
+      <tutorials>
+        <tutorial>specify_pose</tutorial>
       </tutorials>
     </category>
 
