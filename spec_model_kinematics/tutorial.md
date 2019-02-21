@@ -5,7 +5,7 @@ articulated multibody systems with the `<model>`, `<link>`, `<joint>`,
 and `<pose>` tags, which can be briefly summarized as:
 
 * `<link>`: a rigid body (like a "link" in a chain)
-* `<joint>`: an articulation constraint between links
+* `<joint>`: a kinematic relationship between links
 * `<pose>`: the relative position and orientation between two coordinate frames
 * `<model>`: a container for links and joints that defines a complete robot or physical object
 
@@ -22,20 +22,78 @@ Its full documentation can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=model).
 
 It is required to name the model using the `name` attribute.
-For example, a model with no links or joints could be written as:
+For example, an empty model with no links or joints:
 
     <model name="empty" />
 
-coordinate frame
-`<link>`, `<joint>`,
+A model can define a pose that will offset the model frame relative
+to its parent when it is inserted into a world:
 
+    <model name="model_pose_Z">
+      <pose>0 0 1 0 0 0</pose>
+    </model>
 
-The SDFormat `<model>` tag
-It describes the
+## `<link>`
 
+The `<link>` tag represents a named rigid body and must be the child of a `<model>`.
+Its full documentation can be found
+[here](http://sdformat.org/spec?ver=1.4&elem=link).
 
-[official documentation of the model element](http://sdformat.org/spec?ver=1.6&elem=model)
+It is also required for the link to be named using the `name` attribute.
+For example, a model with one link:
 
-<[model](http://sdformat.org/spec?ver=1.6&elem=model)>,
-<[link](http://sdformat.org/spec?ver=1.6&elem=link)>,
-<[joint](http://sdformat.org/spec?ver=1.6&elem=joint)>,
+    <model name="one_link">
+      <link name="link"/>
+    </model>
+
+A model may contain multiple links with unique names:
+
+    <model name="two_links">
+      <link name="link1"/>
+      <link name="link2"/>
+    </model>
+
+A model with multiple links having the same name is invalid:
+
+    <model name="invalid_two_links_same_name">
+      <link name="link"/>
+      <link name="link"/>
+    </model>
+
+The link `<pose>` tag will be interpreted as a coordinate transform applied
+relative to its model frame.
+When inserted into a world, the link pose relative to the world is identical
+for the following two models:
+
+    <model name="model_and_link_pose">
+      <pose>1 0 0 0 0 0</pose>
+      <link name="link">
+        <pose>0 1 0 0 0 0</pose>
+      </link>
+    </model>
+
+    <model name="equivalent_link_pose">
+      <link name="link">
+        <pose>1 1 0 0 0 0</pose>
+      </link>
+    </model>
+
+## `<joint>`
+
+The `<joint>` tag represents a kinematic relationship between rigid body links
+that constrains the degrees of freedom between those links.
+It must be a child of a model.
+Its full documentation can be found
+[here](http://sdformat.org/spec?ver=1.4&elem=joint).
+
+The supported joint types are listed below along with the number of degrees
+of freedom remaining between the two links.
+
+* `ball`: 3 rotational degrees of freedom
+* `continuous`: 1 rotational degree of freedom with joint limits
+* `fixed`: 0 degrees of freedom
+* `prismatic`: 1 translational degree of freedom
+* `revolute`: 1 rotational degree of freedom with joint limits
+* `screw`: 1 coupled rotational/translational degree of freedom
+* `universal`: 2 rotational degrees of freedom
+
