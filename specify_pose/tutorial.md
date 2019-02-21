@@ -1,43 +1,22 @@
 # Specifying pose in SDFormat
 
 A fundamental tool for robot modeling is the ability to concisely and
-intuitively express relative position and orientation of model components
+intuitively express the relative position and orientation of model components
 in 3-D.
 
-The SDFormat specification has the `<pose/>` element which accepts 3 numbers
-to represent a position vector `[x y z]`, followed by 3 numbers to express the
-orientation as roll-pitch-yaw angles in radians.
+The SDFormat specification has the `<pose/>` element which accepts 6 numbers
+in total:
 
     <pose>x y z roll pitch yaw</pose>
 
-The roll angle corresponds to right-hand rotations about the X axis, the pitch
-angle to rotations about the Y axis, and the yaw angle to rotations about the
-Z axis, as shown in the following figure.
-
-[[file:roll-pitch-yaw.svg|400px]]
-
-These angles are a form of Euler angles and are more concise than
-quaternions and rotation matrices, which makes them preferable for a
-human-readable text format like SDFormat.
-See Footnote [1] for a software utitlity for converting between these
-different representations of orientation.
-
-There are many different conventions for expressing orientation with Euler
-angles as a sequence of 3 angular rotations about specified axes.
-One must specify the axes in a specific order and clarify whether the rotations
-are relative to the world frame axes (extrinsic) or the body frame axes
-(intrinsic).
-The convention used by the SDFormat specification is an extrinsic X-Y-Z rotation
-by roll, pitch, and yaw angles (r, p, y), which is equivalent to the rotation
-sequence expressed by the multiplication of the following rotation matrices
-(duplicated from
-[drake::math::RollPitchYaw](https://github.com/RobotLocomotion/drake/blob/246b2c038/math/roll_pitch_yaw.h#L19-L31),
-see Footnote [2] for more information about software implementations).
+The elements `x y z` specify the position vector (in meters), and the elements
+`roll pitch yaw` are Euler angles (in radians) that specify the orientation, which can be
+computed by an extrinsic X-Y-Z rotation as shown by the following equation and figure:
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 
 $$
-    R_{AD}
+    R_{rpy}
     =
     \begin{bmatrix}
       \cos(y) & -\sin(y) & 0 \\\
@@ -58,18 +37,23 @@ $$
     \end{bmatrix}
 $$
 
-$$ R\_{AD} = R\_{AB} * R\_{BC} * R\_{CD} $$
+[[file:roll-pitch-yaw.svg|200px]]
 
-## Footnotes
+## See Also
 
-[1] For a command-line utility to convert between roll/pitch/yaw angles,
-    quaternions, and rotation matrices , please see the `quaternion_from_euler`
-    and `quaternion_to_euler` example programs in
-    [ignition math pull request 297](https://bitbucket.org/ignitionrobotics/ign-math/pull-requests/297/examples-converting-between-euler-angles/diff).
+For a command-line utility to convert between roll-pitch-yaw angles,
+quaternions, and rotation matrices, please see the
+[quaternion\_from\_euler](https://bitbucket.org/ignitionrobotics/ign-math/src/ign-math4/examples/quaternion_from_euler.cc)
+and [quaternion\_to\_euler](https://bitbucket.org/ignitionrobotics/ign-math/src/ign-math4/examples/quaternion_to_euler.cc)
+example programs in ignition math.
 
-[2] Software implementations for converting between this Euler angle convention
-    and quaternions can be found in the
-    [drake::math::RollPitchYaw](https://github.com/RobotLocomotion/drake/blob/246b2c038/math/roll_pitch_yaw.h#L19-L31)
-    C++ class and the
-    [ignition::math::Quaternion](https://bitbucket.org/ignitionrobotics/ign-math/src/ignition-math4_4.0.0/include/ignition/math/Quaternion.hh#Quaternion.hh-308:398)
-    C++ class.
+Software implementations for converting between this Euler angle convention and
+quaternions can be found in
+[ignition::math::Quaternion](https://bitbucket.org/ignitionrobotics/ign-math/src/ignition-math4_4.0.0/include/ignition/math/Quaternion.hh#Quaternion.hh-308:398)
+C++ class, and the [urdf::Rotation](https://github.com/ros/urdfdom_headers/blob/1.0.3/urdf_model/include/urdf_model/pose.h#L103-L155) C++ class.
+
+Some other implementations:
+
+*   [Drake](https://drake.mit.edu/): `drake::math::RollPitchYaw` ([C++](https://drake.mit.edu/doxygen_cxx/classdrake_1_1math_1_1_roll_pitch_yaw.html#details), [Python](https://drake.mit.edu/pydrake/pydrake.math.html#pydrake.math.RollPitchYaw))
+*   [MuJoCo](http://www.mujoco.org/): See `eulerseq` in the
+[`compiler` XML reference](http://www.mujoco.org/book/XMLreference.html#compiler).
