@@ -33,6 +33,16 @@
       <skill>beginner</skill>
     </tutorial>
 
+    <tutorial title="Pose frame semantics" ref='pose_frame_semantics'>
+      <markdown version="1.5">pose_frame_semantics/tutorial.md</markdown>
+      <description>Defining semantics of the pose frame attribute.</description>
+      <tags>
+        <tag>pose</tag>
+        <tag>frame</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
   </tutorials>
 
   <!-- *************************************** -->
@@ -50,6 +60,7 @@
       <description>This series of tutorials describes the SDF specification.</description>
       <tutorials>
         <tutorial>specify_pose</tutorial>
+        <tutorial>pose_frame_semantics</tutorial>
       </tutorials>
     </category>
 
