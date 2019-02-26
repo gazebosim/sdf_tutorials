@@ -141,7 +141,7 @@ The following model contains joint with a valid specification of sibling links.
     </sdf>
 
 The following models contain joints with a valid specification of one sibling
-link connected to a fixed inertial frame as parent and child.
+link connected to a fixed inertial frame as parent or child.
 
     <sdf version="1.4">
       <model name="model">
@@ -166,7 +166,7 @@ and
     </sdf>
 
 The following model contains a link named `world`, so the joint connects `link`
-to its sibling, not to a fixed inertial frame.
+to its sibling rather than connecting to a fixed inertial frame.
 
     <sdf version="1.4">
       <model name="model">
