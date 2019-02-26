@@ -210,6 +210,15 @@ The following world also contains an invalid joint specification because, while
       </world>
     </sdf>
 
+This section has discussed naming conventions for `<joint>` elements as
+children of a `<model>`.
+For completeness, it should be noted that the SDF specification allows for a
+`<joint>` to be a direct child of a `<world>`
+(see [world.sdf:58](https://bitbucket.org/osrf/sdformat/src/21d2cbe52bb/sdf/1.4/world.sdf#world.sdf-58)),
+but the naming conventions for this case are not established, as this use case
+is not supported by Gazebo or any other known software.
+
+
 ### Support for nested models in sdf 1.5
 
 Support for nested models was added in sdf 1.5, which allows a `<model>`
