@@ -144,13 +144,13 @@ and robots (equivalent to models) do not have `<origin/>` tags:
       <model name="model">
         <link name="link">
           <inertial>
-            <pose>x y z roll pitch yaw</pose>
+            <pose>...</pose>
           </inertial>
           <collision name="collision">
-            <pose>x y z roll pitch yaw</pose>
+            <pose>...</pose>
           </collision>
           <visual name="visual">
-            <pose>x y z roll pitch yaw</pose>
+            <pose>...</pose>
           </visual>
         </link>
       </model>
@@ -161,13 +161,13 @@ is equivalent to
     <robot name="model">
       <link name="link">
         <inertial>
-          <origin rpy='roll pitch yaw' xyz='x y z'/>
+          <origin rpy='...' xyz='...'/>
         </inertial>
         <collision name="collision">
-          <origin rpy='roll pitch yaw' xyz='x y z'/>
+          <origin rpy='...' xyz='...'/>
         </collision>
         <visual name="visual">
-          <origin rpy='roll pitch yaw' xyz='x y z'/>
+          <origin rpy='...' xyz='...'/>
         </visual>
       </link>
     </model>
