@@ -118,6 +118,98 @@ and
     </sdf>
 
 
+### Parent frames in URDF
+
+For comparison, the behavior of parent frames in Unified Robot Description
+Format ([URDF](http://wiki.ros.org/urdf/XML/model)) is given in this section.
+A URDF files contains links, joints, collisions, visuals, and inertials
+like SDFormat, but with several significant differences.
+
+The first difference is that coordinate transformations are expressed using
+the attributes of the `<origin/>` tag instead of the value of `<pose/>`,
+which is a superficial difference as the numerical contents of each tag have a
+[similar definition](http://http://sdformat.org/tutorials?tut=specify_pose).
+
+    <pose>x y z roll pitch yaw</pose>
+
+is equivalent to
+
+    <origin rpy='roll pitch yaw' xyz='x y z'/>
+
+Similar to SDFormat, URDF inertial, collision, and visual elements are defined
+relative to their parent link frame with their own `<origin/>` tag, but links
+and robots (equivalent to models) do not have `<origin/>` tags:
+
+    <sdf version="1.4">
+      <model name="model">
+        <link name="link">
+          <inertial>
+            <pose>x y z roll pitch yaw</pose>
+          </inertial>
+          <collision name="collision">
+            <pose>x y z roll pitch yaw</pose>
+          </collision>
+          <visual name="visual">
+            <pose>x y z roll pitch yaw</pose>
+          </visual>
+        </link>
+      </model>
+    </sdf>
+
+is equivalent to
+
+    <robot name="model">
+      <link name="link">
+        <inertial>
+          <origin rpy='roll pitch yaw' xyz='x y z'/>
+        </inertial>
+        <collision name="collision">
+          <origin rpy='roll pitch yaw' xyz='x y z'/>
+        </collision>
+        <visual name="visual">
+          <origin rpy='roll pitch yaw' xyz='x y z'/>
+        </visual>
+      </link>
+    </model>
+
+The most significant difference between URDF and SDFormat coordinate frames
+is related to links and joints.
+While SDFormat allows kinematic loops with the topology of a directed graph,
+URDF kinematics must have the topology of a directed tree, with each link
+being the child of at most one joint.
+URDF coordinate frames are defined recursively based on this tree structure,
+with each joint's `<origin/>` tag defining the coordinate transformation from
+the parent link frame to the child link frame.
+
+    <sdf version="1.4">
+      <model name="model">
+        <link name="link1">
+          <pose>...</pose>
+        </link>
+        <link name="link2">
+          <pose>...</pose>
+        </link>
+        <joint name="joint" type="fixed">
+          <pose>...</pose>
+          <parent>link1</parent>
+          <child>link2</child>
+        </joint>
+      </model>
+    </sdf>
+
+is decidedly not equivalent to
+
+    <robot name="model">
+      <link name="link1"/>
+      <link name="link2"/>
+      <joint name="joint" type="fixed">
+        <origin rpy='...' xyz='...'/>
+        <parent>link1</parent>
+        <child>link2</child>
+      </joint>
+    </robot>
+
+
 ### Specifying parent and child link names for joints in sdf 1.4
 
 Joints specify the parent and child links by name in the `<parent>` and
