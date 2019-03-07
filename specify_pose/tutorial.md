@@ -39,6 +39,13 @@ $$
 
 [[file:roll-pitch-yaw.svg|200px]]
 
+The SDFormat `<pose/>` element is similar to the
+[`<origin/>` element from URDF](http://wiki.ros.org/urdf/XML/joint#Elements),
+which both share the same defition of roll, pitch, and yaw angles:
+
+    <origin xyz="x y z" rpy="roll pitch yaw" />
+
+
 ## See Also
 
 For a command-line utility to convert between roll-pitch-yaw angles,
