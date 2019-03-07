@@ -280,6 +280,9 @@ and the parent link from a sibling model.
 TODO: figure out if a child model is allowed to have the same name as its
 parent.
 
+**Please note:** The future nesting behavior and the `::` delimiter are under
+discussion and subject to change.
+
 ## Proposed behavior
 
 This section will include proposals for changes to legacy behavior and
