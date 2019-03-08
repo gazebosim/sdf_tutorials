@@ -41,7 +41,7 @@ $$
 
 The SDFormat `<pose/>` element is similar to the
 [`<origin/>` element from URDF](http://wiki.ros.org/urdf/XML/joint#Elements),
-which both share the same defition of roll, pitch, and yaw angles:
+which both share the same definition of roll, pitch, and yaw angles:
 
     <origin xyz="x y z" rpy="roll pitch yaw" />
 
