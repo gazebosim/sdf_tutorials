@@ -209,6 +209,38 @@ is decidedly not equivalent to
       </joint>
     </robot>
 
+The following image is used in URDF documentation to illustrate how
+coordinate frames are defined:
+
+![urdf coordinate frames](http://wiki.ros.org/urdf/XML/model?action=AttachFile&do=get&target=link.png)
+
+This image could be represented by the following URDF:
+
+    <robot name="model">
+
+      <link name="link1"/>
+
+      <joint name="joint1" type="...">
+        <origin rpy='...' xyz='...'/>
+        <parent>link1</parent>
+        <child>link2</child>
+      </joint>
+      <link name="link2"/>
+
+      <joint name="joint2" type="...">
+        <origin rpy='...' xyz='...'/>
+        <parent>link1</parent>
+        <child>link3</child>
+      </joint>
+      <link name="link3"/>
+
+      <joint name="joint3" type="...">
+        <origin rpy='...' xyz='...'/>
+        <parent>link3</parent>
+        <child>link4</child>
+      </joint>
+      <link name="link4"/>
+    </robot>
 
 ### Specifying parent and child link names for joints in sdf 1.4
 
