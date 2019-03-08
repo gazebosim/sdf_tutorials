@@ -215,6 +215,10 @@ to illustrate how coordinate frames are defined:
 
 ![urdf coordinate frames](http://wiki.ros.org/urdf/XML/model?action=AttachFile&do=get&target=link.png)
 
+<img src="http://wiki.ros.org/urdf/XML/model?action=AttachFile&do=get&target=link.png"
+     alt="urdf coordinate frames"
+     height="300"/>
+
 This image could be represented by the following URDF:
 
     <robot name="model">
