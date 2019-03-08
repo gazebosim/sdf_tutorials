@@ -209,8 +209,9 @@ is decidedly not equivalent to
       </joint>
     </robot>
 
-The following image is used in URDF documentation to illustrate how
-coordinate frames are defined:
+The following image is used in
+[URDF documentation](http://wiki.ros.org/urdf/XML/model)
+to illustrate how coordinate frames are defined:
 
 ![urdf coordinate frames](http://wiki.ros.org/urdf/XML/model?action=AttachFile&do=get&target=link.png)
 
