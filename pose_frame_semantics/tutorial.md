@@ -217,7 +217,7 @@ to illustrate how coordinate frames are defined:
      alt="urdf coordinate frames"
      height="500"/>
 
-This image could be represented by the following URDF:
+This model in this image could be represented by the following URDF:
 
     <robot name="model">
 
