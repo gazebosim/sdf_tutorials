@@ -20,6 +20,81 @@ attribute.
 
 ## Legacy behavior
 
+### Element naming rules in sdf 1.4
+
+In sdf 1.4, sibling elements of the same type must have unique names.
+For example, the following models are invalid because links, joints, and
+collisions with the same parent do not have unique names.
+
+    <sdf version="1.4">
+      <model name="model">
+        <link name="link"/>
+        <link name="link"/>
+      </model>
+    </sdf>
+
+    <sdf version="1.4">
+      <model name="model">
+        <link name="link1"/>
+        <link name="link2"/>
+        <link name="link3"/>
+        <joint name="joint" type="fixed">
+          <parent>link1</parent>
+          <child>link2</child>
+        </joint>
+        <joint name="joint" type="fixed">
+          <parent>link2</parent>
+          <child>link3</child>
+        </joint>
+      </model>
+    </sdf>
+
+    <sdf version="1.4">
+      <model name="model">
+        <link name="link">
+          <collision name="collision">
+            ...
+          </collision>
+          <collision name="collision">
+            ...
+          </collision>
+        </link>
+      </model>
+    </sdf>
+
+The following model contains collision elements with the same name, but
+the models are valid because the elements are not siblings, but rather
+children of different links.
+
+    <sdf version="1.4">
+      <model name="model">
+        <link name="link1">
+          <collision name="collision">
+            ...
+          </collision>
+        </link>
+        <link name="link2">
+          <collision name="collision">
+            ...
+          </collision>
+        </link>
+      </model>
+    </sdf>
+
+Sibling elements of different types are not mandated to have unique names,
+so the following is valid, though it is uncommon in practice.
+
+    <sdf version="1.4">
+      <model name="model">
+        <link name="base"/>
+        <link name="attachment"/>
+        <joint name="attachment" type="fixed">
+          <parent>base</parent>
+          <child>attachment</child>
+        </joint>
+      </model>
+    </sdf>
+
 ### Parent frames in sdf 1.4
 
 With the exception of joint frames, all `<pose>` tags in sdf 1.4 define
