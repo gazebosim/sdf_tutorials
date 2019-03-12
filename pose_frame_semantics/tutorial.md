@@ -346,7 +346,7 @@ but the naming conventions for this case are not established, as this use case
 is not supported by Gazebo or any other known software.
 
 
-### Support for nested models in sdf 1.5
+### Specifying parent and child link names for joints in sdf 1.5 with nested models
 
 Support for nested models was added in sdf 1.5, which allows a `<model>`
 element to contain child `<model>`s.
