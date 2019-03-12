@@ -97,3 +97,94 @@ of freedom remaining between the two links.
 * `screw`: 1 coupled rotational/translational degree of freedom
 * `universal`: 2 rotational degrees of freedom
 
+The parent and child links of a joint are specified by the `<parent>` and
+`<child>` tag respectively. These tags refer to other links inside the model by
+their names. For example, the following model contains two links and a fixed
+joint between the links:
+
+    <model name="two_links_fixed">
+      <link name="link1"/>
+      <link name="link2"/>
+      <joint name="joint1" type="fixed">
+        <parent>link1</parent>
+        <child>link2</child>
+      </joint>
+    </model>
+
+A fixed joint connects two links such that all six degrees of freedom between
+the links are constrained. In essence, the two links become one rigid body.
+
+Additionally, a `<joint>` tag may contain a `<pose>` tag that specifies the
+coordinate transform of the joint relative to the child link frame. This
+transform is considered to be the transform between the two links when the
+joint is at its initial position. It also determines the relationship between
+a given joint position and the resulting transform between the links. While
+a `<pose>` tag is not necessary for a fixed joint, it is used regularly
+in other joint types.
+
+In the following two examples, a revolute joint is used to demonstrate the use
+of the `<pose>` tag. In these examples, the joint pose is set so that at
+a joint position of 0, the two links are orthogonal to each other. In the first
+example, the joint position is set to `0 0 -0.1`. Since the pose is specified
+relative to the child link (link2), the position of the joint in the world
+frame is `0.1 0 0`.
+
+    <model name="two_links_orthogonal_1">
+      <link name="link1">
+        <pose>0 0 0 0 0 0</pose>
+      </link>
+      <link name="link2">
+        <pose>0.1 0 0.1 0 0 0</pose>
+      </link>
+      <joint name="joint1" type="revolute">
+        <pose>0 0 -0.1 0 0 0</pose>
+        <parent>link1</parent>
+        <child>link2</child>
+        <axis>
+          <xyz>0 1 0</xyz>
+        </axis>
+      </joint>
+      <joint name="joint_world" type="fixed">
+        <parent>world</parent>
+        <child>link1</child>
+      </joint>
+    </model>
+
+In the second example, the joint position is set to `0 -0.1 0 `. The position
+of the joint in the world frame is `0 0 0.1`.
+
+    <model name="two_links_orthogonal_2">
+      <link name="link1">
+        <pose>0 0 0 0 0 0</pose>
+      </link>
+      <link name="link2">
+        <pose>0.1 0 0.1 0 0 0</pose>
+      </link>
+      <joint name="joint1" type="revolute">
+        <pose>-0.1 0 0.0 0 0 0</pose>
+        <parent>link1</parent>
+        <child>link2</child>
+        <axis>
+          <xyz>0 1 0</xyz>
+        </axis>
+      </joint>
+      <joint name="joint_world" type="fixed">
+        <parent>world</parent>
+        <child>link1</child>
+      </joint>
+    </model>
+
+In both examples, the `<axis>` tag is used to specify the axis of rotation of
+the revolute joint. Once again, this axis is specified relative to the child
+link frame.
+
+The initial configuration of the articulated bodies, i.e, at a joint value of
+0 radians, is shown in the following diagram. Note that the pose of link2 is
+the same in both bodies.
+
+[[file:revolute_joint_1a.svg|500px]]
+
+However, a joint value of 0.78 radians (45 degrees) results in two very
+different poses for link2.
+
+[[file:revolute_joint_1b.svg|500px]]
