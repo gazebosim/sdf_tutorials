@@ -320,6 +320,34 @@ This model in this image could be represented by the following URDF:
       <link name="link4"/>
     </robot>
 
+As a contrast, here is what the model frames would like like for a similar
+model given below in SDFormat.
+
+[[file:urdf.svg|500px]]
+
+    <model name="model">
+      <link name="link1"/>
+      <link name="link2"/>
+      <link name="link3"/>
+      <link name="link4"/>
+      <joint name="joint1" type="...">
+        <origin rpy='...' xyz='...'/>
+        <parent>link1</parent>
+        <child>link2</child>
+      </joint>
+      <joint name="joint2" type="...">
+        <origin rpy='...' xyz='...'/>
+        <parent>link1</parent>
+        <child>link3</child>
+      </joint>
+      <joint name="joint3" type="...">
+        <origin rpy='...' xyz='...'/>
+        <parent>link3</parent>
+        <child>link4</child>
+      </joint>
+    </robot>
+
+
 ### Specifying parent and child link names for joints in sdf 1.4
 
 Joints specify the parent and child links by name in the `<parent>` and
