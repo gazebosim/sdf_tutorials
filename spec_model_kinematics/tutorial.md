@@ -90,7 +90,7 @@ The supported joint types are listed below along with the number of degrees
 of freedom remaining between the two links.
 
 * `ball`: 3 rotational degrees of freedom
-* `continuous`: 1 rotational degree of freedom with joint limits
+* `continuous`: 1 rotational degree of freedom with no joint limits
 * `fixed`: 0 degrees of freedom
 * `prismatic`: 1 translational degree of freedom
 * `revolute`: 1 rotational degree of freedom with joint limits
