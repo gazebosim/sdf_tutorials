@@ -286,7 +286,9 @@ is decidedly not equivalent to
 
 The following image is used in
 [URDF documentation](http://wiki.ros.org/urdf/XML/model)
-to illustrate how coordinate frames are defined:
+to illustrate how coordinate frames are defined recursively
+from link1 -> joint1 -> link2 and
+link1 -> joint2 -> link3 -> joint3 -> link4:
 
 <img src="http://wiki.ros.org/urdf/XML/model?action=AttachFile&do=get&target=link.png"
      alt="urdf coordinate frames"
@@ -320,10 +322,8 @@ This model in this image could be represented by the following URDF:
       <link name="link4"/>
     </robot>
 
-As a contrast, here is what the model frames would like like for a similar
-model given below in SDFormat.
-
-[[file:urdf_example_as_sdf.svg|500px]]
+As a contrast, here is an SDFormat model with the same link names, joint names,
+and parent-child relationships:
 
     <model name="model">
       <link name="link1"/>
@@ -346,6 +346,12 @@ model given below in SDFormat.
         <child>link4</child>
       </joint>
     </robot>
+
+The definition of SDF coordinate frames is illustrated by the following image,
+in which all links are defined relative to the model, and each joints is
+defined relative to its child link.
+
+[[file:urdf_example_as_sdf.svg|500px]]
 
 
 ### Specifying parent and child link names for joints in sdf 1.4
