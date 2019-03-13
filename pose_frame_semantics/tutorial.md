@@ -523,27 +523,3 @@ parent.
 **Please note:** The future nesting behavior and the `::` delimiter are under
 discussion and subject to change.
 
-## Proposed behavior
-
-This section includes proposals for changes to legacy behavior and
-semantics for referencing pose frames.
-
-### Element naming rules: unique names for all sibling elements
-
-While it was not explicitly disallowed in previous versions of the spec, it
-can be very confusing when sibling elements of any type have identical names.
-In practice, many models include the element type in the name, whether numbered
-as `link1`/`link2` or used as a suffix `front_right_wheel_joint`
-/ `front_right_steering_joint`, which helps to further ensure name uniqueness
-across element types.
-
-### Pose frame semantics
-
-Requiring unique names for sibling elements will simplify the process of
-referencing frames by name, as it will be sufficient to refer to a name of an
-element within the xml hierarchy without specifying the type.
-
-Use `/` instead of `::` as separator.
-
-Use `..` to refer to parent element.
-
