@@ -323,7 +323,7 @@ This model in this image could be represented by the following URDF:
 As a contrast, here is what the model frames would like like for a similar
 model given below in SDFormat.
 
-[[file:urdf.svg|500px]]
+[[file:urdf_example_as_sdf.svg|500px]]
 
     <model name="model">
       <link name="link1"/>
