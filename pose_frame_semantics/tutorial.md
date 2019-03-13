@@ -12,7 +12,7 @@ For example, this would allow an SDF model to define its kinematics like a
 URDF, with joint frames defined relative to the parent link frame and
 a joint's child link frames relative to the joint frame.
 
-The 1.5 spec also adds `<frame>` elements which can define named coordinate
+The 1.5 specfication also adds `<frame>` elements which can define named coordinate
 frames in addition to the existing link and joint frames in the model.
 
 This document is a work in progress to define the semantics of the pose frame
@@ -536,6 +536,13 @@ In practice, many models include the element type in the name, whether numbered
 as `link1`/`link2` or used as a suffix `front_right_wheel_joint`
 / `front_right_steering_joint`, which helps to further ensure name uniqueness
 across element types.
+As such, all named sibling elements must have unique names.
+
+There are some SDFormat models that may be in compliance with this new
+requirement. To handle this, a validation tool will be created to identify
+models that violate this stricter naming requirement. Furthermore, the
+specification version will be incremented so that checks can be added when
+converting from older, more permissive versions to the newer, stricter version.
 
 ### Pose frame semantics
 
