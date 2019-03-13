@@ -353,6 +353,10 @@ defined relative to its child link.
 
 [[file:urdf_example_as_sdf.svg|500px]]
 
+Once pose frame semantics are implemented in SDFormat, it will be possible
+to define an SDFormat model that behaves identically to a URDF model
+by specifying the parent reference frames according to the URDF convention.
+
 
 ### Specifying parent and child link names for joints in sdf 1.4
 
