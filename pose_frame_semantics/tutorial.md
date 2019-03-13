@@ -12,7 +12,7 @@ For example, this would allow an SDF model to define its kinematics like a
 URDF, with joint frames defined relative to the parent link frame and
 a joint's child link frames relative to the joint frame.
 
-The 1.5 specfication also adds `<frame>` elements which can define named coordinate
+The 1.5 specification also adds `<frame>` elements which can define named coordinate
 frames in addition to the existing link and joint frames in the model.
 
 This document is a work in progress to define the semantics of the pose frame
