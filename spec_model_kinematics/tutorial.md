@@ -130,23 +130,23 @@ relative to the child link (link2), the position of the joint in the world
 frame is `0.1 0 0`.
 
     <model name="two_links_orthogonal_1">
-      <link name="link1">
+      <link name="linkA">
         <pose>0 0 0 0 0 0</pose>
       </link>
-      <link name="link2">
+      <link name="linkB">
         <pose>0.1 0 0.1 0 0 0</pose>
       </link>
-      <joint name="joint1" type="revolute">
+      <joint name="jointA" type="revolute">
         <pose>0 0 -0.1 0 0 0</pose>
-        <parent>link1</parent>
-        <child>link2</child>
+        <parent>linkA</parent>
+        <child>linkB</child>
         <axis>
           <xyz>0 1 0</xyz>
         </axis>
       </joint>
       <joint name="joint_world" type="fixed">
         <parent>world</parent>
-        <child>link1</child>
+        <child>linkA</child>
       </joint>
     </model>
 
@@ -179,12 +179,12 @@ the revolute joint. Once again, this axis is specified relative to the child
 link frame.
 
 The initial configuration of the articulated bodies, i.e, at a joint value of
-0 radians, is shown in the following diagram. Note that the pose of link2 is
-the same in both bodies.
+0 radians, is shown in the following diagram. Note that the pose of linkB and
+link2 is the same in both models.
 
-[[file:revolute_joint_1a.svg|500px]]
+[[file:revolute_joint_1a.svg|600px]]
 
 However, a joint value of 0.78 radians (45 degrees) results in two very
-different poses for link2.
+different poses for linkB and link2.
 
-[[file:revolute_joint_1b.svg|500px]]
+[[file:revolute_joint_1b.svg|600px]]
