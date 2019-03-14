@@ -86,6 +86,8 @@ It must be a child of a model.
 Its full documentation can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=joint).
 
+There are several different types of joints that can be specified in the
+`type` attribute.
 The supported joint types are listed below along with the number of degrees
 of freedom remaining between the two links.
 
@@ -105,7 +107,7 @@ joint between the links:
     <model name="two_links_fixed">
       <link name="link1"/>
       <link name="link2"/>
-      <joint name="joint1" type="fixed">
+      <joint name="joint" type="fixed">
         <parent>link1</parent>
         <child>link2</child>
       </joint>
