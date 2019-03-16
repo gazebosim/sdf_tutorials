@@ -3,37 +3,41 @@
 A fundamental tool for robot modeling is the ability to concisely and
 intuitively express the relative position and orientation of model components
 in 3-D.
+Throughout the tutorials and documentation, the suffix `_AB` is used to
+indicate a quantity that changes from frame `A` to frame `B`.
 
 The SDFormat specification has the `<pose/>` element which accepts 6 numbers
-in total:
+in total to represent a coordinate transform `T_PC` from parent frame `P`
+to child frame `C`:
 
     <pose>x y z roll pitch yaw</pose>
 
 The elements `x y z` specify the position vector (in meters), and the elements
 `roll pitch yaw` are Euler angles (in radians) that specify the orientation, which can be
-computed by an extrinsic X-Y-Z rotation as shown by the following equation and figure:
+computed by an extrinsic X-Y-Z rotation as shown by the following equation
+for the rotation matrix `R_PC` and figure:
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 
 $$
-    R_{rpy}
+    R_{PC}
     =
     \begin{bmatrix}
-      \cos(y) & -\sin(y) & 0 \\\
-      \sin(y) &  \cos(y) & 0 \\\
-           0  &       0  & 1
+      \cos(yaw) & -\sin(yaw) & 0 \\\
+      \sin(yaw) &  \cos(yaw) & 0 \\\
+             0  &         0  & 1
     \end{bmatrix}
     *
     \begin{bmatrix}
-       \cos(p) & 0 & \sin(p) \\\
-            0  & 1 &      0  \\\
-      -\sin(p) & 0 & \cos(p)
+       \cos(pitch) & 0 & \sin(pitch) \\\
+                0  & 1 &          0  \\\
+      -\sin(pitch) & 0 & \cos(pitch)
     \end{bmatrix}
     *
     \begin{bmatrix}
-      1 &      0  &       0  \\\
-      0 & \cos(r) & -\sin(r) \\\
-      0 & \sin(r) &  \cos(r)
+      1 &         0  &          0  \\\
+      0 & \cos(roll) & -\sin(roll) \\\
+      0 & \sin(roll) &  \cos(roll)
     \end{bmatrix}
 $$
 
