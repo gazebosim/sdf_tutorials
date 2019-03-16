@@ -258,14 +258,10 @@ the parent link frame to the child link frame.
 
     <sdf version="1.4">
       <model name="model">
-        <link name="link1">
-          <pose>...</pose>
-        </link>
-        <link name="link2">
-          <pose>...</pose>
-        </link>
+        <link name="link1"/>
+        <link name="link2"/>
         <joint name="joint" type="fixed">
-          <pose>...</pose>
+          <pose>{xyz} {rpy}</pose>
           <parent>link1</parent>
           <child>link2</child>
         </joint>
@@ -278,7 +274,7 @@ is decidedly not equivalent to
       <link name="link1"/>
       <link name="link2"/>
       <joint name="joint" type="fixed">
-        <origin rpy='...' xyz='...'/>
+        <origin rpy='{rpy}' xyz='{xyz}'/>
         <parent>link1</parent>
         <child>link2</child>
       </joint>
@@ -294,28 +290,29 @@ link1 -> joint2 -> link3 -> joint3 -> link4:
      alt="urdf coordinate frames"
      height="500"/>
 
-This model in this image could be represented by the following URDF:
+This model in this image could be represented by the following URDF
+with model frame `0`, `link1` frame `1`, `link2` frame `2`, etc.
 
     <robot name="model">
 
       <link name="link1"/>
 
-      <joint name="joint1" type="...">
-        <origin rpy='...' xyz='...'/>
+      <joint name="joint1" type="revolute">
+        <origin rpy='{rpy_12}' xyz='{xyz_12}'/>
         <parent>link1</parent>
         <child>link2</child>
       </joint>
       <link name="link2"/>
 
-      <joint name="joint2" type="...">
-        <origin rpy='...' xyz='...'/>
+      <joint name="joint2" type="revolute">
+        <origin rpy='{rpy_13}' xyz='{xyz_13}'/>
         <parent>link1</parent>
         <child>link3</child>
       </joint>
       <link name="link3"/>
 
-      <joint name="joint3" type="...">
-        <origin rpy='...' xyz='...'/>
+      <joint name="joint3" type="revolute">
+        <origin rpy='{rpy_34}' xyz='{xyz_34}'/>
         <parent>link3</parent>
         <child>link4</child>
       </joint>
@@ -323,29 +320,40 @@ This model in this image could be represented by the following URDF:
     </robot>
 
 As a contrast, here is an SDFormat model with the same link names, joint names,
-and parent-child relationships:
+and parent-child relationships.
+It also uses integers to correspond to link frames (i.e. `1` -> `link1` frame)
+and uses letters for joint frames, with `A` for `joint1`, `B` for `joint2`,
+and `C` for `joint3`.
 
     <model name="model">
-      <link name="link1"/>
-      <link name="link2"/>
-      <link name="link3"/>
-      <link name="link4"/>
-      <joint name="joint1" type="...">
-        <origin rpy='...' xyz='...'/>
+      <link name="link1">
+        <pose>{xyz_01} {rpy_01}</pose>
+      </link>
+      <link name="link2">
+        <pose>{xyz_02} {rpy_02}</pose>
+      </link>
+      <link name="link3">
+        <pose>{xyz_03} {rpy_03}</pose>
+      </link>
+      <link name="link4">
+        <pose>{xyz_04} {rpy_04}</pose>
+      </link>
+      <joint name="joint1" type="revolute">
+        <pose>{xyz_2A} {rpy_2A}</pose>
         <parent>link1</parent>
         <child>link2</child>
       </joint>
-      <joint name="joint2" type="...">
-        <origin rpy='...' xyz='...'/>
+      <joint name="joint2" type="revolute">
+        <pose>{xyz_3B} {rpy_3B}</pose>
         <parent>link1</parent>
         <child>link3</child>
       </joint>
-      <joint name="joint3" type="...">
-        <origin rpy='...' xyz='...'/>
+      <joint name="joint3" type="revolute">
+        <pose>{xyz_4C} {rpy_4C}</pose>
         <parent>link3</parent>
         <child>link4</child>
       </joint>
-    </robot>
+    </model>
 
 The definition of SDF coordinate frames is illustrated by the following image,
 in which all links are defined relative to the model, and each joints is
