@@ -26,7 +26,7 @@ For example, an empty model with no links or joints:
 
     <model name="empty" />
 
-A model can define a pose that will offset the model frame relative
+A model can define a pose that offsets the model frame relative
 to its parent when it is inserted into a world:
 
     <model name="model_pose_Z">
@@ -60,8 +60,8 @@ A model with multiple links having the same name is invalid:
       <link name="link"/>
     </model>
 
-The link `<pose>` tag will be interpreted as a coordinate transform applied
-relative to its model frame.
+The link `<pose>` tag is a coordinate transform applied relative to its model
+frame.
 When inserted into a world, the link pose relative to the world is identical
 for the following two models:
 
@@ -113,8 +113,17 @@ joint between the links:
       </joint>
     </model>
 
+The joint `<pose>` tag is a coordinate transform applied relative to the
+child link frame.
+Poses are added to the `two_links_fixed` model with simplified names
+for ease in labeling the example figure.
+
+Concise frame names for this model are given as Frames afor `link1`
 A fixed joint connects two links such that all six degrees of freedom between
 the links are constrained. In essence, the two links become one rigid body.
+Some joint types allow degrees of freedom along a specified axis.
+For example, the rotational axis of a revolute joint is specified by the
+`<xyz>` tag under the `<axis>` element.
 
 Additionally, a `<joint>` tag may contain a `<pose>` tag that specifies the
 coordinate transform of the joint relative to the child link frame. This
