@@ -298,21 +298,21 @@ with model frame `0`, `link1` frame `1`, `link2` frame `2`, etc.
       <link name="link1"/>
 
       <joint name="joint1" type="revolute">
-        <origin rpy='{rpy_12}' xyz='{xyz_12}'/>
+        <origin rpy='{rpy_21}' xyz='{xyz_21}'/>
         <parent>link1</parent>
         <child>link2</child>
       </joint>
       <link name="link2"/>
 
       <joint name="joint2" type="revolute">
-        <origin rpy='{rpy_13}' xyz='{xyz_13}'/>
+        <origin rpy='{rpy_31}' xyz='{xyz_31}'/>
         <parent>link1</parent>
         <child>link3</child>
       </joint>
       <link name="link3"/>
 
       <joint name="joint3" type="revolute">
-        <origin rpy='{rpy_34}' xyz='{xyz_34}'/>
+        <origin rpy='{rpy_43}' xyz='{xyz_43}'/>
         <parent>link3</parent>
         <child>link4</child>
       </joint>
@@ -323,33 +323,33 @@ As a contrast, here is an SDFormat model with the same link names, joint names,
 and parent-child relationships.
 It also uses integers to correspond to link frames (i.e. `1` -> `link1` frame)
 and uses letters for joint frames, with `A` for `joint1`, `B` for `joint2`,
-and `C` for `joint3`.
+and `C` for `joint3` and `0` for the model frame.
 
     <model name="model">
       <link name="link1">
-        <pose>{xyz_01} {rpy_01}</pose>
+        <pose>{xyz_10} {rpy_10}</pose>
       </link>
       <link name="link2">
-        <pose>{xyz_02} {rpy_02}</pose>
+        <pose>{xyz_20} {rpy_20}</pose>
       </link>
       <link name="link3">
-        <pose>{xyz_03} {rpy_03}</pose>
+        <pose>{xyz_30} {rpy_30}</pose>
       </link>
       <link name="link4">
-        <pose>{xyz_04} {rpy_04}</pose>
+        <pose>{xyz_40} {rpy_40}</pose>
       </link>
       <joint name="joint1" type="revolute">
-        <pose>{xyz_2A} {rpy_2A}</pose>
+        <pose>{xyz_A2} {rpy_A2}</pose>
         <parent>link1</parent>
         <child>link2</child>
       </joint>
       <joint name="joint2" type="revolute">
-        <pose>{xyz_3B} {rpy_3B}</pose>
+        <pose>{xyz_B3} {rpy_B3}</pose>
         <parent>link1</parent>
         <child>link3</child>
       </joint>
       <joint name="joint3" type="revolute">
-        <pose>{xyz_4C} {rpy_4C}</pose>
+        <pose>{xyz_C4} {rpy_C4}</pose>
         <parent>link3</parent>
         <child>link4</child>
       </joint>
