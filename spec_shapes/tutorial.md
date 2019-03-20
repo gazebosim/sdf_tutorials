@@ -12,21 +12,33 @@ tags providing a means of composing multiple visual elements to form complex
 visual characteristics from primitive ones.  The full documentation for
 `<visual>` can be found [here](http://sdformat.org/spec?ver=1.4&elem=visual).
 
-### Pose of a Visual
+## The `<collision>` tag
 
-Similar to links, joints, and models, visuals have their own coordinate frames
-that can be offset using the `<pose>` tag. By default, the parent frame for
-this pose element is the parent link. However, a different frame of reference
-can be set using the `frame` attribute of the `<pose>` tag. Fore more
-information about the `<pose>` tag, see the [Specifying pose in SDFormat
-](/tutorials?tut=specify_pose&ver=1.4) and [Pose frame semantics
+This tag specifies the physical aspects of a link such as its shape, its
+friction properties and its behavior during contact with other objects. A link
+can have its shape defined in both of its visual and collision elements. This
+can be used, for example, to reduce computation time of collision detection
+algorithms by setting simpler shapes in the `<collision>` element.
+As with visuals, A link can have zero or more `<collision>` tags providing
+a means of composing multiple collision elements to form complex physical
+characteristics from primitive ones. The full documentation for `<collision>`
+can be found [here](http://sdformat.org/spec?ver=1.4&elem=collision).
+
+## Pose of Visuals and Collisions
+
+Similar to models, links, and joints, visuals and collisions have their own
+coordinate frames that can be offset using the `<pose>` tag. By default, the
+parent frame for this pose element is the parent link. However, a different
+frame of reference can be set using the `frame` attribute of the `<pose>` tag.
+Fore more information about the `<pose>` tag, see the [Specifying pose in
+SDFormat](/tutorials?tut=specify_pose&ver=1.4) and [Pose frame semantics
 ](/tutorials?tut=pose_frame_semantics&ver=1.4) tutorials.
 
-### Shapes in a Visual
+## Shapes in Visuals and Collisions
 
-Each `<visual>` tag must contain one `<geometry>` tag,
-which specfies the shape of the visual. The following shapes are supported in
-SDFormat:
+Each `<visual>` tag must contain one `<geometry>` tag, which specifies the shape
+of the visual. Similarly, a `<collision>` tag must also contain one `<geometry>`
+tag. The following shapes are supported in SDFormat:
 
 * Box
 * Cylinder
@@ -55,7 +67,9 @@ example, consider the following visual element:
 In the local frame of the visual, the extents of the box are `-0.5 -0.5 -0.5`
 and `0.5 0.5 0.5`.
 
-As mentioned earlier, multiple visual elements can be used in a single link.
+## Composition of Shapes
+
+Multiple visual elements can be used in a single link.
 In the following example, a cylinder and a sphere are combined to create a more
 complex shape.
 
@@ -82,12 +96,15 @@ complex shape.
   </visual>
 </link>
 ```
+The resulting shape is shown in the following image
 
+[[file:files/cylinder_sphere_combo.png|256px]]
 
 Note that when multiple `<visual>` tags are present inside a link, the `name`
-attribute must be unique.
+attribute must be unique. The same holds for the `name` attribute of
+`<collision>` tags.
 
-### Color of a Visual
+## Color of a Visual
 
 A `<visual>` tag may also contain a `<material>` tag which is used to set the
 color and texture properties of a visual.  The full documentation for
@@ -111,6 +128,8 @@ information about how these work. SDFormat defines the corresponding tags,
 [&lt;emissive&gt;](http://sdformat.org/spec?ver=1.4&elem=material#material_emissive)
 as child elements of `<material>`. The value for each of these is a vector of
 4 numbers representing red, green, blue, and alpha (RGBA).
+
+### Definition of color components
 
 #### Ambient
 
@@ -144,10 +163,11 @@ Specifying the color of an object involves configuring both lights and the
 object's material. Thus, a brief explanation of how the color components of
 lights can be set is given next.
 
-#### Setting the Color Components of Lights
+#### Setting the color components of Lights
 
 Light color can be specified in the world SDF file.
-Ambient light is set globally in [&lt;scene&gt;](http://sdformat.org/spec?ver=1.6&elem=scene#scene_ambient).
+Ambient light is set globally in
+[&lt;scene&gt;](http://sdformat.org/spec?ver=1.6&elem=scene#scene_ambient).
 The amount of ambient light in the world is a design choice left to the user. An
 indoor world may need a large global ambient light since every wall and surface
 is an opportunity to reflect light. A simulation of satellites may have almost
@@ -182,7 +202,7 @@ The following is an example containing `<scene>` and `<light>` elements
 </sdf>
 ```
 
-#### Component Values on Lights Versus Materials
+#### Component values on Lights versus Materials
 
 The final color of an object depends both on the material and the lights shining
 on it. Values on lights represent the intensity of light emitted. Values on
@@ -254,17 +274,4 @@ The following SDF snippet creates a sphere with colors shown the image above.
 </sdf>
 
 ```
-
-## The `<collision>` tag
-
-This tag specifies the physical aspects of a link such as its shape, its
-friction properties and its behavior during contact with other objects. A link
-can have its shape defined in both of its visual and collision elements. This
-can be used, for example, to reduce computation time of collision detection
-algorithms by setting simpler shapes in the `<collision>` element.
-
-A link can have zero or more `<collision>` tags providing a means of composing
-multiple collision elements to form complex physical characteristics from
-primitive ones.  The full documentation for `<collision>` can be found
-[here](http://sdformat.org/spec?ver=1.4&elem=collision).
 
