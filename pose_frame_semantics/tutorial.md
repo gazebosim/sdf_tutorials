@@ -600,9 +600,9 @@ attribute.
 
 The difference between the URDF and SDF expressions is shown in the patch below:
 
-~~~
---- <unnamed>
-+++ <unnamed>
+~~~diff
+--- model.urdf
++++ model.sdf
 @@ -1,26 +1,32 @@
 -    <robot name="model">
 +    <model name="model">
