@@ -274,7 +274,7 @@ is decidedly not equivalent to
       <link name="link1"/>
       <link name="link2"/>
       <joint name="joint" type="fixed">
-        <origin rpy='{rpy}' xyz='{xyz}'/>
+        <origin xyz='{xyz}' rpy='{rpy}'/>
         <parent>link1</parent>
         <child>link2</child>
       </joint>
@@ -299,25 +299,26 @@ with model frame `M`, `link1` frame `L1`, `link2` frame `L2`,
       <link name="link1"/>
 
       <joint name="joint1" type="revolute">
-        <origin rpy='{rpy_L2L1}' xyz='{xyz_L2L1}'/>
+        <origin xyz='{xyz_L2L1}' rpy='{rpy_L2L1}'/>
         <parent>link1</parent>
         <child>link2</child>
       </joint>
       <link name="link2"/>
 
       <joint name="joint2" type="revolute">
-        <origin rpy='{rpy_L3L1}' xyz='{xyz_L3L1}'/>
+        <origin xyz='{xyz_L3L1}' rpy='{rpy_L3L1}'/>
         <parent>link1</parent>
         <child>link3</child>
       </joint>
       <link name="link3"/>
 
       <joint name="joint3" type="revolute">
-        <origin rpy='{rpy_L4L3}' xyz='{xyz_L4L3}'/>
+        <origin xyz='{xyz_L4L3}' rpy='{rpy_L4L3}'/>
         <parent>link3</parent>
         <child>link4</child>
       </joint>
       <link name="link4"/>
+
     </robot>
 
 For comparison, here is an SDFormat model with the same link names, joint names,
@@ -544,7 +545,7 @@ as `link1`/`link2` or used as a suffix `front_right_wheel_joint`
 across element types.
 As such, all named sibling elements must have unique names.
 
-There are some SDFormat models that may be in compliance with this new
+There are some existing SDFormat models that may not comply with this new
 requirement. To handle this, a validation tool will be created to identify
 models that violate this stricter naming requirement. Furthermore, the
 specification version will be incremented so that checks can be added when
@@ -552,9 +553,99 @@ converting from older, more permissive versions to the newer, stricter version.
 
 ### Pose frame semantics
 
-Requiring unique names for sibling elements will simplify the process of
-referencing frames by name, as it will be sufficient to refer to a name of an
+Requiring unique names for sibling elements simplifies the process of
+referencing frames by name, as it is sufficient to refer to a name of an
 element within the xml hierarchy without specifying the type.
+This allows an element's name to be used to implicitly refer to a frame
+attached to that element without worry of name collisions between
+sibling elements like links and joints.
+
+For example, the example URDF from the previous section that corresponds
+to the image in the URDF documentation can be expressed with identical
+kinematics as an SDF by using link and joint names in the pose `frame`
+attribute.
+
+    <model name="model">
+
+      <link name="link1"/>
+
+      <joint name="joint1" type="revolute">
+        <pose frame="link1">{xyz_12} {rpy_12}</pose>
+        <parent>link1</parent>
+        <child>link2</child>
+      </joint>
+      <link name="link2">
+        <pose frame="joint1">0 0 0 0 0 0</pose>
+      </link>
+
+      <joint name="joint2" type="revolute">
+        <pose frame="link1">{xyz_13} {rpy_13}</pose>
+        <parent>link1</parent>
+        <child>link3</child>
+      </joint>
+      <link name="link3">
+        <pose frame="joint2">0 0 0 0 0 0</pose>
+      </link>
+
+      <joint name="joint3" type="revolute">
+        <pose frame="link3">{xyz_34} {rpy_34}</pose>
+        <parent>link3</parent>
+        <child>link4</child>
+      </joint>
+      <link name="link4">
+        <pose frame="joint3">0 0 0 0 0 0</pose>
+      </link>
+
+    </model>
+
+The difference between the URDF and SDF expressions is shown in the patch below:
+
+~~~
+--- <unnamed>
++++ <unnamed>
+@@ -1,26 +1,32 @@
+-    <robot name="model">
++    <model name="model">
+ 
+       <link name="link1"/>
+ 
+       <joint name="joint1" type="revolute">
+-        <origin xyz='{xyz_L2L1}' rpy='{rpy_L2L1}'/>
++        <pose frame="link1">{xyz_L2L1} {rpy_L2L1}</pose>
+         <parent>link1</parent>
+         <child>link2</child>
+       </joint>
+-      <link name="link2"/>
++      <link name="link2">
++        <pose frame="joint1">0 0 0 0 0 0</pose>
++      </link>
+ 
+       <joint name="joint2" type="revolute">
+-        <origin xyz='{xyz_L3L1}' rpy='{rpy_L3L1}'/>
++        <pose frame="link1">{xyz_L3L1} {rpy_L3L1}</pose>
+         <parent>link1</parent>
+         <child>link3</child>
+       </joint>
+-      <link name="link3"/>
++      <link name="link3">
++        <pose frame="joint2">0 0 0 0 0 0</pose>
++      </link>
+ 
+       <joint name="joint3" type="revolute">
+-        <origin xyz='{xyz_L4L3}' rpy='{rpy_L4L3}'/>
++        <pose frame="link3">{xyz_L4L3} {rpy_L4L3}</pose>
+         <parent>link3</parent>
+         <child>link4</child>
+       </joint>
+-      <link name="link4"/>
++      <link name="link4">
++        <pose frame="joint3">0 0 0 0 0 0</pose>
++      </link>
+ 
+-    </robot>
++    </model>
+~~~
+
 
 Use `/` instead of `::` as separator.
 
