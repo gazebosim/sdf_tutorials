@@ -119,6 +119,7 @@ This transform is considered to be the transform between the two links when the
 joint is at its initial position.
 While a `<pose>` tag is not necessary for a fixed joint, it is used regularly
 in other joint types.
+See the following example for an illustration of the joint pose.
 
 Some joint types allow degrees of freedom along a specified axis.
 For example, the rotational axis of a revolute joint is specified by a unit
