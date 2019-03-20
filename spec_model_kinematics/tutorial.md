@@ -175,10 +175,12 @@ with the following image and a corresponding URDF snippet:
      alt="urdf coordinate frames"
      height="500"/>
 
-In the following two examples, a revolute joint is used to demonstrate the use
-of the `<pose>` tag. In these examples, the joint pose is set so that at
-a joint position of 0, the two links are orthogonal to each other. In the first
-example, the joint position is set to `0 0 -0.1`. Since the pose is specified
+In the following two examples, a revolute joint is used to further demonstrate
+the use of the `<pose>` tag with concrete examples.
+In these examples, the joint pose is set so that at the initial configuration,
+the displacement vectors from the joint to each link are orthogonal to each other.
+In the first example, the `xyz` component of the joint pose is set to `0 0 -0.1`.
+Since the pose is specified
 relative to the child link (link2), the position of the joint in the world
 frame is `0.1 0 0`.
 
@@ -203,8 +205,17 @@ frame is `0.1 0 0`.
       </joint>
     </model>
 
-In the second example, the joint position is set to `0 -0.1 0 `. The position
-of the joint in the world frame is `0 0 0.1`.
+The initial configuration of this model is shown on the left side of the
+following figure.
+
+[[file:revolute_joint_1a.svg|600px]]
+
+In the second example, the parent and child links have the same pose relative
+to the model frame, but the xyz component of the joint pose is set to `0 -0.1 0`.
+This changes the position of the joint in the world frame to `0 0 0.1`.
+The initial configuration of this model is shown on the right side of the
+previous figure.
+Note that the pose of linkB and link2 is the same in both models.
 
     <model name="two_links_orthogonal_2">
       <link name="link1">
@@ -228,16 +239,12 @@ of the joint in the world frame is `0 0 0.1`.
     </model>
 
 In both examples, the `<axis>` tag is used to specify the axis of rotation of
-the revolute joint. Once again, this axis is specified relative to the child
-link frame.
+the revolute joint. This axis is specified relative to the joint
+frame.
 
-The initial configuration of the articulated bodies, i.e, at a joint value of
-0 radians, is shown in the following diagram. Note that the pose of linkB and
-link2 is the same in both models.
-
-[[file:revolute_joint_1a.svg|600px]]
-
-However, a joint value of 0.78 radians (45 degrees) results in two very
-different poses for linkB and link2.
+The model configurations for joint values of 0.78 radians (45 degrees) are
+shown in the following figure.
+Note that this results in two very different poses for linkB and link2
+even though they had the same initial world pose.
 
 [[file:revolute_joint_1b.svg|600px]]
