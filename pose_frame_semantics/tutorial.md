@@ -291,65 +291,63 @@ link1 -> joint2 -> link3 -> joint3 -> link4:
      height="500"/>
 
 This model in this image could be represented by the following URDF
-with model frame `0`, `link1` frame `1`, `link2` frame `2`, etc.
+with model frame `M`, `link1` frame `L1`, `link2` frame `L2`,
+`joint1` frame `J1`, etc.
 
     <robot name="model">
 
       <link name="link1"/>
 
       <joint name="joint1" type="revolute">
-        <origin rpy='{rpy_12}' xyz='{xyz_12}'/>
+        <origin rpy='{rpy_L2L1}' xyz='{xyz_L2L1}'/>
         <parent>link1</parent>
         <child>link2</child>
       </joint>
       <link name="link2"/>
 
       <joint name="joint2" type="revolute">
-        <origin rpy='{rpy_13}' xyz='{xyz_13}'/>
+        <origin rpy='{rpy_L3L1}' xyz='{xyz_L3L1}'/>
         <parent>link1</parent>
         <child>link3</child>
       </joint>
       <link name="link3"/>
 
       <joint name="joint3" type="revolute">
-        <origin rpy='{rpy_34}' xyz='{xyz_34}'/>
+        <origin rpy='{rpy_L4L3}' xyz='{xyz_L4L3}'/>
         <parent>link3</parent>
         <child>link4</child>
       </joint>
       <link name="link4"/>
     </robot>
 
-As a contrast, here is an SDFormat model with the same link names, joint names,
-and parent-child relationships.
-It also uses integers to correspond to link frames (i.e. `1` -> `link1` frame)
-and uses letters for joint frames, with `A` for `joint1`, `B` for `joint2`,
-and `C` for `joint3`.
+For comparison, here is an SDFormat model with the same link names, joint names,
+frame names, and parent-child relationships.
 
     <model name="model">
       <link name="link1">
-        <pose>{xyz_01} {rpy_01}</pose>
+        <pose>{xyz_L1M} {rpy_L1M}</pose>
       </link>
       <link name="link2">
-        <pose>{xyz_02} {rpy_02}</pose>
+        <pose>{xyz_L2M} {rpy_L2M}</pose>
       </link>
       <link name="link3">
-        <pose>{xyz_03} {rpy_03}</pose>
+        <pose>{xyz_L3M} {rpy_L3M}</pose>
       </link>
       <link name="link4">
-        <pose>{xyz_04} {rpy_04}</pose>
+        <pose>{xyz_L4M} {rpy_L4M}</pose>
       </link>
       <joint name="joint1" type="revolute">
-        <pose>{xyz_2A} {rpy_2A}</pose>
+        <pose>{xyz_J1L2} {rpy_J1L2}</pose>
         <parent>link1</parent>
         <child>link2</child>
       </joint>
       <joint name="joint2" type="revolute">
-        <pose>{xyz_3B} {rpy_3B}</pose>
+        <pose>{xyz_J2L3} {rpy_J2L3}</pose>
         <parent>link1</parent>
         <child>link3</child>
       </joint>
       <joint name="joint3" type="revolute">
-        <pose>{xyz_4C} {rpy_4C}</pose>
+        <pose>{xyz_J3L4} {rpy_J3L4}</pose>
         <parent>link3</parent>
         <child>link4</child>
       </joint>
