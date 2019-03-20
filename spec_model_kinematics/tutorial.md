@@ -128,7 +128,7 @@ In the following two examples, a revolute joint is used to demonstrate the use
 of the `<pose>` tag. In these examples, the joint pose is set so that at
 a joint position of 0, the two links are orthogonal to each other. In the first
 example, the joint position is set to `0 0 -0.1`. Since the pose is specified
-relative to the child link (link2), the position of the joint in the world
+relative to the child link (linkB), the position of the joint in the world
 frame is `0.1 0 0`.
 
     <model name="two_links_orthogonal_1">
@@ -138,7 +138,7 @@ frame is `0.1 0 0`.
       <link name="linkB">
         <pose>0.1 0 0.1 0 0 0</pose>
       </link>
-      <joint name="jointA" type="revolute">
+      <joint name="jointAB" type="revolute">
         <pose>0 0 -0.1 0 0 0</pose>
         <parent>linkA</parent>
         <child>linkB</child>
@@ -162,7 +162,7 @@ of the joint in the world frame is `0 0 0.1`.
       <link name="link2">
         <pose>0.1 0 0.1 0 0 0</pose>
       </link>
-      <joint name="joint1" type="revolute">
+      <joint name="joint12" type="revolute">
         <pose>-0.1 0 0.0 0 0 0</pose>
         <parent>link1</parent>
         <child>link2</child>
