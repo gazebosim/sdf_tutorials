@@ -646,6 +646,14 @@ The difference between the URDF and SDF expressions is shown in the patch below:
 +    </model>
 ~~~
 
+This enables a well-formed SDFormat file to be easily converted to URDF
+by directly copying `xyz` and `rpy` values and without performing any
+coordinate transformations.
+It does require the kinematics have a tree structure, pose frames to be
+specified for joints and child links, and no link poses to be included.
+A validator could be created to identify SDF files that can be directly
+converted to URDF with minimal modifications based on these principles.
+
 
 Use `/` instead of `::` as separator.
 
