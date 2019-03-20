@@ -179,10 +179,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.9280993"
-     inkscape:cx="411.96994"
-     inkscape:cy="71.294657"
+     inkscape:cx="371.41748"
+     inkscape:cy="156.48441"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g10077-3"
      showgrid="false"
      inkscape:snap-bbox="true"
      inkscape:snap-bbox-midpoints="true"
@@ -192,9 +192,9 @@
      inkscape:snap-object-midpoints="true"
      inkscape:snap-center="true"
      inkscape:window-width="2560"
-     inkscape:window-height="1412"
-     inkscape:window-x="2560"
-     inkscape:window-y="0"
+     inkscape:window-height="1385"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
      inkscape:window-maximized="1"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -212,7 +212,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -223,7 +223,7 @@
      transform="translate(4.0661754,-229.51109)">
     <g
        id="g5886"
-       transform="translate(0,0.19406468)">
+       transform="translate(2.1166667,0.19406468)">
       <circle
          style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.58310169;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="path815-6"
@@ -249,13 +249,13 @@
          inkscape:transform-center-y="-17.67765" />
       <text
          id="text4589"
-         y="286.34558"
-         x="0.58352333"
+         y="287.52191"
+         x="8.9461889"
          style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
          xml:space="preserve"><tspan
            style="font-size:5.64444447px;stroke-width:0.26458332"
-           y="286.34558"
-           x="0.58352333"
+           y="287.52191"
+           x="8.9461889"
            id="tspan4587"
            sodipodi:role="line">linkA</tspan></text>
       <text
@@ -279,7 +279,7 @@
            id="tspan4595"
            x="61.187843"
            y="294.35812"
-           style="font-size:5.64444447px;stroke-width:0.26458332">jointA</tspan></text>
+           style="font-size:5.64444447px;stroke-width:0.26458332">jointAB</tspan></text>
       <circle
          inkscape:transform-center-y="-50"
          inkscape:transform-center-x="-6.6060277e-05"
@@ -327,7 +327,7 @@
     </g>
     <g
        id="g5872"
-       transform="translate(-22.966756,2.6698642)">
+       transform="translate(-20.320921,2.6698642)">
       <circle
          style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.58310169;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="path815-6-5"
@@ -351,13 +351,13 @@
          style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.76499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1.53, 0.765;stroke-dashoffset:0;stroke-opacity:1" />
       <text
          id="text4589-9"
-         y="291.48578"
-         x="138.57828"
+         y="285.04611"
+         x="136.92352"
          style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
          xml:space="preserve"><tspan
            style="font-size:5.64444447px;stroke-width:0.26458332"
-           y="291.48578"
-           x="138.57828"
+           y="285.04611"
+           x="136.92352"
            id="tspan4587-1"
            sodipodi:role="line">link1</tspan></text>
       <text
@@ -381,7 +381,7 @@
            id="tspan4595-9"
            x="138.12927"
            y="237.52577"
-           style="font-size:5.64444447px;stroke-width:0.26458332">joint1</tspan></text>
+           style="font-size:5.64444447px;stroke-width:0.26458332">joint12</tspan></text>
       <path
          id="circle923-3"
          style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:#000000;stroke-width:0.30000001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -441,7 +441,9 @@
        style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.21885218;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <g
        id="g10077"
-       transform="translate(14.95752,4.0954541e-6)">
+       transform="matrix(2,0,0,2,-138.96554,-196.90042)"
+       inkscape:transform-center-x="-5.6033902"
+       inkscape:transform-center-y="-6.8241089">
       <path
          style="fill:none;stroke:#0000ff;stroke-width:0.25292063;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6759-4)"
          d="m 72.910629,244.81064 v -10"
@@ -477,13 +479,13 @@
       <text
          xml:space="preserve"
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222247px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';letter-spacing:0px;word-spacing:0px;fill:#55d400;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-         x="68.751938"
-         y="245.90788"
+         x="67.988297"
+         y="246.16669"
          id="text10069"><tspan
            sodipodi:role="line"
            id="tspan10067"
-           x="68.751938"
-           y="245.90788"
+           x="67.988297"
+           y="246.16669"
            style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333359px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';fill:#55d400;fill-opacity:1;stroke-width:0.26458332">y</tspan></text>
       <circle
          r="1.4663107"
@@ -506,7 +508,7 @@
     </g>
     <g
        id="g10077-3"
-       transform="translate(98.564562,4e-6)">
+       transform="matrix(2,0,0,2,-33.42581,-196.90042)">
       <path
          style="fill:none;stroke:#0000ff;stroke-width:0.25292063;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6759-4-6)"
          d="m 72.910629,244.81064 v -10"
@@ -542,13 +544,13 @@
       <text
          xml:space="preserve"
          style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222247px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';letter-spacing:0px;word-spacing:0px;fill:#55d400;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-         x="68.751938"
-         y="245.90788"
+         x="67.988297"
+         y="246.16669"
          id="text10069-5"><tspan
            sodipodi:role="line"
            id="tspan10067-5"
-           x="68.751938"
-           y="245.90788"
+           x="67.988297"
+           y="246.16669"
            style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333359px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';fill:#55d400;fill-opacity:1;stroke-width:0.26458332">y</tspan></text>
       <circle
          r="1.4663107"

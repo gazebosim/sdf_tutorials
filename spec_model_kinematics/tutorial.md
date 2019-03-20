@@ -181,7 +181,7 @@ In these examples, the joint pose is set so that at the initial configuration,
 the displacement vectors from the joint to each link are orthogonal to each other.
 In the first example, the `xyz` component of the joint pose is set to `0 0 -0.1`.
 Since the pose is specified
-relative to the child link (link2), the position of the joint in the world
+relative to the child link (linkB), the position of the joint in the world
 frame is `0.1 0 0`.
 
     <model name="two_links_orthogonal_1">
@@ -191,7 +191,7 @@ frame is `0.1 0 0`.
       <link name="linkB">
         <pose>0.1 0 0.1 0 0 0</pose>
       </link>
-      <joint name="jointA" type="revolute">
+      <joint name="jointAB" type="revolute">
         <pose>0 0 -0.1 0 0 0</pose>
         <parent>linkA</parent>
         <child>linkB</child>
@@ -224,7 +224,7 @@ Note that the pose of linkB and link2 is the same in both models.
       <link name="link2">
         <pose>0.1 0 0.1 0 0 0</pose>
       </link>
-      <joint name="joint1" type="revolute">
+      <joint name="joint12" type="revolute">
         <pose>-0.1 0 0.0 0 0 0</pose>
         <parent>link1</parent>
         <child>link2</child>
