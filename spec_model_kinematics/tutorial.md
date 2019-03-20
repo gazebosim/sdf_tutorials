@@ -114,24 +114,54 @@ joint between the links:
     </model>
 
 The joint `<pose>` tag is a coordinate transform applied relative to the
-child link frame.
-Poses are added to the `two_links_fixed` model with simplified names
-for ease in labeling the example figure.
-
-Concise frame names for this model are given as Frames afor `link1`
-A fixed joint connects two links such that all six degrees of freedom between
-the links are constrained. In essence, the two links become one rigid body.
-Some joint types allow degrees of freedom along a specified axis.
-For example, the rotational axis of a revolute joint is specified by the
-`<xyz>` tag under the `<axis>` element.
-
-Additionally, a `<joint>` tag may contain a `<pose>` tag that specifies the
-coordinate transform of the joint relative to the child link frame. This
-transform is considered to be the transform between the two links when the
-joint is at its initial position. It also determines the relationship between
-a given joint position and the resulting transform between the links. While
-a `<pose>` tag is not necessary for a fixed joint, it is used regularly
+child link frame to define the joint frame.
+This transform is considered to be the transform between the two links when the
+joint is at its initial position.
+While a `<pose>` tag is not necessary for a fixed joint, it is used regularly
 in other joint types.
+
+Some joint types allow degrees of freedom along a specified axis.
+For example, the rotational axis of a revolute joint is specified by a unit
+Vector3 in the `<xyz>` tag under the `<axis>` element, which is interpreted
+in the joint frame.
+The joint pose and axis direction for the following SDF model are illustrated
+in the following figure, with model frame `M`, parent link frame `P`,
+child link frame `C`, and joint frame `J`.
+
+    <model name="two_links_revolute">
+      <link name="parent">
+        <pose>{xyz_MP} {rpy_MP}</pose>
+      </link>
+      <link name="child">
+        <pose>{xyz_MC} {rpy_MC}</pose>
+      </link>
+      <joint name="joint" type="revolute">
+        <pose>{xyz_CJ} {rpy_CJ}</pose>
+        <parent>parent</parent>
+        <child>child</child>
+        <axis>
+          <xyz>{xyz_axis_J}</xyz>
+        </axis>
+      </joint>
+    </model>
+
+[[file:sdf_joint_frames.svg|600px]]
+
+Note that coordinate frames are defined differently in URDF.
+The kinematic topology of a URDF file must be a tree with no closed
+kinematic loops, and frames are defined recursively along each chain of
+links and joints.
+As discussed in the
+[previous tutorial](http://sdformat.org/tutorials?tut=specify_pose&cat=specification),
+the `<origin>` tag is the URDF analog of the SDFormat `<pose>`.
+The joint origin defines the transform from the parent link frame to the
+joint frame, and the child link frame is co-located with the joint frame.
+This is illustrated in the [URDF documentation](http://wiki.ros.org/urdf/XML/joint)
+with the following image:
+
+<img src="http://wiki.ros.org/urdf/XML/joint?action=AttachFile&do=get&target=joint.png"
+     alt="urdf coordinate frames"
+     height="500"/>
 
 In the following two examples, a revolute joint is used to demonstrate the use
 of the `<pose>` tag. In these examples, the joint pose is set so that at
