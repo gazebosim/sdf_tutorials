@@ -158,7 +158,18 @@ the `<origin>` tag is the URDF analog of the SDFormat `<pose>`.
 The joint origin defines the transform from the parent link frame to the
 joint frame, and the child link frame is co-located with the joint frame.
 This is illustrated in the [URDF documentation](http://wiki.ros.org/urdf/XML/joint)
-with the following image:
+with the following image and a corresponding URDF snippet:
+
+    <robot name="two_links_revolute">
+      <link name="Parent"/>
+      <link name="Child"/>
+      <joint name="joint" type="revolute">
+        <origin xyz="{xyz_PJ}" rpy="{rpy_PJ}" />
+        <parent>Parent</parent>
+        <child>Child</child>
+        <axis xyz="{xyz_axis_J}" />
+      </joint>
+    </robot>
 
 <img src="http://wiki.ros.org/urdf/XML/joint?action=AttachFile&do=get&target=joint.png"
      alt="urdf coordinate frames"
