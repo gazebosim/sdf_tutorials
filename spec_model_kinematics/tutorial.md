@@ -125,20 +125,20 @@ For example, the rotational axis of a revolute joint is specified by a unit
 Vector3 in the `<xyz>` tag under the `<axis>` element, which is interpreted
 in the joint frame.
 The joint pose and axis direction for the following SDF model are illustrated
-in the following figure, with model frame `M`, parent link frame `P`,
-child link frame `C`, and joint frame `J`.
+in the following figure, with model frame `M`, Parent link frame `P`,
+Child link frame `C`, and joint frame `J`.
 
     <model name="two_links_revolute">
-      <link name="parent">
+      <link name="Parent">
         <pose>{xyz_MP} {rpy_MP}</pose>
       </link>
-      <link name="child">
+      <link name="Child">
         <pose>{xyz_MC} {rpy_MC}</pose>
       </link>
       <joint name="joint" type="revolute">
         <pose>{xyz_CJ} {rpy_CJ}</pose>
-        <parent>parent</parent>
-        <child>child</child>
+        <parent>Parent</parent>
+        <child>Child</child>
         <axis>
           <xyz>{xyz_axis_J}</xyz>
         </axis>
