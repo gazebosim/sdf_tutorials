@@ -1,7 +1,8 @@
-# Specifying Collisions and Visuals in SDFormat
+# Adding shapes to a model with collisions and visuals in SDFormat
 
-This tutorial covers how to add elements that describe the physical and visual
-characteristics of each link in a model. These characteristics are specified
+This tutorial explains how to add geometric shapes to a model that describe the
+physical and visual characteristics of each link in a model.
+These characteristics are specified
 using `<visual>` and `<collision>` tags in SDFormat.
 
 ## The `<visual>` tag
