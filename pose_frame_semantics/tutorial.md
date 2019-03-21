@@ -103,7 +103,7 @@ parent xml element.
 
 For example, in the following model, the link frame is defined relative to
 the model frame, and the inertial, collision, visual, and sensor frames
-are all defined relative to the model frame.
+are all defined relative to the link frame.
 
     <sdf version="1.4">
       <model name="model">
