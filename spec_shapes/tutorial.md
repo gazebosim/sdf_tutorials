@@ -4,6 +4,56 @@ This tutorial explains how to add geometric shapes to a model that describe the
 physical and visual characteristics of each link in a model.
 These characteristics are specified
 using `<visual>` and `<collision>` tags in SDFormat.
+Each `<visual>` and `<collision>` must contain one `<geometry>` tag, which
+specifies the shape of the object.
+
+## The `<geometry>` tag
+
+The following shapes are supported by the `<geometry>` tag in SDFormat:
+
+* box
+* cylinder (aligned with Z-axis)
+* sphere
+* plane
+* mesh
+* heightmap
+* image
+
+The full documentation for `<geometry>` can be found
+[here](http://sdformat.org/spec?ver=1.4&elem=geometry).
+
+For `box`, `cylinder`, and `sphere` shapes, the geometric center is used as
+the attachment point to its parent.
+Examples of each shape type that are given below that have a unit cube
+as a bounding box.
+
+```xml
+<geometry>
+  <sphere>
+    <radius>0.5</radius>
+  </sphere>
+</geometry>
+```
+
+```xml
+<geometry>
+  <cylinder>
+    <length>1</length>
+    <radius>0.5</radius>
+  </cylinder>
+</geometry>
+```
+
+```xml
+<geometry>
+  <box>
+    <size>1 1 1</size>
+  </box>
+</geometry>
+```
+
+In the local frame of the shape, the extents of the each shape are `-0.5 -0.5 -0.5`
+and `0.5 0.5 0.5`.
 
 ## The `<visual>` tag
 
@@ -34,39 +84,6 @@ frame of reference can be set using the `frame` attribute of the `<pose>` tag.
 Fore more information about the `<pose>` tag, see the [Specifying pose in
 SDFormat](/tutorials?tut=specify_pose&ver=1.4) and [Pose frame semantics
 ](/tutorials?tut=pose_frame_semantics&ver=1.4) tutorials.
-
-## Shapes in Visuals and Collisions
-
-Each `<visual>` tag must contain one `<geometry>` tag, which specifies the shape
-of the visual. Similarly, a `<collision>` tag must also contain one `<geometry>`
-tag. The following shapes are supported in SDFormat:
-
-* Box
-* Cylinder
-* Sphere
-* Plane
-* Mesh
-* Heightmap
-* Image
-
-The full documentation for `<geometry>` can be found
-[here](http://sdformat.org/spec?ver=1.4&elem=geometry).
-
-For `Box`, `Cylinder`, and `Sphere`, the geometrical center of the shape
-coincides with the origin of the frame specified by the `<pose>` tag. For
-example, consider the following visual element:
-
-```xml
-<visual name="box1">
-  <geometry>
-    <box>
-      <size>1 1 1</size>
-    </box>
-  </geometry>
-</visual>
-```
-In the local frame of the visual, the extents of the box are `-0.5 -0.5 -0.5`
-and `0.5 0.5 0.5`.
 
 ## Composition of Shapes
 
