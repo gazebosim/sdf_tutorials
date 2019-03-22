@@ -131,13 +131,13 @@ Child link frame `C`, and joint frame `J`.
 
     <model name="two_links_revolute">
       <link name="Parent">
-        <pose>{xyz_PM} {rpy_PM}</pose>
+        <pose>{xyz_MP} {rpy_MP}</pose>
       </link>
       <link name="Child">
-        <pose>{xyz_CM} {rpy_CM}</pose>
+        <pose>{xyz_MC} {rpy_MC}</pose>
       </link>
       <joint name="joint" type="revolute">
-        <pose>{xyz_JC} {rpy_JC}</pose>
+        <pose>{xyz_CJ} {rpy_CJ}</pose>
         <parent>Parent</parent>
         <child>Child</child>
         <axis>
@@ -164,9 +164,9 @@ with the following image and a corresponding URDF snippet:
       <link name="Parent"/>
       <link name="Child"/>
       <joint name="joint" type="revolute">
-        <origin xyz="{xyz_JP}" rpy="{rpy_JP}" />
-        <parent>Parent</parent>
-        <child>Child</child>
+        <origin xyz="{xyz_PJ}" rpy="{rpy_PJ}" />
+        <parent link="Parent"/>
+        <child link="Child"/>
         <axis xyz="{xyz_axis_J}" />
       </joint>
     </robot>
