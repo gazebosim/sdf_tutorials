@@ -6,6 +6,18 @@ These characteristics are specified
 using `<visual>` and `<collision>` tags in SDFormat.
 Each `<visual>` and `<collision>` must contain one `<geometry>` tag, which
 specifies the shape of the object.
+A `<visual>` element may contain a `<material>` tag that can specify the
+visual appearance of the shape, such as color and texture,
+while a `<collision>` element may contain a `<surface>` tag that can specify
+physical properties of the surface related to friction and contact.
+
+A link can have zero or more `<visual>` or `<collision>` elements
+placed in the parent link frame using a `<pose>` element.
+This allows a link to define complex geometries by composition of
+individual shapes with distinct visual and physical properties.
+The full documentation can be found
+[here](http://sdformat.org/spec?ver=1.4&elem=visual) for `<visual>`
+and [here](http://sdformat.org/spec?ver=1.4&elem=collision) for `<collision>`.
 
 ## The `<geometry>` tag
 
@@ -24,8 +36,9 @@ The full documentation for `<geometry>` can be found
 
 For `box`, `cylinder`, and `sphere` shapes, the geometric center is used as
 the attachment point to its parent.
-Examples of each shape type that are given below that have a unit cube
-as a bounding box.
+Examples of each shape type are given below for which
+the extents are `-0.5 -0.5 -0.5` and `0.5 0.5 0.5` in the local frame,
+ie. that have the unit cube as a bounding box.
 
 ```xml
 <geometry>
@@ -52,30 +65,32 @@ as a bounding box.
 </geometry>
 ```
 
-In the local frame of the shape, the extents of the each shape are `-0.5 -0.5 -0.5`
-and `0.5 0.5 0.5`.
+A link with matching sphere shapes in a collision and visual can be expressed as:
 
-## The `<visual>` tag
+```xml
+<link name="link">
+  <collision name="collision">
+    <geometry>
+      <sphere>
+        <radius>0.5</radius>
+      </sphere>
+    </geometry>
+  </collision>
+  <visual name="visual">
+    <geometry>
+      <sphere>
+        <radius>0.5</radius>
+      </sphere>
+    </geometry>
+  </visual>
+</link>
+```
 
-This tag specifies the visual aspects of a link such as its shape, color,
-texture, etc. for visualization purposes. A link can have zero or more `<visual>`
-tags providing a means of composing multiple visual elements to form complex
-visual characteristics from primitive ones.  The full documentation for
-`<visual>` can be found [here](http://sdformat.org/spec?ver=1.4&elem=visual).
-
-## The `<collision>` tag
-
-This tag specifies the physical aspects of a link such as its shape, its
-friction properties and its behavior during contact with other objects. A link
-can have its shape defined in both of its visual and collision elements. This
-can be used, for example, to reduce computation time of collision detection
+The geometry for collisions and visuals in a link is not required to match.
+This can be used, for example, to reduce computation time of collision detection
 algorithms by setting simpler shapes in the `<collision>` element.
-As with visuals, A link can have zero or more `<collision>` tags providing
-a means of composing multiple collision elements to form complex physical
-characteristics from primitive ones. The full documentation for `<collision>`
-can be found [here](http://sdformat.org/spec?ver=1.4&elem=collision).
 
-## Pose of Visuals and Collisions
+## Placing visuals and collisions using the `<pose>` tag
 
 Similar to models, links, and joints, visuals and collisions have their own
 coordinate frames that can be offset using the `<pose>` tag. By default, the
