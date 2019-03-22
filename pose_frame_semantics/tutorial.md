@@ -572,7 +572,7 @@ attribute.
       <link name="link1"/>
 
       <joint name="joint1" type="revolute">
-        <pose frame="link1">{xyz_12} {rpy_12}</pose>
+        <pose frame="link1">{xyz_L1L2} {rpy_L1L2}</pose>
         <parent>link1</parent>
         <child>link2</child>
       </joint>
@@ -581,7 +581,7 @@ attribute.
       </link>
 
       <joint name="joint2" type="revolute">
-        <pose frame="link1">{xyz_13} {rpy_13}</pose>
+        <pose frame="link1">{xyz_L1L3} {rpy_L1L3}</pose>
         <parent>link1</parent>
         <child>link3</child>
       </joint>
@@ -590,7 +590,7 @@ attribute.
       </link>
 
       <joint name="joint3" type="revolute">
-        <pose frame="link3">{xyz_34} {rpy_34}</pose>
+        <pose frame="link3">{xyz_L3L4} {rpy_L3L4}</pose>
         <parent>link3</parent>
         <child>link4</child>
       </joint>
@@ -612,10 +612,12 @@ The difference between the URDF and SDF expressions is shown in the patch below:
        <link name="link1"/>
  
        <joint name="joint1" type="revolute">
--        <origin xyz='{xyz_L2L1}' rpy='{rpy_L2L1}'/>
-+        <pose frame="link1">{xyz_L2L1} {rpy_L2L1}</pose>
-         <parent>link1</parent>
-         <child>link2</child>
+-        <origin xyz='{xyz_L1L2}' rpy='{rpy_L1L2}'/>
+-        <parent link="link1"/>
+-        <child link="link2"/>
++        <pose frame="link1">{xyz_L1L2} {rpy_L1L2}</pose>
++        <parent>link1</parent>
++        <child>link2</child>
        </joint>
 -      <link name="link2"/>
 +      <link name="link2">
@@ -623,10 +625,12 @@ The difference between the URDF and SDF expressions is shown in the patch below:
 +      </link>
  
        <joint name="joint2" type="revolute">
--        <origin xyz='{xyz_L3L1}' rpy='{rpy_L3L1}'/>
-+        <pose frame="link1">{xyz_L3L1} {rpy_L3L1}</pose>
-         <parent>link1</parent>
-         <child>link3</child>
+-        <origin xyz='{xyz_L1L3}' rpy='{rpy_L1L3}'/>
+-        <parent link="link1"/>
+-        <child link="link3"/>
++        <pose frame="link1">{xyz_L1L3} {rpy_L1L3}</pose>
++        <parent>link1</parent>
++        <child>link3</child>
        </joint>
 -      <link name="link3"/>
 +      <link name="link3">
@@ -634,10 +638,12 @@ The difference between the URDF and SDF expressions is shown in the patch below:
 +      </link>
  
        <joint name="joint3" type="revolute">
--        <origin xyz='{xyz_L4L3}' rpy='{rpy_L4L3}'/>
-+        <pose frame="link3">{xyz_L4L3} {rpy_L4L3}</pose>
-         <parent>link3</parent>
-         <child>link4</child>
+-        <origin xyz='{xyz_L3L4}' rpy='{rpy_L3L4}'/>
+-        <parent link="link3"/>
+-        <child link="link4"/>
++        <pose frame="link3">{xyz_L3L4} {rpy_L3L4}</pose>
++        <parent>link3</parent>
++        <child>link4</child>
        </joint>
 -      <link name="link4"/>
 +      <link name="link4">
