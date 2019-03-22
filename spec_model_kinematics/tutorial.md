@@ -175,7 +175,9 @@ with the following image and a corresponding URDF snippet:
      alt="urdf coordinate frames"
      height="500"/>
 
-In the following two examples, a revolute joint is used to further demonstrate
+## Examples
+
+In this section, a revolute joint is used to further demonstrate
 the use of the `<pose>` tag with concrete examples.
 In these examples, the joint pose is set so that at the initial configuration,
 the displacement vectors from the joint to each link are orthogonal to each other.
