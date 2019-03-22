@@ -354,8 +354,10 @@ frame names, and parent-child relationships.
     </model>
 
 The definition of SDF coordinate frames is illustrated by the following image,
-in which all links are defined relative to the model, and each joints is
+in which all links are defined relative to the model, and each joint is
 defined relative to its child link.
+Since there is no offset allowed between the child link frame and the joint
+frame in URDF, the SDF joint poses are all zeros.
 
 [[file:urdf_example_as_sdf.svg|500px]]
 
