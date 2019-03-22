@@ -103,7 +103,7 @@ parent xml element.
 
 For example, in the following model, the link frame is defined relative to
 the model frame, and the inertial, collision, visual, and sensor frames
-are all defined relative to the model frame.
+are all defined relative to the link frame.
 
     <sdf version="1.4">
       <model name="model">
@@ -275,8 +275,8 @@ is decidedly not equivalent to
       <link name="link2"/>
       <joint name="joint" type="fixed">
         <origin xyz='{xyz}' rpy='{rpy}'/>
-        <parent>link1</parent>
-        <child>link2</child>
+        <parent link="link1"/>
+        <child link="link2"/>
       </joint>
     </robot>
 
@@ -299,23 +299,23 @@ with model frame `M`, `link1` frame `L1`, `link2` frame `L2`,
       <link name="link1"/>
 
       <joint name="joint1" type="revolute">
-        <origin xyz='{xyz_L2L1}' rpy='{rpy_L2L1}'/>
-        <parent>link1</parent>
-        <child>link2</child>
+        <origin xyz='{xyz_L1L2}' rpy='{rpy_L1L2}'/>
+        <parent link="link1"/>
+        <child link="link2"/>
       </joint>
       <link name="link2"/>
 
       <joint name="joint2" type="revolute">
-        <origin xyz='{xyz_L3L1}' rpy='{rpy_L3L1}'/>
-        <parent>link1</parent>
-        <child>link3</child>
+        <origin xyz='{xyz_L1L3}' rpy='{rpy_L1L3}'/>
+        <parent link="link1"/>
+        <child link="link3"/>
       </joint>
       <link name="link3"/>
 
       <joint name="joint3" type="revolute">
-        <origin xyz='{xyz_L4L3}' rpy='{rpy_L4L3}'/>
-        <parent>link3</parent>
-        <child>link4</child>
+        <origin xyz='{xyz_L3L4}' rpy='{rpy_L3L4}'/>
+        <parent link="link3"/>
+        <child link="link4"/>
       </joint>
       <link name="link4"/>
 
@@ -326,37 +326,39 @@ frame names, and parent-child relationships.
 
     <model name="model">
       <link name="link1">
-        <pose>{xyz_L1M} {rpy_L1M}</pose>
+        <pose>{xyz_ML1} {rpy_ML1}</pose>
       </link>
       <link name="link2">
-        <pose>{xyz_L2M} {rpy_L2M}</pose>
+        <pose>{xyz_ML2} {rpy_ML2}</pose>
       </link>
       <link name="link3">
-        <pose>{xyz_L3M} {rpy_L3M}</pose>
+        <pose>{xyz_ML3} {rpy_ML3}</pose>
       </link>
       <link name="link4">
-        <pose>{xyz_L4M} {rpy_L4M}</pose>
+        <pose>{xyz_ML4} {rpy_ML4}</pose>
       </link>
       <joint name="joint1" type="revolute">
-        <pose>{xyz_J1L2} {rpy_J1L2}</pose>
+        <pose>0 0 0 0 0 0</pose>
         <parent>link1</parent>
         <child>link2</child>
       </joint>
       <joint name="joint2" type="revolute">
-        <pose>{xyz_J2L3} {rpy_J2L3}</pose>
+        <pose>0 0 0 0 0 0</pose>
         <parent>link1</parent>
         <child>link3</child>
       </joint>
       <joint name="joint3" type="revolute">
-        <pose>{xyz_J3L4} {rpy_J3L4}</pose>
+        <pose>0 0 0 0 0 0</pose>
         <parent>link3</parent>
         <child>link4</child>
       </joint>
     </model>
 
 The definition of SDF coordinate frames is illustrated by the following image,
-in which all links are defined relative to the model, and each joints is
+in which all links are defined relative to the model, and each joint is
 defined relative to its child link.
+Since there is no offset allowed between the child link frame and the joint
+frame in URDF, the SDF joint poses are all zeros.
 
 [[file:urdf_example_as_sdf.svg|500px]]
 
