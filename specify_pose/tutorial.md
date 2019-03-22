@@ -8,15 +8,15 @@ Throughout the tutorials and documentation, the suffix `_A` is used to indicate
 a quantity that is expressed w.r.t (with respect to) frame `A`. In addition,
 the suffix `_BA` is used to indicate a quantity that changes from being
 expressed w.r.t frame `A` to being expressed w.r.t frame `B`. For example, the
-pose of frame `A` expressed w.r.t frame `B` is given by the transform `T_BA`.
-An alternative description of `T_BA` alludes to `T` being a linear operator
+pose of frame `A` expressed w.r.t frame `B` is given by the transform `X_BA` &in; SE(3).
+An alternative description of `X_BA` alludes to `X` being a linear operator
 that transforms a frame that is coincident to frame `B` to being coincident to
-frame`A`. In this sense,`T_BA` is said to be "the transform from B to A". Note
+frame`A`. In this sense,`X_BA` is said to be "the transform from B to A". Note
 that both descriptions are valid interpretations of the same mathematical
 object.
 
 The SDFormat specification has the `<pose>` element which accepts 6 numbers
-in total to represent a coordinate transform `T_PC` from parent frame `P`
+in total to represent a coordinate transform `X_PC` from parent frame `P`
 to child frame `C`:
 
     <pose>x y z roll pitch yaw</pose>
