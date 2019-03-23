@@ -668,10 +668,11 @@ The `<frame>` tag was added in version 1.5 of the SDFormat specification,
 though it has seen little use due to the lack of well-defined semantics.
 Similar to `<link>` and `<joint>`, it has a `name` attribute and may
 contain a child pose element.
-As a sibling of links and joints, a frame would be subject to the unique
-name requirement discussed above.
+A `<frame>` can be referenced by name by sibling elements using the
+`<pose frame=''>` attribute, as with links and joints
+and would be subject to the unique name requirement discussed above.
 
-The `<frame>` tag can be used to organize the model so that the pose
+One application of the `<frame>` tag is to organize the model so that the pose
 values are all stored in a single part of the model and referenced
 by name elsewhere.
 For example, the following is equivalent to the SDFormat model discussed
