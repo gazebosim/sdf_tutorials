@@ -657,13 +657,84 @@ The difference between the URDF and SDF expressions is shown in the patch below:
 This enables a well-formed SDFormat file to be easily converted to URDF
 by directly copying `xyz` and `rpy` values and without performing any
 coordinate transformations.
-It does require the kinematics have a tree structure, pose frames to be
+It requires the kinematics to have a tree structure, pose frames to be
 specified for joints and child links, and no link poses to be included.
 A validator could be created to identify SDF files that can be directly
 converted to URDF with minimal modifications based on these principles.
 
+### The `<frame>` tag
+
+The `<frame>` tag was added in version 1.5 of the SDFormat specification,
+though it has seen little use due to the lack of well-defined semantics.
+Similar to `<link>` and `<joint>`, it has a `name` attribute and may
+contain a child pose element.
+As a sibling of links and joints, a frame would be subject to the unique
+name requirement discussed above.
+
+The `<frame>` tag can be used to organize the model so that the pose
+values are all stored in a single part of the model and referenced
+by name elsewhere.
+For example, the following is equivalent to the SDFormat model discussed
+in the previous section.
+
+    <model name="model">
+
+      <frame name="joint1_frame">
+        <pose frame="link1">{xyz_L1L2} {rpy_L1L2}</pose>
+      </frame>
+      <frame name="joint2_frame">
+        <pose frame="link1">{xyz_L1L3} {rpy_L1L3}</pose>
+      </frame>
+      <frame name="joint3_frame">
+        <pose frame="link3">{xyz_L3L4} {rpy_L3L4}</pose>
+      </frame>
+
+      <frame name="link2_frame">
+        <pose frame="joint1">0 0 0 0 0 0</pose>
+      </frame>
+      <frame name="link3_frame">
+        <pose frame="joint2">0 0 0 0 0 0</pose>
+      </frame>
+      <frame name="link4_frame">
+        <pose frame="joint3">0 0 0 0 0 0</pose>
+      </frame>
+
+      <link name="link1"/>
+
+      <joint name="joint1" type="revolute">
+        <pose frame="joint1_frame">0 0 0 0 0 0</pose>
+        <parent>link1</parent>
+        <child>link2</child>
+      </joint>
+      <link name="link2">
+        <pose frame="link2_frame">0 0 0 0 0 0</pose>
+      </link>
+
+      <joint name="joint2" type="revolute">
+        <pose frame="joint2_frame">0 0 0 0 0 0</pose>
+        <parent>link1</parent>
+        <child>link3</child>
+      </joint>
+      <link name="link3">
+        <pose frame="link3_frame">0 0 0 0 0 0</pose>
+      </link>
+
+      <joint name="joint3" type="revolute">
+        <pose frame="joint3_frame">0 0 0 0 0 0</pose>
+        <parent>link3</parent>
+        <child>link4</child>
+      </joint>
+      <link name="link4">
+        <pose frame="link4_frame">0 0 0 0 0 0</pose>
+      </link>
+
+    </model>
+
+
+
+### Nested models
 
 Use `/` instead of `::` as separator.
 
-Use `..` to refer to parent element.
+Use `..` to refer to parent element?
 
