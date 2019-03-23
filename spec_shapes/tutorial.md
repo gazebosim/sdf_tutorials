@@ -137,13 +137,13 @@ Note that when multiple `<visual>` tags are present inside a link, the `name`
 attribute must be unique. The same holds for the `name` attribute of
 `<collision>` tags.
 
-## Color of a Visual
+## The `<material>` tag
 
 A `<visual>` tag may also contain a `<material>` tag which is used to set the
-color and texture properties of a visual.  The full documentation for
-`<material>` can be found
-[here](http://sdformat.org/spec?ver=1.4&elem=material). In this tutorial, we
-will only look at specifying the color of a visual.
+color and texture properties of a visual.
+The full documentation for `<material>` can be found
+[here](http://sdformat.org/spec?ver=1.4&elem=material).
+In this tutorial, we will only look at specifying the color of a visual.
 A more detailed tutorial covering image textures and material scripts can be
 found [here](http://gazebosim.org/tutorials?tut=color_model)
 
