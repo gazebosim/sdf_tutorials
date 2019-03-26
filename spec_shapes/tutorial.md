@@ -96,7 +96,7 @@ Similar to models, links, and joints, visuals and collisions have their own
 coordinate frames that can be offset using the `<pose>` tag. By default, the
 parent frame for this pose element is the parent link. However, a different
 frame of reference can be set using the `frame` attribute of the `<pose>` tag.
-Fore more information about the `<pose>` tag, see the [Specifying pose in
+For more information about the `<pose>` tag, see the [Specifying pose in
 SDFormat](/tutorials?tut=specify_pose&ver=1.4) and [Pose frame semantics
 ](/tutorials?tut=pose_frame_semantics&ver=1.4) tutorials.
 
