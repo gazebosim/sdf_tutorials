@@ -43,6 +43,16 @@
       </tags>
       <skill>beginner</skill>
     </tutorial>
+    <tutorial title="Material properties of a Visual" ref='spec_materials'>
+      <markdown version="1.4">spec_materials/tutorial.md</markdown>
+      <description>Setting the material properties of visuals in SDFormat.</description>
+      <tags>
+        <tag>shape</tag>
+        <tag>visual</tag>
+        <tag>material</tag>
+      </tags>
+      <skill>intermediate</skill>
+    </tutorial>
   </tutorials>
 
   <!-- *************************************** -->
@@ -68,6 +78,7 @@
       <tutorials>
         <tutorial>specify_pose</tutorial>
         <tutorial>spec_shapes</tutorial>
+        <tutorial>spec_materials</tutorial>
       </tutorials>
     </category>
 
