@@ -8,7 +8,7 @@ The full documentation for `<material>` can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=material).
 In this tutorial, we will only look at specifying the color of a visual.
 A more detailed tutorial covering image textures and material scripts can be
-found [here](http://gazebosim.org/tutorials?tut=color_model)
+found [here](http://gazebosim.org/tutorials?tut=color_model).
 
 SDFormat uses the
 [Blinn-Phong](https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_shading_model)
@@ -43,7 +43,7 @@ this component.
 #### Specular
 
 The Specular component is the color and intensity of a highlight from
-a [specular reflection](https://en.wikipedia.org/wiki/Specular_reflection)
+a [specular reflection](https://en.wikipedia.org/wiki/Specular_reflection).
 Higher values make an object appear more shiny. A polished metal surface would
 have a very large specular value, while a piece of paper would have almost none.
 
