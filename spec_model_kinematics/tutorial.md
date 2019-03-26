@@ -91,6 +91,7 @@ There are several different types of joints that can be specified in the
 The supported joint types are listed below along with the number of degrees
 of freedom remaining between the two links.
 
+<!-- TODO: move this documentation into the SDF spec at some point -->
 * `ball`: 3 rotational degrees of freedom
 * `continuous`: 1 rotational degree of freedom with no joint limits
 * `fixed`: 0 degrees of freedom
