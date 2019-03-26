@@ -244,7 +244,7 @@ In both examples, the `<axis>` tag is used to specify the axis of rotation of
 the revolute joint. This axis is specified relative to the joint
 frame.
 
-The model configurations for joint values of 0.78 radians (45 degrees) are
+The model configurations for joint values of 0.78 radians (~45 degrees) are
 shown in the following figure.
 Note that this results in two very different poses for linkB and link2
 even though they had the same initial world pose.
