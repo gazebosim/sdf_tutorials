@@ -46,7 +46,9 @@ For example, a model with one link:
       <link name="link"/>
     </model>
 
-A model may contain multiple links with unique names:
+In version 1.4 of the SDFormat specification, all sibling elements
+of the same type must have unique names.
+Here is an example model with multiple links with unique names:
 
     <model name="two_links">
       <link name="link1"/>
@@ -111,6 +113,23 @@ joint between the links:
       <joint name="joint" type="fixed">
         <parent>link1</parent>
         <child>link2</child>
+      </joint>
+    </model>
+
+As discussed in the previous section, version 1.4 of the SDFormat
+specification requires all sibling elements of the same type to have
+unique names.
+This technically permits a sibling link and joint to have the same name,
+such as the following example,
+but this is not recommended as it can lead to confusion and
+may be disallowed by a future version of the spec.
+
+    <model name="sibling_link_joint_namesake_not_recommended">
+      <link name="base"/>
+      <link name="attachment"/>
+      <joint name="attachment" type="fixed">
+        <parent>base</parent>
+        <child>attachment</child>
       </joint>
     </model>
 
