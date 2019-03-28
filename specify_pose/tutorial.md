@@ -4,40 +4,60 @@ A fundamental tool for robot modeling is the ability to concisely and
 intuitively express the relative position and orientation of model components
 in 3-D.
 
-The SDFormat specification has the `<pose/>` element which accepts 6 numbers
-in total:
+Throughout the tutorials and documentation, the suffix `_A` is used to indicate
+a quantity that is expressed w.r.t (with respect to) frame `A`. In addition,
+the suffix `_BA` is used to indicate a quantity that changes from being
+expressed w.r.t frame `A` to being expressed w.r.t frame `B`. For example, the
+pose of frame `A` expressed w.r.t frame `B` is given by the transform `X_BA` &in; SE(3).
+An alternative description of `X_BA` alludes to `X` being a linear operator
+that transforms a frame that is coincident to frame `B` to being coincident to
+frame`A`. In this sense,`X_BA` is said to be "the transform from B to A". Note
+that both descriptions are valid interpretations of the same mathematical
+object.
+
+The SDFormat specification has the `<pose>` element which accepts 6 numbers
+in total to represent a coordinate transform `X_PC` from parent frame `P`
+to child frame `C`:
 
     <pose>x y z roll pitch yaw</pose>
 
 The elements `x y z` specify the position vector (in meters), and the elements
 `roll pitch yaw` are Euler angles (in radians) that specify the orientation, which can be
-computed by an extrinsic X-Y-Z rotation as shown by the following equation and figure:
+computed by an extrinsic X-Y-Z rotation as shown by the following equation
+for the rotation matrix `R_PC` and figure:
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 
 $$
-    R_{rpy}
+    R_{PC}
     =
     \begin{bmatrix}
-      \cos(y) & -\sin(y) & 0 \\\
-      \sin(y) &  \cos(y) & 0 \\\
-           0  &       0  & 1
+      \cos(yaw) & -\sin(yaw) & 0 \\\
+      \sin(yaw) &  \cos(yaw) & 0 \\\
+             0  &         0  & 1
     \end{bmatrix}
     *
     \begin{bmatrix}
-       \cos(p) & 0 & \sin(p) \\\
-            0  & 1 &      0  \\\
-      -\sin(p) & 0 & \cos(p)
+       \cos(pitch) & 0 & \sin(pitch) \\\
+                0  & 1 &          0  \\\
+      -\sin(pitch) & 0 & \cos(pitch)
     \end{bmatrix}
     *
     \begin{bmatrix}
-      1 &      0  &       0  \\\
-      0 & \cos(r) & -\sin(r) \\\
-      0 & \sin(r) &  \cos(r)
+      1 &         0  &          0  \\\
+      0 & \cos(roll) & -\sin(roll) \\\
+      0 & \sin(roll) &  \cos(roll)
     \end{bmatrix}
 $$
 
 [[file:roll-pitch-yaw.svg|200px]]
+
+The SDFormat `<pose/>` element is similar to the
+[`<origin/>` element from URDF](http://wiki.ros.org/urdf/XML/joint#Elements),
+which both share the same definition of roll, pitch, and yaw angles:
+
+    <origin xyz="x y z" rpy="roll pitch yaw" />
+
 
 ## See Also
 

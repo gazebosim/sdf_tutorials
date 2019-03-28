@@ -44,13 +44,30 @@
       <skill>beginner</skill>
     </tutorial>
 
+    <tutorial title="Pose frame semantics" ref='pose_frame_semantics'>
+      <markdown version="1.5">pose_frame_semantics/tutorial.md</markdown>
+      <description>Defining semantics of the pose frame attribute.</description>
+      <tags>
+        <tag>pose</tag>
+        <tag>frame</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
   </tutorials>
 
   <!-- *************************************** -->
   <categories>
 
     <category title="Get Started" skill="beginner" ref="get_started">
-      <description>Welcome to the SDF tutorials! This is a great place to start, especially if you're a new SDF user. Each category to the left presents a collection of relevant tutorials.</description>
+      <description>
+        Welcome to the SDF tutorials! This is a great place to start, especially if you're a new SDF user.
+        Each category to the left presents a collection of relevant tutorials.
+
+        Use the *Edit* button in the upper right corner of a tutorial page to go directly
+        to its source at
+        [bitbucket.org/osrf/sdf_tutorials](https://bitbucket.org/osrf/sdf_tutorials).
+      </description>
       <tutorials>
         <tutorial>install</tutorial>
         <tutorial>quickstart</tutorial>
@@ -62,6 +79,7 @@
       <tutorials>
         <tutorial>specify_pose</tutorial>
         <tutorial>spec_model_kinematics</tutorial>
+        <tutorial>pose_frame_semantics</tutorial>
       </tutorials>
     </category>
 
