@@ -4,7 +4,7 @@
 
 A `<visual>` tag may contain a `<material>` tag which is used to set the
 color and texture properties of a visual.
-The full documentation for `<material>` can be found
+The full specification for `<material>` can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=material).
 In this tutorial, we will only look at specifying the color of a visual.
 A more detailed tutorial covering image textures and material scripts can be
@@ -12,11 +12,12 @@ found [here](http://gazebosim.org/tutorials?tut=color_model).
 
 SDFormat uses the
 [Blinn-Phong](https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_shading_model)
-shading model for rendering colors. This shading model contains four components
-that combine to form the final color: ambient, diffuse, specular, and emissive.
-The [OpenGL Programming guide chapter on
+shading model for specifying how materials are to be rendered. This shading
+model contains four components that combine to form the final color: ambient,
+diffuse, specular, and emissive. The [OpenGL Programming guide chapter on
 Lighting](http://www.glprogramming.com/red/chapter05.html) has detailed
-information about how these work. SDFormat defines the corresponding tags,
+information on what this specification means. SDFormat defines the
+corresponding tags,
 [&lt;ambient&gt;](http://sdformat.org/spec?ver=1.4&elem=material#material_ambient)
 , [&lt;diffuse&gt;](http://sdformat.org/spec?ver=1.4&elem=material#material_diffuse)
 , [&lt;specular&gt;](http://sdformat.org/spec?ver=1.4&elem=material#material_specular)
@@ -105,14 +106,12 @@ on it. Values on lights represent the intensity of light emitted. Values on
 a material represent the percentage of light an object reflects. The same
 material may be different colors depending on the light that hits it.
 
-For example, consider a material with a diffuse color of `RGBA(1, 1, 0.5, 1.0)`.
-Under a white light it would look <span style="background: #ffff80">yellow</span>.
-If exposed to a light emitting a diffuse `RGBA(0 1 0 1)` then it would appear
-<span style="background:#00ff00">green</span>. If exposed to a light emitting
-a diffuse `RGBA(1 0 0 1)` then it would appear
-<span style="background:#ff0000">red</span>. A light with diffuse
-`RGBA(0 0 0.75 1)` would make the object appear
-<span style="background:#00005f; color: #ffffff">dark blue</span>.
+For example, consider a material with a diffuse color of
+`RGBA(1, 1, 0.5, 1.0)`. Under a white light it would look yellow. If exposed to
+a light emitting a diffuse `RGBA(0, 1, 0, 1)` then it would appear green. If
+exposed to a light emitting a diffuse `RGBA(1, 0, 0, 1)` then it would appear
+red. A light with diffuse `RGBA(0, 0, 0.75, 1)` would make the object appear
+dark blue.
 
 [[file:files/light_and_material_interaction.png|256px]]
 
@@ -125,7 +124,8 @@ value goes above 1.0 then it is set to 1.0.
 
 [[file:files/component_affects.png|600px]]
 
-The following SDF snippet creates a sphere with colors shown the image above.
+The following SDF snippet represents a sphere with colors shown in the image
+above.
 
 ```xml
 <?xml version="1.0"?>

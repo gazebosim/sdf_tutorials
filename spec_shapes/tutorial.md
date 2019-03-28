@@ -15,7 +15,7 @@ A link can have zero or more `<visual>` or `<collision>` elements
 placed in the parent link frame using a `<pose>` element.
 This allows a link to define complex geometries by composition of
 individual shapes with distinct visual and physical properties.
-The full documentation can be found
+The full specifications can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=visual) for `<visual>`
 and [here](http://sdformat.org/spec?ver=1.4&elem=collision) for `<collision>`.
 
@@ -23,15 +23,15 @@ and [here](http://sdformat.org/spec?ver=1.4&elem=collision) for `<collision>`.
 
 The following shapes are supported by the `<geometry>` tag in SDFormat:
 
-* box
-* cylinder (aligned with Z-axis)
-* sphere
-* plane
-* mesh
-* heightmap
-* image
+* `<box>`
+* `<cylinder>` (aligned with Z-axis)
+* `<sphere>`
+* `<plane>`
+* `<mesh>`
+* `<heightmap>`
+* `<image>`
 
-The full documentation for `<geometry>` can be found
+The full specification for `<geometry>` can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=geometry).
 
 For `box`, `cylinder`, and `sphere` shapes, the geometric center is used as
@@ -141,6 +141,6 @@ attribute must be unique. The same holds for the `name` attribute of
 
 A `<visual>` tag may also contain a `<material>` tag which is used to set the
 color and texture properties of a visual.
-The full documentation for `<material>` can be found
+The full specification for `<material>` can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=material).
 A tutorial that covers how to specify the color of a visual can be found [here](/tutorials?tut=spec_materials).
