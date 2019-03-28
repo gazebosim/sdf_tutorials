@@ -114,6 +114,8 @@ exposed to a light emitting a diffuse `RGBA(1, 0, 0, 1)` then it would appear
 red. A light with diffuse `RGBA(0, 0, 0.75, 1)` would make the object appear
 dark blue.
 
+> Tip: An interactive color wheel can be found [here](https://www.w3schools.com/colors/colors_picker.asp)
+
 [[file:files/light_and_material_interaction.png|256px]]
 
 
