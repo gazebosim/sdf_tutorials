@@ -24,7 +24,8 @@ corresponding tags,
 , and
 [&lt;emissive&gt;](http://sdformat.org/spec?ver=1.4&elem=material#material_emissive)
 as child elements of `<material>`. The value for each of these is a vector of
-4 numbers representing red, green, blue, and alpha (RGBA).
+4 numbers representing red, green, blue, and alpha
+([RGBA](https://en.wikipedia.org/wiki/RGBA_color_space)).
 
 ### Definition of color components
 
