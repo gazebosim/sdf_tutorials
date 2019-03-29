@@ -214,7 +214,7 @@ like SDFormat, but with several significant differences.
 The first difference is that coordinate transformations are expressed using
 the attributes of the `<origin/>` tag instead of the value of `<pose/>`,
 which is a superficial difference as the numerical contents of each tag have a
-[similar definition](http://sdformat.org/tutorials?tut=specify_pose).
+[similar definition](/tutorials?tut=specify_pose).
 
     <pose>x y z roll pitch yaw</pose>
 
