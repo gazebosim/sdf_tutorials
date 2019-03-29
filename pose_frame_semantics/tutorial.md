@@ -537,9 +537,8 @@ and the parent link from a sibling model.
       </model>
     </sdf>
 
-TODO: figure out if a child model is allowed to have the same name as its
-parent.
-
-**Please note:** The future nesting behavior and the `::` delimiter are under
+**Please note:** The future nesting behavior, the naming rules
+for child models (can they have same name as the parent model?),
+and the `::` delimiter are under
 discussion and subject to change.
 
