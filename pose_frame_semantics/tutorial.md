@@ -446,7 +446,7 @@ link does not exist.
       <model name="model">
         <link name="link"/>
         <joint name="joint" type="fixed">
-          <parent>fake_link</parent>
+          <parent>fake_link</parent> <!-- INVALID: link with this name not found in this model -->
           <child>link</child>
         </joint>
       </model>
@@ -463,7 +463,7 @@ The following world also contains an invalid joint specification because, while
         <model name="model2">
           <link name="link2"/>
           <joint name="joint" type="fixed">
-            <parent>link1</parent>
+            <parent>link1</parent> <!-- INVALID: link1 is not a sibling of joint -->
             <child>link2</child>
           </joint>
         </model>
@@ -491,7 +491,7 @@ For example, the following model contains two links nested inside child models.
           <link name="link"/>
         </model>
         <model name="model2">
-          <link name="link"/>
+          <link name="link"/> <!-- VALID -->
         </model>
       </model>
     </sdf>
