@@ -29,7 +29,7 @@ collisions with the same parent do not have unique names.
     <sdf version="1.4">
       <model name="model">
         <link name="link"/>
-        <link name="link"/>
+        <link name="link"/> <!-- INVALID: Same name as sibling "link"! -->
       </model>
     </sdf>
 
@@ -42,7 +42,7 @@ collisions with the same parent do not have unique names.
           <parent>link1</parent>
           <child>link2</child>
         </joint>
-        <joint name="joint" type="fixed">
+        <joint name="joint" type="fixed"> <!-- INVALID: Same name as sibling "joint"! -->
           <parent>link2</parent>
           <child>link3</child>
         </joint>
@@ -55,7 +55,7 @@ collisions with the same parent do not have unique names.
           <collision name="collision">
             ...
           </collision>
-          <collision name="collision">
+          <collision name="collision"> <!-- INVALID: Same name as sibling "collision"! -->
             ...
           </collision>
         </link>
@@ -74,7 +74,7 @@ children of different links.
           </collision>
         </link>
         <link name="link2">
-          <collision name="collision">
+          <collision name="collision"> <!-- VALID -->
             ...
           </collision>
         </link>
@@ -82,13 +82,13 @@ children of different links.
     </sdf>
 
 Sibling elements of different types are not mandated to have unique names,
-so the following is valid, though it is uncommon in practice.
+so the following is valid, though it is confusing and not recommended.
 
     <sdf version="1.4">
       <model name="model">
         <link name="base"/>
         <link name="attachment"/>
-        <joint name="attachment" type="fixed">
+        <joint name="attachment" type="fixed"> <!-- VALID, but not recommended -->
           <parent>base</parent>
           <child>attachment</child>
         </joint>
