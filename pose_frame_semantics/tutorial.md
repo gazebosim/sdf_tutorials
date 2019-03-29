@@ -95,6 +95,17 @@ so the following is valid, though it is confusing and not recommended.
       </model>
     </sdf>
 
+It is allowed to create a link named `world`, but there is special treatment
+for a joint with `world` specified in the `<parent>` or `<child>` tags,
+so it is not recommended to do so.
+
+    <sdf version="1.4">
+      <model name="model">
+        <link name="world"/> <!-- VALID, but not recommended -->
+        <link name="world_link"/> <!-- VALID, better -->
+      </model>
+    </sdf>
+
 ### Parent frames in sdf 1.4
 
 With the exception of joint frames, all `<pose>` tags in sdf 1.4 define
@@ -420,7 +431,7 @@ to its sibling rather than connecting to a fixed inertial frame.
     <sdf version="1.4">
       <model name="model">
         <link name="link"/>
-        <link name="world"/>
+        <link name="world"/> <!-- VALID, but not recommended -->
         <joint name="joint" type="fixed">
           <parent>world</parent>
           <child>link</child>
