@@ -305,6 +305,8 @@ link1 -> joint2 -> link3 -> joint3 -> link4:
 This model in this image could be represented by the following URDF
 with model frame `M`, `link1` frame `L1`, `link2` frame `L2`,
 `joint1` frame `J1`, etc.
+using the suffix notation for kinematic quantities described in the
+[specify\_pose tutorialdefinition](http://sdformat.org/tutorials?tut=specify_pose).
 
     <robot name="model">
 
