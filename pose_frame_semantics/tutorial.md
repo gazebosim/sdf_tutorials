@@ -209,6 +209,7 @@ which is a superficial difference as the numerical contents of each tag have a
 
 is equivalent to
 
+    <!-- URDF -->
     <origin rpy='roll pitch yaw' xyz='x y z'/>
 
 Similar to SDFormat, URDF inertial, collision, and visual elements are defined
@@ -245,7 +246,7 @@ is equivalent to
           <origin rpy='...' xyz='...'/>
         </visual>
       </link>
-    </model>
+    </robot>
 
 The most significant difference between URDF and SDFormat coordinate frames
 is related to links and joints.
