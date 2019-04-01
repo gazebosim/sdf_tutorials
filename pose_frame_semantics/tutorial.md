@@ -26,41 +26,47 @@ In sdf 1.4, sibling elements of the same type must have unique names.
 For example, the following models are invalid because links, joints, and
 collisions with the same parent do not have unique names.
 
-    <sdf version="1.4">
-      <model name="model">
-        <link name="link"/>
-        <link name="link"/> <!-- INVALID: Same name as sibling "link"! -->
-      </model>
-    </sdf>
+~~~
+<sdf version="1.4">
+  <model name="model">
+    <link name="link"/>
+    <link name="link"/> <!-- INVALID: Same name as sibling "link"! -->
+  </model>
+</sdf>
+~~~
 
-    <sdf version="1.4">
-      <model name="model">
-        <link name="link1"/>
-        <link name="link2"/>
-        <link name="link3"/>
-        <joint name="joint" type="fixed">
-          <parent>link1</parent>
-          <child>link2</child>
-        </joint>
-        <joint name="joint" type="fixed"> <!-- INVALID: Same name as sibling "joint"! -->
-          <parent>link2</parent>
-          <child>link3</child>
-        </joint>
-      </model>
-    </sdf>
+~~~
+<sdf version="1.4">
+  <model name="model">
+    <link name="link1"/>
+    <link name="link2"/>
+    <link name="link3"/>
+    <joint name="joint" type="fixed">
+      <parent>link1</parent>
+      <child>link2</child>
+    </joint>
+    <joint name="joint" type="fixed"> <!-- INVALID: Same name as sibling "joint"! -->
+      <parent>link2</parent>
+      <child>link3</child>
+    </joint>
+  </model>
+</sdf>
+~~~
 
-    <sdf version="1.4">
-      <model name="model">
-        <link name="link">
-          <collision name="collision">
-            ...
-          </collision>
-          <collision name="collision"> <!-- INVALID: Same name as sibling "collision"! -->
-            ...
-          </collision>
-        </link>
-      </model>
-    </sdf>
+~~~
+<sdf version="1.4">
+  <model name="model">
+    <link name="link">
+      <collision name="collision">
+        ...
+      </collision>
+      <collision name="collision"> <!-- INVALID: Same name as sibling "collision"! -->
+        ...
+      </collision>
+    </link>
+  </model>
+</sdf>
+~~~
 
 The following model contains collision elements with the same name, but
 the models are valid because the elements are not siblings, but rather
