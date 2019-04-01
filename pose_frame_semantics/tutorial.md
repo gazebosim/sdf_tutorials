@@ -558,7 +558,7 @@ converting from older, more permissive versions to the newer, stricter version.
 Requiring unique names for sibling elements simplifies the process of
 referencing frames by name, as it is sufficient to refer to a name of an
 element within the xml hierarchy without specifying the type.
-This allows an element's name to be used to implicitly refer to a frame
+This allows an element's name to implicitly refer to a frame
 attached to that element without worry of name collisions between
 sibling elements like links and joints.
 
@@ -668,8 +668,8 @@ The `<frame>` tag was added in version 1.5 of the SDFormat specification,
 though it has seen little use due to the lack of well-defined semantics.
 Similar to `<link>` and `<joint>`, it has a `name` attribute and may
 contain a child pose element.
-A `<frame>` can be referenced by name by sibling elements using the
-`<pose frame=''>` attribute, as with links and joints
+As with links and joints, a `<frame>` can be referenced by name by sibling
+elements using the `<pose frame=''>` attribute,
 and would be subject to the unique name requirement discussed above.
 
 One application of the `<frame>` tag is to organize the model so that the pose
