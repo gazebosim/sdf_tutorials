@@ -680,7 +680,7 @@ specified for joints and child links, and no link poses to be included.
 A validator could be created to identify SDF files that can be directly
 converted to URDF with minimal modifications based on these principles.
 
-### The `<frame>` tag
+### The `<model><frame>` tag
 
 The `<frame>` tag was added in version 1.5 of the SDFormat specification,
 though it has seen little use due to the lack of well-defined semantics.
@@ -749,7 +749,112 @@ in the previous section.
 
     </model>
 
+### The `<link><frame>` tag
 
+The `<frame>` can also be attached to a link to organize the
+collisions, visuals, sensors, and lights attached to a link.
+For example, the following model shows a link with two LED's
+represented by two sets of co-located collisions, visuals, and lights.
+
+    <model name="model_without_frames">
+      <link name="link_with_LEDs">
+        <light name="light1" type="point">
+          <pose>0.1 0 0 0 0 0 0</pose>
+        </light>
+        <collision name="collision1">
+          <pose>0.1 0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual1">
+          <pose>0.1 0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+
+        <light name="light2" type="point">
+          <pose>-0.1 0 0 0 0 0 0</pose>
+        </light>
+        <collision name="collision2">
+          <pose>-0.1 0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual2">
+          <pose>-0.1 0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+Note that the pose information is duplicated between the collision, visual
+and light elements of each LED.
+By using a `<frame>` for each LED, the pose information can be stored
+in one place and used by these elements.
+
+    <model name="model_without_frames">
+      <link name="link_with_LEDs">
+        <frame name="led1_frame">
+          <pose>0.1 0 0 0 0 0 0</pose>
+        </frame>
+        <frame name="led2_frame">
+          <pose>-0.1 0 0 0 0 0 0</pose>
+        </frame>
+
+        <light name="light1" type="point">
+          <pose frame="led1_frame">0 0 0 0 0 0 0</pose>
+        </light>
+        <collision name="collision1">
+          <pose frame="led1_frame">0 0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual1">
+          <pose frame="led1_frame">0 0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+
+        <light name="light2" type="point">
+          <pose frame="led2_frame">0 0 0 0 0 0 0</pose>
+        </light>
+        <collision name="collision2">
+          <pose frame="led2_frame">0 0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual2">
+          <pose frame="led2_frame">0 0 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
 
 ### Nested models
 
