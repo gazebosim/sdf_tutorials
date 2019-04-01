@@ -553,6 +553,24 @@ models that violate this stricter naming requirement. Furthermore, the
 specification version will be incremented so that checks can be added when
 converting from older, more permissive versions to the newer, stricter version.
 
+### Element naming rules: reserved names and characters
+
+Since `world` has a special interpretation when specified as a parent
+or child link of a joint, it should not be used as a name for any entities
+in the simulation.
+
+~~~
+<model name="world"/><!-- INVALID: world is a reserved name. -->
+<model name="world_model"/><!-- VALID -->
+~~~
+
+~~~
+<model name="model">
+  <link name="world"/><!-- INVALID: world is a reserved name. -->
+  <link name="world_link"/><!-- VALID -->
+</model>
+~~~
+
 ### Pose frame semantics
 
 Requiring unique names for sibling elements simplifies the process of
