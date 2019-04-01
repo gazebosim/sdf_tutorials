@@ -6,7 +6,7 @@ in 3-D.
 
 Throughout the tutorials and documentation, the suffix `_A` is used to indicate
 a kinematic quantity that is expressed w.r.t (with respect to) frame `A`. In addition,
-the suffix `_BA` is used to indicate a quantity that changes from being
+the suffix `_BA` is used to indicate a kinematic quantity that changes from being
 expressed w.r.t frame `A` to being expressed w.r.t frame `B`. For example, the
 pose of frame `A` expressed w.r.t frame `B` is given by the transform `X_BA` &in; SE(3).
 An alternative description of `X_BA` alludes to `X` being a linear operator
