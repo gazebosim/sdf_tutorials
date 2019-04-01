@@ -805,7 +805,7 @@ and light elements of each LED.
 By using a `<frame>` for each LED, the pose information can be stored
 in one place and used by these elements.
 
-    <model name="model_without_frames">
+    <model name="model_with_frames">
       <link name="link_with_LEDs">
         <frame name="led1_frame">
           <pose>0.1 0 0 0 0 0 0</pose>
