@@ -251,6 +251,7 @@ and robots (equivalent to models) do not have `<origin/>` tags:
 
 is equivalent to
 
+    <!-- URDF -->
     <robot name="model">
       <link name="link">
         <inertial>
@@ -288,6 +289,7 @@ the parent link frame to the child link frame.
 
 is decidedly not equivalent to
 
+    <!-- URDF -->
     <robot name="model">
       <link name="link1"/>
       <link name="link2"/>
@@ -314,6 +316,7 @@ with model frame `M`, `link1` frame `L1`, `link2` frame `L2`,
 using the suffix notation for kinematic quantities described in the
 [specify\_pose tutorial](/tutorials?tut=specify_pose).
 
+    <!-- URDF -->
     <robot name="model">
 
       <link name="link1"/>
