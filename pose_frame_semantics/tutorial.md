@@ -571,6 +571,10 @@ in the simulation.
 </model>
 ~~~
 
+The forward slash `/` will be replacing `::` as a delimiter between
+scoped element names.
+As such, the `/` character is reserved and may not be used in an element name.
+
 ### Pose frame semantics
 
 Requiring unique names for sibling elements simplifies the process of
@@ -751,7 +755,9 @@ in the previous section.
 
 ### The `<link><frame>` tag
 
-The `<frame>` can also be attached to a link to organize the
+The `<frame>` tag can also be attached to a link to create a body-fixed frame
+on that link.
+This can be used to organize the
 collisions, visuals, sensors, and lights attached to a link.
 For example, the following model shows a link with two LED's
 represented by two sets of co-located collisions, visuals, and lights.
@@ -853,6 +859,44 @@ in one place and used by these elements.
             </box>
           </geometry>
         </visual>
+      </link>
+    </model>
+
+### Referencing a `<link><frame>` from `<model>` scope
+
+In addition to being useful for organizing elements within a link,
+the `<link><frame>` tags can also be useful at the `<model>` scope.
+To refer to a `<frame>` embedded in a `<link>`, use the link name,
+followed by a `/`, followed by the frame name.
+
+    <model name="attach_to_embedded_link_frame">
+      <link name="base">
+        <frame name="mounting_point1">
+          <pose>0.5 0.2 0 0 0 0</pose>
+        </frame>
+        <frame name="mounting_point2">
+          <pose>-0.5 0.2 0 0 0 0</pose>
+        </frame>
+      </link>
+
+      <!-- SDF 1.4 kinematics: child -> joint -->
+      <link name="attachment1_link">
+        <pose frame="base/mounting_point1">0 0 0 0 0 0</pose>
+      </link>
+      <joint name="attachment1_joint" type="fixed">
+        <!-- implicit joint pose at child link -->
+        <parent>base</parent>
+        <child>attachment1_link</child>
+      </joint>
+
+      <!-- URDF kinematics: parent -> joint -> child -->
+      <joint name="attachment2_joint" type="fixed">
+        <pose frame="base/mounting_point2">0 0 0 0 0 0</pose>
+        <parent>base</parent>
+        <child>attachment2_link</child>
+      </joint>
+      <link name="attachment2_link">
+        <pose frame="attachment2_joint">0 0 0 0 0 0</pose>
       </link>
     </model>
 
