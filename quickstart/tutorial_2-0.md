@@ -4,7 +4,7 @@ This guide will walk you through sdformat's [API](http://sdformat.org/api), show
 
 ## Prerequisites
 
-Make sure you have [sdformat](http://sdformat.org/tutorials?tut=install) installed on your system.
+Make sure you have [sdformat](/tutorials?tut=install) installed on your system.
 
 ## Parsing a model SDF
 
