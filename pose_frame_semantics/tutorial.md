@@ -94,7 +94,7 @@ so the following is valid, though it is confusing and not recommended.
       <model name="model">
         <link name="base"/>
         <link name="attachment"/>
-        <joint name="attachment" type="fixed"> <!-- VALID, but not recommended -->
+        <joint name="attachment" type="fixed"> <!-- VALID, but RECOMMEND AGAINST -->
           <parent>base</parent>
           <child>attachment</child>
         </joint>
@@ -107,7 +107,7 @@ so it is not recommended to do so.
 
     <sdf version="1.4">
       <model name="model">
-        <link name="world"/> <!-- VALID, but not recommended -->
+        <link name="world"/> <!-- VALID, but RECOMMEND AGAINST -->
         <link name="world_link"/> <!-- VALID, better -->
       </model>
     </sdf>
@@ -442,7 +442,7 @@ to its sibling rather than connecting to a fixed inertial frame.
     <sdf version="1.4">
       <model name="model">
         <link name="link"/>
-        <link name="world"/> <!-- VALID, but not recommended -->
+        <link name="world"/> <!-- VALID, but RECOMMEND AGAINST -->
         <joint name="joint" type="fixed">
           <parent>world</parent>
           <child>link</child>
