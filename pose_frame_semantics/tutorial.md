@@ -26,41 +26,47 @@ In sdf 1.4, sibling elements of the same type must have unique names.
 For example, the following models are invalid because links, joints, and
 collisions with the same parent do not have unique names.
 
-    <sdf version="1.4">
-      <model name="model">
-        <link name="link"/>
-        <link name="link"/>
-      </model>
-    </sdf>
+~~~
+<sdf version="1.4">
+  <model name="model">
+    <link name="link"/>
+    <link name="link"/> <!-- INVALID: Same name as sibling "link"! -->
+  </model>
+</sdf>
+~~~
 
-    <sdf version="1.4">
-      <model name="model">
-        <link name="link1"/>
-        <link name="link2"/>
-        <link name="link3"/>
-        <joint name="joint" type="fixed">
-          <parent>link1</parent>
-          <child>link2</child>
-        </joint>
-        <joint name="joint" type="fixed">
-          <parent>link2</parent>
-          <child>link3</child>
-        </joint>
-      </model>
-    </sdf>
+~~~
+<sdf version="1.4">
+  <model name="model">
+    <link name="link1"/>
+    <link name="link2"/>
+    <link name="link3"/>
+    <joint name="joint" type="fixed">
+      <parent>link1</parent>
+      <child>link2</child>
+    </joint>
+    <joint name="joint" type="fixed"> <!-- INVALID: Same name as sibling "joint"! -->
+      <parent>link2</parent>
+      <child>link3</child>
+    </joint>
+  </model>
+</sdf>
+~~~
 
-    <sdf version="1.4">
-      <model name="model">
-        <link name="link">
-          <collision name="collision">
-            ...
-          </collision>
-          <collision name="collision">
-            ...
-          </collision>
-        </link>
-      </model>
-    </sdf>
+~~~
+<sdf version="1.4">
+  <model name="model">
+    <link name="link">
+      <collision name="collision">
+        ...
+      </collision>
+      <collision name="collision"> <!-- INVALID: Same name as sibling "collision"! -->
+        ...
+      </collision>
+    </link>
+  </model>
+</sdf>
+~~~
 
 The following model contains collision elements with the same name, but
 the models are valid because the elements are not siblings, but rather
@@ -74,7 +80,7 @@ children of different links.
           </collision>
         </link>
         <link name="link2">
-          <collision name="collision">
+          <collision name="collision"> <!-- VALID -->
             ...
           </collision>
         </link>
@@ -82,16 +88,27 @@ children of different links.
     </sdf>
 
 Sibling elements of different types are not mandated to have unique names,
-so the following is valid, though it is uncommon in practice.
+so the following is valid, though it is confusing and not recommended.
 
     <sdf version="1.4">
       <model name="model">
         <link name="base"/>
         <link name="attachment"/>
-        <joint name="attachment" type="fixed">
+        <joint name="attachment" type="fixed"> <!-- VALID, but RECOMMEND AGAINST -->
           <parent>base</parent>
           <child>attachment</child>
         </joint>
+      </model>
+    </sdf>
+
+It is allowed to create a link named `world`, but there is special treatment
+for a joint with `world` specified in the `<parent>` or `<child>` tags,
+so it is not recommended to do so.
+
+    <sdf version="1.4">
+      <model name="model">
+        <link name="world"/> <!-- VALID, but RECOMMEND AGAINST -->
+        <link name="world_link"/> <!-- VALID, better -->
       </model>
     </sdf>
 
@@ -203,12 +220,13 @@ like SDFormat, but with several significant differences.
 The first difference is that coordinate transformations are expressed using
 the attributes of the `<origin/>` tag instead of the value of `<pose/>`,
 which is a superficial difference as the numerical contents of each tag have a
-[similar definition](http://http://sdformat.org/tutorials?tut=specify_pose).
+[similar definition](/tutorials?tut=specify_pose).
 
     <pose>x y z roll pitch yaw</pose>
 
 is equivalent to
 
+    <!-- URDF -->
     <origin rpy='roll pitch yaw' xyz='x y z'/>
 
 Similar to SDFormat, URDF inertial, collision, and visual elements are defined
@@ -233,6 +251,7 @@ and robots (equivalent to models) do not have `<origin/>` tags:
 
 is equivalent to
 
+    <!-- URDF -->
     <robot name="model">
       <link name="link">
         <inertial>
@@ -245,7 +264,7 @@ is equivalent to
           <origin rpy='...' xyz='...'/>
         </visual>
       </link>
-    </model>
+    </robot>
 
 The most significant difference between URDF and SDFormat coordinate frames
 is related to links and joints.
@@ -270,6 +289,7 @@ the parent link frame to the child link frame.
 
 is decidedly not equivalent to
 
+    <!-- URDF -->
     <robot name="model">
       <link name="link1"/>
       <link name="link2"/>
@@ -293,7 +313,10 @@ link1 -> joint2 -> link3 -> joint3 -> link4:
 This model in this image could be represented by the following URDF
 with model frame `M`, `link1` frame `L1`, `link2` frame `L2`,
 `joint1` frame `J1`, etc.
+using the suffix notation for kinematic quantities described in the
+[specify\_pose tutorial](/tutorials?tut=specify_pose).
 
+    <!-- URDF -->
     <robot name="model">
 
       <link name="link1"/>
@@ -420,7 +443,7 @@ to its sibling rather than connecting to a fixed inertial frame.
     <sdf version="1.4">
       <model name="model">
         <link name="link"/>
-        <link name="world"/>
+        <link name="world"/> <!-- VALID, but RECOMMEND AGAINST -->
         <joint name="joint" type="fixed">
           <parent>world</parent>
           <child>link</child>
@@ -435,7 +458,7 @@ link does not exist.
       <model name="model">
         <link name="link"/>
         <joint name="joint" type="fixed">
-          <parent>fake_link</parent>
+          <parent>fake_link</parent> <!-- INVALID: link with this name not found in this model -->
           <child>link</child>
         </joint>
       </model>
@@ -452,7 +475,7 @@ The following world also contains an invalid joint specification because, while
         <model name="model2">
           <link name="link2"/>
           <joint name="joint" type="fixed">
-            <parent>link1</parent>
+            <parent>link1</parent> <!-- INVALID: link1 is not a sibling of joint -->
             <child>link2</child>
           </joint>
         </model>
@@ -480,7 +503,7 @@ For example, the following model contains two links nested inside child models.
           <link name="link"/>
         </model>
         <model name="model2">
-          <link name="link"/>
+          <link name="link"/> <!-- VALID -->
         </model>
       </model>
     </sdf>
@@ -526,10 +549,9 @@ and the parent link from a sibling model.
       </model>
     </sdf>
 
-TODO: figure out if a child model is allowed to have the same name as its
-parent.
-
-**Please note:** The future nesting behavior and the `::` delimiter are under
+**Please note:** The future nesting behavior, the naming rules
+for child models (can they have same name as the parent model?),
+and the `::` delimiter are under
 discussion and subject to change.
 
 ## Proposed behavior

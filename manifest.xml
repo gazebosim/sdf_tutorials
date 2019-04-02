@@ -33,6 +33,27 @@
       <skill>beginner</skill>
     </tutorial>
 
+    <tutorial title="Collisions and Visuals" ref='spec_shapes'>
+      <markdown version="1.4">spec_shapes/tutorial.md</markdown>
+      <description>Adding shapes to a model with collisions and visuals in SDFormat.</description>
+      <tags>
+        <tag>shape</tag>
+        <tag>collision</tag>
+        <tag>visual</tag>
+      </tags>
+      <skill>beginner</skill>
+    </tutorial>
+    <tutorial title="Material properties of a Visual" ref='spec_materials'>
+      <markdown version="1.4">spec_materials/tutorial.md</markdown>
+      <description>Setting the material properties of visuals in SDFormat.</description>
+      <tags>
+        <tag>shape</tag>
+        <tag>visual</tag>
+        <tag>material</tag>
+      </tags>
+      <skill>intermediate</skill>
+    </tutorial>
+
     <tutorial title="Pose frame semantics" ref='pose_frame_semantics'>
       <markdown version="1.5">pose_frame_semantics/tutorial.md</markdown>
       <description>Defining semantics of the pose frame attribute.</description>
@@ -67,6 +88,8 @@
       <description>This series of tutorials describes the SDF specification.</description>
       <tutorials>
         <tutorial>specify_pose</tutorial>
+        <tutorial>spec_shapes</tutorial>
+        <tutorial>spec_materials</tutorial>
         <tutorial>pose_frame_semantics</tutorial>
       </tutorials>
     </category>
