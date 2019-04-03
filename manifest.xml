@@ -72,7 +72,7 @@
       <markdown version="2.0">pose_frame_semantics/proposal.md</markdown>
       <description>
         Proposing new behavior for SDF 2.0, including semantics for the
-        `<pose frame=''>` attribute, the `<frame>` element, new rules
+        `_pose frame=''_` attribute, the `_frame_` element, new rules
         for element naming, and corresponding examples.
       </description>
       <tags>
