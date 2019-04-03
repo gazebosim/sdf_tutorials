@@ -108,7 +108,14 @@
         <tutorial>specify_pose</tutorial>
         <tutorial>spec_shapes</tutorial>
         <tutorial>spec_materials</tutorial>
+      </tutorials>
+    </category>
+
+    <category title="SDF Pose Frame Semantics" skill="advanced" ref="specification">
+      <description>This series of tutorials describes pose frame semantics in SDF.</description>
+      <tutorials>
         <tutorial>pose_frame_semantics</tutorial>
+        <tutorial>pose_frame_semantics_proposal</tutorial>
       </tutorials>
     </category>
 
