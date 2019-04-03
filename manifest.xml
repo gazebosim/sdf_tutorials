@@ -69,7 +69,7 @@
     </tutorial>
 
     <tutorial title="Pose frame semantics: proposed behavior" ref='pose_frame_semantics_proposal' type='proposal'>
-      <markdown version="2.0">pose_frame_semantics/tutorial.md</markdown>
+      <markdown version="2.0">pose_frame_semantics/proposal.md</markdown>
       <description>
         Proposing new behavior for SDF 2.0, including semantics for the
         `<pose frame=''>` attribute, the `<frame>` element, new rules
