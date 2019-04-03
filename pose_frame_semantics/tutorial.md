@@ -706,6 +706,24 @@ specified for joints and child links, and no link poses to be included.
 A validator could be created to identify SDF files that can be directly
 converted to URDF with minimal modifications based on these principles.
 
+### Empty pose element implies identity pose
+
+With the use of the `frame` attribute in `<pose>` elements, there are
+many expected cases when a frame is defined relative to another frame
+with no additional pose offset.
+To reduce verbosity, empty pose elements are interpreted as equivalent to the
+identity pose, as illustrated by the following pairs of equivalent poses:
+
+~~~
+`<pose />`
+`<pose>0 0 0 0 0 0</pose>`
+~~~
+
+~~~
+`<pose frame='frame_name' />`
+`<pose frame='frame_name'>0 0 0 0 0 0</pose>`
+~~~
+
 ### The `<model><frame>` tag
 
 The `<frame>` tag was added in version 1.5 of the SDFormat specification,
@@ -735,42 +753,42 @@ in the previous section.
       </frame>
 
       <frame name="link2_frame">
-        <pose frame="joint1">0 0 0 0 0 0</pose>
+        <pose frame="joint1" />
       </frame>
       <frame name="link3_frame">
-        <pose frame="joint2">0 0 0 0 0 0</pose>
+        <pose frame="joint2" />
       </frame>
       <frame name="link4_frame">
-        <pose frame="joint3">0 0 0 0 0 0</pose>
+        <pose frame="joint3" />
       </frame>
 
       <link name="link1"/>
 
       <joint name="joint1" type="revolute">
-        <pose frame="joint1_frame">0 0 0 0 0 0</pose>
+        <pose frame="joint1_frame" />
         <parent>link1</parent>
         <child>link2</child>
       </joint>
       <link name="link2">
-        <pose frame="link2_frame">0 0 0 0 0 0</pose>
+        <pose frame="link2_frame" />
       </link>
 
       <joint name="joint2" type="revolute">
-        <pose frame="joint2_frame">0 0 0 0 0 0</pose>
+        <pose frame="joint2_frame" />
         <parent>link1</parent>
         <child>link3</child>
       </joint>
       <link name="link3">
-        <pose frame="link3_frame">0 0 0 0 0 0</pose>
+        <pose frame="link3_frame" />
       </link>
 
       <joint name="joint3" type="revolute">
-        <pose frame="joint3_frame">0 0 0 0 0 0</pose>
+        <pose frame="joint3_frame" />
         <parent>link3</parent>
         <child>link4</child>
       </joint>
       <link name="link4">
-        <pose frame="link4_frame">0 0 0 0 0 0</pose>
+        <pose frame="link4_frame" />
       </link>
 
     </model>
@@ -903,7 +921,7 @@ followed by a `/`, followed by the frame name.
 
       <!-- SDF 1.4 kinematics: child -> joint -->
       <link name="attachment1_link">
-        <pose frame="base/mounting_point1">0 0 0 0 0 0</pose>
+        <pose frame="base/mounting_point1" />
       </link>
       <joint name="attachment1_joint" type="fixed">
         <!-- implicit joint pose at child link -->
@@ -913,12 +931,12 @@ followed by a `/`, followed by the frame name.
 
       <!-- URDF kinematics: parent -> joint -> child -->
       <joint name="attachment2_joint" type="fixed">
-        <pose frame="base/mounting_point2">0 0 0 0 0 0</pose>
+        <pose frame="base/mounting_point2" />
         <parent>base</parent>
         <child>attachment2_link</child>
       </joint>
       <link name="attachment2_link">
-        <pose frame="attachment2_joint">0 0 0 0 0 0</pose>
+        <pose frame="attachment2_joint" />
       </link>
     </model>
 
