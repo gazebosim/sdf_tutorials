@@ -59,7 +59,7 @@ A model with multiple links having the same name is invalid:
 
     <model name="invalid_two_links_same_name">
       <link name="link"/>
-      <link name="link"/>
+      <link name="link"/> <!-- INVALID: Same name as sibling "link"! -->
     </model>
 
 The link `<pose>` tag is a coordinate transform applied relative to its model
@@ -67,18 +67,22 @@ frame.
 When inserted into a world, the link pose relative to the world is identical
 for the following two models:
 
-    <model name="model_and_link_pose">
-      <pose>1 0 0 0 0 0</pose>
-      <link name="link">
-        <pose>0 1 0 0 0 0</pose>
-      </link>
-    </model>
+~~~
+<model name="model_and_link_pose">
+  <pose>1 0 0 0 0 0</pose>
+  <link name="link">
+    <pose>0 1 0 0 0 0</pose>
+  </link>
+</model>
+~~~
 
-    <model name="equivalent_link_pose">
-      <link name="link">
-        <pose>1 1 0 0 0 0</pose>
-      </link>
-    </model>
+~~~
+<model name="equivalent_link_pose">
+  <link name="link">
+    <pose>1 1 0 0 0 0</pose>
+  </link>
+</model>
+~~~
 
 ## `<joint>`
 
@@ -180,6 +184,7 @@ joint frame, and the child link frame is co-located with the joint frame.
 This is illustrated in the [URDF documentation](http://wiki.ros.org/urdf/XML/joint)
 with the following image and a corresponding URDF snippet:
 
+    <!-- URDF -->
     <robot name="two_links_revolute">
       <link name="Parent"/>
       <link name="Child"/>
