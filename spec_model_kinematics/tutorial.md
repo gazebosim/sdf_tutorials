@@ -139,16 +139,24 @@ may be disallowed by a future version of the spec.
 
 The joint `<pose>` tag is a coordinate transform applied relative to the
 child link frame to define the joint frame.
-This transform is considered to be the transform between the two links when the
-joint is at its initial position.
 While a `<pose>` tag is not necessary for a fixed joint, it is used regularly
 in other joint types.
 See the following example for an illustration of the joint pose.
 
 Some joint types allow degrees of freedom along a specified axis.
-For example, the rotational axis of a revolute joint is specified by a unit
-Vector3 in the `<xyz>` tag under the `<axis>` element, which is interpreted
-in the joint frame.
+Consider body-fixed coordinate frames attached to the parent and child links
+that coincide with the joint frame when the model is in its initial
+configuration.
+For descriptive purposes,
+the frame attached to the parent link is termed the joint's fixed frame,
+and the frame attached to the child link is termed the joint's mobilized frame.
+The specification is clear about the location of the joint frame in the
+initial configuration but is ambiguous about its definition after joint motion,
+whether it is fixed with the parent link or mobilized with the child link.
+For a revolute joint, the rotational axis is specified by a unit
+Vector3 in the `<xyz>` tag under the `<axis>` element, which is constant
+in both the fixed and mobilized joint frames.
+
 The joint pose and axis direction for the following SDF model are illustrated
 in the following figure, with model frame `M`, Parent link frame `P`,
 Child link frame `C`, and joint frame `J`.
