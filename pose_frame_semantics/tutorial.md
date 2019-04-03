@@ -805,10 +805,10 @@ represented by two sets of co-located collisions, visuals, and lights.
     <model name="model_without_frames">
       <link name="link_with_LEDs">
         <light name="led1_light" type="point">
-          <pose>0.1 0 0 0 0 0 0</pose>
+          <pose>0.1 0 0 0 0 0</pose>
         </light>
         <collision name="led1_collision">
-          <pose>0.1 0 0 0 0 0 0</pose>
+          <pose>0.1 0 0 0 0 0</pose>
           <geometry>
             <box>
               <size>0.01 0.01 0.001</size>
@@ -816,7 +816,7 @@ represented by two sets of co-located collisions, visuals, and lights.
           </geometry>
         </collision>
         <visual name="led1_visual">
-          <pose>0.1 0 0 0 0 0 0</pose>
+          <pose>0.1 0 0 0 0 0</pose>
           <geometry>
             <box>
               <size>0.01 0.01 0.001</size>
@@ -825,10 +825,10 @@ represented by two sets of co-located collisions, visuals, and lights.
         </visual>
 
         <light name="led2_light" type="point">
-          <pose>-0.1 0 0 0 0 0 0</pose>
+          <pose>-0.1 0 0 0 0 0</pose>
         </light>
         <collision name="led2_collision">
-          <pose>-0.1 0 0 0 0 0 0</pose>
+          <pose>-0.1 0 0 0 0 0</pose>
           <geometry>
             <box>
               <size>0.01 0.01 0.001</size>
@@ -836,7 +836,7 @@ represented by two sets of co-located collisions, visuals, and lights.
           </geometry>
         </collision>
         <visual name="led2_visual">
-          <pose>-0.1 0 0 0 0 0 0</pose>
+          <pose>-0.1 0 0 0 0 0</pose>
           <geometry>
             <box>
               <size>0.01 0.01 0.001</size>
@@ -854,17 +854,17 @@ in one place and used by these elements.
     <model name="model_with_frames">
       <link name="link_with_LEDs">
         <frame name="led1_frame">
-          <pose>0.1 0 0 0 0 0 0</pose>
+          <pose>0.1 0 0 0 0 0</pose>
         </frame>
         <frame name="led2_frame">
-          <pose>-0.1 0 0 0 0 0 0</pose>
+          <pose>-0.1 0 0 0 0 0</pose>
         </frame>
 
         <light name="led1_light" type="point">
-          <pose frame="led1_frame">0 0 0 0 0 0 0</pose>
+          <pose frame="led1_frame" />
         </light>
         <collision name="led1_collision">
-          <pose frame="led1_frame">0 0 0 0 0 0 0</pose>
+          <pose frame="led1_frame" />
           <geometry>
             <box>
               <size>0.01 0.01 0.001</size>
@@ -872,7 +872,7 @@ in one place and used by these elements.
           </geometry>
         </collision>
         <visual name="led1_visual">
-          <pose frame="led1_frame">0 0 0 0 0 0 0</pose>
+          <pose frame="led1_frame" />
           <geometry>
             <box>
               <size>0.01 0.01 0.001</size>
@@ -881,10 +881,10 @@ in one place and used by these elements.
         </visual>
 
         <light name="led2_light" type="point">
-          <pose frame="led2_frame">0 0 0 0 0 0 0</pose>
+          <pose frame="led2_frame" />
         </light>
         <collision name="led2_collision">
-          <pose frame="led2_frame">0 0 0 0 0 0 0</pose>
+          <pose frame="led2_frame" />
           <geometry>
             <box>
               <size>0.01 0.01 0.001</size>
@@ -892,7 +892,7 @@ in one place and used by these elements.
           </geometry>
         </collision>
         <visual name="led2_visual">
-          <pose frame="led2_frame">0 0 0 0 0 0 0</pose>
+          <pose frame="led2_frame" />
           <geometry>
             <box>
               <size>0.01 0.01 0.001</size>
