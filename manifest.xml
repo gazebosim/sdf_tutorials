@@ -111,7 +111,7 @@
       </tutorials>
     </category>
 
-    <category title="SDF Pose Frame Semantics" skill="advanced" ref="specification">
+    <category title="SDF Pose Frame Semantics" skill="advanced" ref="pose_semantics_docs">
       <description>This series of tutorials describes pose frame semantics in SDF.</description>
       <tutorials>
         <tutorial>pose_frame_semantics</tutorial>
