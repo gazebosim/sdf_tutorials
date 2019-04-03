@@ -9,7 +9,7 @@ support proposed semantics for more expressivity in SDFormat.
 This includes the ability to describe the kinematics of a URDF model
 with an SDF 2.0 file.
 
-## Proposed element naming rule: unique names for all sibling elements
+## Element naming rule: unique names for all sibling elements
 
 While it was not explicitly disallowed in previous versions of the spec, it
 can be very confusing when sibling elements of any type have identical names.
@@ -48,7 +48,7 @@ models that violate this stricter naming requirement. Furthermore, the
 specification version will be incremented so that checks can be added when
 converting from older, more permissive versions to the newer, stricter version.
 
-## Proposed element naming rule: reserved names and characters
+## Element naming rule: reserved names and characters
 
 Since `world` has a special interpretation when specified as a parent
 or child link of a joint, it should not be used as a name for any entities
@@ -78,7 +78,7 @@ As such, the `/` character is reserved and may not be used in an element name.
       </model>
     </sdf>
 
-## Proposed semantics for `<pose frame=''>` attribute
+## Semantics for `<pose frame=''>` attribute
 
 Requiring unique names for sibling elements simplifies the process of
 referencing frames by name, as it is sufficient to refer to a name of an
@@ -187,7 +187,7 @@ specified for joints and child links, and no link poses to be included.
 A validator could be created to identify SDF files that can be directly
 converted to URDF with minimal modifications based on these principles.
 
-## Proposal: empty `<pose/>` element implies identity pose
+## Empty `<pose/>` element implies identity pose
 
 With the use of the `frame` attribute in `<pose>` elements, there are
 many expected cases when a frame is defined relative to another frame
@@ -205,7 +205,7 @@ identity pose, as illustrated by the following pairs of equivalent poses:
 `<pose frame='frame_name'>0 0 0 0 0 0</pose>`
 ~~~
 
-## Proposed semantics for `<model><frame>` tag
+## Semantics for `<model><frame>` tag
 
 The `<frame>` tag was added in version 1.5 of the SDFormat specification,
 though it has seen little use due to the lack of well-defined semantics.
@@ -274,7 +274,7 @@ in the previous section.
 
     </model>
 
-## Proposed semantics for `<link><frame>` tag
+## Semantics for `<link><frame>` tag
 
 The `<frame>` tag can also be attached to a link to create a body-fixed frame
 on that link.
@@ -383,7 +383,7 @@ in one place and used by these elements.
       </link>
     </model>
 
-## Proposed semantics for referencing a `<link><frame>` from `<model>` scope
+## Semantics for referencing a `<link><frame>` from `<model>` scope
 
 In addition to being useful for organizing elements within a link,
 the `<link><frame>` tags can also be useful at the `<model>` scope.
