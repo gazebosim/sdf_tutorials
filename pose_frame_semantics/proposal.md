@@ -78,7 +78,7 @@ As such, the `/` character is reserved and may not be used in an element name.
       </model>
     </sdf>
 
-## Semantics for `<pose frame=''>` attribute
+## `<pose frame=''>` attribute
 
 Requiring unique names for sibling elements simplifies the process of
 referencing frames by name, as it is sufficient to refer to a name of an
@@ -205,7 +205,7 @@ identity pose, as illustrated by the following pairs of equivalent poses:
 `<pose frame='frame_name'>0 0 0 0 0 0</pose>`
 ~~~
 
-## Semantics for `<model><frame>` tag
+## `<model><frame>` tag
 
 The `<frame>` tag was added in version 1.5 of the SDFormat specification,
 though it has seen little use due to the lack of well-defined semantics.
@@ -274,7 +274,7 @@ in the previous section.
 
     </model>
 
-## Semantics for `<link><frame>` tag
+## `<link><frame>` tag
 
 The `<frame>` tag can also be attached to a link to create a body-fixed frame
 on that link.
@@ -383,7 +383,7 @@ in one place and used by these elements.
       </link>
     </model>
 
-## Semantics for referencing a `<link><frame>` from `<model>` scope
+## Referencing a `<link><frame>` from `<model>` scope
 
 In addition to being useful for organizing elements within a link,
 the `<link><frame>` tags can also be useful at the `<model>` scope.
