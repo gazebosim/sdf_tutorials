@@ -92,8 +92,8 @@ attached to that element without worry of name collisions between
 sibling elements like links and joints.
 
 For example, recall the example URDF from the
-[Parent frames in URDF section](/?tut=pose_frame_semantics#ParentframesinURDF)
-of the [Pose Frame Semantics: Legacy Behavior tutorial](/?tut=pose_frame_semantics)
+[Parent frames in URDF section](/tutorials?tut=pose_frame_semantics#ParentframesinURDF)
+of the [Pose Frame Semantics: Legacy Behavior tutorial](/tutorials?tut=pose_frame_semantics)
 that corresponds to the following image in the
 [URDF documentation](http://wiki.ros.org/urdf/XML/model):
 
