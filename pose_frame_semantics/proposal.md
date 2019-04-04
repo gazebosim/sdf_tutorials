@@ -20,27 +20,31 @@ across element types.
 As such, all named sibling elements must have unique names.
 
 
-    <sdf version="1.4">
-      <model name="model">
-        <link name="base"/>
-        <link name="attachment"/>
-        <joint name="attachment" type="fixed"> <!-- VALID, but RECOMMEND AGAINST -->
-          <parent>base</parent>
-          <child>attachment</child>
-        </joint>
-      </model>
-    </sdf>
+~~~
+<sdf version="1.4">
+  <model name="model">
+    <link name="base"/>
+    <link name="attachment"/>
+    <joint name="attachment" type="fixed"> <!-- VALID, but RECOMMEND AGAINST -->
+      <parent>base</parent>
+      <child>attachment</child>
+    </joint>
+  </model>
+</sdf>
+~~~
 
-    <sdf version="2.0">
-      <model name="model">
-        <link name="base"/>
-        <link name="attachment"/>
-        <joint name="attachment" type="fixed"> <!-- INVALID, sibling link has same name. -->
-          <parent>base</parent>
-          <child>attachment</child>
-        </joint>
-      </model>
-    </sdf>
+~~~
+<sdf version="2.0">
+  <model name="model">
+    <link name="base"/>
+    <link name="attachment"/>
+    <joint name="attachment" type="fixed"> <!-- INVALID, sibling link has same name. -->
+      <parent>base</parent>
+      <child>attachment</child>
+    </joint>
+  </model>
+</sdf>
+~~~
 
 There are some existing SDFormat models that may not comply with this new
 requirement. To handle this, a validation tool will be created to identify
