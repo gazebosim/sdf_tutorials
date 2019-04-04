@@ -91,8 +91,17 @@ This allows an element's name to implicitly refer to a frame
 attached to that element without worry of name collisions between
 sibling elements like links and joints.
 
-For example, the example URDF from the previous section that corresponds
-to the image in the URDF documentation can be expressed with identical
+For example, recall the example URDF from the
+[Parent frames in URDF section](/?tut=pose_frame_semantics#ParentframesinURDF)
+of the [Pose Frame Semantics: Legacy Behavior tutorial](/?tut=pose_frame_semantics)
+that corresponds to the following image in the
+[URDF documentation](http://wiki.ros.org/urdf/XML/model):
+
+<img src="http://wiki.ros.org/urdf/XML/model?action=AttachFile&do=get&target=link.png"
+     alt="urdf coordinate frames"
+     height="500"/>
+
+That URDF model can be expressed with identical
 kinematics as an SDF by using link and joint names in the pose `frame`
 attribute.
 
