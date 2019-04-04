@@ -145,17 +145,18 @@ See the following example for an illustration of the joint pose.
 
 Some joint types allow degrees of freedom along a specified axis.
 Consider body-fixed coordinate frames attached to the parent and child links
-that coincide with the joint frame when the model is in its initial
+that coincide with the joint frame `J` when the model is in its initial
 configuration.
 For descriptive purposes,
-the frame attached to the parent link is termed the joint's fixed frame,
-and the frame attached to the child link is termed the joint's mobilized frame.
-The specification is clear about the location of the joint frame in the
-initial configuration but is ambiguous about its definition after joint motion,
-whether it is fixed with the parent link or mobilized with the child link.
+the frame attached to the parent link is termed the joint's fixed frame `Jf`,
+and the frame attached to the child link is termed the joint's mobilized frame `Jm`.
+The specification is clear that these frames are all coincident in the initial
+configuration `q0`: `J = Jf(q0) = Jm(q0) = J0`.
+The specification is ambiguous about the definition of `J` after joint motion,
+whether it follows `Jf` or `Jm`.
 For a revolute joint, the rotational axis is specified by a unit
 Vector3 in the `<xyz>` tag under the `<axis>` element, which is constant
-in both the fixed and mobilized joint frames.
+in both the `Jf` and `Jm` frames.
 
 The joint pose and axis direction for the following SDF model are illustrated
 in the following figure, with model frame `M`, Parent link frame `P`,
