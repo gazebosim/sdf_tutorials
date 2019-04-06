@@ -191,11 +191,17 @@ The difference between the URDF and SDF expressions is shown in the patch below:
 +    </model>
 ~~~
 
-This enables a well-formed SDFormat file to be easily converted to URDF
+These semantics provide powerful expressiveness for constructing models
+using relative coordinate frames.
+This can reduce duplication of pose transform data and eliminates
+the need to use forward kinematics to compute the assembled poses
+of links.
+
+One use case is enabling a well-formed SDFormat file to be easily converted to URDF
 by directly copying `xyz` and `rpy` values and without performing any
 coordinate transformations.
-It requires the kinematics to have a tree structure, pose frames to be
-specified for joints and child links, and no link poses to be included.
+The well-formed SDFormat file must have kinematics with a tree structure,
+pose frames specified for joints and child links, and no link poses.
 A validator could be created to identify SDF files that can be directly
 converted to URDF with minimal modifications based on these principles.
 
