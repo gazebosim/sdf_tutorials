@@ -29,7 +29,7 @@ For example, an empty model with no links or joints:
 A model can define a pose that offsets the model frame relative
 to its parent when it is inserted into a world:
 
-    <model name="model_pose_with_pose">
+    <model name="model_with_pose">
       <pose>{xyz_WM} {rpy_WM}</pose>
     </model>
 
