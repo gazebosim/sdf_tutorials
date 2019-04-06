@@ -99,7 +99,7 @@ of freedom remaining between the two links.
 <!-- TODO: move this documentation into the SDF spec at some point -->
 * `ball`: 3 rotational degrees of freedom
 * `continuous`: 1 rotational degree of freedom with no joint limits
-* `fixed`: 0 degrees of freedom
+* `fi\xed`: 0 degrees of freedom
 * `prismatic`: 1 translational degree of freedom
 * `revolute`: 1 rotational degree of freedom with joint limits
 * `screw`: 1 coupled rotational/translational degree of freedom
