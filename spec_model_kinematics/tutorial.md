@@ -61,8 +61,8 @@ A model with multiple links having the same name is invalid:
       <link name="link"/> <!-- INVALID: Same name as sibling "link"! -->
     </model>
 
-The link `<pose>` tag is a coordinate transform applied relative to its model
-frame.
+Each link has a body-fixed frame, whose initial pose relative to the
+model frame is specified by the link `<pose>` tag.
 When inserted into a world, the link pose relative to the world is identical
 for the following two models:
 
