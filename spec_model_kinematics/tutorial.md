@@ -18,7 +18,7 @@ about specifying poses for more detail on the `<pose>` tag.
 ## `<model>`
 
 The `<model>` tag serves as a named container for a group of links and joints.
-Its full documentation can be found
+Its full specification can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=model).
 
 It is required to name the model using the `name` attribute.
@@ -36,7 +36,7 @@ to its parent when it is inserted into a world:
 ## `<link>`
 
 The `<link>` tag represents a named rigid body and must be the child of a `<model>`.
-Its full documentation can be found
+Its full specification can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=link).
 
 It is also required for the link to be named using the `name` attribute.
@@ -89,7 +89,7 @@ for the following two models:
 The `<joint>` tag represents a kinematic relationship between rigid body links
 that constrains the degrees of freedom between those links.
 It must be a child of a model.
-Its full documentation can be found
+Its full specification can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=joint).
 
 There are several different types of joints that can be specified in the
