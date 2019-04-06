@@ -142,17 +142,16 @@ While a `<pose>` tag is not necessary for a fixed joint, it is used regularly
 in other joint types.
 See the following example for an illustration of the joint pose.
 
-Some joint types allow degrees of freedom along a specified axis.
-Consider body-fixed coordinate frames attached to the parent and child links
-that coincide with the joint frame `J` when the model is in its initial
-configuration.
-For descriptive purposes,
-the frame attached to the parent link is termed the joint's fixed frame `Jf`,
-and the frame attached to the child link is termed the joint's mobilized frame `Jm`.
-The specification is clear that these frames are all coincident in the initial
-configuration `q0`: `J = Jf(q0) = Jm(q0) = J0`.
-The specification is ambiguous about the definition of `J` after joint motion,
-whether it follows `Jf` or `Jm`.
+Some joint types allow degrees of freedom along a specified axis;
+the following frames are denoted:
+
+* `Jf` is a frame attached to the parent link.
+* `Jm` is a mobilized frame attached to the child link.
+* `J` is the joint frame.
+  The spec is ambiguous about this frame after motion; however,
+  at the initial configuration (`q0`), the frames
+  `J`, `Jf`, and `Jm` are all coincident.
+
 For a revolute joint, the rotational axis is specified by a unit
 Vector3 in the `<xyz>` tag under the `<axis>` element, which is constant
 in both the `Jf` and `Jm` frames.
