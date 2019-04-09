@@ -70,7 +70,9 @@ in the simulation.
 </model>
 ~~~
 
-@azeey to add info about names starting with `__`.
+Names that start and end with double underscores (eg. `__wheel__`) are reserved
+for use by library implementors. For example, such names might be useful during
+parsing for setting sentinel or default names for elements with missing names.
 
 The forward slash `/` will be replacing `::` as a delimiter between
 scoped element names.
@@ -145,9 +147,9 @@ The difference between the URDF and SDF expressions is shown in the patch below:
 @@ -1,26 +1,32 @@
 -    <robot name="model">
 +    <model name="model">
- 
+
        <link name="link1"/>
- 
+
        <joint name="joint1" type="revolute">
 -        <origin xyz='{xyz_L1L2}' rpy='{rpy_L1L2}'/>
 +        <pose frame="link1">{xyz_L1L2} {rpy_L1L2}</pose>
@@ -160,7 +162,7 @@ The difference between the URDF and SDF expressions is shown in the patch below:
 +      <link name="link2">
 +        <pose frame="joint1">0 0 0 0 0 0</pose>
 +      </link>
- 
+
        <joint name="joint2" type="revolute">
 -        <origin xyz='{xyz_L1L3}' rpy='{rpy_L1L3}'/>
 +        <pose frame="link1">{xyz_L1L3} {rpy_L1L3}</pose>
@@ -173,7 +175,7 @@ The difference between the URDF and SDF expressions is shown in the patch below:
 +      <link name="link3">
 +        <pose frame="joint2">0 0 0 0 0 0</pose>
 +      </link>
- 
+
        <joint name="joint3" type="revolute">
 -        <origin xyz='{xyz_L3L4}' rpy='{rpy_L3L4}'/>
 +        <pose frame="link3">{xyz_L3L4} {rpy_L3L4}</pose>
@@ -186,7 +188,7 @@ The difference between the URDF and SDF expressions is shown in the patch below:
 +      <link name="link4">
 +        <pose frame="joint3">0 0 0 0 0 0</pose>
 +      </link>
- 
+
 -    </robot>
 +    </model>
 ~~~
