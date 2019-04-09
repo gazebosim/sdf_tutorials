@@ -54,35 +54,37 @@ converting from older, more permissive versions to the newer, stricter version.
 
 ## Element naming rule: reserved names and characters
 
-Since `world` has a special interpretation when specified as a parent
+* Since `world` has a special interpretation when specified as a parent
 or child link of a joint, it should not be used as a name for any entities
 in the simulation.
 
-~~~
-<model name="world"/><!-- INVALID: world is a reserved name. -->
-<model name="world_model"/><!-- VALID -->
-~~~
+    ~~~
+    <model name="world"/><!-- INVALID: world is a reserved name. -->
+    <model name="world_model"/><!-- VALID -->
+    ~~~
 
-~~~
-<model name="model">
-  <link name="world"/><!-- INVALID: world is a reserved name. -->
-  <link name="world_link"/><!-- VALID -->
-</model>
-~~~
+    ~~~
+    <model name="model">
+      <link name="world"/><!-- INVALID: world is a reserved name. -->
+      <link name="world_link"/><!-- VALID -->
+    </model>
+    ~~~
 
-Names that start and end with double underscores (eg. `__wheel__`) are reserved
+* Names that start and end with double underscores (eg. `__wheel__`) are reserved
 for use by library implementors. For example, such names might be useful during
 parsing for setting sentinel or default names for elements with missing names.
 
-The forward slash `/` will be replacing `::` as a delimiter between
+* The forward slash `/` will be replacing `::` as a delimiter between
 scoped element names.
 As such, the `/` character is reserved and may not be used in an element name.
 
+    ```
     <sdf version="2.0">
       <model name="car">
         <link name="wheel/left"/> <!-- INVALID: '/' may not be used in element name -->
       </model>
     </sdf>
+    ```
 
 ## `<pose frame=''>` attribute
 
