@@ -239,16 +239,14 @@ frame is `0.1 0 0`.
       </joint>
     </model>
 
-The initial configuration of this model is shown on the left side of the
+The initial configuration of this model is shown in the
 following figure.
 
-[[file:revolute_joint_1a.svg|600px]]
+[[file:revolute_joint_1a.svg|300px]]
 
 In the second example, the parent and child links have the same pose relative
 to the model frame, but the xyz component of the joint pose is set to `0 -0.1 0`.
 This changes the position of the joint in the world frame to `0 0 0.1`.
-The initial configuration of this model is shown on the right side of the
-previous figure.
 Note that the pose of linkB and link2 is the same in both models.
 
     <model name="two_links_orthogonal_2">
@@ -271,6 +269,10 @@ Note that the pose of linkB and link2 is the same in both models.
         <child>link1</child>
       </joint>
     </model>
+
+The initial configuration of this model is shown in the following figure.
+
+[[file:revolute_joint_2a.svg|300px]]
 
 In both examples, the `<axis>` tag is used to specify the axis of rotation of
 the revolute joint. This axis is specified relative to the joint
