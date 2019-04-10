@@ -52,7 +52,7 @@ models that violate this stricter naming requirement. Furthermore, the
 specification version will be incremented so that checks can be added when
 converting from older, more permissive versions to the newer, stricter version.
 
-## Element naming rule: reserved names and characters
+## Element naming rule: reserved names and escaped characters
 
 * Since `world` has a special interpretation when specified as a parent
 or child link of a joint, it should not be used as a name for any entities
@@ -74,17 +74,29 @@ in the simulation.
 for use by library implementors. For example, such names might be useful during
 parsing for setting sentinel or default names for elements with missing names.
 
+    ~~~
+    <model name="__model__"/><!-- INVALID: name starts and ends with __. -->
+    ~~~
+
+    ~~~
+    <model name="model">
+      <link name="__link__"/><!-- INVALID: name starts and ends with __. -->
+    </model>
+    ~~~
+
 * The forward slash `/` will be replacing `::` as a delimiter between
 scoped element names.
-As such, the `/` character is reserved and may not be used in an element name.
+Since there are many existing urdf models that use the `/` character in link and
+joint names, the character should not be completely banned from element names.
+Instead, the `/` character must be escaped when referring to an element name.
+Escaping will be described in more detail in subsequent sections.
+Some references to `/` use in link and joint names in existing models are given
+below.
 
-    ```
-    <sdf version="2.0">
-      <model name="car">
-        <link name="wheel/left"/> <!-- INVALID: '/' may not be used in element name -->
-      </model>
-    </sdf>
-    ```
+    * [irobot\_hand\_description in osrf/drcsim](https://bitbucket.org/osrf/drcsim/src/drcsim7_7.0.0/irobot_hand_description/urdf/irobot_hand.urdf.xacro#irobot_hand.urdf.xacro-625:630)
+    * [nao\_description in ros-naoqi/nao\_robot](https://github.com/ros-naoqi/nao_robot/blob/0.5.15/nao_description/urdf/naoV50_generated_urdf/nao_sensors.xacro#L7)
+    * [r2\_description in nasa robonaut](https://bitbucket.org/nasa_ros_pkg/deprecated_nasa_r2_common/src/15ec0b187aba8ca15e6906c2f9325e4b0d4b45ae/r2_description/urdf/models/r2c_upperbody/r2c.head_sensors.xacro#r2c.head_sensors.xacro-4)
+    * [rotors\_description in ethz-asl/rotors\_simulator](https://github.com/ethz-asl/rotors_simulator/blob/3.0.0/rotors_description/urdf/multirotor_base.xacro#L42-L50)
 
 ## `<pose frame=''>` attribute
 
@@ -442,4 +454,29 @@ followed by a `/`, followed by the frame name.
         <pose frame="attachment2_joint" />
       </link>
     </model>
+
+## Referencing a `<link><frame>` when link name contains `/` or `\`
+
+The `/` character is permitted in link and joint names, though not recommended.
+In order to reference a `<link><frame>` from the `<model>` scope when a link
+name contains a `/` or `\` character, the slashes should be escaped as shown
+below.
+
+    ```
+    <model name="embedded_link_frame_escaping">
+      <link name="name/with\slashes">
+        <frame name="frame1">
+          <pose>0.5 0.2 0 0 0 0</pose>
+        </frame>
+      </link>
+
+      <link name="unescaped_link_frame">
+        <pose frame="name/with\slashes/frame1"/> <!-- INVALID: implies search for name -> with\slashes -> frame1 -->
+      </link>
+
+      <link name="escaped_link_frame">
+        <pose frame="name\/with\\slashes/frame1"/> <!-- VALID. -->
+      </link>
+    </model>
+    ```
 
