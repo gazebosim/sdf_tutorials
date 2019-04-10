@@ -87,9 +87,9 @@ parsing for setting sentinel or default names for elements with missing names.
 * The forward slash `/` will be replacing `::` as a delimiter between
 scoped element names.
 Since there are many existing urdf models that use the `/` character in link and
-joint names, the character should not be completely banned from element names.
-Instead, the `/` character must be escaped when referring to an element name.
-Escaping will be described in more detail in subsequent sections.
+joint names, an accomodation is made to allow for these characters to be escaped
+as `\/` when used in name attributes.
+Likewise any uses of `\` in a name should be escaped as `\\`.
 Some references to `/` use in link and joint names in existing models are given
 below.
 
@@ -97,6 +97,21 @@ below.
     * [nao\_description in ros-naoqi/nao\_robot](https://github.com/ros-naoqi/nao_robot/blob/0.5.15/nao_description/urdf/naoV50_generated_urdf/nao_sensors.xacro#L7)
     * [r2\_description in nasa robonaut](https://bitbucket.org/nasa_ros_pkg/deprecated_nasa_r2_common/src/15ec0b187aba8ca15e6906c2f9325e4b0d4b45ae/r2_description/urdf/models/r2c_upperbody/r2c.head_sensors.xacro#r2c.head_sensors.xacro-4)
     * [rotors\_description in ethz-asl/rotors\_simulator](https://github.com/ethz-asl/rotors_simulator/blob/3.0.0/rotors_description/urdf/multirotor_base.xacro#L42-L50)
+
+    ```
+    <model name="slash_escaping">
+      <link name="unescaped/link\name"/> <!-- INVALID: / and \ should be escaped. -->
+      <joint name="unescaped/joint\name"/> <!-- INVALID: / and \ should be escaped. -->
+
+      <link name="escaped\/link\\name"/> <!-- VALID. -->
+
+      <link name="parent"/>
+      <joint name="escaped\/joint\\name" type="fixed"> <!-- VALID. -->
+        <parent>parent</parent>
+        <child>escaped\/link\\name</child> <!-- VALID: reference link with escaped name. -->
+      </joint>
+    </model>
+    ```
 
 ## `<pose frame=''>` attribute
 
@@ -455,26 +470,19 @@ followed by a `/`, followed by the frame name.
       </link>
     </model>
 
-## Referencing a `<link><frame>` when link name contains `/` or `\`
-
-The `/` character is permitted in link and joint names, though not recommended.
-In order to reference a `<link><frame>` from the `<model>` scope when a link
-name contains a `/` or `\` character, the slashes should be escaped as shown
-below.
+As discussed in a previous section, any `/` or `\` characters in link and
+joint names must be escaped, which allows the `/` to be used as a
+separator.
 
     <model name="embedded_link_frame_escaping">
-      <link name="name/with\slashes">
-        <frame name="frame1">
+      <link name="escaped\/link\\name">
+        <frame name="frame_name">
           <pose>0.5 0.2 0 0 0 0</pose>
         </frame>
       </link>
 
-      <link name="unescaped_link_frame">
-        <pose frame="name/with\slashes/frame1"/> <!-- INVALID: implies search for name -> with\slashes -> frame1 -->
-      </link>
-
-      <link name="escaped_link_frame">
-        <pose frame="name\/with\\slashes/frame1"/> <!-- VALID. -->
+      <link name="link">
+        <pose frame="escaped\/link\\name/frame_name"/> <!-- VALID. -->
       </link>
     </model>
 
