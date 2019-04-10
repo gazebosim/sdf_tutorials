@@ -478,3 +478,133 @@ below.
       </link>
     </model>
 
+## Valid parent elements for `<frame>` tags
+
+In the SDF 1.5 specification, the `<frame>` element was added to many elements
+as a sibling of `<pose>`, but it is not clear that it is useful to allow
+so many locations for `<frame>` tags.
+This proposal has examples for `<frame>` tags as children of `<model>` and
+`<link>` and will restrict the `<frame>` tags to these elements unless a
+compelling use case is provided for other elements.
+
+    <model name="valid_frame_locations">
+      <frame name="model_frame"> <!-- VALID. -->
+        <pose/>
+      </frame>
+
+      <link name="link">
+        <frame name="link_frame"> <!-- VALID. -->
+          <pose/>
+        </frame>
+
+        <inertial>
+          <frame name="inertial_frame"> <!-- INVALID. -->
+            <pose/>
+          </frame>
+        </inertial>
+
+        <collision name="collision">
+          <frame name="collision_frame"> <!-- INVALID. -->
+            <pose/>
+          </frame>
+        </collision>
+
+        <visual name="visual">
+          <frame name="visual_frame"> <!-- INVALID. -->
+            <pose/>
+          </frame>
+        </visual>
+
+        <sensor name="sensor">
+          <frame name="sensor_frame"> <!-- INVALID. -->
+            <pose/>
+          </frame>
+        </sensor>
+
+        <light name="light">
+          <frame name="light_frame"> <!-- INVALID. -->
+            <pose/>
+          </frame>
+        </light>
+      </link>
+
+      <joint name="joint">
+        <frame name="joint_frame"> <!-- INVALID. -->
+          <pose/>
+        </frame>
+
+        <sensor name="sensor">
+          <frame name="sensor_frame"> <!-- INVALID. -->
+            <pose/>
+          </frame>
+        </sensor>
+      </joint>
+    </model>
+
+## Referencing implicit frames in `<pose frame=''>`
+
+The `<pose frame=''>` attribute references frames by name.
+This proposal includes examples for referencing frames created explicitly using
+the `<frame>` tag, as well as referencing the frames implicitly attached to
+`<link>` and `<joint>` tags by name.
+A future proposal will address nested models and model composition, which
+will likely include referencing the frames implicitly attached to `<model>` tags
+by the model name.
+There are several other tags contained by a `<link>` or `<joint>` that contain a
+`<pose>`, which could make them eligible for implicit frames.
+These include `<collision>`, `<visual>`, `<link><sensor>`, `<joint><sensor>`,
+`<light>`, and `<inertial>`.
+To simplify the parsing task, these other tags will not be considered as having
+implicit frames that may be referenced from `<pose frame=''>` by the name of
+the parent tag.
+
+    <model name="implicit_frame_names">
+      <frame name="model_frame_name">
+        <pose/>
+      </frame>
+
+      <link name="link_name">
+        <frame name="link_frame_name">
+          <pose/>
+        </frame>
+        <collision name="collision_name"/>
+        <visual name="visual_name"/>
+        <sensor name="sensor_name"/>
+        <light name="light_name"/>
+
+        <frame name="relative_to_frame">
+          <pose frame="link_frame_name"/> <!-- VALID. -->
+        </frame>
+
+        <frame name="relative_to_collision">
+          <pose frame="collision_frame_name"/> <!-- INVALID. -->
+        </frame>
+
+        <frame name="relative_to_visual">
+          <pose frame="visual_frame_name"/> <!-- INVALID. -->
+        </frame>
+
+        <frame name="relative_to_sensor">
+          <pose frame="sensor_frame_name"/> <!-- INVALID. -->
+        </frame>
+
+        <frame name="relative_to_light">
+          <pose frame="light_frame_name"/> <!-- INVALID. -->
+        </frame>
+      </link>
+
+      <joint name="joint_name"/>
+
+      <frame name="relative_to_frame">
+        <pose frame="model_frame_name"/> <!-- VALID. -->
+      </frame>
+
+      <frame name="relative_to_link">
+        <pose frame="link_name"/> <!-- VALID. -->
+      </frame>
+
+      <frame name="relative_to_joint">
+        <pose frame="joint_name"/> <!-- VALID. -->
+      </frame>
+    </model>
+
