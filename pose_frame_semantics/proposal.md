@@ -462,7 +462,6 @@ In order to reference a `<link><frame>` from the `<model>` scope when a link
 name contains a `/` or `\` character, the slashes should be escaped as shown
 below.
 
-    ```
     <model name="embedded_link_frame_escaping">
       <link name="name/with\slashes">
         <frame name="frame1">
@@ -478,5 +477,4 @@ below.
         <pose frame="name\/with\\slashes/frame1"/> <!-- VALID. -->
       </link>
     </model>
-    ```
 
