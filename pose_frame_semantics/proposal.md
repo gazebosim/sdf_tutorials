@@ -572,30 +572,30 @@ the parent tag.
         <sensor name="sensor_name"/>
         <light name="light_name"/>
 
-        <frame name="relative_to_frame">
+        <frame name="relative_to_link_frame">
           <pose frame="link_frame_name"/> <!-- VALID. -->
         </frame>
 
         <frame name="relative_to_collision">
-          <pose frame="collision_frame_name"/> <!-- INVALID. -->
+          <pose frame="collision_name"/> <!-- INVALID. -->
         </frame>
 
         <frame name="relative_to_visual">
-          <pose frame="visual_frame_name"/> <!-- INVALID. -->
+          <pose frame="visual_name"/> <!-- INVALID. -->
         </frame>
 
         <frame name="relative_to_sensor">
-          <pose frame="sensor_frame_name"/> <!-- INVALID. -->
+          <pose frame="sensor_name"/> <!-- INVALID. -->
         </frame>
 
         <frame name="relative_to_light">
-          <pose frame="light_frame_name"/> <!-- INVALID. -->
+          <pose frame="light_name"/> <!-- INVALID. -->
         </frame>
       </link>
 
       <joint name="joint_name"/>
 
-      <frame name="relative_to_frame">
+      <frame name="relative_to_model_frame">
         <pose frame="model_frame_name"/> <!-- VALID. -->
       </frame>
 
