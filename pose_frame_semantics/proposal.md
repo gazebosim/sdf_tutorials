@@ -245,13 +245,13 @@ To reduce verbosity, empty pose elements are interpreted as equivalent to the
 identity pose, as illustrated by the following pairs of equivalent poses:
 
 ~~~
-`<pose />`
-`<pose>0 0 0 0 0 0</pose>`
+<pose />
+<pose>0 0 0 0 0 0</pose>
 ~~~
 
 ~~~
-`<pose frame='frame_name' />`
-`<pose frame='frame_name'>0 0 0 0 0 0</pose>`
+<pose frame='frame_name' />
+<pose frame='frame_name'>0 0 0 0 0 0</pose>
 ~~~
 
 ## `<model><frame>` tag
