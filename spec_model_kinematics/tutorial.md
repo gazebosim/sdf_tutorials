@@ -145,20 +145,27 @@ See the following example for an illustration of the joint pose.
 Some joint types allow degrees of freedom along a specified axis;
 the following frames are denoted:
 
-* `Jf` is the frame attached to the parent link.
-* `Jm` is the frame attached to the child link.
+* `Jp` is the frame rigidly affixed to the parent link.
+* `Jc` is the frame rigidly affixed to the child link.
 * `J` is the joint frame.
-  The spec is ambiguous about this frame after motion; however,
-  at the initial configuration (`q0`), the frames
-  `J`, `Jf`, and `Jm` are all coincident.
+  The current specification is ambiguous about this frame after motion, and
+  whether it is rigidly affixed to the parent or child frames; however,
+  at the initial configuration, the frames `J`, `Jp`, and `Jc` are all
+  coincident.
 
-For a revolute joint, the rotational axis is specified by a unit
-Vector3 in the `<xyz>` tag under the `<axis>` element, which is constant
-in both the `Jf` and `Jm` frames.
+### Example Joint: `revolute`
+
+The rotational axis of a `revolute` joint is specified by a
+unit vector in the `<xyz>` tag under the `<axis>` element. Because rotation
+occurs around this axis, it can be seen as specified in either `Jp` or `Jc`,
+and thus is compatible with the current ambiguity of the specification.
+
+<!-- TODO: Talk about frame ambiguity for other frames with multiple dofs.
+     Document current behavior, e.g. hinge2 and universal. -->
 
 The joint pose and axis direction for the following SDF model are illustrated
-in the following figure, with model frame `M`, Parent link frame `P`,
-Child link frame `C`, and joint frame `J`.
+in the following figure, with model frame `M`, parent link frame `P`,
+phild link frame `C`, and joint frame `J`.
 
     <model name="two_links_revolute">
       <link name="Parent">
@@ -207,7 +214,7 @@ with the following image and a corresponding URDF snippet:
      alt="urdf coordinate frames"
      height="500"/>
 
-## Examples
+## Example Models
 
 In this section, a revolute joint is used to further demonstrate
 the use of the `<pose>` tag with concrete examples.
