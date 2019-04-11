@@ -213,6 +213,9 @@ In this section, a revolute joint is used to further demonstrate
 the use of the `<pose>` tag with concrete examples.
 In these examples, the joint pose is set so that at the initial configuration,
 the displacement vectors from the joint to each link are orthogonal to each other.
+
+### Model `two_links_orthogonal_1`
+
 In the first example, the `xyz` component of the joint pose is set to `0 0 -0.1`.
 Since the pose is specified
 relative to the child link (linkB), the position of the joint in the world
@@ -244,6 +247,8 @@ following figure.
 
 [[file:revolute_joint_1a.svg|300px]]
 
+### Model `two_links_orthogonal_2`
+
 In the second example, the parent and child links have the same pose relative
 to the model frame, but the xyz component of the joint pose is set to `0 -0.1 0`.
 This changes the position of the joint in the world frame to `0 0 0.1`.
@@ -273,6 +278,8 @@ Note that the pose of linkB and link2 is the same in both models.
 The initial configuration of this model is shown in the following figure.
 
 [[file:revolute_joint_2a.svg|300px]]
+
+### Comparison after joint motion
 
 In both examples, the `<axis>` tag is used to specify the axis of rotation of
 the revolute joint. This axis is specified relative to the joint
