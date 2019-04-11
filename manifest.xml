@@ -75,6 +75,16 @@
       <skill>advanced</skill>
     </tutorial>
 
+    <tutorial title="Composition: Proposal" ref='composition_proposal'>
+      <markdown version="2.0">composition/proposal.md</markdown>
+      <description>Defining semantics of model composition.</description>
+      <tags>
+        <tag>include</tag>
+        <tag>model</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
   </tutorials>
 
   <!-- *************************************** -->
@@ -103,6 +113,7 @@
         <tutorial>spec_shapes</tutorial>
         <tutorial>spec_materials</tutorial>
         <tutorial>pose_frame_semantics</tutorial>
+        <tutorial>composition_proposal</tutorial>
       </tutorials>
     </category>
 
