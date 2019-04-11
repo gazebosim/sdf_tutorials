@@ -145,8 +145,8 @@ See the following example for an illustration of the joint pose.
 Some joint types allow degrees of freedom along a specified axis;
 the following frames are denoted:
 
-* `Jf` is a frame attached to the parent link.
-* `Jm` is a mobilized frame attached to the child link.
+* `Jf` is the frame attached to the parent link.
+* `Jm` is the frame attached to the child link.
 * `J` is the joint frame.
   The spec is ambiguous about this frame after motion; however,
   at the initial configuration (`q0`), the frames
