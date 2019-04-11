@@ -33,6 +33,17 @@
       <skill>beginner</skill>
     </tutorial>
 
+    <tutorial title="Model kinematics" ref='spec_model_kinematics'>
+      <markdown version="1.4">spec_model_kinematics/tutorial.md</markdown>
+      <description>Specifying model kinematics with links and joints in SDFormat.</description>
+      <tags>
+        <tag>joint</tag>
+        <tag>link</tag>
+        <tag>model</tag>
+      </tags>
+      <skill>beginner</skill>
+    </tutorial>
+
     <tutorial title="Collisions and Visuals" ref='spec_shapes'>
       <markdown version="1.4">spec_shapes/tutorial.md</markdown>
       <description>Adding shapes to a model with collisions and visuals in SDFormat.</description>
@@ -106,6 +117,7 @@
       <description>This series of tutorials describes the SDF specification.</description>
       <tutorials>
         <tutorial>specify_pose</tutorial>
+        <tutorial>spec_model_kinematics</tutorial>
         <tutorial>spec_shapes</tutorial>
         <tutorial>spec_materials</tutorial>
       </tutorials>
