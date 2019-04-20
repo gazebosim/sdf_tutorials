@@ -137,21 +137,13 @@ may be disallowed by a future version of the spec.
     </model>
 
 The joint `<pose>` tag is a coordinate transform applied relative to the
-child link frame to define the joint frame.
+child link frame to define the joint frame `Jc` that is rigidly affixed
+to the child link.
+Additionally, the frame `Jp` is a frame rigidly affixed to the parent link
+that coincides exactly with `Jc` at the initial configuration of the model.
 While a `<pose>` tag is not necessary for a fixed joint, it is used regularly
 in other joint types.
 See the following example for an illustration of the joint pose.
-
-Some joint types allow degrees of freedom along a specified axis;
-the following frames are denoted:
-
-* `Jp` is the frame rigidly affixed to the parent link.
-* `Jc` is the frame rigidly affixed to the child link.
-* `J` is the joint frame.
-  The current specification is ambiguous about this frame after motion, and
-  whether it is rigidly affixed to the parent or child frames; however,
-  at the initial configuration, the frames `J`, `Jp`, and `Jc` are all
-  coincident.
 
 ### Example Joint: `revolute`
 
@@ -165,7 +157,7 @@ and thus is compatible with the current ambiguity of the specification.
 
 The joint pose and axis direction for the following SDF model are illustrated
 in the following figure, with model frame `M`, parent link frame `P`,
-phild link frame `C`, and joint frame `J`.
+phild link frame `C`, and the child joint frame `Jc`.
 
     <model name="two_links_revolute">
       <link name="Parent">
@@ -175,11 +167,11 @@ phild link frame `C`, and joint frame `J`.
         <pose>{xyz_MC} {rpy_MC}</pose>
       </link>
       <joint name="joint" type="revolute">
-        <pose>{xyz_CJ} {rpy_CJ}</pose>
+        <pose>{xyz_CJc} {rpy_CJc}</pose>
         <parent>Parent</parent>
         <child>Child</child>
         <axis>
-          <xyz>{xyz_axis_J}</xyz>
+          <xyz>{xyz_axis_Jc}</xyz>
         </axis>
       </joint>
     </model>
@@ -194,7 +186,7 @@ As discussed in the
 [previous tutorial](http://sdformat.org/tutorials?tut=specify_pose&cat=specification),
 the `<origin>` tag is the URDF analog of the SDFormat `<pose>`.
 The joint origin defines the transform from the parent link frame to the
-joint frame, and the child link frame is co-located with the joint frame.
+child joint frame `Jc`, and the child link frame is co-located with frame `Jc`.
 This is illustrated in the [URDF documentation](http://wiki.ros.org/urdf/XML/joint)
 with the following image and a corresponding URDF snippet:
 
@@ -203,10 +195,10 @@ with the following image and a corresponding URDF snippet:
       <link name="Parent"/>
       <link name="Child"/>
       <joint name="joint" type="revolute">
-        <origin xyz="{xyz_PJ}" rpy="{rpy_PJ}" />
+        <origin xyz="{xyz_PJc}" rpy="{rpy_PJc}" />
         <parent link="Parent"/>
         <child link="Child"/>
-        <axis xyz="{xyz_axis_J}" />
+        <axis xyz="{xyz_axis_Jc}" />
       </joint>
     </robot>
 
