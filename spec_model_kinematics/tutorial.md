@@ -157,7 +157,7 @@ and thus is compatible with the current ambiguity of the specification.
 
 The joint pose and axis direction for the following SDF model are illustrated
 in the following figure, with model frame `M`, parent link frame `P`,
-phild link frame `C`, and the child joint frame `Jc`.
+child link frame `C`, and the child joint frame `Jc`.
 
     <model name="two_links_revolute">
       <link name="Parent">
