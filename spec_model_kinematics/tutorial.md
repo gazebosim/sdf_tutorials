@@ -136,11 +136,18 @@ may be disallowed by a future version of the spec.
       </joint>
     </model>
 
-The joint `<pose>` tag is a coordinate transform applied relative to the
-child link frame to define the child joint frame `Jc`, which is rigidly affixed
-to the child link.
-Additionally, the parent joint frame `Jp` is rigidly affixed to the parent link
-and coincides exactly with `Jc` at the initial configuration of the model.
+For a joint with parent link frame `P` and child link frame `C`,
+the joint `<pose>` tag specifies the pose `X_CJc` of a joint frame `Jc` rigidly
+affixed to the child link.
+Similarly, a frame `Jp` is rigidly affixed to the parent body.
+The pose of frame `Jp` in `P` is not specified explicitly but is inferred
+from the poses of `P` and `C` given in the model frame at the "zero
+configuration" of the joint.
+Most joint types specify how the frames `Jp` and `Jc` can move relative
+to each other (with the notable exception of the fixed joint).
+A zero configuration is defined for each joint type (for instance, zero angle
+for a revolute joint) such that the frames `Jp` and `Jc` are coincident in the
+zero configuration.
 While a `<pose>` tag is not necessary for a fixed joint, it is used regularly
 in other joint types.
 See the following example for an illustration of the joint pose.
