@@ -192,8 +192,11 @@ links and joints.
 As discussed in the
 [previous tutorial](http://sdformat.org/tutorials?tut=specify_pose&cat=specification),
 the `<origin>` tag is the URDF analog of the SDFormat `<pose>`.
-The joint origin defines the pose from the parent link frame to the
-child joint frame `Jc`, and the child link frame is co-located with frame `Jc`.
+The joint origin defines the pose `X_PJp` of the joint frame `Jp` in the parent
+link frame.
+The joint frame `Jc` is rigidly affixed to the child link such that it coincides
+with `Jp` in the zero configuration,
+and the child link frame is co-located with frame `Jc`.
 This is illustrated in the [URDF documentation](http://wiki.ros.org/urdf/XML/joint)
 with the following image and a corresponding URDF snippet:
 
