@@ -156,7 +156,8 @@ See the following example for an illustration of the joint pose.
 
 The rotational axis of a `revolute` joint is specified by a
 unit vector in the `<xyz>` tag under the `<axis>` element.
-This axis has the same coordinates in frames `Jp` and `Jc`.
+By definition, this axis has the same coordinates when expressed in either
+frame `Jp` or `Jc`.
 
 <!-- TODO: Talk about frame ambiguity for other frames with multiple dofs.
      Document current behavior, e.g. hinge2 and universal. -->
