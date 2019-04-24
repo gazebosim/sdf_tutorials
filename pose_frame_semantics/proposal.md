@@ -9,7 +9,17 @@ support proposed semantics for more expressivity in SDFormat.
 This includes the ability to describe the kinematics of a URDF model
 with an SDF 2.0 file.
 
+**NOTE**: When describing elements or attributes,
+[XPath](https://www.w3schools.com/xml/xpath_syntax.asp) is sometimes to used to
+provide and concise context.
+
 ## Element naming rule: unique names for all sibling elements
+
+<!-- TODO(eric): Move these naming / scoping sections below the actual
+semantics proposals? -->
+
+<!-- TODO(eric): These naming rules should stay in this proposal, but should
+then transition to a nesting / scoping proposal once they land. -->
 
 While it was not explicitly disallowed in previous versions of the spec, it
 can be very confusing when sibling elements of any type have identical names.
@@ -115,12 +125,58 @@ below.
 
 ## `<pose frame=''>` attribute
 
-Requiring unique names for sibling elements simplifies the process of
-referencing frames by name, as it is sufficient to refer to a name of an
-element within the xml hierarchy without specifying the type.
-This allows an element's name to implicitly refer to a frame
-attached to that element without worry of name collisions between
-sibling elements like links and joints.
+A frame consists of its affixed link (mobilized body) and an offset w.r.t. that
+affixed link's origin coordinate frame. Adding a new frame to an existing frame
+implies that the new frame's affixed link will be its parent frame's affixed
+link, incorporating the parent frame's offset in its own offset.
+
+Frames can be used to compose information and minimize redundancy
+(e.g. specify the bottom center of table, add it to the world with that frame,
+then add an object to the top-left-back corner), and can be used to abstract
+physical attachments (e.g. specify a camera frame in a model to be used for
+inverse kinematics or visual servoing, without the need to also know the
+attached link).
+
+### Valid `<frame/>` Usages
+
+`<frame/>` can only appear in the following contexts:
+
+* `//model/frame`
+* `//link/frame`
+
+No other elements can specify a frame.
+
+TODO(eric): What about `//world/frame`?
+
+### Frames and Parent Link Semantics
+
+As mentioned above, specifying a `<frame/>` implies having a parent link and a
+pose relative to this link. Due to SDFormat using maximal coordinates (see
+Addendum below), it is important to distinguish when a frame's link is (a)
+determined by its parent element's semantics or (b) is explicitly specified by
+the `//pose[@frame]` attribute.
+
+The following usages imply case (a), where the maximal (initial) position of
+the frame is specified, but the parent link is left up to the individual
+elements:
+
+* `//model/pose[@frame]` - dictates initial pose; parent link determined by
+joint connections
+* `//link/pose[@frame]` - dictates initial pose; parent link determined by
+joint connections
+* `//link/frame/pose[@frame]` - dictactes initial pose; parent link is always
+the given link
+* `//joint/pose[@frame]` - dictates initial pose; ???
+    * TODO(eric) should we permit joints to have explicit frames???
+
+The *ONLY* frame specification that determines the parent link is:
+
+* `//model/frame/pose[@frame]` - dictates initial pose *AND* parent link
+
+This permits model-scope frame abstraction, as mentioned above, while keeping
+in line with existing maximal coordinates modeling.
+
+### Example: Parity with URDF
 
 For example, recall the example URDF from the Parent frames in URDF section
 of the [Pose Frame Semantics: Legacy Behavior tutorial](/tutorials?tut=pose_frame_semantics)
@@ -236,6 +292,49 @@ pose frames specified for joints and child links, and no link poses.
 A validator could be created to identify SDF files that can be directly
 converted to URDF with minimal modifications based on these principles.
 
+### Example: Abstract Case with Relative Frames
+
+In some cases, it's very informative to have physically distinct frames
+`P` (parent link), `Jp` (attachment of joint to `P`), `C` (child link), and `Jc`
+(attachment of joint to `C`) explicitly specified, as shown in this image:
+
+<!-- Figure Credit: Alejandro Castro -->
+
+[[file:abstract_joint_frames.svg|256px]]
+
+One representation in SDFormat, placing `X_PJp` inside of the joint element:
+
+    <model name="abstract_joint_frames">
+      <link name="parent"/>
+      <joint name="joint1">
+        <pose frame="parent">{X_PJp}</pose>
+        <parent>parent</parent>
+        <child>child</child>
+      </joint>
+      <link name="child">
+        <pose frame="joint1">{X_JcC}</pose>
+      </link>
+    </model>
+
+An alternate formulation, placing `X_PJp` inside of the link element:
+
+    <model name="abstract_joint_frames">
+      <link name="parent">
+        <frame name="j1">
+          <pose>{X_PJp}</pose>
+        </frame>
+      </link>
+      <joint name="joint1">
+        <pose frame="parent/j1"/>
+        <parent>parent</parent>
+        <child>child</child>
+      </joint>
+      <link name="child">
+        <pose frame="parent/j1">{X_JcC}</pose>
+        <!-- Or: <pose frame="joint1">{X_JcC}</pose> -->
+      </link>
+    </model>
+
 ## Empty `<pose/>` element implies identity pose
 
 With the use of the `frame` attribute in `<pose>` elements, there are
@@ -254,12 +353,13 @@ identity pose, as illustrated by the following pairs of equivalent poses:
 <pose frame='frame_name'>0 0 0 0 0 0</pose>
 ~~~
 
-## `<model><frame>` tag
+## `<model><frame>` tag Examples
 
 The `<frame>` tag was added in version 1.5 of the SDFormat specification,
 though it has seen little use due to the lack of well-defined semantics.
 Similar to `<link>` and `<joint>`, it has a `name` attribute and may
 contain a child pose element.
+
 As with links and joints, a `<frame>` can be referenced by name by sibling
 elements using the `<pose frame=''>` attribute,
 and would be subject to the unique name requirement discussed above.
@@ -323,12 +423,16 @@ in the previous section.
 
     </model>
 
-## `<link><frame>` tag
+In this case, `joint1_frame` is rigidly affixed to `link1`, `joint3_frame` is
+rigidly affixed to `link3`, etc.
+
+## `<link><frame>` tag Examples
 
 The `<frame>` tag can also be attached to a link to create a body-fixed frame
 on that link.
 This can be used to organize the
 collisions, visuals, sensors, and lights attached to a link.
+
 For example, the following model shows a link with two LED's
 represented by two sets of co-located collisions, visuals, and lights.
 
@@ -555,6 +659,32 @@ The `<pose frame=''>` attribute references frames by name.
 This proposal includes examples for referencing frames created explicitly using
 the `<frame>` tag, as well as referencing the frames implicitly attached to
 `<link>` and `<joint>` tags by name.
+
+Requiring unique names for sibling elements simplifies the process of
+referencing frames by name, as it is sufficient to refer to a name of an
+element within the xml hierarchy without specifying the type.
+This allows an element's name to implicitly refer to a frame
+attached to that element without worry of name collisions between
+sibling elements like links and joints.
+
+As mentioned above, specifying `//pose[@frame]` generally only indicates the
+absolute pose, but not the parent link; as such, typically the user will only
+need to worry about the initial configuration.
+
+However, all frames that can be refered to via the model should still have
+physically meaningful values at non-zero configuration, and thus should be
+attached to a meaningful link.
+
+### Joint: Implicit Frame's Affixed Link
+
+Given that joint frames can be implicitly referenced, they should have a
+useful non-zero configuration. Since prior versions of SDFormat specified a
+joint's pose by default w.r.t. the child link, it is proposed to make the
+joint's implicit frame coincide with `Jc`, and thus be affixed to the child
+link.
+
+### Future Proposal: Canonical Frames
+
 A future proposal will address nested models and model composition, which
 will likely include referencing the frames implicitly attached to `<model>` tags
 by the model name.
@@ -616,3 +746,25 @@ the parent tag.
       </frame>
     </model>
 
+## Addendum: Model Building, Contrast Maximal vs Minimal Coordinates
+
+`X(0)` implies zero configuration, while `X(q)` implies a value at a given
+configuration.
+
+The following are two contrasting interpretations of specifying a parent link
+`P` and child link `C`, connected by joint `J` at `Jp` and `Jc`, respectively,
+with configuration-dependent transform `X_JpJc(q)`, with `X_JpJc(0) = I`.
+
+* Maximal (Absolute) Coordinates:
+    * Add `P` at initial pose `X_MP(0)`, `C` at initial pose `X_MC(0)`
+    * Add `J` at `X_MJ(0)`, connect:
+        * `P` at `X_PJp` (`X_PM(0) * X_MJ(0)`)
+        * `C` at `X_CJc` (`X_PC(0) * X_MC(0)`)
+* Minimal (Relative) Coordinates:
+    * Add `P` and `C`; their poses are ignored unless they have a meaningful
+    parent (e.g. a weld or other joint)
+    * Add `J`, connect:
+        * `P` at `X_PJp`
+        * `C` at `X_CJc`
+    * `X_MP(q)` is driven by parent relationships
+    * `X_MC(q)` is driven by `X_MP(q) * X_PJp * X_JpJc(q) * X_JcC`.
