@@ -142,6 +142,8 @@ affixed to the child link.
 Similarly, a frame `Jp` is rigidly affixed to the parent body.
 These frames are illustrated in the following figure.
 
+<!-- Figure Credit: Alejandro Castro -->
+
 [[file:joint_frames.svg|600px]]
 
 The pose of frame `Jp` in `P` is not specified explicitly but is inferred
