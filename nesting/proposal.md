@@ -88,7 +88,7 @@ Proposed welding semantics, with somma dat nesting:
     <!-- Arm + Electric Flange + Gripper -->
     <model name="robot_1">
         <include file="arm.sdf">
-            <name>amr</name>
+            <name>arm</name>
             <pose>{X_MR1}</pose>
         </include>
         <include file="flange_electric">
