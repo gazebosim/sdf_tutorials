@@ -75,7 +75,7 @@
       <skill>advanced</skill>
     </tutorial>
 
-    <tutorial title="Nesting: Proposal" ref='nesting_proposal'>
+    <tutorial title="Nesting: Proposal" ref='nesting_proposal' type='proposal'>
       <markdown version="2.0">nesting/proposal.md</markdown>
       <description>Defining semantics of model nesting.</description>
       <tags>
