@@ -146,8 +146,6 @@ attached link).
 
 No other elements can specify a frame.
 
-TODO(eric): What about `//world/frame`?
-
 ### Frames and Parent Link Semantics
 
 As mentioned above, specifying a `<frame/>` implies having a parent link and a
@@ -683,6 +681,24 @@ joint's pose by default w.r.t. the child link, it is proposed to make the
 joint's implicit frame coincide with `Jc`, and thus be affixed to the child
 link.
 
+### Open Question: Purely Kinematic Models
+
+This document may implicitly permit a model that is purely kinematic, or rather,
+defined purely as frames, relative to the model frame.
+
+Opinions:
+
+* Eric: I am in favor of this, as it is useful for gripper or camera offsets
+that may admit other welding afterwards.
+    * For gripper offsets, it is true that these may be actual physical bodies;
+    I am fine with them being as such, as long as people don't put crappy /
+    useless inertial values there. If they do, then it's more or less abuse.
+    * However: Due to the current state of using absolute coordinates, and thus
+    only permitting frame welding via joints, there is no mechanism to support
+    purely kinematic welding. We should really fix this.
+    Perhaps if we define some mechanism to place a model's initial pose, and
+    permit external specification of frame fixturing?
+
 ### Future Proposal: Canonical Frames
 
 A future proposal will address nested models and model composition, which
@@ -746,7 +762,51 @@ the parent tag.
       </frame>
     </model>
 
-## Addendum: Model Building, Contrast Maximal vs Minimal Coordinates
+## Future Proposal: Scoping Limitations
+
+For simplicity, this should start out with a conservative level of scoping
+access, to permit functional encapsulation.
+
+This conservative scoping shall be a constraint on which "direction" a frame
+can be referred to: a parent element can "dig into" a child element's frame;
+however, a child element cannot access its parent element frame.
+
+The motivation for this is that supporting `//pose[@frame]` implicates some
+level of "encompassed" parsing; that is, in a `//model` instance, almost all
+frames should be known.
+
+If global references are to be permitted, then this would force composition be
+driven through SDFormat, which can be seen as a severe limitation. More
+concretely, if one model file can reference "up" in the hierarchy, then the
+semantics of that model is completely entangled with its context, and permits
+its reuse elsewhere.
+
+All frames should be considered relative to the encompassing element, and thus
+for a `//model`, all initial poses should ultimately be rendered relative to
+the initial model pose. A model should not have access to a global "world" frame
+beyond it's own relative scope. Rationale:
+
+* It *really* complicates parsing. To accurately process a model, a user must
+now track all frames and cycles *for the entirety* of world creation. Due to use
+of absolute coordinates, *no* valid relative poses could be computed until the
+very end.
+* If a model is permitted to go "up" and leak out of encapsulation, then that
+model can *never* be used in a situation where it might be attached elsewhere.
+(This has been a pain point in Drake with IIWA models being grounded, using
+`//joint/parent = "world"`.)
+
+If a user needs a model fixtured to world, and needs to incorporate offsets into
+that fixture, that should be *in the context of application*, and not be
+permissible in the model file itself. Has a very explicitly defined scenario for
+welding a body to the ground at a specific pose, then they be in the practice of
+specifying the scenario as a `//world` element.
+
+### Followup: Restrict World-Welding Joints to `//world/joint`, not `//model/joint`
+
+See above: This admits more explicit denotation of encapsulation, and promotes
+better usage.
+
+## Addendum: Model Building, Contrast Model-Absolute vs Element-Relative Coordinates
 
 `X(0)` implies zero configuration, while `X(q)` implies a value at a given
 configuration.
@@ -755,12 +815,12 @@ The following are two contrasting interpretations of specifying a parent link
 `P` and child link `C`, connected by joint `J` at `Jp` and `Jc`, respectively,
 with configuration-dependent transform `X_JpJc(q)`, with `X_JpJc(0) = I`.
 
-* Maximal (Absolute) Coordinates:
+* Model-Absolute Coordinates:
     * Add `P` at initial pose `X_MP(0)`, `C` at initial pose `X_MC(0)`
     * Add `J` at `X_MJ(0)`, connect:
         * `P` at `X_PJp` (`X_PM(0) * X_MJ(0)`)
         * `C` at `X_CJc` (`X_PC(0) * X_MC(0)`)
-* Minimal (Relative) Coordinates:
+* Element-Relative Coordinates:
     * Add `P` and `C`; their poses are ignored unless they have a meaningful
     parent (e.g. a weld or other joint)
     * Add `J`, connect:
