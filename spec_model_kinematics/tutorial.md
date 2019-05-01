@@ -214,7 +214,7 @@ with the following image and a corresponding URDF snippet:
         <origin xyz="{xyz_PJc}" rpy="{rpy_PJc}" />
         <parent link="Parent"/>
         <child link="Child"/>
-        <axis xyz="{xyz_axis_Jc}" />
+        <axis xyz="{xyz_axis_Jp}" />
       </joint>
     </robot>
 
