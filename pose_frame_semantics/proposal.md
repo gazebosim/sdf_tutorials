@@ -148,11 +148,14 @@ the name of the joint.
 
 ### Explicit frames defined by `<frame>`
 
-To simplify the process of referring to the link frame defined by the
+A frame can be explicitly defined using the `<frame>` element, which has
+`name` and `affixed_to` attributes, and a child `<pose>` element.
+For example, the following snippet defines a frame `F` affixed to
+frame `A` with pose offset `X_AF`.
 
-Links and joints have implicit frames with the same name
-
-### `<pose frame=''>` attribute
+    <frame name="F" affixed_to="A">
+      <pose>{X_AF}</pose>
+    </frame>
 
 ### Valid `<frame/>` Usages
 
@@ -162,6 +165,31 @@ Links and joints have implicit frames with the same name
 * `//link/frame`
 
 No other elements can specify a frame.
+
+For example, the following model contains link `L1` and frames `F1` and `F2`
+that are both affixed to link `L1`.
+
+    <model name="m">
+
+      <link name="L1"/>
+
+      <frame name="F1" affixed_to="L1">
+        <pose>{X_L1F1}</pose>
+      </frame>
+
+      <frame name="F2" affixed_to="F1">
+        <pose>{X_F1F2}</pose>
+      </frame>
+
+    </model>
+
+### Explicit frames defined by `<frame>`
+
+To simplify the process of referring to the link frame defined by the
+
+Links and joints have implicit frames with the same name
+
+### `<pose frame=''>` attribute
 
 ### Frames and Parent Link Semantics
 
