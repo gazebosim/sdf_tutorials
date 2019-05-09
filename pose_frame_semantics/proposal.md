@@ -123,7 +123,7 @@ below.
     </model>
     ```
 
-## `<pose frame=''>` attribute
+## Frames
 
 A frame consists of its affixed link (mobilized body) and an offset w.r.t. that
 affixed link's origin coordinate frame. Adding a new frame to an existing frame
@@ -137,41 +137,26 @@ physical attachments (e.g. specify a camera frame in a model to be used for
 inverse kinematics or visual servoing, without the need to also know the
 attached link).
 
-### Valid `<frame/>` Usages
+### `<frame>` and `<pose frame=''>`
+
+In all situations, `//pose[@frame]` indicates the frame that a pose is expressed
+to, but does not define the link it is affixed to.
+
+To specify the affixed-to link, you must specify `//frame[@affixed_to]`. Some
+notes about this attribute:
+
+* This will affect the default value of `//frame/pose[@frame]`
+* `//frame[@affixed_to]` may have restricted semantics in certain contexts.
 
 `<frame/>` can only appear in the following contexts:
 
-* `//model/frame`
-* `//link/frame`
+* `//model/frame` - can specify any `@affixed_to` frame
+* `//link/frame` - can *not* specify `@affixed_to` frame, as it will be affixed
+to the given link element.
 
-No other elements can specify a frame.
-
-### Frames and Parent Link Semantics
-
-As mentioned above, specifying a `<frame/>` implies having a parent link and a
-pose relative to this link. Due to SDFormat using maximal coordinates (see
-Addendum below), it is important to distinguish when a frame's link is (a)
-determined by its parent element's semantics or (b) is explicitly specified by
-the `//pose[@frame]` attribute.
-
-The following usages imply case (a), where the maximal (initial) position of
-the frame is specified, but the parent link is left up to the individual
-elements:
-
-* `//model/pose[@frame]` - dictates initial pose; affixed-to link determined by
-joint connections ??? (**TODO**: requires canonical link discussion)
-* `//link/pose[@frame]` - dictates initial pose; affixed-to link is always the
-given link
-* `//link/frame/pose[@frame]` - dictactes initial pose; affixed-to link is
-always the given link
-* `//joint/pose[@frame]` - dictates initial pose; ... (**TODO(eric)** should we permit joints to have explicit frames?)
-
-The *ONLY* frame specification that determines the parent link is:
-
-* `//model/frame/pose[@frame]` - dictates initial pose *AND* affixed-to link
-
-This permits model-scope frame abstraction, as mentioned above, while keeping
-in line with existing maximal coordinates modeling.
+**TODO(eric)**: How to explicitly refer the model's canonical frame (e.g.
+default `//model/pose[@frame]`) to counter the implicit behavior of
+`@affixed_to`? 
 
 ### Example: Parity with URDF
 
@@ -369,25 +354,19 @@ in the previous section.
 
     <model name="model">
 
-      <frame name="joint1_frame">
-        <pose frame="link1">{xyz_L1L2} {rpy_L1L2}</pose>
+      <frame name="joint1_frame" affixed_to="link1">
+        <pose>{xyz_L1L2} {rpy_L1L2}</pose>
       </frame>
-      <frame name="joint2_frame">
-        <pose frame="link1">{xyz_L1L3} {rpy_L1L3}</pose>
+      <frame name="joint2_frame" affixed_to="link1">
+        <pose>{xyz_L1L3} {rpy_L1L3}</pose>
       </frame>
-      <frame name="joint3_frame">
-        <pose frame="link3">{xyz_L3L4} {rpy_L3L4}</pose>
+      <frame name="joint3_frame" affixed_to="link3">
+        <pose>{xyz_L3L4} {rpy_L3L4}</pose>
       </frame>
 
-      <frame name="link2_frame">
-        <pose frame="joint1" />
-      </frame>
-      <frame name="link3_frame">
-        <pose frame="joint2" />
-      </frame>
-      <frame name="link4_frame">
-        <pose frame="joint3" />
-      </frame>
+      <frame name="link2_frame" affixed_to="joint1"/>
+      <frame name="link3_frame" affixed_to="joint2"/>
+      <frame name="link4_frame" affixed_to="jonit3"/>
 
       <link name="link1"/>
 
@@ -712,7 +691,7 @@ implicit frames that may be referenced from `<pose frame=''>` by the name of
 the parent tag.
 
     <model name="implicit_frame_names">
-      <frame name="model_frame_name">
+      <frame name="model_frame_name">  <!-- TODO: What is the equivalent `affixed_to` value? -->
         <pose/>
       </frame>
 
