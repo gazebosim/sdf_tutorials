@@ -123,10 +123,11 @@ below.
     </model>
     ```
 
-## `<pose frame=''>` attribute
+## Definition of a frame
 
-A frame consists of its affixed link (mobilized body) and an offset w.r.t. that
-affixed link's origin coordinate frame. Adding a new frame to an existing frame
+A frame consists of its name, an affixed link (mobilized body) and a pose offset
+w.r.t. that affixed link's origin coordinate frame.
+Affixing a new frame to an existing frame
 implies that the new frame's affixed link will be its parent frame's affixed
 link, incorporating the parent frame's offset in its own offset.
 
@@ -136,6 +137,22 @@ then add an object to the top-left-back corner), and can be used to abstract
 physical attachments (e.g. specify a camera frame in a model to be used for
 inverse kinematics or visual servoing, without the need to also know the
 attached link).
+
+### Implicit frames for links and joints
+
+Each link has an implicit frame affixed to itself at the offset specified
+in the `<pose>` tag that can be referenced using the name of the link.
+Likewise, each joint has an implicit frame (`Jc`) affixed to the child link
+at the offset specified by the `<pose>` tag that can be referenced using
+the name of the joint.
+
+### Explicit frames defined by `<frame>`
+
+To simplify the process of referring to the link frame defined by the
+
+Links and joints have implicit frames with the same name
+
+### `<pose frame=''>` attribute
 
 ### Valid `<frame/>` Usages
 
@@ -158,11 +175,11 @@ The following usages imply case (a), where the maximal (initial) position of
 the frame is specified, but the parent link is left up to the individual
 elements:
 
-* `//model/pose[@frame]` - dictates initial pose; parent link determined by
+* `//model/pose[@frame]` - dictates initial pose; affixed-to link determined by
 joint connections
-* `//link/pose[@frame]` - dictates initial pose; parent link determined by
-joint connections
-* `//link/frame/pose[@frame]` - dictactes initial pose; parent link is always
+* `//link/pose[@frame]` - dictates initial pose; affixed-to link is always
+the given link
+* `//link/frame/pose[@frame]` - dictactes initial pose; affixed-to link is always
 the given link
 * `//joint/pose[@frame]` - dictates initial pose; ???
     * TODO(eric) should we permit joints to have explicit frames???
@@ -370,24 +387,24 @@ in the previous section.
 
     <model name="model">
 
-      <frame name="joint1_frame">
-        <pose frame="link1">{xyz_L1L2} {rpy_L1L2}</pose>
+      <frame name="joint1_frame" affixed_to="link1">
+        <pose>{xyz_L1L2} {rpy_L1L2}</pose>
       </frame>
-      <frame name="joint2_frame">
-        <pose frame="link1">{xyz_L1L3} {rpy_L1L3}</pose>
+      <frame name="joint2_frame" affixed_to="link1">
+        <pose>{xyz_L1L3} {rpy_L1L3}</pose>
       </frame>
-      <frame name="joint3_frame">
-        <pose frame="link3">{xyz_L3L4} {rpy_L3L4}</pose>
+      <frame name="joint3_frame" affixed_to="link3">
+        <pose>{xyz_L3L4} {rpy_L3L4}</pose>
       </frame>
 
-      <frame name="link2_frame">
-        <pose frame="joint1" />
+      <frame name="link2_frame" affixed_to="joint1>
+        <pose />
       </frame>
-      <frame name="link3_frame">
-        <pose frame="joint2" />
+      <frame name="link3_frame" affixed_to="joint2">
+        <pose />
       </frame>
-      <frame name="link4_frame">
-        <pose frame="joint3" />
+      <frame name="link4_frame" affixed_to="joint3">
+        <pose />
       </frame>
 
       <link name="link1"/>
