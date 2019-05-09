@@ -677,6 +677,29 @@ that may admit other welding afterwards.
     Perhaps if we define some mechanism to place a model's initial pose, and
     permit external specification of frame fixturing?
 
+Motivating Example: Scene-fixed camera calibration results - frames only
+
+    <!-- Scene cameras: `M` will be affixed to some world-affixed frame -->
+    <model name="camera_calibration_scene_fixed">
+      <frame name="camera_001_rgb">
+        <pose>{X_MC1}</pose>
+      </frame>
+      <frame name="camera_001_depth" affixed_to="camera_001_rgb">
+        <pose>{X_C1D}</pose>
+      </frame>
+      <!-- ... -->
+    </model>
+
+    <!-- Wrist cameras: `M` will be affixed to wrist -->
+    <model name="camera_calibration_scene_fixed">
+      <frame name="camera_011_rgb">
+        <pose>{X_MC11}</pose>
+      </frame>
+      <frame name="camera_011_depth" affixed_to="camera_011_rgb">
+        <pose>{X_C11D}</pose>
+      </frame>
+    </model>
+
 ### Future Proposal: Canonical Frames
 
 A future proposal will address nested models and model composition, which
