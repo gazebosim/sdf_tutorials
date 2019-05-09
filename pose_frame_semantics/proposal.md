@@ -158,18 +158,17 @@ The following usages imply case (a), where the maximal (initial) position of
 the frame is specified, but the parent link is left up to the individual
 elements:
 
-* `//model/pose[@frame]` - dictates initial pose; parent link determined by
-joint connections
-* `//link/pose[@frame]` - dictates initial pose; parent link determined by
-joint connections
-* `//link/frame/pose[@frame]` - dictactes initial pose; parent link is always
-the given link
-* `//joint/pose[@frame]` - dictates initial pose; ???
-    * TODO(eric) should we permit joints to have explicit frames???
+* `//model/pose[@frame]` - dictates initial pose; affixed-to link determined by
+joint connections ??? (**TODO**: requires canonical link discussion)
+* `//link/pose[@frame]` - dictates initial pose; affixed-to link is always the
+given link
+* `//link/frame/pose[@frame]` - dictactes initial pose; affixed-to link is
+always the given link
+* `//joint/pose[@frame]` - dictates initial pose; ... (**TODO(eric)** should we permit joints to have explicit frames?)
 
 The *ONLY* frame specification that determines the parent link is:
 
-* `//model/frame/pose[@frame]` - dictates initial pose *AND* parent link
+* `//model/frame/pose[@frame]` - dictates initial pose *AND* affixed-to link
 
 This permits model-scope frame abstraction, as mentioned above, while keeping
 in line with existing maximal coordinates modeling.
