@@ -127,8 +127,50 @@ Proposed welding semantics, with somma dat nesting:
 </model>
 ```
 
-### Open Questions
+### Open Question: Overriding canonical frame?
 
-*   `<include/>` should or should not be able to override canonical frame?
-    * Care should be taken to enusre this does not alter the affixed-to
-    semantics of model-defined frames.
+`<include/>` should or should not be able to override canonical frame?
+
+* Care should be taken to enusre this does not alter the affixed-to
+semantics of model-defined frames.
+
+### Open Question: Purely Kinematic Models
+
+This document may implicitly permit a model that is purely kinematic, or rather,
+defined purely as frames, relative to the model frame.
+
+Opinions:
+
+* Eric: I am in favor of this, as it is useful for gripper or camera offsets
+that may admit other welding afterwards.
+    * For gripper offsets, it is true that these may be actual physical bodies;
+    I am fine with them being as such, as long as people don't put crappy /
+    useless inertial values there. If they do, then it's more or less abuse.
+    * However: Due to the current state of using absolute coordinates, and thus
+    only permitting frame welding via joints, there is no mechanism to support
+    purely kinematic welding. We should really fix this.
+    Perhaps if we define some mechanism to place a model's initial pose, and
+    permit external specification of frame fixturing?
+
+Motivating Example: Scene-fixed camera calibration results - frames only
+
+    <!-- Scene cameras: `M` will be affixed to some world-affixed frame -->
+    <model name="camera_calibration_scene_fixed">
+      <frame name="camera_001_rgb">
+        <pose>{X_MC1}</pose>
+      </frame>
+      <frame name="camera_001_depth" affixed_to="camera_001_rgb">
+        <pose>{X_C1D}</pose>
+      </frame>
+      <!-- ... -->
+    </model>
+
+    <!-- Wrist cameras: `M` will be affixed to wrist -->
+    <model name="camera_calibration_scene_fixed">
+      <frame name="camera_011_rgb">
+        <pose>{X_MC11}</pose>
+      </frame>
+      <frame name="camera_011_depth" affixed_to="camera_011_rgb">
+        <pose>{X_C11D}</pose>
+      </frame>
+    </model>
