@@ -104,6 +104,23 @@ You cannot achieve the above by defining the weld in the gripper itself:
 
 `<insert text from pro-pose-al>`
 
+### Suggestion: Make Your Model an "API"
+
+Your model is effectively an "API" of sorts. It has publicly referencable
+links, joints, frames, and possibly sub-models.
+
+As such, you should consider levels of abstraction; use frames frequently,
+especially for mounting points. If that mounting point physically moves at some
+point, you update your model, and any downstream references can be left
+untouched.
+
+If you need to use intermediate frames that are not intended to be used for
+public consumption, please prefix them with a single `_`, like Python.
+
+*TODO(eric): For the abstraction argument, //joint/parent and //joint/child
+should really be able to refer to a link - then a frame can be used completely
+for abstraction!*
+
 ### Element Nesting
 
 Within a single `//model`, there should only be *one* level of nesting. Thus,
