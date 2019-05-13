@@ -6,7 +6,8 @@ functionality, with possible changes...
 At present, SDFormat adds an `<include/>` tag. However, it has the following
 design issues:
 
-1.   Encapsulation, Lifetime: There is no specification on how encapsulated an included file should be, and at what stage of construction inclusion is permitted.
+1.   Encapsulation: There is no specification on how encapsulated an included
+file should be, and at what stage of construction inclusion is permitted.
     * Can the included file refer to joints that it does not define?
         * Example: Adding a gripper to an IIWA. There may be a weld pose based on the pneumatic or electric flange.
     * It is useful to encode frame offsets.
@@ -14,23 +15,90 @@ design issues:
     * This is being addressed in the [Pose Frame Semantics Proposal PR](https://bitbucket.org/osrf/sdf_tutorials/pull-requests/7/pose-frame-semantics-proposal-for-new/diff)
 3.   SDFormat requires that included models be converted to SDFormat (e.g. including an URDF). This may prevent software packages from doing more complex composition where there may not be an exact mapping to SDFormat, or where this conversion is excessive overhead.
 
-## Lifetime
-
-For this aspect, the goal of this proposal is meant to permit the following:
-
-* Adding models *after other models have been processed*
-    * This is achievable with current implementation of Gazebo, and with
-    partially-conformant implementation of Drake. However, with new proposals
-    for `//pose[@frame]` semantics, and the desire to stick with model-absolute
-    coordinates, this may become more nuanced when referring to frames in a
-    model.
-    * This permits SDFormat to be a *non-viral* format, e.g. a library developer
-    does not have to try and implement a mechanism to convert to some holisitc
-    SDFormat IR, or their own incantation thereof.
-
 ## Encapsulation
 
-In order to simplify, `<insert text from pro-pose-al>`
+For this aspect, the goal of this proposal is meant to permit adding models
+either inside of a file, or after other models have been processed.
+
+* This is achievable with current implementation of Gazebo, and with
+partially-conformant implementation of Drake. However, with new proposals
+for `//pose[@frame]` semantics, and the desire to stick with model-absolute
+coordinates, this may become more nuanced when referring to frames in a
+model.
+* This permits SDFormat to be a *non-viral* format, e.g. a library developer
+does not have to try and implement a mechanism to convert to some holisitc
+SDFormat IR, or their own incantation thereof.
+
+### Model File Completeness
+
+A program should be able to load any *single file* on its own, with its declared dependencies being present (like Python modules).
+
+All initially specified `//pose` elements will be rigidly related to one
+another. You cannot refer to elements that do not exist inside that file.
+
+The goal here here is to keep things simple from a parsing perspective,
+especially for using model-absolute coordinate specification.
+
+### Positive Example
+
+If composing and welding an arm and a gripper:
+
+    ~~~
+    <-- arm.sdf -->
+    <model name="arm">
+        <link name="body"/>
+    </model>
+    ~~~
+
+    ~~~
+    <-- gripper.sdf -->
+    <model name="gripper">
+        <link name="body"/>
+    </model>
+    ~~~
+
+    ~~~
+    <model name="arm_and_gripper">
+        <include file="arm.sdf"/>
+        <include file="gripper.sdf">
+            <pose frame="arm">{X_AG}</pose>
+        </include>
+        <joint name="weld" type="fixed">
+            <parent>arm/body</parent>
+            <child>gripper/body</child>
+        </joint>
+    </model>
+    ~~~
+
+### Negative Example
+
+You cannot achieve the above by defining the weld in the gripper itself:
+
+    ~~~
+    <-- arm.sdf: Same as above. -->
+    ~~~
+
+    ~~~
+    <-- gripper_with_weld.sdf -->
+    <model name="gripper">
+        <pose>{X_AG}</pose>
+        <link name="gripper">
+        <joint name="weld" type="fixed">
+            <parent>arm/body</parent> <!-- INVALID: Does not exist in this file -->
+            <child>gripper/body</child>
+        </joint>
+    </model>
+    ~~~
+
+    ~~~
+    <model name="arm_and_gripper">
+        <include file="arm.sdf"/>
+        <include file="gripper_with_weld.sdf"/>
+    </model>
+    ~~~
+
+<!-- TODO(eric): Will this mess up Anzu workflows? Should there be some sort of
+     specification welding? Perhaps along the lines of kinematic models? -->
 
 ## Naming Semantics
 
@@ -154,12 +222,9 @@ Proposed welding semantics, with somma dat nesting:
 </model>
 ```
 
-### Open Question: Overriding canonical frame?
+### Open Question: Overriding canonical link
 
-`<include/>` should or should not be able to override canonical frame?
-
-* Care should be taken to enusre this does not alter the affixed-to
-semantics of model-defined frames.
+`<include/>` *should not* be able to override canonical link.
 
 ### Open Question: Purely Kinematic Models
 
