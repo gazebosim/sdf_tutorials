@@ -104,18 +104,23 @@ You cannot achieve the above by defining the weld in the gripper itself:
 
 `<insert text from pro-pose-al>`
 
-## Example: Alterate Formulation of Abstract Case
+### Element Nesting
 
-From pose semantics:
+Within a single `//model`, there should only be *one* level of nesting. Thus,
+there is no complication of inter-element ambiguity, or multiple levels of
+scope resolution.
 
-An alternate formulation, placing `X_PJp` inside of the link element:
+*TODO(eric): Update this if we permit //link/frame... but the more I write, the
+more I strongly dislike adding complexity solely for the sake of sugar...*
+
+For example, an atlernative formulation to the abstract frame placement, placing
+`X_PJp` relative to the link element.
 
     <model name="abstract_joint_frames">
-      <link name="parent">
-        <frame name="j1">
-          <pose>{X_PJp}</pose>
-        </frame>
-      </link>
+      <link name="parent"/>
+      <frame name="parent_j1" affixed_to="parent">
+        <pose>{X_PJp}</pose>
+      </frame>
       <joint name="joint1">
         <pose frame="parent/j1"/>
         <parent>parent</parent>
@@ -130,6 +135,14 @@ An alternate formulation, placing `X_PJp` inside of the link element:
 **TODO**: See discussion: https://bitbucket.org/osrf/sdf_tutorials/pull-requests/14/pose-frame-semantics-suggested-semantics/activity#comment-100143077
 
 *   Determine explicit semantics about references for `//link/frame`
+
+### Model Nesting: Cross-`//model` referencing
+
+For a single file that has nested models, each model can reference each other's
+frames, links, or joints:
+
+*TODO(eric): Make example of this. This will inform what the complications
+might be for //link/frame.*
 
 ## Example: Robot Arm with Gripper
 
@@ -266,3 +279,5 @@ Motivating Example: Scene-fixed camera calibration results - frames only
         <pose>{X_C11D}</pose>
       </frame>
     </model>
+
+*TODO(eric): As an alternative, make some sort of `//frame_group` tag?*
