@@ -10,13 +10,13 @@ This includes the ability to describe the kinematics of a URDF model
 with an SDF 2.0 file.
 
 **NOTE**: When describing elements or attributes,
-[XPath](https://www.w3schools.com/xml/xpath_syntax.asp) is sometimes to used to
-provide and concise context.
+[XPath](https://www.w3schools.com/xml/xpath_syntax.asp) is used provide
+concise context.
 
 ## Element naming rule: unique names for all sibling elements
 
 <!-- TODO(eric): Move these naming / scoping sections below the actual
-semantics proposals? -->
+semantics proposals. -->
 
 <!-- TODO(eric): These naming rules should stay in this proposal, but should
 then transition to a nesting / scoping proposal once they land. -->
@@ -137,7 +137,7 @@ physical attachments (e.g. specify a camera frame in a model to be used for
 inverse kinematics or visual servoing, without the need to also know the
 attached link).
 
-### `<frame>` and `<pose frame=''>`
+### `//frame` and `//pose[@frame]`
 
 In all situations, `//pose[@frame]` indicates the frame that a pose is expressed
 to, but does not define the link it is affixed to.
@@ -317,7 +317,7 @@ An alternate formulation, placing `X_PJp` inside of the link element:
       </link>
     </model>
 
-## Empty `<pose/>` element implies identity pose
+## Empty `//pose` element implies identity pose
 
 With the use of the `frame` attribute in `<pose>` elements, there are
 many expected cases when a frame is defined relative to another frame
@@ -335,7 +335,7 @@ identity pose, as illustrated by the following pairs of equivalent poses:
 <pose frame='frame_name'>0 0 0 0 0 0</pose>
 ~~~
 
-## `<model><frame>` tag Examples
+## `//model/frame` Examples
 
 The `<frame>` tag was added in version 1.5 of the SDFormat specification,
 though it has seen little use due to the lack of well-defined semantics.
@@ -402,7 +402,7 @@ in the previous section.
 In this case, `joint1_frame` is rigidly affixed to `link1`, `joint3_frame` is
 rigidly affixed to `link3`, etc.
 
-## `<link><frame>` tag Examples
+## `//link/frame` Examples
 
 The `<frame>` tag can also be attached to a link to create a body-fixed frame
 on that link.
@@ -512,10 +512,10 @@ in one place and used by these elements.
       </link>
     </model>
 
-## Referencing a `<link><frame>` from `<model>` scope
+## Referencing a `//link/frame` from `//model` scope
 
 In addition to being useful for organizing elements within a link,
-the `<link><frame>` tags can also be useful at the `<model>` scope.
+the `//link/frame` tags can also be useful at the `//model` scope.
 To refer to a `<frame>` embedded in a `<link>`, use the link name,
 followed by a `/`, followed by the frame name.
 
@@ -566,7 +566,7 @@ separator.
       </link>
     </model>
 
-## Valid parent elements for `<frame>` tags
+## Valid parent elements for `//frame`
 
 In the SDF 1.5 specification, the `<frame>` element was added to many elements
 as a sibling of `<pose>`, but it is not clear that it is useful to allow
@@ -629,9 +629,9 @@ compelling use case is provided for other elements.
       </joint>
     </model>
 
-## Referencing implicit frames in `<pose frame=''>`
+## Referencing implicit frames in `//pose[@frame]`
 
-The `<pose frame=''>` attribute references frames by name.
+The `//pose[@frame]` attribute references frames by name.
 This proposal includes examples for referencing frames created explicitly using
 the `<frame>` tag, as well as referencing the frames implicitly attached to
 `<link>` and `<joint>` tags by name.
