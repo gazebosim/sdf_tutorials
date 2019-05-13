@@ -298,25 +298,6 @@ One representation in SDFormat, placing `X_PJp` inside of the joint element:
       </link>
     </model>
 
-An alternate formulation, placing `X_PJp` inside of the link element:
-
-    <model name="abstract_joint_frames">
-      <link name="parent">
-        <frame name="j1">
-          <pose>{X_PJp}</pose>
-        </frame>
-      </link>
-      <joint name="joint1">
-        <pose frame="parent/j1"/>
-        <parent>parent</parent>
-        <child>child</child>
-      </joint>
-      <link name="child">
-        <pose frame="parent/j1">{X_JcC}</pose>
-        <!-- Or: <pose frame="joint1">{X_JcC}</pose> -->
-      </link>
-    </model>
-
 ## Empty `//pose` element implies identity pose
 
 With the use of the `frame` attribute in `<pose>` elements, there are
