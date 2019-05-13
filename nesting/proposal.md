@@ -171,6 +171,9 @@ Semantics:
 * `//frame[@affixed_to]` can cross
 * `//frame[@affixed_to]` *can* refer to links outside of a given model, as long
 as it
+* `//model[@canonical_link]` *cannot* cross model boundaries
+* The default `//pose[@frame]` will refer to the *closest* enclosing `//model`,
+not the file.
 
 ### Example: Simple Cross-Referencing
 
