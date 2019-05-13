@@ -145,7 +145,7 @@ For example, an atlernative formulation to the abstract frame placement, placing
       </joint>
       <link name="child">
         <pose frame="joint1">{X_JcC}</pose>
-        <!-- Or: <pose frame="parent/j1">{X_JcC}</pose> -->
+        <!-- Or: <pose frame="parent_j1">{X_JcC}</pose> -->
       </link>
     </model>
 
@@ -252,7 +252,7 @@ Proposed welding semantics, with somma dat nesting:
 </model>
 ```
 
-### Open Question: Overriding canonical link
+### Do not permit overriding canonical link
 
 `<include/>` *should not* be able to override canonical link.
 
@@ -298,3 +298,16 @@ Motivating Example: Scene-fixed camera calibration results - frames only
     </model>
 
 *TODO(eric): As an alternative, make some sort of `//frame_group` tag?*
+
+### Open Question: Permit inlined `//include`?
+
+In order to permit different levels of abstraction (e.g. for frame groups, or
+for adding certain collision elements), should it be possible to `//include` an
+element, but dump it into the current scope?
+
+Kind of like `from my_module import *` in Python... which is recommended
+against...
+
+However, it *is* super useful to be able add a set of frames and welding
+semantics... But that would break encapsulation? Should that just be deferred
+to text processing???
