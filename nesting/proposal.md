@@ -1,7 +1,4 @@
-# WIP Model Nesting: Proposal
-
-TODO(eric): Ensure that we have overarching goals for compatiblity but new
-functionality, with possible changes...
+# Model Nesting: Proposal
 
 At present, SDFormat adds an `<include/>` tag. However, it has the following
 design issues:
@@ -100,7 +97,7 @@ You cannot achieve the above by defining the weld in the gripper itself:
 <!-- TODO(eric): Will this mess up Anzu workflows? Should there be some sort of
      specification welding? Perhaps along the lines of kinematic models? -->
 
-## Naming Semantics
+## Naming Syntax and Semantics
 
 `<insert text from pro-pose-al>`
 
@@ -151,20 +148,61 @@ For example, an atlernative formulation to the abstract frame placement, placing
 </model>
 ~~~
 
-**TODO**: See discussion: https://bitbucket.org/osrf/sdf_tutorials/pull-requests/14/pose-frame-semantics-suggested-semantics/activity#comment-100143077
+*TODO(eric): [See discussion](https://bitbucket.org/osrf/sdf_tutorials/pull-requests/14/pose-frame-semantics-suggested-semantics/activity#comment-100143077).
+Determine explicit semantics about references for `//link/frame`.*
 
-*   Determine explicit semantics about references for `//link/frame`
+### Model Nesting: Cross-Referencing
 
-### Model Nesting: Cross-`//model` referencing
+Syntax:
 
-For a single file that has nested models, each model can reference each other's
-frames, links, or joints:
+* There is no "implicit name" resolution; if a name does not exist in a
+requested scope, it is an error.
+* Cross-referencing is only allowed from sibling elements *in the same file*.
+* There are only two types of references allowed, current scope and absolute
+scope. Relative scopes are *not* permitted.
+* Scopes are syntax-based, i.e. defined by file or element composition. Welding
+joints, affixing frames, etc., does not change the scope of an element.
+* Scopes via composition are defined by the *instantiated* (or overriden) model
+name, not the model name specified by the included file.
 
-*TODO(eric): Make example of this. This will inform what the complications
-might be for //link/frame.*
+Semantics:
 
-## Example: Robot Arm with Gripper
+* `//joint/parent` and `//joint/child` can cross model boundaries
+* `//frame[@affixed_to]` can cross
+* `//frame[@affixed_to]` *can* refer to links outside of a given model, as long
+as it
 
+### Example: Simple Cross-Referencing
+
+Consider the following example model, all defined in a single file:
+
+~~~xml
+<model name="parent">
+    <link name="link1"/>
+    <link name="link2"/>
+
+    <model name="child1">
+        <link name="link1">
+            <pose frame="/link1"/>  <!-- VALID: Refers to parent's link1 -->
+            <pose frame="link1"/>  <!-- INVALID: Circular -->
+        </link>
+        <frame name="some_frame">
+            <pose frame="link2"/>  <!-- INVALID: link2 does not exist in /child1 scope -->
+        </frame>
+    </model>
+
+    <model name="child2">
+        <link name="link1">
+            <pose frame="/child1/link1"/>  <!-- VALID: Refers to child1's link1 -->
+        </link>
+    </model>
+</model>
+~~~
+
+This implies that for scoping, it is *extremely* important that the parser to
+know that it's working with a single model file.
+
+### Example: Robot Arm with Gripper
 
 Frames:
 
@@ -242,11 +280,7 @@ Proposed welding semantics, with somma dat nesting:
     <model name="robot_2">
         <include file="arm.sdf">
             <name>arm</name>
-            <!-- N.B. B/c both models live in same file, cross referencing is
-                 fine... ??? -->
-            <!-- Should this be forced to use a relative path?
-                 e.g. ../robot_1/gripper? -->
-            <pose frame="robot_1/gripper">{X_G1R2}</pose>
+            <pose frame="/robot_1/gripper">{X_G1R2}</pose>
         </include>
         <include file="flange_electric">
             <pose frame="arm/flange_fixture"/>
