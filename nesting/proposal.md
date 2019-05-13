@@ -43,59 +43,59 @@ especially for using model-absolute coordinate specification.
 
 If composing and welding an arm and a gripper:
 
-    ~~~
-    <-- arm.sdf -->
-    <model name="arm">
-        <link name="body"/>
-    </model>
-    ~~~
+~~~xml
+<!-- arm.sdf -->
+<model name="arm">
+    <link name="body"/>
+</model>
+~~~
 
-    ~~~
-    <-- gripper.sdf -->
-    <model name="gripper">
-        <link name="body"/>
-    </model>
-    ~~~
+~~~xml
+<!-- gripper.sdf -->
+<model name="gripper">
+    <link name="body"/>
+</model>
+~~~
 
-    ~~~
-    <model name="arm_and_gripper">
-        <include file="arm.sdf"/>
-        <include file="gripper.sdf">
-            <pose frame="arm">{X_AG}</pose>
-        </include>
-        <joint name="weld" type="fixed">
-            <parent>arm/body</parent>
-            <child>gripper/body</child>
-        </joint>
-    </model>
-    ~~~
+~~~xml
+<model name="arm_and_gripper">
+    <include file="arm.sdf"/>
+    <include file="gripper.sdf">
+        <pose frame="arm">{X_AG}</pose>
+    </include>
+    <joint name="weld" type="fixed">
+        <parent>arm/body</parent>
+        <child>gripper/body</child>
+    </joint>
+</model>
+~~~
 
 ### Negative Example
 
 You cannot achieve the above by defining the weld in the gripper itself:
 
-    ~~~
-    <-- arm.sdf: Same as above. -->
-    ~~~
+~~~xml
+<!-- arm.sdf: Same as above. -->
+~~~
 
-    ~~~
-    <-- gripper_with_weld.sdf -->
-    <model name="gripper">
-        <pose>{X_AG}</pose>
-        <link name="gripper">
-        <joint name="weld" type="fixed">
-            <parent>arm/body</parent> <!-- INVALID: Does not exist in this file -->
-            <child>gripper/body</child>
-        </joint>
-    </model>
-    ~~~
+~~~xml
+<!-- gripper_with_weld.sdf -->
+<model name="gripper">
+    <pose>{X_AG}</pose>
+    <link name="gripper">
+    <joint name="weld" type="fixed">
+        <parent>arm/body</parent> <!-- INVALID: Does not exist in this file -->
+        <child>gripper/body</child>
+    </joint>
+</model>
+~~~
 
-    ~~~
-    <model name="arm_and_gripper">
-        <include file="arm.sdf"/>
-        <include file="gripper_with_weld.sdf"/>
-    </model>
-    ~~~
+~~~xml
+<model name="arm_and_gripper">
+    <include file="arm.sdf"/>
+    <include file="gripper_with_weld.sdf"/>
+</model>
+~~~
 
 <!-- TODO(eric): Will this mess up Anzu workflows? Should there be some sort of
      specification welding? Perhaps along the lines of kinematic models? -->
@@ -133,21 +133,23 @@ more I strongly dislike adding complexity solely for the sake of sugar...*
 For example, an atlernative formulation to the abstract frame placement, placing
 `X_PJp` relative to the link element.
 
-    <model name="abstract_joint_frames">
-      <link name="parent"/>
-      <frame name="parent_j1" affixed_to="parent">
-        <pose>{X_PJp}</pose>
-      </frame>
-      <joint name="joint1">
-        <pose frame="parent/j1"/>
-        <parent>parent</parent>
-        <child>child</child>
-      </joint>
-      <link name="child">
-        <pose frame="joint1">{X_JcC}</pose>
-        <!-- Or: <pose frame="parent_j1">{X_JcC}</pose> -->
-      </link>
-    </model>
+~~~xml
+<model name="abstract_joint_frames">
+  <link name="parent"/>
+  <frame name="parent_j1" affixed_to="parent">
+    <pose>{X_PJp}</pose>
+  </frame>
+  <joint name="joint1">
+    <pose frame="parent/j1"/>
+    <parent>parent</parent>
+    <child>child</child>
+  </joint>
+  <link name="child">
+    <pose frame="joint1">{X_JcC}</pose>
+    <!-- Or: <pose frame="parent_j1">{X_JcC}</pose> -->
+  </link>
+</model>
+~~~
 
 **TODO**: See discussion: https://bitbucket.org/osrf/sdf_tutorials/pull-requests/14/pose-frame-semantics-suggested-semantics/activity#comment-100143077
 
@@ -163,14 +165,19 @@ might be for //link/frame.*
 
 ## Example: Robot Arm with Gripper
 
-```xml
-<!-- Frames
-    * L - arm/link
-    * F - flange origin
-    * G - gripper physical origin.
-        * Gm - gripper model origin. Will not be coincident with G.
--->
 
+Frames:
+
+* `L` - arm/link
+* `F` - flange origin
+* `G` - gripper physical origin
+* `Gm` - gripper model origin
+    * For sake of artificial complexity (specification edge cases), will
+    not coincide with `G`.
+
+Files:
+
+~~~xml
 <!-- arm.sdf -->
 <model name="arm">
     <link name="link"/>
@@ -178,7 +185,9 @@ might be for //link/frame.*
       <pose frame="link">{X_LF}</pose>
     </frame>
 </model>
+~~~
 
+~~~xml
 <!-- flange_electric.sdf -->
 <model name="flange">
     <link name="body"/>
@@ -186,7 +195,9 @@ might be for //link/frame.*
       <pose frame="body">{X_FG_electric}</pose>
     </frame>
 </model>
+~~~
 
+~~~xml
 <!-- flange_pneumatic.sdf -->
 <model name="flange">
     <link name="body"/>
@@ -194,7 +205,9 @@ might be for //link/frame.*
       <pose frame="body">{X_FG_pneumatic}</pose>
     </frame>
 </model>
+~~~
 
+~~~xml
 <!-- gripper.sdf -->
 <model name="gripper">
     <link name="gripper"/>
@@ -202,7 +215,7 @@ might be for //link/frame.*
         <pose>{X_GmG}</pose>
     </frame>
 </model>
-```
+~~~
 
 Proposed welding semantics, with somma dat nesting:
 
