@@ -24,55 +24,6 @@ as `//model/link` and the `name` attribute as `//model[@name]`:
       <link/>
     </model>
 
-## Element naming rule: unique names for all sibling elements
-
-<!-- TODO(eric): Move these naming / scoping sections below the actual
-semantics proposals. -->
-
-<!-- TODO(eric): These naming rules should stay in this proposal, but should
-then transition to a nesting / scoping proposal once they land. -->
-
-While it was not explicitly disallowed in previous versions of the spec, it
-can be very confusing when sibling elements of any type have identical names.
-In practice, many models include the element type in the name, whether numbered
-as `link1`/`link2` or used as a suffix `front_right_wheel_joint`
-/ `front_right_steering_joint`, which helps to further ensure name uniqueness
-across element types.
-As such, all named sibling elements must have unique names.
-
-
-~~~
-<sdf version="1.4">
-  <model name="model">
-    <link name="base"/>
-    <link name="attachment"/>
-    <joint name="attachment" type="fixed"> <!-- VALID, but RECOMMEND AGAINST -->
-      <parent>base</parent>
-      <child>attachment</child>
-    </joint>
-  </model>
-</sdf>
-~~~
-
-~~~
-<sdf version="2.0">
-  <model name="model">
-    <link name="base"/>
-    <link name="attachment"/>
-    <joint name="attachment" type="fixed"> <!-- INVALID, sibling link has same name. -->
-      <parent>base</parent>
-      <child>attachment</child>
-    </joint>
-  </model>
-</sdf>
-~~~
-
-There are some existing SDFormat models that may not comply with this new
-requirement. To handle this, a validation tool will be created to identify
-models that violate this stricter naming requirement. Furthermore, the
-specification version will be incremented so that checks can be added when
-converting from older, more permissive versions to the newer, stricter version.
-
 ## Element naming rule: reserved names and escaped characters
 
 * Since `world` has a special interpretation when specified as a parent
@@ -134,10 +85,13 @@ below.
     </model>
     ```
 
-## Definition of a frame
+## Definition of explicit and implicit frames
 
-A frame is defined by a name, an affixed link (mobilized body) and a pose
-with respect to another frame.
+A frame is defined by a name, an affixed link (mobilized body) to which the
+frame is rigidly affixed, and a pose with respect to another frame.
+The pose determines the initial configuration of the frame on the affixed link
+and the frame relative to which it is expressed may be on a different link.
+
 These definitions can be explicitly encoded using the `<frame>` element with
 `//frame[@name]` and `//frame[@affixed_to]` attributes along with a `<pose>`
 element and `//pose[@frame]` attribute.
@@ -148,17 +102,136 @@ link `L` with pose `X_AF` relative to frame `A`.
       <pose frame="A">{X_AF}</pose>
     </frame>
 
-A `<frame>` element can only appear in a `<model>` (`//model/frame`).
-This simplifies the 
-The `//frame/pose[@frame]` attribute defaults to the value of attribute
-`//frame[@affixed_to]`, so the following snippet with `//frame/pose[@frame]`
-omitted is equivalent:
+Since it can be convenient to refer to the link frame specified by
+`//link/pose`, each link is given an implicit frame named after itself and
+affixed to itself.
+Likewise, each joint is given an implicit frame named after itself and affixed
+to the child link based on the pose in `//joint/pose`.
+The `//pose[@frame]` attribute can be used for both link and joint poses to
+specify the frame relative to which the pose is expressed.
 
-    <frame name="F" affixed_to="L">
-      <pose>{X_LF}</pose>
-    </frame>
+As frames are referenced in several attributes by name, it is necessary to
+avoid naming conflicts between frames defined in `//model/frame`,
+`//model/link`, and `//model/joint`.
+This motivates the naming rule proposed in the following section.
 
+## Element naming rule: unique names for all sibling elements
 
+<!-- TODO(eric): These naming rules should stay in this proposal, but should
+then transition to a nesting / scoping proposal once they land. -->
+
+While it was not explicitly disallowed in previous versions of the spec, it
+can be very confusing when sibling elements of any type have identical names.
+In practice, many models include the element type in the name, whether numbered
+as `link1`/`link2` or used as a suffix `front_right_wheel_joint`
+/ `front_right_steering_joint`, which helps to further ensure name uniqueness
+across element types.
+Furthermore, the frame semantics proposed in this document use the names of
+sibling `//model/frame`, `//model/link` and `//model/joint` to refer to frames.
+Thus for the sake of consistency, all named sibling elements must have unique
+names.
+
+~~~
+<sdf version="1.4">
+  <model name="model">
+    <link name="base"/>
+    <link name="attachment"/>
+    <joint name="attachment" type="fixed"> <!-- VALID, but RECOMMEND AGAINST -->
+      <parent>base</parent>
+      <child>attachment</child>
+    </joint>
+  </model>
+</sdf>
+~~~
+
+~~~
+<sdf version="2.0">
+  <model name="model">
+    <link name="base"/>
+    <link name="attachment"/>
+    <joint name="attachment" type="fixed"> <!-- INVALID, sibling link has same name. -->
+      <parent>base</parent>
+      <child>attachment</child>
+    </joint>
+  </model>
+</sdf>
+~~~
+
+There are some existing SDFormat models that may not comply with this new
+requirement. To handle this, a validation tool will be created to identify
+models that violate this stricter naming requirement. Furthermore, the
+specification version will be incremented so that checks can be added when
+converting from older, more permissive versions to the newer, stricter version.
+
+## Details of `//model/frame`
+
+While a `<frame>` element is permitted in many places in sdf 1.5, this proposal
+only permits a `<frame>` element to appear in a `<model>` (`//model/frame`).
+Further details of the attributes of this element are given below.
+
+### The `//model/frame[@name]` attribute
+
+The `//model/frame[@name]` attribute specifies the name of a `<frame>`.
+It is a required attribute, and can be used in the `affixed_to` and
+`//pose[@frame]` attributes to refer to this frame.
+As stated in a previous section, all sibling elements must have unique names to
+avoid ambiguity when referring to frames by name.
+
+    <model name="frame_naming">
+      <frame/>          <!-- INVALID: name attribute is missing. -->
+      <frame name=''/>  <!-- INVALID: name attribute is empty. -->
+      <frame name='A'/> <!-- VALID. -->
+      <frame name='B'/> <!-- VALID. -->
+    </model>
+
+    <model name="nonunique_sibling_frame_names">
+      <frame name='F'/>
+      <frame name='F'/> <!-- INVALID: sibling names are not unique. -->
+    </model>
+
+    <model name="nonunique_sibling_names">
+      <link name='L'/>
+      <frame name='L'/> <!-- INVALID: sibling names are not unique. -->
+    </model>
+
+### The `//model/frame[@affixed_to]` attribute
+
+The `//model/frame[@affixed_to]` attribute specifies the link to which the
+`<frame>` is affixed.
+It is a required attribute and must contain the name of a sibling link or frame.
+If a frame is specified, recursively following the `affixed_to` attributes
+of the specified frames must lead to the name of a link.
+
+    <model name="frame_affixing">
+      <link name="L"/>
+      <frame name="F1" affixed_to="L"/>   <!-- VALID: Directly affixed_to link L. -->
+      <frame name="F2" affixed_to="F1"/>  <!-- VALID: Indirectly affixed_to link L via frame F1. -->
+      <frame name="F3" affixed_to="A"/>   <!-- INVALID: no frame or link named A. -->
+    </model>
+
+    <model name="joint_affixing">
+      <link name="P"/>
+      <link name="C"/>
+      <joint name="J" type="fixed">
+        <parent>P</parent>
+        <child>P</child>
+      </joint>
+      <frame name="F1" affixed_to="P"/>   <!-- VALID: Directly affixed_to link P. -->
+      <frame name="F2" affixed_to="C"/>   <!-- VALID: Directly affixed_to link C. -->
+      <frame name="F3" affixed_to="J"/>   <!-- VALID: Indirectly affixed_to link C via joint J. -->
+      <frame name="F4" affixed_to="F3"/>  <!-- VALID: Indirectly affixed_to link C via frame F3. -->
+    </model>
+
+    <model name="frame_affixing_cycle">
+      <link name="L"/>
+      <frame name="F1" affixed_to="F2"/>
+      <frame name="F2" affixed_to="F1"/>  <!-- INVALID: cycle in affixed_to graph does not lead to link. -->
+    </model>
+
+## The `//pose[@frame]` attribute
+
+The value of the `//model/frame/pose` element specifies the pose of the frame
+relative to the frame specified in the `//model/frame/pose[@frame]`
 Affixing a new frame to an existing frame
 implies that the new frame's affixed link will be its parent frame's affixed
 link, incorporating the parent frame's offset in its own offset.
