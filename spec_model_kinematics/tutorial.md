@@ -12,7 +12,7 @@ and `<pose>` tags, which can be briefly summarized as:
 SDFormat links, joints, and models each have their own coordinate frames that
 can be offset using the `<pose>` tag.
 See the
-[previous tutorial](http://sdformat.org/tutorials?tut=specify_pose&cat=specification)
+[previous tutorial](/tutorials?tut=specify_pose)
 about specifying poses for more detail on the `<pose>` tag.
 
 ## `<model>`
@@ -196,7 +196,7 @@ The kinematic topology of a URDF file must be a tree with no closed
 kinematic loops, and frames are defined recursively along each chain of
 links and joints.
 As discussed in the
-[previous tutorial](http://sdformat.org/tutorials?tut=specify_pose&cat=specification),
+[previous tutorial](/tutorials?tut=specify_pose),
 the `<origin>` tag is the URDF analog of the SDFormat `<pose>`.
 The joint origin defines the pose `X_PJp` of the joint frame `Jp` in the parent
 link frame.
