@@ -10,13 +10,21 @@ This includes the ability to describe the kinematics of a URDF model
 with an SDF 2.0 file.
 
 **NOTE**: When describing elements or attributes,
-[XPath](https://www.w3schools.com/xml/xpath_syntax.asp) is sometimes to used to
-provide and concise context.
+[XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp) is used provide
+concise context.
+For example, a single `<model>` tag is referred to as `//model` using XPath.
+It is even more concise for referring to nested tags and attributes.
+In the following example, the `<link>` inside the `<model>` tag is referenced
+as `//model/link` and the `name` attribute as `//model[@name]`:
+
+    <model name="model_name">
+      <link/>
+    </model>
 
 ## Element naming rule: unique names for all sibling elements
 
 <!-- TODO(eric): Move these naming / scoping sections below the actual
-semantics proposals? -->
+semantics proposals. -->
 
 <!-- TODO(eric): These naming rules should stay in this proposal, but should
 then transition to a nesting / scoping proposal once they land. -->
@@ -123,7 +131,7 @@ below.
     </model>
     ```
 
-## Definition of a frame
+## Frames
 
 A frame consists of its name, an affixed link (mobilized body) and a pose offset
 w.r.t. that affixed link's origin coordinate frame.
@@ -157,12 +165,22 @@ frame `A` with pose offset `X_AF`.
       <pose>{X_AF}</pose>
     </frame>
 
-### Valid `<frame/>` Usages
+### `//frame` and `//pose[@frame]`
+
+In all situations, `//pose[@frame]` indicates the frame that a pose is expressed
+to, but does not define the link it is affixed to.
+
+To specify the affixed-to link, you must specify `//frame[@affixed_to]`. Some
+notes about this attribute:
+
+* This will affect the default value of `//frame/pose[@frame]`
+* `//frame[@affixed_to]` may have restricted semantics in certain contexts.
 
 `<frame/>` can only appear in the following contexts:
 
-* `//model/frame`
-* `//link/frame`
+* `//model/frame` - can specify any `@affixed_to` frame
+* `//link/frame` - can *not* specify `@affixed_to` frame, as it will be affixed
+to the given link element.
 
 No other elements can specify a frame.
 
@@ -189,34 +207,9 @@ To simplify the process of referring to the link frame defined by the
 
 Links and joints have implicit frames with the same name
 
-### `<pose frame=''>` attribute
-
-### Frames and Parent Link Semantics
-
-As mentioned above, specifying a `<frame/>` implies having a parent link and a
-pose relative to this link. Due to SDFormat using maximal coordinates (see
-Addendum below), it is important to distinguish when a frame's link is (a)
-determined by its parent element's semantics or (b) is explicitly specified by
-the `//pose[@frame]` attribute.
-
-The following usages imply case (a), where the maximal (initial) position of
-the frame is specified, but the parent link is left up to the individual
-elements:
-
-* `//model/pose[@frame]` - dictates initial pose; affixed-to link determined by
-joint connections ??? (**TODO**: requires canonical link discussion)
-* `//link/pose[@frame]` - dictates initial pose; affixed-to link is always the
-given link
-* `//link/frame/pose[@frame]` - dictactes initial pose; affixed-to link is
-always the given link
-* `//joint/pose[@frame]` - dictates initial pose; ... (**TODO(eric)** should we permit joints to have explicit frames?)
-
-The *ONLY* frame specification that determines the parent link is:
-
-* `//model/frame/pose[@frame]` - dictates initial pose *AND* affixed-to link
-
-This permits model-scope frame abstraction, as mentioned above, while keeping
-in line with existing maximal coordinates modeling.
+**TODO(eric)**: How to explicitly refer the model's canonical frame (e.g.
+default `//model/pose[@frame]`) to counter the implicit behavior of
+`@affixed_to`? 
 
 ### Example: Parity with URDF
 
@@ -377,7 +370,7 @@ An alternate formulation, placing `X_PJp` inside of the link element:
       </link>
     </model>
 
-## Empty `<pose/>` element implies identity pose
+## Empty `//pose` element implies identity pose
 
 With the use of the `frame` attribute in `<pose>` elements, there are
 many expected cases when a frame is defined relative to another frame
@@ -395,7 +388,7 @@ identity pose, as illustrated by the following pairs of equivalent poses:
 <pose frame='frame_name'>0 0 0 0 0 0</pose>
 ~~~
 
-## `<model><frame>` tag Examples
+## `//model/frame` Examples
 
 The `<frame>` tag was added in version 1.5 of the SDFormat specification,
 though it has seen little use due to the lack of well-defined semantics.
@@ -424,15 +417,9 @@ in the previous section.
         <pose>{xyz_L3L4} {rpy_L3L4}</pose>
       </frame>
 
-      <frame name="link2_frame" affixed_to="joint1>
-        <pose />
-      </frame>
-      <frame name="link3_frame" affixed_to="joint2">
-        <pose />
-      </frame>
-      <frame name="link4_frame" affixed_to="joint3">
-        <pose />
-      </frame>
+      <frame name="link2_frame" affixed_to="joint1"/>
+      <frame name="link3_frame" affixed_to="joint2"/>
+      <frame name="link4_frame" affixed_to="joint3"/>
 
       <link name="link1"/>
 
@@ -468,7 +455,7 @@ in the previous section.
 In this case, `joint1_frame` is rigidly affixed to `link1`, `joint3_frame` is
 rigidly affixed to `link3`, etc.
 
-## `<link><frame>` tag Examples
+## `//link/frame` Examples
 
 The `<frame>` tag can also be attached to a link to create a body-fixed frame
 on that link.
@@ -578,10 +565,10 @@ in one place and used by these elements.
       </link>
     </model>
 
-## Referencing a `<link><frame>` from `<model>` scope
+## Referencing a `//link/frame` from `//model` scope
 
 In addition to being useful for organizing elements within a link,
-the `<link><frame>` tags can also be useful at the `<model>` scope.
+the `//link/frame` tags can also be useful at the `//model` scope.
 To refer to a `<frame>` embedded in a `<link>`, use the link name,
 followed by a `/`, followed by the frame name.
 
@@ -695,9 +682,9 @@ compelling use case is provided for other elements.
       </joint>
     </model>
 
-## Referencing implicit frames in `<pose frame=''>`
+## Referencing implicit frames in `//pose[@frame]`
 
-The `<pose frame=''>` attribute references frames by name.
+The `//pose[@frame]` attribute references frames by name.
 This proposal includes examples for referencing frames created explicitly using
 the `<frame>` tag, as well as referencing the frames implicitly attached to
 `<link>` and `<joint>` tags by name.
@@ -717,37 +704,6 @@ However, all frames that can be refered to via the model should still have
 physically meaningful values at non-zero configuration, and thus should be
 attached to a meaningful link.
 
-### Joint: Implicit Frame's Affixed Link
-
-Given that joint frames can be implicitly referenced, they should have a
-useful non-zero configuration. Since prior versions of SDFormat specified a
-joint's pose by default w.r.t. the child link, it is proposed to make the
-joint's implicit frame coincide with `Jc`, and thus be affixed to the child
-link.
-
-### Open Question: Purely Kinematic Models
-
-This document may implicitly permit a model that is purely kinematic, or rather,
-defined purely as frames, relative to the model frame.
-
-Opinions:
-
-* Eric: I am in favor of this, as it is useful for gripper or camera offsets
-that may admit other welding afterwards.
-    * For gripper offsets, it is true that these may be actual physical bodies;
-    I am fine with them being as such, as long as people don't put crappy /
-    useless inertial values there. If they do, then it's more or less abuse.
-    * However: Due to the current state of using absolute coordinates, and thus
-    only permitting frame welding via joints, there is no mechanism to support
-    purely kinematic welding. We should really fix this.
-    Perhaps if we define some mechanism to place a model's initial pose, and
-    permit external specification of frame fixturing?
-
-### Future Proposal: Canonical Frames
-
-A future proposal will address nested models and model composition, which
-will likely include referencing the frames implicitly attached to `<model>` tags
-by the model name.
 There are several other tags contained by a `<link>` or `<joint>` that contain a
 `<pose>`, which could make them eligible for implicit frames.
 These include `<collision>`, `<visual>`, `<link><sensor>`, `<joint><sensor>`,
@@ -804,6 +760,98 @@ the parent tag.
       <frame name="relative_to_joint">
         <pose frame="joint_name"/> <!-- VALID. -->
       </frame>
+    </model>
+
+### Joint: Implicit Frame's Affixed Link
+
+Given that joint frames can be implicitly referenced, they should have a
+useful non-zero configuration. Since prior versions of SDFormat specified a
+joint's pose by default w.r.t. the child link, it is proposed to make the
+joint's implicit frame coincide with `Jc`, and thus be affixed to the child
+link.
+
+## Model Frame
+
+When a model is defined, a model frame is effectively assigned. This should
+define the following:
+
+* The default `model/frame[@affixed_to]` for:
+    * `//model/frame`
+* The default `pose[@frame]` for:
+    * `//model/pose`
+    * `//link/pose`
+    * `//joint/pose`
+
+To be congruent with prior suggestions in this proposal, the model frame should
+physically attached to a link and its value be explicitly referenceable.
+
+### Explicitly Referenceable
+
+While it would be useful to explicitly refer to a model frame by the model
+name, there are two complications: it may conflict with link names, and for
+model composition, users may be able to override the model name via
+`//include`.
+
+This proposal suggests that instead of auto-assigning a model frame, the
+specification provides a means to use the *value* of the model frame (rather
+than implicitly allocate a name and restrict that name's usage). A user can
+achieve this by defining `//model/frame` with an identity pose. Example:
+
+    <model name="test_model">
+      <frame name="model_frame"/>
+    </model>
+
+Nested models will have their own individual model frames. (See pending Nesting
+proposal for nuances.)
+
+Alternatives:
+
+* The model frame is named as the model's name as specified by the file (not
+overridden by `//include`). No link, joint, or frame can be specified using
+this name.
+* The model frame be explicitly referable to using the **reserved name**
+`"model_frame"`. No link, joint, or frame can be specified using this name.
+
+### Canonical Link
+
+At present, Gazebo assigns a model a canonical link, which is effectively the
+link that any "model-affixed" frames are actually affixed to. This does not
+affect the pose. For SDFormat <2, [Gazebo 10.1.0 chooses the first link](https://bitbucket.org/osrf/gazebo/src/0d2a582e4e1443a3b989ef588023a60f61cb56d9/gazebo/physics/Model.cc#lines-130:132) as the canonical link.
+
+The canonical link should become part of SDFormat's specification, and should
+be user-configurable but with a default value. These two models are equivalent:
+
+    <model name="test_model" canonical_link="link1">
+      <link name="link1"/>
+      <link name="link2"/>
+    </model>
+
+    <model name="test_model">
+      <link name="link1"/>
+      <link name="link2"/>
+    </model>
+
+For nested models, it is suggested that each model have its *own* link
+(contrary to current Gazebo implementation???), since models could be composed,
+but may not necessarily be rigidly affixed to each other. For example:
+
+    <model name="top" canonical_link="link1">
+      <link name="link1"/>
+      <model name="sub" canonical_link="link1">
+        <link name="link1"/>
+      </model>
+    </model>
+
+Atlernatives:
+
+    <!-- //link[@canonical] -->
+    <model name="test_model">
+      <link name="link1" canonical="true"/>
+    </model>
+
+    <!-- //model/canonical_link -->
+    <model name="test_model">
+      <canonical_link>link1</canonical_link>
     </model>
 
 ## Future Proposal: Scoping Limitations
