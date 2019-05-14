@@ -2,10 +2,13 @@
 
 As described in the
 [tutorial on existing behavior for pose frame semantics](/tutorials?tut=pose_frame_semantics),
-the `frame` attribute string was added to `<pose>` elements in SDF version 1.5,
-but semantics were not fully defined, so it has not yet been used.
+`<frame>` elements were added to several elements, and
+the `frame` attribute string was added to `<pose>` elements in SDF version 1.5.
+Semantics for the frame element and attribute were not fully defined, however,
+so they have not yet been used.
 This document proposes a series of changes for SDF version 2.0 to
-support proposed semantics for more expressivity in SDFormat.
+support semantics for more expressivity of kinematics and coordinate frames
+in SDFormat.
 This includes the ability to describe the kinematics of a URDF model
 with an SDF 2.0 file.
 
@@ -13,7 +16,7 @@ with an SDF 2.0 file.
 [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp) is used provide
 concise context.
 For example, a single `<model>` tag is referred to as `//model` using XPath.
-It is even more concise for referring to nested tags and attributes.
+XPath is even more concise for referring to nested tags and attributes.
 In the following example, the `<link>` inside the `<model>` tag is referenced
 as `//model/link` and the `name` attribute as `//model[@name]`:
 
@@ -131,10 +134,31 @@ below.
     </model>
     ```
 
-## Frames
+## Definition of a frame
 
-A frame consists of its name, an affixed link (mobilized body) and a pose offset
-w.r.t. that affixed link's origin coordinate frame.
+A frame is defined by a name, an affixed link (mobilized body) and a pose
+with respect to another frame.
+These definitions can be explicitly encoded using the `<frame>` element with
+`//frame[@name]` and `//frame[@affixed_to]` attributes along with a `<pose>`
+element and `//pose[@frame]` attribute.
+For example, the following snippet defines an explicit frame `F` affixed to
+link `L` with pose `X_AF` relative to frame `A`.
+
+    <frame name="F" affixed_to="L">
+      <pose frame="A">{X_AF}</pose>
+    </frame>
+
+A `<frame>` element can only appear in a `<model>` (`//model/frame`).
+This simplifies the 
+The `//frame/pose[@frame]` attribute defaults to the value of attribute
+`//frame[@affixed_to]`, so the following snippet with `//frame/pose[@frame]`
+omitted is equivalent:
+
+    <frame name="F" affixed_to="L">
+      <pose>{X_LF}</pose>
+    </frame>
+
+
 Affixing a new frame to an existing frame
 implies that the new frame's affixed link will be its parent frame's affixed
 link, incorporating the parent frame's offset in its own offset.
