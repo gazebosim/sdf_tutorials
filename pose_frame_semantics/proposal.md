@@ -92,7 +92,14 @@ frame is rigidly affixed, and a pose with respect to another frame.
 The pose determines the initial configuration of the frame on the affixed link
 and the frame relative to which it is expressed may be on a different link.
 
-These definitions can be explicitly encoded using the `<frame>` element with
+Frames can be used to compose information and minimize redundancy
+(e.g. specify the bottom center of table, add it to the world with that frame,
+then add an object to the top-left-back corner), and can be used to abstract
+physical attachments (e.g. specify a camera frame in a model to be used for
+inverse kinematics or visual servoing, without the need to also know the
+attached link).
+
+A frame can be defined explicitly using the `<frame>` element with
 `//frame[@name]` and `//frame[@affixed_to]` attributes along with a `<pose>`
 element and `//pose[@frame]` attribute.
 For example, the following snippet defines an explicit frame `F` affixed to
@@ -177,22 +184,28 @@ It is a required attribute, and can be used in the `affixed_to` and
 As stated in a previous section, all sibling elements must have unique names to
 avoid ambiguity when referring to frames by name.
 
-    <model name="frame_naming">
-      <frame/>          <!-- INVALID: name attribute is missing. -->
-      <frame name=''/>  <!-- INVALID: name attribute is empty. -->
-      <frame name='A'/> <!-- VALID. -->
-      <frame name='B'/> <!-- VALID. -->
-    </model>
+~~~
+<model name="frame_naming">
+  <frame/>          <!-- INVALID: name attribute is missing. -->
+  <frame name=''/>  <!-- INVALID: name attribute is empty. -->
+  <frame name='A'/> <!-- VALID. -->
+  <frame name='B'/> <!-- VALID. -->
+</model>
+~~~
 
-    <model name="nonunique_sibling_frame_names">
-      <frame name='F'/>
-      <frame name='F'/> <!-- INVALID: sibling names are not unique. -->
-    </model>
+~~~
+<model name="nonunique_sibling_frame_names">
+  <frame name='F'/>
+  <frame name='F'/> <!-- INVALID: sibling names are not unique. -->
+</model>
+~~~
 
-    <model name="nonunique_sibling_names">
-      <link name='L'/>
-      <frame name='L'/> <!-- INVALID: sibling names are not unique. -->
-    </model>
+~~~
+<model name="nonunique_sibling_names">
+  <link name='L'/>
+  <frame name='L'/> <!-- INVALID: sibling names are not unique. -->
+</model>
+~~~
 
 ### The `//model/frame[@affixed_to]` attribute
 
@@ -202,111 +215,135 @@ It is a required attribute and must contain the name of a sibling link or frame.
 If a frame is specified, recursively following the `affixed_to` attributes
 of the specified frames must lead to the name of a link.
 
-    <model name="frame_affixing">
-      <link name="L"/>
-      <frame name="F1" affixed_to="L"/>   <!-- VALID: Directly affixed_to link L. -->
-      <frame name="F2" affixed_to="F1"/>  <!-- VALID: Indirectly affixed_to link L via frame F1. -->
-      <frame name="F3" affixed_to="A"/>   <!-- INVALID: no frame or link named A. -->
-    </model>
+~~~
+<model name="frame_affixing">
+  <link name="L"/>
+  <frame name="F1" affixed_to="L"/>   <!-- VALID: Directly affixed_to link L. -->
+  <frame name="F2" affixed_to="F1"/>  <!-- VALID: Indirectly affixed_to link L via frame F1. -->
+  <frame name="F3" affixed_to="A"/>   <!-- INVALID: no frame or link named A. -->
+</model>
+~~~
 
-    <model name="joint_affixing">
-      <link name="P"/>
-      <link name="C"/>
-      <joint name="J" type="fixed">
-        <parent>P</parent>
-        <child>P</child>
-      </joint>
-      <frame name="F1" affixed_to="P"/>   <!-- VALID: Directly affixed_to link P. -->
-      <frame name="F2" affixed_to="C"/>   <!-- VALID: Directly affixed_to link C. -->
-      <frame name="F3" affixed_to="J"/>   <!-- VALID: Indirectly affixed_to link C via joint J. -->
-      <frame name="F4" affixed_to="F3"/>  <!-- VALID: Indirectly affixed_to link C via frame F3. -->
-    </model>
+~~~
+<model name="joint_affixing">
+  <link name="P"/>
+  <link name="C"/>
+  <joint name="J" type="fixed">
+    <parent>P</parent>
+    <child>P</child>
+  </joint>
+  <frame name="F1" affixed_to="P"/>   <!-- VALID: Directly affixed_to link P. -->
+  <frame name="F2" affixed_to="C"/>   <!-- VALID: Directly affixed_to link C. -->
+  <frame name="F3" affixed_to="J"/>   <!-- VALID: Indirectly affixed_to link C via joint J. -->
+  <frame name="F4" affixed_to="F3"/>  <!-- VALID: Indirectly affixed_to link C via frame F3. -->
+</model>
+~~~
 
-    <model name="frame_affixing_cycle">
-      <link name="L"/>
-      <frame name="F1" affixed_to="F2"/>
-      <frame name="F2" affixed_to="F1"/>  <!-- INVALID: cycle in affixed_to graph does not lead to link. -->
-    </model>
+~~~
+<model name="frame_affixing_cycle">
+  <link name="L"/>
+  <frame name="F1" affixed_to="F2"/>
+  <frame name="F2" affixed_to="F1"/>  <!-- INVALID: cycle in affixed_to graph does not lead to link. -->
+</model>
+~~~
 
 ## The `//pose[@frame]` attribute
 
-The value of the `//model/frame/pose` element specifies the pose of the frame
-relative to the frame specified in the `//model/frame/pose[@frame]`
-Affixing a new frame to an existing frame
-implies that the new frame's affixed link will be its parent frame's affixed
-link, incorporating the parent frame's offset in its own offset.
+The `//pose[@frame]` attribute indicates the frame relative to which the initial
+pose of the frame is expressed.
+This applies equally to `//frame/pose`, `//link/pose`, and `//joint/pose`
+elements.
+If the `//link/pose[@frame]` or `//joint/pose[@frame]` attribute is not set,
+then the parent frames from sdf 1.4 should be used
+(see the "Parent frames in sdf 1.4" section of the
+[pose frame semantics tutorial](/tutorials?tut=pose_frame_semantics)).
+If the `//frame/pose[@frame]` attribute is not set, it should default to
+the value of the `//frame[@affixed_to]` attribute.
 
-Frames can be used to compose information and minimize redundancy
-(e.g. specify the bottom center of table, add it to the world with that frame,
-then add an object to the top-left-back corner), and can be used to abstract
-physical attachments (e.g. specify a camera frame in a model to be used for
-inverse kinematics or visual servoing, without the need to also know the
-attached link).
+For example, consider the figure given in the 
+[previous tutorial about specifying pose](/tutorials?tut=specify_pose)
+that shows a parent link `P`, child link `C`, and joint frames `Jp` and `Jc`
+on the parent and child respectively.
 
-### Implicit frames for links and joints
+<!-- Figure Credit: Alejandro Castro -->
 
-Each link has an implicit frame affixed to itself at the offset specified
-in the `<pose>` tag that can be referenced using the name of the link.
-Likewise, each joint has an implicit frame (`Jc`) affixed to the child link
-at the offset specified by the `<pose>` tag that can be referenced using
-the name of the joint.
+[[file:joint_frames.svg|600px]]
 
-### Explicit frames defined by `<frame>`
+The `//pose[@frame]` attribute is not specified for the parent link `P`, so it
+is specified relative to the model frame `M`, while the pose of the other
+elements is specified relative to other named frames.
+This allows poses to be defined recursively, and also allows explicitly named
+frames `Jp` and `Jc` to be affixed to the parent and child, respectively.
 
-A frame can be explicitly defined using the `<frame>` element, which has
-`name` and `affixed_to` attributes, and a child `<pose>` element.
-For example, the following snippet defines a frame `F` affixed to
-frame `A` with pose offset `X_AF`.
+    <model name="M">
 
-    <frame name="F" affixed_to="A">
-      <pose>{X_AF}</pose>
-    </frame>
+      <link name="P">
+        <pose>{X_MP}</pose>   <!-- //pose[@frame] unspecified, default to model frame. -->
+      </link>
 
-### `//frame` and `//pose[@frame]`
+      <link name="C">
+        <pose frame="P">{X_PC}</pose>   <!-- Recursive pose definition. -->
+      </link>
 
-In all situations, `//pose[@frame]` indicates the frame that a pose is expressed
-to, but does not define the link it is affixed to.
+      <joint name="J" type="fixed">
+        <pose frame="P">{X_PJ}</pose>
+        <parent>P</parent>
+        <child>C</child>
+      </joint>
 
-To specify the affixed-to link, you must specify `//frame[@affixed_to]`. Some
-notes about this attribute:
-
-* This will affect the default value of `//frame/pose[@frame]`
-* `//frame[@affixed_to]` may have restricted semantics in certain contexts.
-
-`<frame/>` can only appear in the following contexts:
-
-* `//model/frame` - can specify any `@affixed_to` frame
-* `//link/frame` - can *not* specify `@affixed_to` frame, as it will be affixed
-to the given link element.
-
-No other elements can specify a frame.
-
-For example, the following model contains link `L1` and frames `F1` and `F2`
-that are both affixed to link `L1`.
-
-    <model name="m">
-
-      <link name="L1"/>
-
-      <frame name="F1" affixed_to="L1">
-        <pose>{X_L1F1}</pose>
+      <frame name="Jp" affixed_to="P">
+        <pose frame="J">0 0 0 0 0 0</pose>
       </frame>
 
-      <frame name="F2" affixed_to="F1">
-        <pose>{X_F1F2}</pose>
+      <frame name="Jc" affixed_to="C">
+        <pose frame="J">0 0 0 0 0 0</pose>
+      </frame>
+
+      <frame name="Jc1" affixed_to="J">   <!-- Jc1 == Jc, since J is affixed to C -->
+        <pose frame="J">0 0 0 0 0 0</pose>
+      </frame>
+
+      <frame name="Jc2" affixed_to="J">
+        <pose>0 0 0 0 0 0</pose>   <!-- Jc2 == Jc1, //pose[@frame] defaults to J. -->
       </frame>
 
     </model>
-
-### Explicit frames defined by `<frame>`
-
-To simplify the process of referring to the link frame defined by the
-
-Links and joints have implicit frames with the same name
 
 **TODO(eric)**: How to explicitly refer the model's canonical frame (e.g.
 default `//model/pose[@frame]`) to counter the implicit behavior of
 `@affixed_to`? 
+
+## Empty `//pose` and `//frame` elements implies identity pose
+
+With the use of the `//pose[@frame]` and `//frame[@affixed_to]` attributes,
+there are many expected cases when a frame is defined relative to another frame
+with no additional pose offset.
+To reduce verbosity, empty pose elements are interpreted as equivalent to the
+identity pose, as illustrated by the following pairs of equivalent poses:
+
+~~~
+<pose />
+<pose>0 0 0 0 0 0</pose>
+~~~
+
+~~~
+<pose frame='frame_name' />
+<pose frame='frame_name'>0 0 0 0 0 0</pose>
+~~~
+
+Likewise, empty `//frame` elements are interpreted as identity pose relative
+to `//frame[@affixed_to]`, as illustrated by the following equivalent group
+of frames:
+
+~~~
+<frame name="F" affixed_to="A" />
+<frame name="F" affixed_to="A">
+  <pose frame="A" />
+</frame>
+<frame name="F" affixed_to="A">
+  <pose frame="A">0 0 0 0 0 0</pose>
+</frame>
+~~~
 
 ### Example: Parity with URDF
 
