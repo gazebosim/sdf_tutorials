@@ -247,72 +247,6 @@ of the specified frames must lead to the name of a link.
 </model>
 ~~~
 
-## The `//pose[@frame]` attribute
-
-The `//pose[@frame]` attribute indicates the frame relative to which the initial
-pose of the frame is expressed.
-This applies equally to `//frame/pose`, `//link/pose`, and `//joint/pose`
-elements.
-If the `//link/pose[@frame]` or `//joint/pose[@frame]` attribute is not set,
-then the parent frames from sdf 1.4 should be used
-(see the "Parent frames in sdf 1.4" section of the
-[pose frame semantics tutorial](/tutorials?tut=pose_frame_semantics)).
-If the `//frame/pose[@frame]` attribute is not set, it should default to
-the value of the `//frame[@affixed_to]` attribute.
-
-For example, consider the figure given in the 
-[previous tutorial about specifying pose](/tutorials?tut=specify_pose)
-that shows a parent link `P`, child link `C`, and joint frames `Jp` and `Jc`
-on the parent and child respectively.
-
-<!-- Figure Credit: Alejandro Castro -->
-
-[[file:joint_frames.svg|600px]]
-
-The `//pose[@frame]` attribute is not specified for the parent link `P`, so it
-is specified relative to the model frame `M`, while the pose of the other
-elements is specified relative to other named frames.
-This allows poses to be defined recursively, and also allows explicitly named
-frames `Jp` and `Jc` to be affixed to the parent and child, respectively.
-
-    <model name="M">
-
-      <link name="P">
-        <pose>{X_MP}</pose>   <!-- //pose[@frame] unspecified, default to model frame. -->
-      </link>
-
-      <link name="C">
-        <pose frame="P">{X_PC}</pose>   <!-- Recursive pose definition. -->
-      </link>
-
-      <joint name="J" type="fixed">
-        <pose frame="P">{X_PJ}</pose>
-        <parent>P</parent>
-        <child>C</child>
-      </joint>
-
-      <frame name="Jp" affixed_to="P">
-        <pose frame="J">0 0 0 0 0 0</pose>
-      </frame>
-
-      <frame name="Jc" affixed_to="C">
-        <pose frame="J">0 0 0 0 0 0</pose>
-      </frame>
-
-      <frame name="Jc1" affixed_to="J">   <!-- Jc1 == Jc, since J is affixed to C -->
-        <pose frame="J">0 0 0 0 0 0</pose>
-      </frame>
-
-      <frame name="Jc2" affixed_to="J">
-        <pose>0 0 0 0 0 0</pose>   <!-- Jc2 == Jc1, //pose[@frame] defaults to J. -->
-      </frame>
-
-    </model>
-
-**TODO(eric)**: How to explicitly refer the model's canonical frame (e.g.
-default `//model/pose[@frame]`) to counter the implicit behavior of
-`@affixed_to`? 
-
 ## Empty `//pose` and `//frame` elements implies identity pose
 
 With the use of the `//pose[@frame]` and `//frame[@affixed_to]` attributes,
@@ -345,6 +279,70 @@ of frames:
 </frame>
 ~~~
 
+## The `//pose[@frame]` attribute
+
+The `//pose[@frame]` attribute indicates the frame relative to which the initial
+pose of the frame is expressed.
+This applies equally to `//frame/pose`, `//link/pose`, and `//joint/pose`
+elements.
+If the `//link/pose[@frame]` or `//joint/pose[@frame]` attribute is not set,
+then the parent frames from sdf 1.4 should be used
+(see the "Parent frames in sdf 1.4" section of the
+[pose frame semantics tutorial](/tutorials?tut=pose_frame_semantics)).
+If the `//frame/pose[@frame]` attribute is not set, it should default to
+the value of the `//frame[@affixed_to]` attribute.
+
+For example, consider the figure given in the
+[previous tutorial about specifying pose](/tutorials?tut=specify_pose)
+that shows a parent link `P`, child link `C`, and joint frames `Jp` and `Jc`
+on the parent and child respectively.
+
+<!-- Figure Credit: Alejandro Castro -->
+
+[[file:../spec_model_kinematics/joint_frames.svg|600px]]
+
+The `//pose[@frame]` attribute is not specified for the parent link `P`, so it
+is specified relative to the model frame `M`, while the pose of the other
+elements is specified relative to other named frames.
+This allows poses to be defined recursively, and also allows explicitly named
+frames `Jp` and `Jc` to be affixed to the parent and child, respectively.
+
+    <model name="M">
+
+      <link name="P">
+        <pose>{X_MP}</pose>   <!-- //pose[@frame] unspecified, default to model frame. -->
+      </link>
+
+      <link name="C">
+        <pose frame="P">{X_PC}</pose>   <!-- Recursive pose definition. -->
+      </link>
+
+      <joint name="J" type="fixed">
+        <pose frame="P">{X_PJ}</pose>
+        <parent>P</parent>
+        <child>C</child>
+      </joint>
+
+      <frame name="Jp" affixed_to="P">
+        <pose frame="J" />
+      </frame>
+
+      <frame name="Jc" affixed_to="C">
+        <pose frame="J" />
+      </frame>
+
+      <frame name="Jc1" affixed_to="J">   <!-- Jc1 == Jc, since J is affixed to C -->
+        <pose frame="J" />
+      </frame>
+
+      <frame name="Jc2" affixed_to="J" /> <!-- Jc2 == Jc1, since //pose[@frame] defaults to J. -->
+
+    </model>
+
+**TODO(eric)**: How to explicitly refer the model's canonical frame (e.g.
+default `//model/pose[@frame]`) to counter the implicit behavior of
+`@affixed_to`?
+
 ### Example: Parity with URDF
 
 For example, recall the example URDF from the Parent frames in URDF section
@@ -370,7 +368,7 @@ attribute.
         <child>link2</child>
       </joint>
       <link name="link2">
-        <pose frame="joint1">0 0 0 0 0 0</pose>
+        <pose frame="joint1" />
       </link>
 
       <joint name="joint2" type="revolute">
@@ -379,7 +377,7 @@ attribute.
         <child>link3</child>
       </joint>
       <link name="link3">
-        <pose frame="joint2">0 0 0 0 0 0</pose>
+        <pose frame="joint2" />
       </link>
 
       <joint name="joint3" type="revolute">
@@ -388,7 +386,7 @@ attribute.
         <child>link4</child>
       </joint>
       <link name="link4">
-        <pose frame="joint3">0 0 0 0 0 0</pose>
+        <pose frame="joint3" />
       </link>
 
     </model>
@@ -414,7 +412,7 @@ The difference between the URDF and SDF expressions is shown in the patch below:
        </joint>
 -      <link name="link2"/>
 +      <link name="link2">
-+        <pose frame="joint1">0 0 0 0 0 0</pose>
++        <pose frame="joint1" />
 +      </link>
 
        <joint name="joint2" type="revolute">
@@ -427,7 +425,7 @@ The difference between the URDF and SDF expressions is shown in the patch below:
        </joint>
 -      <link name="link3"/>
 +      <link name="link3">
-+        <pose frame="joint2">0 0 0 0 0 0</pose>
++        <pose frame="joint2" />
 +      </link>
 
        <joint name="joint3" type="revolute">
@@ -440,7 +438,7 @@ The difference between the URDF and SDF expressions is shown in the patch below:
        </joint>
 -      <link name="link4"/>
 +      <link name="link4">
-+        <pose frame="joint3">0 0 0 0 0 0</pose>
++        <pose frame="joint3" />
 +      </link>
 
 -    </robot>
@@ -461,77 +459,7 @@ pose frames specified for joints and child links, and no link poses.
 A validator could be created to identify SDF files that can be directly
 converted to URDF with minimal modifications based on these principles.
 
-### Example: Abstract Case with Relative Frames
-
-In some cases, it's very informative to have physically distinct frames
-`P` (parent link), `Jp` (attachment of joint to `P`), `C` (child link), and `Jc`
-(attachment of joint to `C`) explicitly specified, as shown in this image:
-
-<!-- Figure Credit: Alejandro Castro -->
-
-[[file:abstract_joint_frames.svg|256px]]
-
-One representation in SDFormat, placing `X_PJp` inside of the joint element:
-
-    <model name="abstract_joint_frames">
-      <link name="parent"/>
-      <joint name="joint1">
-        <pose frame="parent">{X_PJp}</pose>
-        <parent>parent</parent>
-        <child>child</child>
-      </joint>
-      <link name="child">
-        <pose frame="joint1">{X_JcC}</pose>
-      </link>
-    </model>
-
-An alternate formulation, placing `X_PJp` inside of the link element:
-
-    <model name="abstract_joint_frames">
-      <link name="parent">
-        <frame name="j1">
-          <pose>{X_PJp}</pose>
-        </frame>
-      </link>
-      <joint name="joint1">
-        <pose frame="parent/j1"/>
-        <parent>parent</parent>
-        <child>child</child>
-      </joint>
-      <link name="child">
-        <pose frame="parent/j1">{X_JcC}</pose>
-        <!-- Or: <pose frame="joint1">{X_JcC}</pose> -->
-      </link>
-    </model>
-
-## Empty `//pose` element implies identity pose
-
-With the use of the `frame` attribute in `<pose>` elements, there are
-many expected cases when a frame is defined relative to another frame
-with no additional pose offset.
-To reduce verbosity, empty pose elements are interpreted as equivalent to the
-identity pose, as illustrated by the following pairs of equivalent poses:
-
-~~~
-<pose />
-<pose>0 0 0 0 0 0</pose>
-~~~
-
-~~~
-<pose frame='frame_name' />
-<pose frame='frame_name'>0 0 0 0 0 0</pose>
-~~~
-
-## `//model/frame` Examples
-
-The `<frame>` tag was added in version 1.5 of the SDFormat specification,
-though it has seen little use due to the lack of well-defined semantics.
-Similar to `<link>` and `<joint>`, it has a `name` attribute and may
-contain a child pose element.
-
-As with links and joints, a `<frame>` can be referenced by name by sibling
-elements using the `<pose frame=''>` attribute,
-and would be subject to the unique name requirement discussed above.
+## Example: Parity with URDF using `//model/frame`
 
 One application of the `<frame>` tag is to organize the model so that the pose
 values are all stored in a single part of the model and referenced
