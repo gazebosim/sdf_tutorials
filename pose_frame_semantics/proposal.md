@@ -24,38 +24,6 @@ as `//model/link` and the `name` attribute as `//model[@name]`:
       <link/>
     </model>
 
-## Element naming rule: reserved names
-
-* Since `world` has a special interpretation when specified as a parent
-or child link of a joint, it should not be used as a name for any entities
-in the simulation.
-
-    ~~~
-    <model name="world"/><!-- INVALID: world is a reserved name. -->
-    <model name="world_model"/><!-- VALID -->
-    ~~~
-
-    ~~~
-    <model name="model">
-      <link name="world"/><!-- INVALID: world is a reserved name. -->
-      <link name="world_link"/><!-- VALID -->
-    </model>
-    ~~~
-
-* Names that start and end with double underscores (eg. `__wheel__`) are reserved
-for use by library implementors. For example, such names might be useful during
-parsing for setting sentinel or default names for elements with missing names.
-
-    ~~~
-    <model name="__model__"/><!-- INVALID: name starts and ends with __. -->
-    ~~~
-
-    ~~~
-    <model name="model">
-      <link name="__link__"/><!-- INVALID: name starts and ends with __. -->
-    </model>
-    ~~~
-
 ## Definition of explicit and implicit frames
 
 A frame is defined by a name, an affixed link (mobilized body) to which the
@@ -575,6 +543,38 @@ Atlernatives:
     <model name="test_model">
       <canonical_link>link1</canonical_link>
     </model>
+
+## Element naming rule: reserved names
+
+* Since `world` has a special interpretation when specified as a parent
+or child link of a joint, it should not be used as a name for any entities
+in the simulation.
+
+    ~~~
+    <model name="world"/><!-- INVALID: world is a reserved name. -->
+    <model name="world_model"/><!-- VALID -->
+    ~~~
+
+    ~~~
+    <model name="model">
+      <link name="world"/><!-- INVALID: world is a reserved name. -->
+      <link name="world_link"/><!-- VALID -->
+    </model>
+    ~~~
+
+* Names that start and end with double underscores (eg. `__wheel__`) are reserved
+for use by library implementors. For example, such names might be useful during
+parsing for setting sentinel or default names for elements with missing names.
+
+    ~~~
+    <model name="__model__"/><!-- INVALID: name starts and ends with __. -->
+    ~~~
+
+    ~~~
+    <model name="model">
+      <link name="__link__"/><!-- INVALID: name starts and ends with __. -->
+    </model>
+    ~~~
 
 ## Future Proposal: Scoping Limitations
 
