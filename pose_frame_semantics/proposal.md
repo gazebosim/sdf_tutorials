@@ -492,14 +492,6 @@ in the previous section.
 In this case, `joint1_frame` is rigidly affixed to `link1`, `joint3_frame` is
 rigidly affixed to `link3`, etc.
 
-### Joint: Implicit Frame's Affixed Link
-
-Given that joint frames can be implicitly referenced, they should have a
-useful non-zero configuration. Since prior versions of SDFormat specified a
-joint's pose by default w.r.t. the child link, it is proposed to make the
-joint's implicit frame coincide with `Jc`, and thus be affixed to the child
-link.
-
 ## Model Frame
 
 When a model is defined, a model frame is effectively assigned. This should
