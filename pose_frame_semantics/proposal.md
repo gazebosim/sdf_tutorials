@@ -60,8 +60,9 @@ parsing for setting sentinel or default names for elements with missing names.
 
 A frame is defined by a name, an affixed link (mobilized body) to which the
 frame is rigidly affixed, and a pose with respect to another frame.
-The pose determines the initial configuration of the frame on the affixed link
-and the frame relative to which it is expressed may be on a different link.
+The pose determines the initial configuration of the frame on the affixed link.
+Note that the frame relative to which it is expressed may be affixed to a
+different link.
 
 Frames can be used to compose information and minimize redundancy
 (e.g. specify the bottom center of table, add it to the world with that frame,
@@ -150,8 +151,8 @@ Further details of the attributes of this element are given below.
 ### The `//model/frame[@name]` attribute
 
 The `//model/frame[@name]` attribute specifies the name of a `<frame>`.
-It is a required attribute, and can be used in the `affixed_to` and
-`//pose[@frame]` attributes to refer to this frame.
+It is a required attribute, and can be used by other frames in the `affixed_to`
+and `//pose[@frame]` attributes to refer to this frame.
 As stated in a previous section, all sibling elements must have unique names to
 avoid ambiguity when referring to frames by name.
 
@@ -182,7 +183,8 @@ avoid ambiguity when referring to frames by name.
 
 The `//model/frame[@affixed_to]` attribute specifies the link to which the
 `<frame>` is affixed.
-It is a required attribute and must contain the name of a sibling link or frame.
+It is a required attribute and must contain the name of a sibling explicit or
+implicit frame.
 If a frame is specified, recursively following the `affixed_to` attributes
 of the specified frames must lead to the name of a link.
 
@@ -191,7 +193,7 @@ of the specified frames must lead to the name of a link.
   <link name="L"/>
   <frame name="F1" affixed_to="L"/>   <!-- VALID: Directly affixed_to link L. -->
   <frame name="F2" affixed_to="F1"/>  <!-- VALID: Indirectly affixed_to link L via frame F1. -->
-  <frame name="F3" affixed_to="A"/>   <!-- INVALID: no frame or link named A. -->
+  <frame name="F3" affixed_to="A"/>   <!-- INVALID: no sibling frame named A. -->
 </model>
 ~~~
 
@@ -201,7 +203,7 @@ of the specified frames must lead to the name of a link.
   <link name="C"/>
   <joint name="J" type="fixed">
     <parent>P</parent>
-    <child>P</child>
+    <child>C</child>
   </joint>
   <frame name="F1" affixed_to="P"/>   <!-- VALID: Directly affixed_to link P. -->
   <frame name="F2" affixed_to="C"/>   <!-- VALID: Directly affixed_to link C. -->
@@ -218,7 +220,7 @@ of the specified frames must lead to the name of a link.
 </model>
 ~~~
 
-## Empty `//pose` and `//frame` elements implies identity pose
+## Empty `//pose` and `//frame` elements imply identity pose
 
 With the use of the `//pose[@frame]` and `//frame[@affixed_to]` attributes,
 there are many expected cases when a frame is defined relative to another frame
@@ -236,9 +238,9 @@ identity pose, as illustrated by the following pairs of equivalent poses:
 <pose frame='frame_name'>0 0 0 0 0 0</pose>
 ~~~
 
-Likewise, empty `//frame` elements are interpreted as identity pose relative
-to `//frame[@affixed_to]`, as illustrated by the following equivalent group
-of frames:
+Likewise, empty `//frame` elements are interpreted as having an identity pose
+relative to `//frame[@affixed_to]`, as illustrated by the following equivalent
+group of frames:
 
 ~~~
 <frame name="F" affixed_to="A" />
@@ -263,20 +265,22 @@ then the parent frames from sdf 1.4 should be used
 If the `//frame/pose[@frame]` attribute is not set, it should default to
 the value of the `//frame[@affixed_to]` attribute.
 
-For example, consider the figure given in the
+For example, consider the following figure from the
 [previous tutorial about specifying pose](/tutorials?tut=specify_pose)
-that shows a parent link `P`, child link `C`, and joint frames `Jp` and `Jc`
-on the parent and child respectively.
+that shows a parent link `P`, child link `C`, and joint `J` with joint frames
+`Jp` and `Jc` on the parent and child respectively.
 
 <!-- Figure Credit: Alejandro Castro -->
 
 [[file:../spec_model_kinematics/joint_frames.svg|600px]]
 
+An sdformat representation of this model is given below.
 The `//pose[@frame]` attribute is not specified for the parent link `P`, so it
 is specified relative to the model frame `M`, while the pose of the other
 elements is specified relative to other named frames.
 This allows poses to be defined recursively, and also allows explicitly named
 frames `Jp` and `Jc` to be affixed to the parent and child, respectively.
+For reference, equivalent expressions of `Jc` are defined as `Jc1` and `Jc2`.
 
     <model name="M">
 
@@ -316,7 +320,7 @@ default `//model/pose[@frame]`) to counter the implicit behavior of
 
 ### Example: Parity with URDF
 
-For example, recall the example URDF from the Parent frames in URDF section
+Recall the example URDF from the Parent frames in URDF section
 of the [Pose Frame Semantics: Legacy Behavior tutorial](/tutorials?tut=pose_frame_semantics)
 that corresponds to the following image in the
 [URDF documentation](http://wiki.ros.org/urdf/XML/model):
