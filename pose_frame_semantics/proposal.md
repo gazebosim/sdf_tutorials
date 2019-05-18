@@ -590,51 +590,9 @@ parsing for setting sentinel or default names for elements with missing names.
     </model>
     ~~~
 
-## Future Proposal: Scoping Limitations
-
-For simplicity, this should start out with a conservative level of scoping
-access, to permit functional encapsulation.
-
-This conservative scoping shall be a constraint on which "direction" a frame
-can be referred to: a parent element can "dig into" a child element's frame;
-however, a child element cannot access its parent element frame.
-
-The motivation for this is that supporting `//pose[@relative_to]` implicates some
-level of "encompassed" parsing; that is, in a `//model` instance, almost all
-frames should be known.
-
-If global references are to be permitted, then this would force composition be
-driven through SDFormat, which can be seen as a severe limitation. More
-concretely, if one model file can reference "up" in the hierarchy, then the
-semantics of that model is completely entangled with its context, and permits
-its reuse elsewhere.
-
-All frames should be considered relative to the encompassing element, and thus
-for a `//model`, all initial poses should ultimately be rendered relative to
-the initial model pose. A model should not have access to a global "world" frame
-beyond it's own relative scope. Rationale:
-
-* It *really* complicates parsing. To accurately process a model, a user must
-now track all frames and cycles *for the entirety* of world creation. Due to use
-of absolute coordinates, *no* valid relative poses could be computed until the
-very end.
-* If a model is permitted to go "up" and leak out of encapsulation, then that
-model can *never* be used in a situation where it might be attached elsewhere.
-(This has been a pain point in Drake with IIWA models being grounded, using
-`//joint/parent = "world"`.)
-
-If a user needs a model fixtured to world, and needs to incorporate offsets into
-that fixture, that should be *in the context of application*, and not be
-permissible in the model file itself. Has a very explicitly defined scenario for
-welding a body to the ground at a specific pose, then they be in the practice of
-specifying the scenario as a `//world` element.
-
-### Followup: Restrict World-Welding Joints to `//world/joint`, not `//model/joint`
-
-See above: This admits more explicit denotation of encapsulation, and promotes
-better usage.
-
 ## Addendum: Model Building, Contrast Model-Absolute vs Element-Relative Coordinates
+
+<!-- TODO: Is this needed? -->
 
 `X(0)` implies zero configuration, while `X(q)` implies a value at a given
 configuration.
