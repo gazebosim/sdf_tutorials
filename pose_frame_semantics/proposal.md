@@ -349,8 +349,10 @@ For reference, equivalent expressions of `Jc` are defined as `Jc1` and `Jc2`.
 
     <model name="M">
 
+      <frame name="model_frame" />
+
       <link name="P">
-        <pose>{X_MP}</pose>   <!-- //pose[@relative_to] unspecified, default to model frame. -->
+        <pose relative_to="model_frame">{X_MP}</pose>
       </link>
 
       <link name="C">
@@ -378,11 +380,6 @@ For reference, equivalent expressions of `Jc` are defined as `Jc1` and `Jc2`.
       <frame name="Jc2" affixed_to="J" /> <!-- Jc2 == Jc1, since //pose[@relative_to] defaults to J. -->
 
     </model>
-
-**TODO(eric)**: How to explicitly refer the model's canonical frame (e.g.
-default `//model/pose[@relative_to]`) to counter the implicit behavior of
-`@affixed_to`?
-Steve: I think you can do this by creating an explicit `<frame name="model_frame" />`
 
 ### Example: Parity with URDF
 
