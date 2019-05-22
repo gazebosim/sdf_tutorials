@@ -283,6 +283,21 @@ and thus indirectly affixed to the canonical link.
 </model>
 ~~~
 
+## The `//pose[@relative_to]` attribute
+
+The `//pose[@relative_to]` attribute indicates the frame relative to which the initial
+pose of the frame is expressed.
+This applies equally to `//frame/pose`, `//link/pose`, and `//joint/pose`
+elements.
+If `//link/pose[@relative_to]` is not set, it defaults to the model frame,
+following the behavior from SDFormat 1.4.
+If `//joint/pose[@relative_to]` is not set, it defaults to the child link's
+implicit frame, also following the behavior from SDFormat 1.4
+(see the "Parent frames in sdf 1.4" section of the
+[pose frame semantics tutorial](/tutorials?tut=pose_frame_semantics)).
+If the `//frame/pose[@relative_to]` attribute is not set, it should default to
+the value of the `//frame[@affixed_to]` attribute.
+
 ## Empty `//pose` and `//frame` elements imply identity pose
 
 With the use of the `//pose[@relative_to]` and `//frame[@affixed_to]` attributes,
@@ -308,6 +323,9 @@ group of frames:
 ~~~
 <frame name="F" affixed_to="A" />
 <frame name="F" affixed_to="A">
+  <pose />
+</frame>
+<frame name="F" affixed_to="A">
   <pose relative_to="A" />
 </frame>
 <frame name="F" affixed_to="A">
@@ -315,20 +333,7 @@ group of frames:
 </frame>
 ~~~
 
-## The `//pose[@relative_to]` attribute
-
-The `//pose[@relative_to]` attribute indicates the frame relative to which the initial
-pose of the frame is expressed.
-This applies equally to `//frame/pose`, `//link/pose`, and `//joint/pose`
-elements.
-If `//link/pose[@relative_to]` is not set, it defaults to the model frame,
-following the behavior from SDFormat 1.4.
-If `//joint/pose[@relative_to]` is not set, it defaults to the child link's
-implicit frame, also following the behavior from SDFormat 1.4
-(see the "Parent frames in sdf 1.4" section of the
-[pose frame semantics tutorial](/tutorials?tut=pose_frame_semantics)).
-If the `//frame/pose[@relative_to]` attribute is not set, it should default to
-the value of the `//frame[@affixed_to]` attribute.
+## Example using the `//pose[@relative_to]` attribute
 
 For example, consider the following figure from the
 [previous tutorial about specifying pose](/tutorials?tut=specify_pose)
