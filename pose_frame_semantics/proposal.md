@@ -27,7 +27,7 @@ as `//model/link` and the `name` attribute as `//model[@name]`:
 ## Rename the `//pose[@frame]` attribute to `//pose[@relative_to]`
 
 The `//pose[@frame]` attribute will be renamed to `//pose[@relative_to]` to
-avoid confusion between the `//frame` element and `//pose[@frame]` attributes.
+avoid confusion between the `//frame` element and `//pose[@frame]` attribute.
 The new name is also more descriptive according to the semantics proposed
 later in this document, since it specifies that the pose is to be interpreted
 relative to the named frame.
@@ -37,7 +37,7 @@ relative to the named frame.
 A frame is defined by a name, an affixed link (mobilized body) to which the
 frame is rigidly affixed, and a pose with respect to another frame.
 The pose determines the initial configuration of the frame on the affixed link.
-Note that the frame relative to which it is expressed may be affixed to a
+Note that the pose may be expressed relative to a frame that is affixed to a
 different link.
 
 Frames can be used to compose information and minimize redundancy
@@ -164,7 +164,8 @@ as `link1`/`link2` or used as a suffix `front_right_wheel_joint`
 / `front_right_steering_joint`, which helps to further ensure name uniqueness
 across element types.
 Furthermore, the frame semantics proposed in this document use the names of
-sibling `//model/frame`, `//model/link` and `//model/joint` to refer to frames.
+sibling elements `//model/frame`, `//model/link` and `//model/joint` to refer
+to frames.
 Thus for the sake of consistency, all named sibling elements must have unique
 names.
 
@@ -246,7 +247,6 @@ If it is specified, it must contain the name of a sibling explicit or
 implicit frame.
 If a `//frame` is specified, recursively following the `affixed_to` attributes
 of the specified frames must lead to the name of a link.
-
 If the attribute is not specified, the frame is affixed to the model frame
 and thus indirectly affixed to the canonical link.
 
