@@ -345,8 +345,10 @@ that shows a parent link `P`, child link `C`, and joint `J` with joint frames
 [[file:../spec_model_kinematics/joint_frames.svg|600px]]
 
 An sdformat representation of this model is given below.
-The `//pose[@relative_to]` attribute is not specified for the parent link `P`, so it
-is specified relative to the model frame `M`, while the pose of the other
+The frame named `model_frame` is created so that the implicit model frame
+can be referenced explicitly.
+The pose of the parent link `P` is specified relative to the implicit
+model frame, while the pose of the other
 elements is specified relative to other named frames.
 This allows poses to be defined recursively, and also allows explicitly named
 frames `Jp` and `Jc` to be affixed to the parent and child, respectively.
