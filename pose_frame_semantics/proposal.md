@@ -692,6 +692,9 @@ elements by name, but they will all be affixed to the same `//link` in which
 they are defined.
 If the `//link/frame[@affixed_to]` attribute is unspecified, it defaults
 to the link's implicit frame.
+If both `//link/frame[@affixed_to]` and `//link/frame/pose[@relative_to]`
+are specified, the `relative_to` value is used and `affixed_to`
+is ignored.
 
 For example, the model with two LED's is rewritten below using two
 `//link/frame` elements.
