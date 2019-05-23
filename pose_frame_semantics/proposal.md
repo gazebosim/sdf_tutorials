@@ -687,14 +687,12 @@ parsing task.
 Instead of adding implicit frames for `//link/collision`, `//link/light`,
 `//link/sensor`, and `//link/visual`, explicit frames could be defined
 as `//link/frame`.
-The `//link/frame[@affixed_to]` attribute may refer to sibling `//link/frame`
-elements by name, but they will all be affixed to the same `//link` in which
-they are defined.
+Any `//frame` elements defined within a `//link` must be affixed to that link.
+The `//link/frame[@affixed_to]` and `//link/frame/pose[@relative_to]` attributes
+may refer to sibling `//link/frame` elements by name, but if both attributes
+are set, the value of `affixed_to` will have no effect.
 If the `//link/frame[@affixed_to]` attribute is unspecified, it defaults
 to the link's implicit frame.
-If both `//link/frame[@affixed_to]` and `//link/frame/pose[@relative_to]`
-are specified, the `relative_to` value is used and `affixed_to`
-is ignored.
 
 For example, the model with two LED's is rewritten below using two
 `//link/frame` elements.
