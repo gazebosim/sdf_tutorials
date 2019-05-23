@@ -73,6 +73,8 @@ to the child link based on the pose in `//joint/pose`.
 The `//pose[@relative_to]` attribute can be used for both link and joint poses to
 specify the frame relative to which the pose is expressed.
 
+## Canonical Link
+
 ### Implicit frame defined by `//model/pose` affixed to canonical link
 
 Each model has an implicit frame defined by the `//model/pose` element.
