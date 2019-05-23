@@ -59,6 +59,9 @@ link `L` with pose `X_AF` relative to frame `A`:
       <pose relative_to="A">{X_AF}</pose>
     </frame>
 
+The `//frame[@affixed_to]` and `//pose[@relative_to]` attributes are distinct
+in order to support a Model-Absolute paradigm for model building
+(see the Addendum on Model Building for further discussion).
 The `//frame` element is described in more detail later in this proposal.
 For now, note that the `affixed_to` and `relative_to` attributes refer
 to other frames by name.
@@ -598,8 +601,6 @@ parsing for setting sentinel or default names for elements with missing names.
 
 ## Addendum: Model Building, Contrast Model-Absolute vs Element-Relative Coordinates
 
-<!-- TODO: Is this needed? -->
-
 `X(0)` implies zero configuration, while `X(q)` implies a value at a given
 configuration.
 
@@ -611,7 +612,7 @@ with configuration-dependent transform `X_JpJc(q)`, with `X_JpJc(0) = I`.
     * Add `P` at initial pose `X_MP(0)`, `C` at initial pose `X_MC(0)`
     * Add `J` at `X_MJ(0)`, connect:
         * `P` at `X_PJp` (`X_PM(0) * X_MJ(0)`)
-        * `C` at `X_CJc` (`X_PC(0) * X_MC(0)`)
+        * `C` at `X_CJc` (`X_CM(0) * X_MJ(0)`)
 * Element-Relative Coordinates:
     * Add `P` and `C`; their poses are ignored unless they have a meaningful
     parent (e.g. a weld or other joint)
