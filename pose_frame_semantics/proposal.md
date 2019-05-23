@@ -567,6 +567,202 @@ in the previous section.
 In this case, `joint1_frame` is rigidly affixed to `link1`, `joint3_frame` is
 rigidly affixed to `link3`, etc.
 
+## Other uses of `//pose[@relative_to]`
+
+The `//model/frame` and `//pose[@relative_to]` constructs provide much more
+flexibility when defining the coordinate frames for sibling `//link`
+and `//joint` elements for model kinematics.
+
+A related problem is that there is often duplication of pose information
+in elements attached to links.
+For example, the following link has two LED light sources, which each have
+co-located collision, visual, and light tags, and the pose data is duplicated
+within each element.
+
+    <model name="model_with_duplicated_poses">
+      <link name="link_with_LEDs">
+        <light name="led1_light" type="point">
+          <pose>0.1 0 0 0 0 0</pose>
+        </light>
+        <collision name="led1_collision">
+          <pose>0.1 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led1_visual">
+          <pose>0.1 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+
+        <light name="led2_light" type="point">
+          <pose>-0.1 0 0 0 0 0</pose>
+        </light>
+        <collision name="led2_collision">
+          <pose>-0.1 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led2_visual">
+          <pose>-0.1 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+### Possible solution: more implicit frames
+
+This proposal currently only allows implicit frames for `//link` and `//joint`
+to be referenced from `//pose[@relative_to]`.
+By expanding the number of element types that have implicit frames,
+any of these implicit frames could be referenced by name instead of
+duplicating the pose data.
+
+For example, if `//light` elements are granted implicit frames,
+the example could be rewritten as follows without pose duplication:
+
+    <model name="model_with_implicit_frames">
+      <link name="link_with_LEDs">
+        <light name="led1_light" type="point">
+          <pose>0.1 0 0 0 0 0</pose>
+        </light>
+        <collision name="led1_collision">
+          <pose relative_to="led1_light" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led1_visual">
+          <pose relative_to="led1_light" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+
+        <light name="led2_light" type="point">
+          <pose>-0.1 0 0 0 0 0</pose>
+        </light>
+        <collision name="led2_collision">
+          <pose relative_to="led2_light" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led2_visual">
+          <pose relative_to="led2_light" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+The drawbacks of this approach are that increasing the number of implicit
+frames increases the size of the frame graph and adds complexity to the
+parsing task.
+
+### Possible solution: use `//link/frame`
+
+Instead of adding implicit frames for `//link/collision`, `//link/light`,
+`//link/sensor`, and `//link/visual`, explicit frames could be defined
+as `//link/frame`.
+The `//link/frame[@affixed_to]` attribute may refer to sibling `//link/frame`
+elements by name, but they will all be affixed to the same `//link` in which
+they are defined.
+If the `//link/frame[@affixed_to]` attribute is unspecified, it defaults
+to the link's implicit frame.
+
+For example, the model with two LED's is rewritten below using two
+`//link/frame` elements.
+The `led1_frame` doesn't specify the `//link/frame[@affixed_to]` attribute,
+so it is affixed to the implicit link frame by default.
+The `led2_frame` is affixed to `led1_frame`, and the `relative_to` attribute
+is unset, so it default to be relative to `led1_frame`.
+An equivalent `led2_frame_` is given with `relative_to` set instead of
+`affixed_to`.
+
+    <model name="model_with_link_frames">
+      <link name="link_with_LEDs">
+        <frame name="led1_frame">
+          <pose>0.1 0 0 0 0 0</pose>
+        </frame>
+        <frame name="led2_frame" affixed_to="led1_frame">
+          <pose>-0.2 0 0 0 0 0</pose>
+        </frame>
+        <frame name="led2_frame_">
+          <pose relative_to="led1_frame">>-0.2 0 0 0 0 0</pose>
+        </frame>
+
+        <light name="led1_light" type="point">
+          <pose relative_to="led1_frame" />
+        </light>
+        <collision name="led1_collision">
+          <pose relative_to="led1_frame" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led1_visual">
+          <pose relative_to="led1_frame" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+
+        <light name="led2_light" type="point">
+          <pose relative_to="led2_frame" />
+        </light>
+        <collision name="led2_collision">
+          <pose relative_to="led2_frame" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led2_visual">
+          <pose relative_to="led2_frame" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+Using `//link/frame` elements instead of many implicit frames simplifies
+the parsing task, though there may still be data duplication
+if the same frame location needs to be referenced from a `//model/frame` scope
+and a `//link/frame` scope since non-sibling elements cannot cross-reference
+each other.
+The forth-coming Nesting proposal should address this concern.
+
 ## Element naming rule: reserved names
 
 * Since `world` has a special interpretation when specified as a parent
