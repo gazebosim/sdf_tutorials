@@ -65,6 +65,18 @@
       <skill>intermediate</skill>
     </tutorial>
 
+    <tutorial title="Inertial properties" ref='spec_inertial'>
+      <markdown version="1.4">spec_inertial/tutorial.md</markdown>
+      <description>Specifying inertial properties of models and links in SDFormat.</description>
+      <tags>
+        <tag>inertial</tag>
+        <tag>link</tag>
+        <tag>model</tag>
+        <tag>static</tag>
+      </tags>
+      <skill>beginner</skill>
+    </tutorial>
+
     <tutorial title="Pose frame semantics" ref='pose_frame_semantics'>
       <markdown version="1.5">pose_frame_semantics/tutorial.md</markdown>
       <description>Defining semantics of the pose frame attribute.</description>
