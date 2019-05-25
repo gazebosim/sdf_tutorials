@@ -66,7 +66,8 @@ box.
 ## `<inertial>`
 
 The `<inertial>` tag is a container for inertial properties that can be added
-to a `<link>`.
+to a `<link>`, including mass, moment of inertia, and center of mass pose.
+An example usage of `<inertial>` is shown in the following snippet.
 
     <link name="link">
 
@@ -85,3 +86,18 @@ to a `<link>`.
 
     </link>
 
+### `<mass>`
+
+The mass of the link in kilograms (kg) is specified in the `<mass>` tag.
+The mass affects both the weight of an object in a gravitational field
+and the resistance to linear acceleration from an applied linear force.
+
+### `<pose>`
+
+The `<pose>` in the `<inertial>` block specifies the pose of a body-fixed
+link inertia frame.
+Note that *inertial frame* is a term of art that typically refers
+to a non-accelerating frame and not a body-fixed frame.
+The link's center of mass is located at the origin of this frame,
+and the moment of inertia matrix is interpreted in the coordinates of
+this frame.
