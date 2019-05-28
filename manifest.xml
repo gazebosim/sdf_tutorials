@@ -24,7 +24,7 @@
       <skill>beginner</skill>
     </tutorial>
 
-    <tutorial title="Specifying pose" ref='specify_pose'>
+    <tutorial title="Specifying pose" ref='specify_pose' type='documentation'>
       <markdown version="1.4">specify_pose/tutorial.md</markdown>
       <description>Specifying pose in SDFormat.</description>
       <tags>
@@ -33,7 +33,7 @@
       <skill>beginner</skill>
     </tutorial>
 
-    <tutorial title="Model kinematics" ref='spec_model_kinematics'>
+    <tutorial title="Model kinematics" ref='spec_model_kinematics' type='documentation'>
       <markdown version="1.4">spec_model_kinematics/tutorial.md</markdown>
       <description>Specifying model kinematics with links and joints in SDFormat.</description>
       <tags>
@@ -44,7 +44,7 @@
       <skill>beginner</skill>
     </tutorial>
 
-    <tutorial title="Collisions and Visuals" ref='spec_shapes'>
+    <tutorial title="Collisions and Visuals" ref='spec_shapes' type='documentation'>
       <markdown version="1.4">spec_shapes/tutorial.md</markdown>
       <description>Adding shapes to a model with collisions and visuals in SDFormat.</description>
       <tags>
@@ -54,7 +54,7 @@
       </tags>
       <skill>beginner</skill>
     </tutorial>
-    <tutorial title="Material properties of a Visual" ref='spec_materials'>
+    <tutorial title="Material properties of a Visual" ref='spec_materials' type='documentation'>
       <markdown version="1.4">spec_materials/tutorial.md</markdown>
       <description>Setting the material properties of visuals in SDFormat.</description>
       <tags>
@@ -65,7 +65,7 @@
       <skill>intermediate</skill>
     </tutorial>
 
-    <tutorial title="Pose frame semantics" ref='pose_frame_semantics'>
+    <tutorial title="Pose frame semantics" ref='pose_frame_semantics' type='documentation'>
       <markdown version="1.5">pose_frame_semantics/tutorial.md</markdown>
       <description>Defining semantics of the pose frame attribute.</description>
       <tags>
