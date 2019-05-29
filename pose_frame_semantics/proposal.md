@@ -250,6 +250,7 @@ The `//model/frame[@affixed_to]` attribute specifies the link to which the
 It is an optional attribute.
 If it is specified, it must contain the name of a sibling explicit or
 implicit frame.
+Cycles in the `affixed_to` graph are not allowed.
 If a `//frame` is specified, recursively following the `affixed_to` attributes
 of the specified frames must lead to the name of a link.
 If the attribute is not specified, the frame is affixed to the model frame
@@ -258,7 +259,8 @@ and thus indirectly affixed to the canonical link.
 ~~~
 <model name="frame_affixing">
   <link name="L"/>
-  <frame name="F0"/>                  <!-- VALID: Indirectly affixed_to canonical link L via the model frame. -->
+  <frame name="F00"/>                 <!-- VALID: Indirectly affixed_to canonical link L via the model frame. -->
+  <frame name="F0" affixed_to=""/>    <!-- VALID: Indirectly affixed_to canonical link L via the model frame. -->
   <frame name="F1" affixed_to="L"/>   <!-- VALID: Directly affixed_to link L. -->
   <frame name="F2" affixed_to="F1"/>  <!-- VALID: Indirectly affixed_to link L via frame F1. -->
   <frame name="F3" affixed_to="A"/>   <!-- INVALID: no sibling frame named A. -->
@@ -294,14 +296,121 @@ The `//pose[@relative_to]` attribute indicates the frame relative to which the i
 pose of the frame is expressed.
 This applies equally to `//frame/pose`, `//link/pose`, and `//joint/pose`
 elements.
-If `//link/pose[@relative_to]` is not set, it defaults to the model frame,
+If `//link/pose[@relative_to]` is empty or not set, it defaults to the model frame,
 following the behavior from SDFormat 1.4.
-If `//joint/pose[@relative_to]` is not set, it defaults to the child link's
+If `//joint/pose[@relative_to]` is empty or not set, it defaults to the child link's
 implicit frame, also following the behavior from SDFormat 1.4
 (see the "Parent frames in sdf 1.4" section of the
 [pose frame semantics tutorial](/tutorials?tut=pose_frame_semantics)).
-If the `//frame/pose[@relative_to]` attribute is not set, it should default to
+If the `//frame/pose[@relative_to]` attribute is empty or not set, it should default to
 the value of the `//frame[@affixed_to]` attribute.
+Cycles in the `relative_to` attribute graph are not allowed and must be
+checked separately from the `affixed_to` attribute graph.
+Following the `relative_to` attributes of the specified frames must lead to a
+frame expressed relative to the model frame.
+
+~~~
+<model name="link_pose_relative_to">
+  <link name="L1">
+    <pose>{X_ML1}</pose>                    <!-- Pose relative_to model frame (M) by default. -->
+  </link>
+  <link name="L2">
+    <pose relative_to="">{X_ML2}</pose>     <!-- Pose relative_to model frame (M) by default. -->
+  </link>
+  <link name="L3">
+    <pose relative_to="L1">{X_L1L3}</pose>  <!-- Pose relative_to link frame (L1 -> M). -->
+  </link>
+
+  <link name="cycle1">
+    <pose relative_to="cycle2">{X_C1C2}</pose>
+  </link>
+  <link name="cycle2">
+    <pose relative_to="cycle1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
+  </link>
+</model>
+~~~
+
+~~~
+<model name="joint_pose_relative_to">
+  <link name="P1"/>                         <!-- Link pose relative to model frame (M) by default. -->
+  <link name="C1"/>                         <!-- Link pose relative to model frame (M) by default. -->
+  <joint name="J1" type="fixed">
+    <pose>{X_C1J1}</pose>                   <!-- Joint pose relative to child link frame (C1 -> M) by default. -->
+    <parent>P1</parent>
+    <child>C1</child>
+  </joint>
+
+  <link name="P2"/>                         <!-- Link pose relative to model frame (M) by default. -->
+  <joint name="J2" type="fixed">
+    <pose relative_to="P2">{X_P2J2}</pose>  <!-- Joint pose relative to link frame P2 -> M. -->
+    <parent>P2</parent>
+    <child>C2</child>
+  </joint>
+  <link name="C2">
+    <pose relative_to="J2">{X_J2C2}</pose>  <!-- Link pose relative to joint frame J2 -> P2 -> M. -->
+  </link>
+
+  <link name="P3"/>
+  <link name="C3">
+    <pose relative_to="J3">{X_J3C3}</pose>
+  </link>
+  <joint name="J3" type="fixed">
+    <pose relative_to="C3">{X_C3J3}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
+    <parent>P3</parent>
+    <child>C3</child>
+  </joint>
+</model>
+~~~
+
+~~~
+<model name="frame_pose_relative_to">
+  <link name="L">
+    <pose>{X_ML}</pose>                     <!-- Link pose relative_to the model frame (M) by default. -->
+  </link>
+
+  <frame name="F0">                         <!-- Frame indirectly affixed_to canonical link L via model frame. -->
+    <pose>{X_MF0}</pose>                    <!-- Pose relative_to the affixed_to frame (M) by default. -->
+  </frame>
+
+  <frame name="F1" affixed_to="L">          <!-- Frame directly affixed_to link L. -->
+    <pose>{X_LF1}</pose>                    <!-- Pose relative_to the affixed_to frame (L -> M) by default. -->
+  </frame>
+  <frame name="F2" affixed_to="L">          <!-- Frame directly affixed_to link L. -->
+    <pose relative_to="">{X_LF2}</pose>     <!-- Pose relative_to the affixed_to frame (L -> M) by default. -->
+  </frame>
+  <frame name="F3">                         <!-- Frame indirectly affixed_to canonical link L via model frame. -->
+    <pose relative_to="L">{X_LF3}</pose>    <!-- Pose relative_to link frame L -> M. -->
+  </frame>
+
+  <frame name="cycle1">
+    <pose relative_to="cycle2">{X_C1C2}</pose>
+  </frame>
+  <frame name="cycle2">
+    <pose relative_to="cycle1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
+  </frame>
+</model>
+~~~
+
+The following example may look like it has a graph cycle since frame `F1` is
+`affixed_to` link `L2`, and the pose of link `L2` is `relative_to` frame `F1`.
+It is not a cycle, however, since the `affixed_to` and `relative_to` attributes
+have separate, valid graphs.
+
+~~~
+<model name="not_a_cycle">
+  <link name="L1">
+    <pose>{X_ML1}</pose>                    <!-- Pose relative to model frame (M) by default. -->
+  </link>
+
+  <frame name="F1" affixed_to="L2">         <!-- Frame directly affixed to link L2. -->
+    <pose relative_to="L1">{X_L1F1}</pose>  <!-- Pose relative to implicit link frame L1 -> M. -->
+  </frame>
+
+  <link name="L2">
+    <pose relative_to="F1">{X_F1L2}</pose>  <!-- Pose relative to frame F1 -> L1 -> M. -->
+  </link>
+</model>
+~~~
 
 ## Empty `//pose` and `//frame` elements imply identity pose
 
