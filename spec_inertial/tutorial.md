@@ -66,21 +66,21 @@ box.
 ## `<inertial>`
 
 The `<inertial>` tag is a container for inertial properties that can be added
-to a `<link>`, including mass, moment of inertia, and center of mass pose.
+to a `<link>`, including mass, moment of inertia, and center of mass (Cm) pose.
 An example usage of `<inertial>` is shown in the following snippet.
 
-    <link name="link">
+    <link name="L">
 
       <inertial>
         <pose>{X_LCm}</pose>
         <mass>{mass}</mass>
         <inertia>
           <ixx>{ixx}</ixx>
-          <iyy>{iyy}</iyy>
-          <izz>{izz}</izz>
           <ixy>{ixy}</ixy>
           <ixz>{ixz}</ixz>
+          <iyy>{iyy}</iyy>
           <iyz>{iyz}</iyz>
+          <izz>{izz}</izz>
         </inertia>
       </inertial>
 
@@ -96,8 +96,34 @@ and the resistance to linear acceleration from an applied linear force.
 
 The `<pose>` in the `<inertial>` block specifies the pose of a body-fixed
 link inertia frame.
-Note that *inertial frame* is a term of art that typically refers
-to a non-accelerating frame and not a body-fixed frame.
 The link's center of mass is located at the origin of this frame,
 and the moment of inertia matrix is interpreted in the coordinates of
 this frame.
+Note that *inertial frame* is a term of art that typically refers
+to a non-accelerating frame and not a body-fixed frame, so that label
+is avoided.
+
+### `<inertia>`
+
+The `<inertia>` tag is used to specify the components of the moment of
+the link's 3x3 moment of inertia matrix with respect to the center of mass
+and using the coordinates of the link inertia frame.
+Since the moment of inertia matrix is symmetric, only 6 components are
+needed.
+For example, the following symmetric matrix:
+
+    | ixx   ixy   ixz |
+    | ixy   iyy   iyz |
+    | ixz   iyz   izz |
+
+can be specified with the `<inertia>` tag as follows:
+
+    <inertia>
+      <ixx>{ixx}</ixx>
+      <ixy>{ixy}</ixy>
+      <ixz>{ixz}</ixz>
+      <iyy>{iyy}</iyy>
+      <iyz>{iyz}</iyz>
+      <izz>{izz}</izz>
+    </inertia>
+
