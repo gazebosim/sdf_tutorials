@@ -1,4 +1,4 @@
-# Pose Frame Semantics
+# Pose Frame Semantics: Legacy Behavior
 
 In version 1.4 and earlier of the SDF spec, the `<pose>` element represents
 a relative coordinate transformation between a frame and its parent.
@@ -294,7 +294,7 @@ is decidedly not equivalent to
       <link name="link1"/>
       <link name="link2"/>
       <joint name="joint" type="fixed">
-        <origin rpy='{rpy}' xyz='{xyz}'/>
+        <origin xyz='{xyz}' rpy='{rpy}'/>
         <parent link="link1"/>
         <child link="link2"/>
       </joint>
@@ -322,25 +322,26 @@ using the suffix notation for kinematic quantities described in the
       <link name="link1"/>
 
       <joint name="joint1" type="revolute">
-        <origin rpy='{rpy_L1L2}' xyz='{xyz_L1L2}'/>
+        <origin xyz='{xyz_L1L2}' rpy='{rpy_L1L2}'/>
         <parent link="link1"/>
         <child link="link2"/>
       </joint>
       <link name="link2"/>
 
       <joint name="joint2" type="revolute">
-        <origin rpy='{rpy_L1L3}' xyz='{xyz_L1L3}'/>
+        <origin xyz='{xyz_L1L3}' rpy='{rpy_L1L3}'/>
         <parent link="link1"/>
         <child link="link3"/>
       </joint>
       <link name="link3"/>
 
       <joint name="joint3" type="revolute">
-        <origin rpy='{rpy_L3L4}' xyz='{xyz_L3L4}'/>
+        <origin xyz='{xyz_L3L4}' rpy='{rpy_L3L4}'/>
         <parent link="link3"/>
         <child link="link4"/>
       </joint>
       <link name="link4"/>
+
     </robot>
 
 For comparison, here is an SDFormat model with the same link names, joint names,
@@ -552,4 +553,5 @@ and the parent link from a sibling model.
 for child models (can they have same name as the parent model?),
 and the `::` delimiter are under
 discussion and subject to change.
-
+Please see the [proposal](/tutorials?tut=pose_frame_semantics_proposal)
+for the potential new behavior in SDF 2.0.
