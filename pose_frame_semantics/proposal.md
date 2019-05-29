@@ -821,7 +821,7 @@ An equivalent `led2_frame_` is given with `relative_to` set instead of
           <pose>-0.2 0 0 0 0 0</pose>
         </frame>
         <frame name="led2_frame_">
-          <pose relative_to="led1_frame">>-0.2 0 0 0 0 0</pose>
+          <pose relative_to="led1_frame">-0.2 0 0 0 0 0</pose>
         </frame>
 
         <light name="led1_light" type="point">
