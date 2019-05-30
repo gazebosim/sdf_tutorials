@@ -1,4 +1,4 @@
-# Creating Worlds
+# Creating Worlds in SDFormat
 
 Conceptually, a world in SDFormat is a environment in which models can be instantiated and simulated by a physics engine. A world is created using the `<world>` tag. The tag has a required `name` attribute which can be used to differentiate between multiple worlds in a single SDF file. The `<world>` tag can contain various elements, but in this tutorial, only the `<model>` element is covered as we describe how to create a simulation world composed of various models. The full specification of `<world>` can be found [here](http://sdformat.org/spec?ver=1.4&elem=world).
 
