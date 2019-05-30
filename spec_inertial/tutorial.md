@@ -63,6 +63,8 @@ box.
         </link>
       </model>
 
+    </world>
+
 ## `<inertial>`
 
 The `<inertial>` tag is a container for inertial properties that can be added
