@@ -15,8 +15,11 @@ The `<static>` tag can be set to true in a `<model>` to mark the model as
 static, in which case all inertial properties for links are ignored, and the
 links are fixed in place at their initial pose.
 The default value is false.
+The full specification for `<static>` can be found
+[here](/spec?ver=1.4&elem=model#model_static).
 In the following example, a world consists of a ball that falls on a static
-box.
+box (see the [Creating Worlds](/tutorials?tut=spec_world) documentation
+for more info about the `<world>` element).
 
     <world name="ball_falling_ground">
 
@@ -69,6 +72,8 @@ box.
 
 The `<inertial>` tag is a container for inertial properties that can be added
 to a `<link>`, including mass, moment of inertia, and center of mass (Cm) pose.
+The full specification for a link's `<inertial>` can be found
+[here](/spec?ver=1.4&elem=link#link_inertial).
 An example usage of `<inertial>` is shown in the following snippet.
 
     <link name="L">
