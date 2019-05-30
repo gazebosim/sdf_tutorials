@@ -111,6 +111,7 @@ If the pose is unspecified, it defaults to an identity pose.
 The `<inertia>` tag is used to specify the components of the moment of
 the link's 3x3 moment of inertia matrix with respect to the center of mass
 and using the coordinates of the link inertia frame.
+Each component has units of `kg*m^2`.
 Since the moment of inertia matrix is symmetric, only 6 components are
 needed.
 For example, the following symmetric matrix:
