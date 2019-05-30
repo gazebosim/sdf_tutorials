@@ -93,6 +93,52 @@ An example usage of `<inertial>` is shown in the following snippet.
 The mass of the link in kilograms (kg) is specified in the `<mass>` tag.
 The mass affects both the weight of an object in a gravitational field
 and the resistance to linear acceleration from an applied linear force.
+If the mass is unspecified, it defaults to 1 kg.
+
+
+    <world name="balanced_seesaw">
+
+      <model name="fulcrum">
+        <static>1</static>
+        <link name="link">
+          <collision name="collision">
+            <geometry>
+              <box>
+                <size>0.02 0.20 0.20</size>
+              </box>
+            </geometry>
+          </collision>
+          <visual name="visual">
+            <geometry>
+              <box>
+                <size>0.02 0.20 0.20</size>
+              </box>
+            </geometry>
+          </visual>
+        </link>
+      </model>
+
+      <model name="plank">
+        <pose>0 0 0.11 0 0 0</pose>
+        <link name="link">
+          <collision name="collision">
+            <geometry>
+              <box>
+                <size>2.0 0.20 0.02</size>
+              </box>
+            </geometry>
+          </collision>
+          <visual name="visual">
+            <geometry>
+              <box>
+                <size>2.0 0.20 0.02</size>
+              </box>
+            </geometry>
+          </visual>
+        </link>
+      </model>
+
+    </world>
 
 ### `<pose>`
 
