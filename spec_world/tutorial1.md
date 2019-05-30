@@ -122,7 +122,7 @@ As can be seen in the example, the models `ground`, `box`, and `sphere` are defi
 
 ## Creating a box and a sphere on ground plane
 
-A fully working example of a box and a sphere placed on a ground plane is provided below. Note that the `<static>` tag is used in the ground model to indicate that the model does not behave as a dynamic object and should be considered only for its collision and visual properties. More about the `<static>` tag can be found in the [Inertial Properties](/tutorials?tut=spec_inertial)
+A fully working example of a box and a sphere placed on a ground plane is provided below. Note that the `<static>` tag is used in the ground model to indicate that the model does not behave as a dynamic object and should be considered only for its collision and visual properties. More about the `<static>` tag can be found in the [Inertial Properties](/tutorials?tut=spec_inertial) documentation.
 
 ```xml
 <?xml version="1.0" ?>
