@@ -104,6 +104,7 @@ this frame.
 Note that *inertial frame* is a term of art that typically refers
 to a non-accelerating frame and not a body-fixed frame, so that label
 is avoided.
+If the pose is unspecified, it defaults to an identity pose.
 
 ### `<inertia>`
 
@@ -129,3 +130,5 @@ can be specified with the `<inertia>` tag as follows:
       <izz>{izz}</izz>
     </inertia>
 
+If the moment of inertia components are not specified, it defaults to a
+3x3 identity matrix.
