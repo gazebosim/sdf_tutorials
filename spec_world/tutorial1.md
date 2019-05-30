@@ -2,7 +2,7 @@
 
 Conceptually, a world in SDFormat is a environment in which models can be instantiated and simulated by a physics engine. A world is created using the `<world>` tag. The tag has a required `name` attribute which can be used to differentiate between multiple worlds in a single SDF file. The `<world>` tag can contain various elements, but in this tutorial, only the `<model>` element is covered as we describe how to create a simulation world composed of various models. The full specification of `<world>` can be found [here](http://sdformat.org/spec?ver=1.4&elem=world).
 
-One of the most fundamental properties of a world is that it contains the world coordinate frame, which is defined to be the canonical inertial frame of reference for all dynamic bodies in the world. When a model is inserted into a world as a direct child of `<world>`, its pose is expressed relative to this frame. Refer to the [Specifying Pose](/tutorials?tut=specify_pose) and [Model Kinematics](/tutorials?tut=spec_model_kinematics) to learn more about setting poses of models.
+One of the most fundamental properties of a world is that it contains the world coordinate frame, which is defined to be the canonical inertial frame of reference for all dynamic bodies in the world. When a model is inserted into a world as a direct child of `<world>`, its pose is expressed relative to this frame. Refer to the [Specifying Pose](/tutorials?tut=specify_pose) and [Model Kinematics](/tutorials?tut=spec_model_kinematics) documentation to learn more about setting poses of models.
 
 Two methods are available in SDFormat for inserting a model into a world.
 
