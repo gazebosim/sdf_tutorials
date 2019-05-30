@@ -24,7 +24,7 @@
       <skill>beginner</skill>
     </tutorial>
 
-    <tutorial title="Specifying pose" ref='specify_pose'>
+    <tutorial title="Specifying pose" ref='specify_pose' type='documentation'>
       <markdown version="1.4">specify_pose/tutorial.md</markdown>
       <description>Specifying pose in SDFormat.</description>
       <tags>
@@ -33,7 +33,7 @@
       <skill>beginner</skill>
     </tutorial>
 
-    <tutorial title="Model kinematics" ref='spec_model_kinematics'>
+    <tutorial title="Model kinematics" ref='spec_model_kinematics' type='documentation'>
       <markdown version="1.4">spec_model_kinematics/tutorial.md</markdown>
       <description>Specifying model kinematics with links and joints in SDFormat.</description>
       <tags>
@@ -44,7 +44,7 @@
       <skill>beginner</skill>
     </tutorial>
 
-    <tutorial title="Collisions and Visuals" ref='spec_shapes'>
+    <tutorial title="Collisions and Visuals" ref='spec_shapes' type='documentation'>
       <markdown version="1.4">spec_shapes/tutorial.md</markdown>
       <description>Adding shapes to a model with collisions and visuals in SDFormat.</description>
       <tags>
@@ -54,7 +54,7 @@
       </tags>
       <skill>beginner</skill>
     </tutorial>
-    <tutorial title="Material properties of a Visual" ref='spec_materials'>
+    <tutorial title="Material properties of a Visual" ref='spec_materials' type='documentation'>
       <markdown version="1.4">spec_materials/tutorial.md</markdown>
       <description>Setting the material properties of visuals in SDFormat.</description>
       <tags>
@@ -65,7 +65,7 @@
       <skill>intermediate</skill>
     </tutorial>
 
-    <tutorial title="Inertial properties" ref='spec_inertial'>
+    <tutorial title="Inertial properties" ref='spec_inertial' type='documentation'>
       <markdown version="1.4">spec_inertial/tutorial.md</markdown>
       <description>Specifying inertial properties of models and links in SDFormat.</description>
       <tags>
@@ -77,9 +77,27 @@
       <skill>beginner</skill>
     </tutorial>
 
-    <tutorial title="Pose frame semantics" ref='pose_frame_semantics'>
+    <tutorial title="Pose frame semantics: legacy behavior" ref='pose_frame_semantics' type='documentation'>
       <markdown version="1.5">pose_frame_semantics/tutorial.md</markdown>
-      <description>Defining semantics of the pose frame attribute.</description>
+      <description>
+        Describing existing behavior for element naming, definition of
+        coordinate frames, referencing parent and child links,
+        and nested model behavior.
+      </description>
+      <tags>
+        <tag>pose</tag>
+        <tag>frame</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
+    <tutorial title="Pose frame semantics: proposed behavior" ref='pose_frame_semantics_proposal' type='proposal'>
+      <markdown version="2.0">pose_frame_semantics/proposal.md</markdown>
+      <description>
+        Proposing new behavior for SDF 2.0, including semantics for the
+        pose frame attribute, the frame element, new rules
+        for element naming, and corresponding examples.
+      </description>
       <tags>
         <tag>pose</tag>
         <tag>frame</tag>
@@ -114,7 +132,15 @@
         <tutorial>spec_model_kinematics</tutorial>
         <tutorial>spec_shapes</tutorial>
         <tutorial>spec_materials</tutorial>
+        <tutorial>spec_inertial</tutorial>
+      </tutorials>
+    </category>
+
+    <category title="SDF Pose Frame Semantics" skill="advanced" ref="pose_semantics_docs">
+      <description>This series of tutorials describes pose frame semantics in SDF.</description>
+      <tutorials>
         <tutorial>pose_frame_semantics</tutorial>
+        <tutorial>pose_frame_semantics_proposal</tutorial>
       </tutorials>
     </category>
 
