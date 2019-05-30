@@ -83,7 +83,7 @@ To mitigate these issues SDFormat v1.5 introduced the `<include>` tag inside `<w
 ```xml
 <!--simple_world.sdf-->
 <?xml version="1.0" ?>
-<sdf version="1.4">
+<sdf version="1.5">
 <world name="simple_world">
     <include>
       <uri>ground.sdf</uri>      
@@ -103,7 +103,7 @@ As can be seen in the example, the models `ground`, `box`, and `sphere` are defi
 
 ```xml
 <?xml version="1.0" ?>
-<sdf version="1.4">
+<sdf version="1.5">
 <world name="simple_world_two_boxes">
     <include>
       <uri>box.sdf</uri>      
@@ -117,6 +117,8 @@ As can be seen in the example, the models `ground`, `box`, and `sphere` are defi
   </world>
 </sdf>
 ```
+
+> **Note**: A functionally limited version of the `<include>` tag is available in SDFormat v1.4. This version allows specifying the `<uri>` of the externally defined model but does not allow overriding the name or pose of the inserted model.
 
 ## Creating a box and a sphere on ground plane
 
