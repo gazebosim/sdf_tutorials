@@ -253,7 +253,7 @@ If the attribute is not specified, the frame is attached to the model frame
 and thus indirectly attached to the canonical link.
 
 ~~~
-<model name="frame_affixing">
+<model name="frame_attaching">
   <link name="L"/>
   <frame name="F00"/>                 <!-- VALID: Indirectly attached_to canonical link L via the model frame. -->
   <frame name="F0" attached_to=""/>    <!-- VALID: Indirectly attached_to canonical link L via the model frame. -->
@@ -264,7 +264,7 @@ and thus indirectly attached to the canonical link.
 ~~~
 
 ~~~
-<model name="joint_affixing">
+<model name="joint_attaching">
   <link name="P"/>
   <link name="C"/>
   <joint name="J" type="fixed">
@@ -279,7 +279,7 @@ and thus indirectly attached to the canonical link.
 ~~~
 
 ~~~
-<model name="frame_affixing_cycle">
+<model name="frame_attaching_cycle">
   <link name="L"/>
   <frame name="F1" attached_to="F2"/>
   <frame name="F2" attached_to="F1"/>  <!-- INVALID: cycle in attached_to graph does not lead to link. -->
