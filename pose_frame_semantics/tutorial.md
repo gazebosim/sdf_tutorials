@@ -594,3 +594,12 @@ in several ways:
 
 * Recursively compute initial frame poses for links and joints using the rules
   for parent frames defined in the previous section.
+
+### Phases of parsing kinematics of an sdf 1.5 model
+
+Parsing an sdf 1.5 model is similar to parsing an sdf 1.4 model, with the
+addition of nested models.
+Validation steps 1 and 2 are the same, but the procedure for checking
+parent and child names for joints must account for the `::` separator,
+which allows links to be specified as the descendants of sibling models
+of a joint.
