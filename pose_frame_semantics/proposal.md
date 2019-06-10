@@ -39,8 +39,8 @@ Any pose must be defined **relative to** (or be measured in) a certain frame.
 This is captured by `//pose[@relative_to]`, described below.
 
 A frame must have a name, be **attached to** another frame, and have a defined
-pose. This is captured by `//frame` and `//frame[@attached_to]`, described
-below.
+pose. This is captured by `//frame`, `//frame[@attached_to]`, and
+`//frame/pose`, described below.
 
 It is important to mention:
 
