@@ -555,3 +555,42 @@ and the `::` delimiter are under
 discussion and subject to change.
 Please see the [proposal](/tutorials?tut=pose_frame_semantics_proposal)
 for the potential new behavior in SDF 2.0.
+
+### Phases of parsing kinematics of an sdf 1.4 model
+
+This section describes phases for parsing the kinematics of an sdf 1.4 model.
+It does not discuss proper validation of collision and visual geometries,
+link inertia, and many other parameters.
+There are three phases for validating the kinematics data in a model:
+
+1.  **XML parsing and schema validation:**
+    Parse model file from XML into a tree data structure,
+    ensuring that there are no XML syntax errors and that the XML
+    data complies with the [schema](http://sdformat.org/schemas/root.xsd).
+
+2.  **Name attribute checking:**
+    Several SDF element types have name attributes that are required by the
+    schema but have additional requirements.
+    Check that name attributes are not an empty string `""`, and that siblings
+    elements of the same type have unique names.
+    This includes but is not limited to models, actors, links, joints,
+    collisions, visuals, sensors, and lights.
+
+3.  **Joint parent/child name checking:**
+    Each joint must specify parent and child link names.
+    Check that the parent and child link names are different and each
+    match the name of a sibling link to the joint,
+    with the following exception:
+    if "world" is specified as a link name but there is no sibling link
+    with that name, then the joint is attached to a fixed reference frame.
+
+After these three phases have been completed, the model kinematics can be used
+in several ways:
+
+* Construct a kinematic graph with a node for each link and a directed edge
+  for each joint from the parent link to the child.
+  The graph may be a tree if there are no kinematic loops, in which case
+  its kinematics are compible with URDF.
+
+* Recursively compute initial frame poses for links and joints using the rules
+  for parent frames defined in the previous section.
