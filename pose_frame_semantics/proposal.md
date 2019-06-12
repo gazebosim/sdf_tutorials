@@ -292,7 +292,7 @@ and thus indirectly attached to the canonical link.
 </model>
 ~~~
 
-## Details of //world/frame
+## Details of `//world/frame`
 
 The `//world/frame` has two attributes, `name` and `attached_to`, and a child
 `<pose>` element that specifies the initial pose of the frame. Further details
