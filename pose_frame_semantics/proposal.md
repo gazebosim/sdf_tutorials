@@ -38,8 +38,8 @@ attached link).
 Any pose must be defined **relative to** (or be measured in) a certain frame.
 This is captured by `//pose[@relative_to]`, described below.
 
-A frame must have a name, be **attached to** another frame, and have a defined
-pose. This is captured by `//frame`, `//frame[@attached_to]`, and
+A frame must have a name, be **attached to** another frame or link, and have a
+defined pose. This is captured by `//frame`, `//frame[@attached_to]`, and
 `//frame/pose`, described below.
 
 It is important to mention:
@@ -47,8 +47,8 @@ It is important to mention:
 * A pose being defined **relative to** a given frame does not imply that it
 will be **attached to** a given frame.
 * A pose's **relative to** frame only defines its *initial configuration*;
-any movement due to degrees of freedom will only physically "change" a pose by
-its **attached to** frame.
+any movement due to degrees of freedom will only result in a new pose as
+defined by its **attached to** frame.
     * This is done in order to support a "Model-Absolute" paradigm for model
     building; see the Addendum on Model Building for further discussion.
 
@@ -63,10 +63,10 @@ non-`//frame` elements. The following frame types are implicitly introduced:
 defined by `//link/pose`.
 * Joint frames: defined by `//joint[@name]`, attached to the child link at the
 joint's origin defined by `//joint/pose`.
-* Model frame: can only be referred to via a `//model/pose` element when its
-`@relative_to` attribute resolves to empty.
+* Model frame: can only be referred to via a `//link/pose` or `//joint/pose`
+element when its `@relative_to` attribute resolves to empty.
 
-These frames and their semantics are described below more explicitly.
+These frames and their semantics are described below in more detail.
 
 ## Model Frame and Canonical Link
 
