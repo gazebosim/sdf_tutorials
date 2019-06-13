@@ -63,7 +63,7 @@ non-`//frame` elements. The following frame types are implicitly introduced:
 defined by `//link/pose`.
 * Joint frames: defined by `//joint[@name]`, attached to the child link at the
 joint's origin defined by `//joint/pose`.
-* Model frame: can only be referred to via a `//link/pose` or `//joint/pose`
+* Model frame: can only be referred to via a `//link/pose` or `//frame/pose`
 element when its `@relative_to` attribute resolves to empty.
 
 These frames and their semantics are described below in more detail.
