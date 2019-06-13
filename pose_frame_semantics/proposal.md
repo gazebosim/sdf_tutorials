@@ -296,7 +296,7 @@ and thus indirectly attached to the canonical link.
 
 The `//world/frame` has two attributes, `name` and `attached_to`, and a child
 `<pose>` element that specifies the initial pose of the frame. Further details
-of the attributes of this `//world/frame` is given below.
+of the attributes of this `//world/frame` are given below.
 
 ### The `//world/frame[@name]` attribute
 
