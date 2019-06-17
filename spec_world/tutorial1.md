@@ -122,12 +122,12 @@ As can be seen in the example, the models `ground`, `box`, and `sphere` are
 defined in the files `ground.sdf`, `box.sdf`, and `sphere.sdf` respectively. In
 `simple_world.sdf` the `<include>` tag is used to include the models in the
 world. The pose of the each model can be overridden by the `<pose>` child tag
-of `<include>`. This is demonstrated in the example where the pose the sphere
-in the original definition of the model was `1 2 3 0 0 0` but gets overridden
-to `10 0 2 0 0 0` when inserted into the world. Since the name of a model has
-to be unique, `<include>` also provides a mechanism for overriding the name of
-the included model. Thus, it is possible to create two instances of the same
-model with different names as shown in the following example.
+of `<include>`. This is demonstrated in the example where the pose of the
+sphere in the original definition of the model was `1 2 3 0 0 0` but gets
+overridden to `10 0 2 0 0 0` when inserted into the world. Since the name of
+a model has to be unique, `<include>` also provides a mechanism for overriding
+the name of the included model. Thus, it is possible to create two instances of
+the same model with different names as shown in the following example.
 
 ```xml
 <?xml version="1.0" ?>
