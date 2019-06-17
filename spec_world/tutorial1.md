@@ -2,12 +2,12 @@
 
 Conceptually, a world in SDFormat is a environment in which models can be
 instantiated and simulated by a physics engine. A world is created using the
-`<world>` tag. The tag has a required `name` attribute which can be used to
-differentiate between multiple worlds in a single SDF file. The `<world>` tag
-can contain various elements, but in this tutorial, only the `<model>` element
-is covered as we describe how to create a simulation world composed of various
-models. The full specification of `<world>` can be found
+`<world>` tag. It can contain various elements, but in this tutorial, only the
+`<model>` element is covered as we describe how to create a simulation world
+composed of various models. The full specification of `<world>` can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=world).
+
+> **Note**: See [Appendix](#appendix) about a required name attribute of `<world>`
 
 One of the most fundamental properties of a world is that it contains the world
 coordinate frame, which is defined to be the canonical inertial frame of
@@ -228,3 +228,28 @@ Properties](/tutorials?tut=spec_inertial) documentation.
 </sdf>
 ```
 
+## <a id="appendix">Appendix</a>
+
+The `<world>` tag has a required `name` attribute. It can be used to
+differentiate between multiple worlds running in parallel. However, this is not
+a very common use case and will not be discussed in this article.
+
+The world element is not referred to elsewhere in an SDF file by the name
+specified in its `name` attribute. Instead, the special name `world` is used.
+For example, when referring to the world as a link in the `<joint>` element,
+the special name `world` refers to the world as long as there is no sibling link
+that has the name `world`.
+
+```xml
+<sdf version="1.4">
+  <world name="world_with_joint">
+    <model name="fixed_box">
+      <link name="body"/>
+      <joint name="j_fixed" type="fixed">
+        <parent>world</parent> <!-- The name `world` is used instead of world_with_joint -->
+        <child>body</child>
+      </joint>
+    </model>
+  </world>
+</sdf>
+```
