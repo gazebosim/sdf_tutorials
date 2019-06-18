@@ -567,6 +567,9 @@ There are three phases for validating the kinematics data in a model:
     Parse model file from XML into a tree data structure,
     ensuring that there are no XML syntax errors and that the XML
     data complies with the [schema](http://sdformat.org/schemas/root.xsd).
+    Schema `.xsd` files are generated from the `.sdf` specification files
+    when building `libsdformat` with the
+    [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
 
 2.  **Name attribute checking:**
     Several SDF element types have name attributes that are required by the
