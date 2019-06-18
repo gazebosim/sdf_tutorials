@@ -583,9 +583,8 @@ There are three phases for validating the kinematics data in a model:
     [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216).
 
 3.  **Joint parent/child name checking:**
-    Each joint must specify parent and child link names.
-    Check that the parent and child link names are different and each
-    match the name of a sibling link to the joint,
+    For each joint, check that the parent and child link names are different
+    and that each match the name of a sibling link to the joint,
     with the following exception:
     if "world" is specified as a link name but there is no sibling link
     with that name, then the joint is attached to a fixed reference frame.
