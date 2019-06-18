@@ -572,12 +572,15 @@ There are three phases for validating the kinematics data in a model:
     [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
 
 2.  **Name attribute checking:**
-    Several SDF element types have name attributes that are required by the
-    schema but have additional requirements.
     Check that name attributes are not an empty string `""`, and that siblings
     elements of the same type have unique names.
     This includes but is not limited to models, actors, links, joints,
     collisions, visuals, sensors, and lights.
+    This step is distinct from validation with the schema because the schema
+    only confirms the existence of name attributes, not their content.
+    Note that `libsdformat` does not currently perform this check when loading
+    an SDF using `sdf::readFile` or `sdf::readString` (see
+    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216).
 
 3.  **Joint parent/child name checking:**
     Each joint must specify parent and child link names.
