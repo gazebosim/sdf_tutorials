@@ -222,6 +222,32 @@ models that violate this stricter naming requirement. Furthermore, the
 specification version will be incremented so that checks can be added when
 converting from older, more permissive versions to the newer, stricter version.
 
+Alternatives considered:
+
+It was considered to specify the frame type in the `//frame[@attached_to]`
+and `//pose[@relative_to]` attributes in order to avoid this additional naming
+restriction.
+For example, the following approach uses a URI with the frame type encoded
+as the scheme.
+
+    <model name="model">
+      <link name="base"/>
+      <frame name="base"/>
+      <frame name="link_base">
+        <pose relative_to="link://base"/>    <!-- Relative to the link. -->
+      <frame name="frame_base">
+        <pose relative_to="frame://base"/>   <!-- Relative to the frame. -->
+    </model>
+
+While an approach like this would avoid the need for the new naming
+restrictions, it would either require always specifying the frame type in
+addition to the frame name or add complexity to the specification by allowing
+multiple ways to specify the same thing.
+Moreover, it was mentioned above that it can be very confusing when sibling
+elements of any type have identical names, which mitigates the need to
+support non-unique names for sibling elements.
+As such, the naming restriction is preferred.
+
 ## Details of `//model/frame`
 
 While a `<frame>` element is permitted in many places in sdf 1.5, this proposal
