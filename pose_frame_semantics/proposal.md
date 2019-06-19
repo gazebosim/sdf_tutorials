@@ -123,7 +123,7 @@ be user-configurable but with a default value. These two models are equivalent:
 Future versions of SDFormat may require that the canonical link always be
 explicitly defined.
 
-#### Alternatives
+#### Alternatives considered
 
 ~~~
 <!-- //link[@canonical] -->
@@ -158,7 +158,7 @@ achieve this by defining `//model/frame` with an identity pose. Example:
 Nested models will have their own individual model frames. (See pending Nesting
 proposal for nuances.)
 
-#### Alternatives
+#### Alternatives considered
 
 * The model frame is named as the model's name as specified by the file (not
 overridden by `//include`). No link, joint, or frame can be specified using
