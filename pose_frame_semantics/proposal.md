@@ -123,7 +123,7 @@ be user-configurable but with a default value. These two models are equivalent:
 Future versions of SDFormat may require that the canonical link always be
 explicitly defined.
 
-Alternatives:
+#### Alternatives
 
 ~~~
 <!-- //link[@canonical] -->
@@ -158,7 +158,7 @@ achieve this by defining `//model/frame` with an identity pose. Example:
 Nested models will have their own individual model frames. (See pending Nesting
 proposal for nuances.)
 
-Alternatives:
+#### Alternatives
 
 * The model frame is named as the model's name as specified by the file (not
 overridden by `//include`). No link, joint, or frame can be specified using
@@ -222,7 +222,7 @@ models that violate this stricter naming requirement. Furthermore, the
 specification version will be incremented so that checks can be added when
 converting from older, more permissive versions to the newer, stricter version.
 
-Alternatives considered:
+#### Alternatives considered
 
 It was considered to specify the frame type in the `//frame[@attached_to]`
 and `//pose[@relative_to]` attributes in order to avoid this additional naming
@@ -660,7 +660,7 @@ pose `relative_to` frames specified for joints and child links, and no link pose
 A validator could be created to identify SDF files that can be directly
 converted to URDF with minimal modifications based on these principles.
 
-Alternatives considered:
+#### Alternatives considered
 
 An even simpler approach to getting parity with URDF would be to add an
 attribute `//joint[@attached_to_child]` that specifies whether the implicit
