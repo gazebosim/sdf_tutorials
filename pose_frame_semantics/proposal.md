@@ -634,6 +634,55 @@ pose `relative_to` frames specified for joints and child links, and no link pose
 A validator could be created to identify SDF files that can be directly
 converted to URDF with minimal modifications based on these principles.
 
+Alternatives considered:
+
+An even simpler approach to getting parity with URDF would be to add an
+attribute `//joint[@attached_to_child]` that specifies whether the implicit
+joint frame is attached to the child link (true) or the parent link (false).
+If `//joint/pose[@relative_to]` is unset, this attribute would determine
+the default value of `//joint/pose[@relative_to]`.
+For backwards compatibility, the attribute would default to true.
+In this example, setting that attribute to false would eliminate the need
+to specify the `//joint/pose[@relative_to]` attribute and the duplication
+of the parent link name.
+As seen below, the `//link/pose[@relative_to]` attributes still need to be set:
+
+    <model name="model">
+
+      <link name="link1"/>
+
+      <joint name="joint1" type="revolute">
+        <pose relative_to="link1">{xyz_L1L2} {rpy_L1L2}</pose>
+        <parent>link1</parent>
+        <child>link2</child>
+      </joint>
+      <link name="link2">
+        <pose relative_to="joint1" />
+      </link>
+
+      <joint name="joint2" type="revolute" attached_to_child="false">
+        <pose>{xyz_L1L3} {rpy_L1L3}</pose>
+        <parent>link1</parent>
+        <child>link3</child>
+      </joint>
+      <link name="link3">
+        <pose relative_to="joint2" />
+      </link>
+
+      <joint name="joint3" type="revolute" attached_to_child="false">
+        <pose>{xyz_L3L4} {rpy_L3L4}</pose>
+        <parent>link3</parent>
+        <child>link4</child>
+      </joint>
+      <link name="link4">
+        <pose relative_to="joint3" />
+      </link>
+
+    </model>
+
+This change was not included since parity with URDF can already be achieved
+with the other propsed functionality.
+
 ## Example: Parity with URDF using `//model/frame`
 
 One application of the `<frame>` tag is to organize the model so that the pose
