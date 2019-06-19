@@ -300,8 +300,9 @@ of the attributes of this `//world/frame` are given below.
 
 ### The `//world/frame[@name]` attribute
 
-The `//world/frame[@name]` attribute specifies the name of the frame. It follows
-the same name uniqueness rules as `//modle/frame[@name]`.
+The `//world/frame[@name]` attribute specifies the name of the frame. To avoid
+ambiguity, sibling frames—explicit frames specified by `//world/frame` and
+implicit frames specified by `//world/model`—must have unique names.
 
 ### The `//world/frame[@attached_to]` attribute
 
