@@ -6,11 +6,11 @@ As described in the
 the `frame` attribute string was added to `<pose>` elements in SDF version 1.5.
 Semantics for the frame element and attribute were not fully defined, however,
 so they have not yet been used.
-This document proposes a series of changes for SDF version 2.0 to
+This document proposes a series of changes for SDF version 1.7 to
 support semantics for more expressivity of kinematics and coordinate frames
 in SDFormat.
 This includes the ability to describe the kinematics of a URDF model
-with an SDF 2.0 file.
+with an SDF 1.7 file.
 
 **NOTE**: When describing elements or attributes,
 [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp) is used provide
@@ -204,7 +204,7 @@ names.
 ~~~
 
 ~~~
-<sdf version="2.0">
+<sdf version="1.7">
   <model name="model">
     <link name="base"/>
     <link name="attachment"/>
