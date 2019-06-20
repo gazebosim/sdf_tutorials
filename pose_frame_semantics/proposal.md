@@ -88,6 +88,14 @@ non-`//frame` elements. The following frame types are implicitly introduced:
 
 These frames and their semantics are described below in more detail.
 
+#### Alternatives considered
+
+Introducing implicit frames for other elements such as `//link/visual`,
+`//link/collision`, and `//link/sensor` was considered. However, it was
+determined that introducing these implicit frames adds unnecessary complexity
+to the SDFormat parser. It would also pollute the frame graph making it less
+efficient to traverse.
+
 ## Model Frame and Canonical Link
 
 ### Implicit frame defined by `//model/pose` attached to canonical link
