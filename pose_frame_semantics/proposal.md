@@ -26,21 +26,40 @@ as `//model/link` and the `name` attribute as `//model[@name]`:
 
 ## Motivation
 
-Frames can be used to compose information and minimize redundancy
+Coordinate frames are a fundamental aspect of model specification in SDFormat.
+For each element with a [`//pose` tag](/tutorials?tut=specify_pose)
+(such as model, link and joint), a coordinate frame is defined, consisting of
+an origin and orientation of XYZ coordinate axes.
+Coordinate frames are defined by applying the pose transform relative to
+another coordinate frame.
+In SDF 1.6 and earlier, there are fixed rules for determining the frame
+relative to which each subsequent frame is defined
+(see the "Parent frames" sections in the documentation for
+[Pose frame semantics: legacy behavior](/tutorials?tut=pose_frame_semantics)).
+
+To improve the expressivity of model specification in SDFormat, two features
+are being added:
+
+* the ability to define arbitrary coordinate frames within a model
+* the ability to choose the frame relative to which each frame is defined
+
+These features allow frames to be used to compose information and minimize redundancy
 (e.g. specify the bottom center of table, add it to the world with that frame,
 then add an object to the top-left-back corner), and can be used to abstract
 physical attachments (e.g. specify a camera frame in a model to be used for
 inverse kinematics or visual servoing, without the need to also know the
 attached link).
 
-## Poses and Frames
+## Terminology for frames and poses
 
-Any pose must be defined **relative to** (or be measured in) a certain frame.
-This is captured by `//pose[@relative_to]`, described below.
+Each pose must be defined **relative to** (or be measured in) a certain frame.
+This is captured by the attribute `//pose[@relative_to]`, described below.
 
-A frame must have a name, be **attached to** another frame or link, and have a
-defined pose. This is captured by `//frame`, `//frame[@attached_to]`, and
-`//frame/pose`, described below.
+Arbitrary frames are defined with the `//frame` tag.
+A frame must have a name (`//frame[@name]`),
+be **attached to** another frame or link (`//frame[@attached_to]`),
+and have a defined pose (`//frame/pose`).
+Further details are given below.
 
 It is important to mention:
 
@@ -59,12 +78,13 @@ Explicit frames are those defined by `//frame`, described below.
 Implicit frames are introduced for convenience, and are defined by
 non-`//frame` elements. The following frame types are implicitly introduced:
 
-* Link frames: defined by `//link[@name]`, attached to the link at its origin
-defined by `//link/pose`.
-* Joint frames: defined by `//joint[@name]`, attached to the child link at the
-joint's origin defined by `//joint/pose`.
-* Model frame: can only be referred to via a `//link/pose` or `//frame/pose`
-element when its `@relative_to` attribute resolves to empty.
+* Link frames: each link has a frame named `//link[@name]`, attached to the
+  link at its origin defined by `//link/pose`.
+* Joint frames: each joint has a frame named `//joint[@name]`, attached to the
+  child link at the joint's origin defined by `//joint/pose`.
+* Model frame: each model has a frame, but it can only be referenced by a
+  `//link/pose` or `//frame/pose` element when its `@relative_to` attribute
+  resolves to empty.
 
 These frames and their semantics are described below in more detail.
 
