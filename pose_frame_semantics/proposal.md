@@ -807,6 +807,7 @@ link inertia, and many other parameters.
 Several of these phases are similar to the phases of parsing an sdf 1.4
 model in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
 In phases that differ from sdf 1.4, *italics* is used to signal the difference.
+For new phases, the ***Title:*** is highlighted.
 
 There are *five* phases for validating the kinematics data in a model:
 
@@ -837,8 +838,28 @@ There are *five* phases for validating the kinematics data in a model:
     with that name, then the joint is attached to a fixed reference frame.
 
 4.  ***Frame attached_to attribute checking:***
+    For each `//model/frame`, if the `attached_to` attribute exists and is not
+    an empty string `""`, check that the value of the `attached_to` attribute
+    matches the name of a sibling link, joint, or frame.
 
-5.  ***Pose relative_to attribute checking:***
+5.  ***Frame attached_to graph checking:***
+    Construct an `attached_to` directed graph for the model with a vertex for
+    each link in the model.
+    Add a vertex for the model frame with an edge connecting to the vertex
+    of the model's canonical link.
+    Add vertices for each joint with an edge connecting from the joint to
+    the vertex of its child link.
+    Add vertices for each `//frame` with an edge connecting these vertices to
+    the vertex specified in the `//frame[@attached_to]` attribute.
+    If the attribute does not exist or is empty, then connect to the model
+    frame vertex.
+    Verify that the graph has no cycles and that by following the directed
+    edges, every vertex is connected to a link, which is the link to which
+    that frames is attached.
+
+6.  ***Pose relative_to attribute checking:***
+
+7.  ***Pose relative_to graph checking:***
 
 ## Addendum: Model Building, Contrast "Model-Absolute" vs "Element-Relative" Coordinates
 
