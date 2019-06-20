@@ -849,16 +849,16 @@ There are *five* phases for validating the kinematics data in a model:
     5.1 Add a vertex for the model frame with an edge connecting to the vertex
         of the model's canonical link.
 
-    5.1 Add vertices for each joint with an edge connecting from the joint to
+    5.2 Add vertices for each joint with an edge connecting from the joint to
         the vertex of its child link.
 
-    5.1 Add vertices for each `//frame` with an edge connecting these vertices to
-        the vertex specified in the `//frame[@attached_to]` attribute.
+    5.3 Add vertices for each `//frame` with an edge connecting these vertices
+        to the vertex specified in the `//frame[@attached_to]` attribute.
 
-    5.1 If the attribute does not exist or is empty, then connect to the model
+    5.4 If the attribute does not exist or is empty, then connect to the model
         frame vertex.
 
-    5.1 Verify that the graph has no cycles and that by following the directed
+    5.5 Verify that the graph has no cycles and that by following the directed
         edges, every vertex is connected to a link, which is the link to which
         that frames is attached.
 
