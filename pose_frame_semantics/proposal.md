@@ -799,6 +799,47 @@ parsing for setting sentinel or default names for elements with missing names.
     </model>
     ~~~
 
+## Phases of parsing kinematics of an sdf 1.7 model
+
+This section describes phases for parsing the kinematics of an sdf 1.7 model.
+It does not discuss proper validation of collision and visual geometries,
+link inertia, and many other parameters.
+Several of these phases are similar to the phases of parsing an sdf 1.4
+model in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
+In phases that differ from sdf 1.4, *italics* is used to signal the difference.
+
+There are *five* phases for validating the kinematics data in a model:
+
+1.  **XML parsing and schema validation:**
+    Parse model file from XML into a tree data structure,
+    ensuring that there are no XML syntax errors and that the XML
+    data complies with the [schema](http://sdformat.org/schemas/root.xsd).
+    Schema `.xsd` files are generated from the `.sdf` specification files
+    when building `libsdformat` with the
+    [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
+
+2.  **Name attribute checking:**
+    Check that name attributes are not an empty string `""`, and that sibling
+    elements of *any* type have unique names.
+    This includes but is not limited to models, actors, links, joints,
+    collisions, visuals, sensors, and lights.
+    This step is distinct from validation with the schema because the schema
+    only confirms the existence of name attributes, not their content.
+    Note that `libsdformat` does not currently perform this check when loading
+    an SDF using `sdf::readFile` or `sdf::readString` (see
+    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216).
+
+3.  **Joint parent/child name checking:**
+    For each joint, check that the parent and child link names are different
+    and that each match the name of a sibling link to the joint,
+    with the following exception:
+    if "world" is specified as a link name but there is no sibling link
+    with that name, then the joint is attached to a fixed reference frame.
+
+4.  ***Frame attached_to attribute checking:***
+
+5.  ***Pose relative_to attribute checking:***
+
 ## Addendum: Model Building, Contrast "Model-Absolute" vs "Element-Relative" Coordinates
 
 `X(0)` implies zero configuration, while `X(q)` implies a value at a given
