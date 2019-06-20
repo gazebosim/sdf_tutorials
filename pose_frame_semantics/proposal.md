@@ -307,15 +307,20 @@ implicit frames specified by `//world/model`—must have unique names.
 ### The `//world/frame[@attached_to]` attribute
 
 The `//world/frame[@attached_to]` attribute specifies another frame to which
-this frame is attached. A `//world/frame` can be attached to the implicit world
-frame or to an explicitly defined `//world/frame`. If the
-`//world/frame[@attached_to]` attribute is not specified or is left empty, the
-frame will be attached to the world frame. If the attribute is specified, it
-must refer to a sibling `//world/frame`.
+this frame is attached. A `//world/frame` can be attached to an implicitl frame
+(defined by `//world` or `//world/model`) or to an explicitly frame defined by
+`//world/frame`. If the `//world/frame[@attached_to]` attribute is not
+specified or is left empty, the frame will be attached to the world frame. If
+the attribute is specified, it must refer to a sibling `//world/frame` or
+`//world/model`.
+
+When a a `//world/frame` is attached to a `//world/model`, it is indirectly
+attached to the canonical link of the model.
 
 Similar to `//model/frame`, cycles in the `attached_to` graph are not allowed.
 If a `//world/frame` is specified, recursively following the `attached_to`
-attributes of the specified frames must lead to the implicit world frame.
+attributes of the specified frames must lead to the implicit world frame or to
+the canonical link of a sibling model.
 
 ~~~
 <world name="frame_attaching">
@@ -323,6 +328,11 @@ attributes of the specified frames must lead to the implicit world frame.
   <frame name="F1" attached_to=""/>    <!-- VALID: Indirectly attached_to the implicit world frame. -->
   <frame name="F2" attached_to="F1"/>  <!-- VALID: Directly attached to F1, indirectly attached_to the implicit world frame via F1. -->
   <frame name="F3" attached_to="A"/>   <!-- INVALID: no sibling frame named A. -->
+
+  <model name="M0">
+    <link name="L"/>                   <!-- Canonical link. -->
+  </model>
+  <frame name="F4" attached_to="M0"/>  <!-- Valid: Indirectly attached_to to the canonical link, L, of M0. -->
 </world>
 ~~~
 
