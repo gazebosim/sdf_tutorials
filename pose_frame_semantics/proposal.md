@@ -851,28 +851,82 @@ There are *five* phases for validating the kinematics data in a model:
     matches the name of a sibling link, joint, or frame.
 
 5.  ***Frame attached_to graph checking:***
-    Construct an `attached_to` directed graph for the model with a vertex for
-    each link in the model.
+    Construct an `attached_to` directed graph for the model:
 
-    5.1 Add a vertex for the model frame with an edge connecting to the vertex
+    5.1 Add a vertex for each link in the model.
+
+    5.2 Add a vertex for the model frame with an edge connecting to the vertex
         of the model's canonical link.
 
-    5.2 Add vertices for each joint with an edge connecting from the joint to
+    5.3 Add vertices for each joint with an edge connecting from the joint to
         the vertex of its child link.
 
-    5.3 Add vertices for each `//frame` with an edge connecting these vertices
+    5.4 Add vertices for each `//frame` with an edge connecting these vertices
         to the vertex specified in the `//frame[@attached_to]` attribute.
 
-    5.4 If the attribute does not exist or is empty, then connect to the model
+    5.5 If the attribute does not exist or is empty, then connect to the model
         frame vertex.
 
-    5.5 Verify that the graph has no cycles and that by following the directed
+    5.6 Verify that the graph has no cycles and that by following the directed
         edges, every vertex is connected to a link, which is the link to which
-        that frames is attached.
+        that frame is attached.
 
 6.  ***Pose relative_to attribute checking:***
+    For each `//model/link/pose`, `//model/joint/pose` and `//model/frame/pose`
+    if the `relative_to` attribute exists and is not an empty string `""`,
+    check that the value of the `relative_to` attribute
+    matches the name of a link, joint, or frame that is a sibling of the element
+    that contains the `//pose`.
 
 7.  ***Pose relative_to graph checking:***
+    Construct a `relative_to` directed graph for the model:
+
+    5.1 Add a vertex for the implicit model frame.
+
+    5.2 Add vertices for each `//model/link`, `//model/joint`, and
+        `//model/frame`.
+
+    5.3 For each `//model/link`:
+
+    5.3.1 If `//link/pose[@relative_to]` exists and is not empty,
+          add an edge from the link vertex to the vertex named in
+          `//link/pose[@relative_to]`.
+
+    5.3.2 Otherwise (ie. if `//link/pose` or `//link/pose[@relative_to]` do not
+          exist or `//link/pose[@relative_to]` is an empty string `""`)
+          add an edge from the link vertex to the implicit model frame vertex.
+
+    5.4 For each `//model/joint`:
+
+    5.4.1 If `//joint/pose[@relative_to]` exists and is not empty,
+          add an edge from the joint vertex to the vertex named in
+          `//joint/pose[@relative_to]`.
+
+    5.4.2 Otherwise (ie. if `//joint/pose` or `//joint/pose[@relative_to]` do not
+          exist or `//joint/pose[@relative_to]` is an empty string `""`)
+          add an edge from the joint vertex to
+          the child link vertex named in `//joint/child`.
+
+    5.5 For each `//model/frame`:
+
+    5.5.1 If `//frame/pose[@relative_to]` exists and is not empty,
+          add an edge from the frame vertex to the vertex named in
+          `//frame/pose[@relative_to]`.
+
+    5.5.2 Otherwise if `//frame[@attached_to` exists and is not empty
+          (ie. if `//frame[@attached_to` exists and is not an empty string `""`
+          and one of the following is true: `//frame/pose` does not exist,
+          `//frame/pose[@relative_to]` does not exist,
+          `//frame/pose[@relative_to]` is an empty string `""`)
+          add an edge from the frame vertex to the vertex named in
+          `//frame[@attached_to]`.
+
+    5.5.3 Otherwise (ie. if neither `//frame[@attached_to]` nor
+          `//frame/pose[@relative_to]` are specified)
+          add an edge from the frame vertex to the implicit model frame vertex.
+
+    5.6 Verify that the graph has no cycles and that by following the directed
+        edges, every vertex is connected to the implicit model frame.
 
 ## Addendum: Model Building, Contrast "Model-Absolute" vs "Element-Relative" Coordinates
 
