@@ -138,8 +138,8 @@ may be disallowed by a future version of the spec.
 
 For a joint with parent link frame `P` and child link frame `C`,
 the joint `<pose>` tag specifies the pose `X_CJc` of a joint frame `Jc` rigidly
-affixed to the child link.
-Similarly, a frame `Jp` is rigidly affixed to the parent body.
+attached to the child link.
+Similarly, a frame `Jp` is rigidly attached to the parent body.
 These frames are illustrated in the following figure.
 
 <!-- Figure Credit: Alejandro Castro -->
@@ -200,7 +200,7 @@ As discussed in the
 the `<origin>` tag is the URDF analog of the SDFormat `<pose>`.
 The joint origin defines the pose `X_PJp` of the joint frame `Jp` in the parent
 link frame.
-The joint frame `Jc` is rigidly affixed to the child link such that it coincides
+The joint frame `Jc` is rigidly attached to the child link such that it coincides
 with `Jp` in the zero configuration,
 and the child link frame is co-located with frame `Jc`.
 This is illustrated in the [URDF documentation](http://wiki.ros.org/urdf/XML/joint)
