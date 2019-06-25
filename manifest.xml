@@ -54,6 +54,17 @@
       </tags>
       <skill>beginner</skill>
     </tutorial>
+
+    <tutorial title="Creating Worlds" ref='spec_world' type='documentation'>
+      <markdown version="1.4">spec_world/tutorial1.md</markdown>
+      <description>Creating worlds in SDFormat.</description>
+      <tags>
+        <tag>world</tag>
+        <tag>model</tag>
+      </tags>
+      <skill>beginner</skill>
+    </tutorial>
+
     <tutorial title="Material properties of a Visual" ref='spec_materials' type='documentation'>
       <markdown version="1.4">spec_materials/tutorial.md</markdown>
       <description>Setting the material properties of visuals in SDFormat.</description>
@@ -130,6 +141,7 @@
         <tutorial>spec_model_kinematics</tutorial>
         <tutorial>spec_shapes</tutorial>
         <tutorial>spec_materials</tutorial>
+        <tutorial>spec_world</tutorial>
       </tutorials>
     </category>
 
