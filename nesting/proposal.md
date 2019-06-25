@@ -1,30 +1,44 @@
-# Model Nesting: Proposal
+# Model Nesting Proposal
 
-At present, SDFormat adds an `<include/>` tag. However, it has the following
-design issues:
+## Motivation
 
-1.   Encapsulation: There is no specification on how encapsulated an included
-file should be, and at what stage of construction inclusion is permitted.
-    * Can the included file refer to joints that it does not define?
-        * Example: Adding a gripper to an IIWA. There may be a weld pose based on the pneumatic or electric flange.
-    * It is useful to encode frame offsets.
-2.   There is no explicit specification about namespacing, relative references or absolute references, etc.
-    * This is being addressed in the [Pose Frame Semantics Proposal PR](https://bitbucket.org/osrf/sdf_tutorials/pull-requests/7/pose-frame-semantics-proposal-for-new/diff)
-3.   SDFormat requires that included models be converted to SDFormat (e.g. including an URDF). This may prevent software packages from doing more complex composition where there may not be an exact mapping to SDFormat, or where this conversion is excessive overhead.
+At present, SDFormat has an `//include` tag. However, it may have issues with
+encapsulation / "viral" format requirements and namespacing. These are
+described below.
+
+These are incorporated into a new suggested parsing order to acommodate these
+motivations.
+
+### Proposed Parsing Order
+
+In order
 
 ## Encapsulation
+
+Any set of models are effectively an "API". They has publicly referencable
+elements (links, joints, frames, and possibly sub-models).
+
+At present, there is no specification on how encapsulated an included file
+should be, and at what stage of construction inclusion is permitted. Both of these drive reusability of existing models, and what modifications are necessary
+for composition.
+
+Some example circumstances:
+
+* Can the included file refer to joints that it does not define?
+    * Example: Adding a gripper to an IIWA. There may be a weld pose based on the pneumatic or electric flange.
+    * What if including a model in one context completely changes the topology
+    from another context, unintentionally?
+* How well does abstraction work?
+    * Can links be renamed, and can aliased be left, possiblye with pose offsets?
 
 For this aspect, the goal of this proposal is meant to permit adding models
 either inside of a file, or after other models have been processed.
 
-* This is achievable with current implementation of Gazebo, and with
-partially-conformant implementation of Drake. However, with new proposals
-for `//pose[@frame]` semantics, and the desire to stick with model-absolute
-coordinates, this may become more nuanced when referring to frames in a
-model.
-* This permits SDFormat to be a *non-viral* format, e.g. a library developer
-does not have to try and implement a mechanism to convert to some holisitc
-SDFormat IR, or their own incantation thereof.
+This could also pave the way for SDFormat to be a *non-viral* format, e.g. a
+library developer does not have to convert their models to some sort of SDFormat
+IR (which may not cover everything they need), or have to reimplement / fork
+`libsdformat`, just so that they can leverage SDFormat for composition or as an
+optional format.
 
 ### Model File Completeness
 
@@ -35,6 +49,22 @@ another. You cannot refer to elements that do not exist inside that file.
 
 The goal here here is to keep things simple from a parsing perspective,
 especially for using model-absolute coordinate specification.
+
+### Guiding Motivation: Make Your Model an "API"
+
+*TODO(eric): I want to present this, but can't think of a better location.*
+
+As such, you should consider levels of abstraction; use frames frequently,
+especially for mounting points. If that mounting point physically moves at some
+point, you update your model, and any downstream references can be left
+untouched.
+
+*TODO(eric): For the abstraction argument, //joint/parent and //joint/child
+should really be able to refer to a frame - then a frame can be used completely
+for abstraction!*
+
+If you need to use intermediate frames that are not intended to be used for
+public consumption, please prefix them with a single `_`, like Python.
 
 ### Positive Example
 
@@ -97,26 +127,12 @@ You cannot achieve the above by defining the weld in the gripper itself:
 <!-- TODO(eric): Will this mess up Anzu workflows? Should there be some sort of
      specification welding? Perhaps along the lines of kinematic models? -->
 
-## Naming Syntax and Semantics
+## Namespacing: Syntax and Semantics
+
+There is no explicit specification about namespacing, relative references or
+absolute references, etc.
 
 `<insert text from pro-pose-al>`
-
-### Suggestion: Make Your Model an "API"
-
-Your model is effectively an "API" of sorts. It has publicly referencable
-links, joints, frames, and possibly sub-models.
-
-As such, you should consider levels of abstraction; use frames frequently,
-especially for mounting points. If that mounting point physically moves at some
-point, you update your model, and any downstream references can be left
-untouched.
-
-If you need to use intermediate frames that are not intended to be used for
-public consumption, please prefix them with a single `_`, like Python.
-
-*TODO(eric): For the abstraction argument, //joint/parent and //joint/child
-should really be able to refer to a link - then a frame can be used completely
-for abstraction!*
 
 ### Element Nesting
 
@@ -133,7 +149,7 @@ For example, an atlernative formulation to the abstract frame placement, placing
 ~~~xml
 <model name="abstract_joint_frames">
   <link name="parent"/>
-  <frame name="parent_j1" affixed_to="parent">
+  <frame name="parent_j1" attached_to="parent">
     <pose>{X_PJp}</pose>
   </frame>
   <joint name="joint1">
@@ -168,12 +184,12 @@ name, not the model name specified by the included file.
 Semantics:
 
 * `//joint/parent` and `//joint/child` can cross model boundaries
-* `//frame[@affixed_to]` can cross
-* `//frame[@affixed_to]` *can* refer to links outside of a given model, as long
+* `//frame[@attached_to]` can cross
+* `//frame[@attached_to]` *can* refer to links outside of a given model, as long
 as it
 * `//model[@canonical_link]` *cannot* cross model boundaries
-* The default `//pose[@frame]` will refer to the *closest* enclosing `//model`,
-not the file.
+* The default `//pose[@relative_to]` will refer to the *closest* enclosing
+`//model`, not the file.
 
 ### Example: Simple Cross-Referencing
 
@@ -306,7 +322,15 @@ Proposed welding semantics, with somma dat nesting:
 
 `<include/>` *should not* be able to override canonical link.
 
-### Open Question: Purely Kinematic Models
+ ???
+
+## "Viral" SDFormat
+
+SDFormat requires that included models be converted to SDFormat (e.g. including an URDF). This may prevent software packages from doing more complex composition where there may not be an exact mapping to SDFormat, or where this conversion is excessive overhead.
+
+## Open Questions
+
+### Purely Kinematic Models?
 
 This document may implicitly permit a model that is purely kinematic, or rather,
 defined purely as frames, relative to the model frame.
@@ -331,7 +355,7 @@ Motivating Example: Scene-fixed camera calibration results - frames only
       <frame name="camera_001_rgb">
         <pose>{X_MC1}</pose>
       </frame>
-      <frame name="camera_001_depth" affixed_to="camera_001_rgb">
+      <frame name="camera_001_depth" attached_to="camera_001_rgb">
         <pose>{X_C1D}</pose>
       </frame>
       <!-- ... -->
@@ -342,14 +366,14 @@ Motivating Example: Scene-fixed camera calibration results - frames only
       <frame name="camera_011_rgb">
         <pose>{X_MC11}</pose>
       </frame>
-      <frame name="camera_011_depth" affixed_to="camera_011_rgb">
+      <frame name="camera_011_depth" attached_to="camera_011_rgb">
         <pose>{X_C11D}</pose>
       </frame>
     </model>
 
 *TODO(eric): As an alternative, make some sort of `//frame_group` tag?*
 
-### Open Question: Permit inlined `//include`?
+### Permit inlined `//include`?
 
 In order to permit different levels of abstraction (e.g. for frame groups, or
 for adding certain collision elements), should it be possible to `//include` an
@@ -361,3 +385,5 @@ against...
 However, it *is* super useful to be able add a set of frames and welding
 semantics... But that would break encapsulation? Should that just be deferred
 to text processing???
+
+## 
