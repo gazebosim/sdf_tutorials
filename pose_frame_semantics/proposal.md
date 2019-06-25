@@ -895,28 +895,28 @@ parsing task.
 Instead of adding implicit frames for `//link/collision`, `//link/light`,
 `//link/sensor`, and `//link/visual`, explicit frames could be defined
 as `//link/frame`.
-Any `//frame` elements defined within a `//link` must be affixed to that link.
-The `//link/frame[@affixed_to]` and `//link/frame/pose[@relative_to]` attributes
+Any `//frame` elements defined within a `//link` must be attached to that link.
+The `//link/frame[@attached_to]` and `//link/frame/pose[@relative_to]` attributes
 may refer to sibling `//link/frame` elements by name, but if both attributes
-are set, the value of `affixed_to` will have no effect.
-If the `//link/frame[@affixed_to]` attribute is unspecified, it defaults
+are set, the value of `attached_to` will have no effect.
+If the `//link/frame[@attached_to]` attribute is unspecified, it defaults
 to the link's implicit frame.
 
 For example, the model with two LED's is rewritten below using two
 `//link/frame` elements.
-The `led1_frame` doesn't specify the `//link/frame[@affixed_to]` attribute,
-so it is affixed to the implicit link frame by default.
-The `led2_frame` is affixed to `led1_frame`, and the `relative_to` attribute
+The `led1_frame` doesn't specify the `//link/frame[@attached_to]` attribute,
+so it is attached to the implicit link frame by default.
+The `led2_frame` is attached to `led1_frame`, and the `relative_to` attribute
 is unset, so it default to be relative to `led1_frame`.
 An equivalent `led2_frame_` is given with `relative_to` set instead of
-`affixed_to`.
+`attached_to`.
 
     <model name="model_with_link_frames">
       <link name="link_with_LEDs">
         <frame name="led1_frame">
           <pose>0.1 0 0 0 0 0</pose>
         </frame>
-        <frame name="led2_frame" affixed_to="led1_frame">
+        <frame name="led2_frame" attached_to="led1_frame">
           <pose>-0.2 0 0 0 0 0</pose>
         </frame>
         <frame name="led2_frame_">
