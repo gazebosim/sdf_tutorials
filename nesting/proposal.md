@@ -9,9 +9,18 @@ described below.
 These are incorporated into a new suggested parsing order to acommodate these
 motivations.
 
-### Proposed Parsing Order
+### Proposed Update: Phases of Parsing Composition of of SDFormat 1.7 Model
 
-In order
+Building on top of:
+
+* http://sdformat.org/tutorials?tut=pose_frame_semantics&#Phasesofparsingkinematicsofansdf1.4model
+* http://sdformat.org/tutorials?tut=pose_frame_semantics_proposal&cat=pose_semantics_docs&branch=pose_frame_parsing_proposal
+
+The proposed updates are:
+
+*TODO(eric): Write this.*
+
+For the motivation of each of these stages, please see below.
 
 ## Encapsulation
 
@@ -19,7 +28,8 @@ Any set of models are effectively an "API". They has publicly referencable
 elements (links, joints, frames, and possibly sub-models).
 
 At present, there is no specification on how encapsulated an included file
-should be, and at what stage of construction inclusion is permitted. Both of these drive reusability of existing models, and what modifications are necessary
+should be, and at what stage of construction inclusion is permitted. Both of
+these drive reusability of existing models, and what modifications are necessary
 for composition.
 
 Some example circumstances:
@@ -31,24 +41,11 @@ Some example circumstances:
 * How well does abstraction work?
     * Can links be renamed, and can aliased be left, possiblye with pose offsets?
 
-For this aspect, the goal of this proposal is meant to permit adding models
-either inside of a file, or after other models have been processed.
-
-This could also pave the way for SDFormat to be a *non-viral* format, e.g. a
-library developer does not have to convert their models to some sort of SDFormat
-IR (which may not cover everything they need), or have to reimplement / fork
-`libsdformat`, just so that they can leverage SDFormat for composition or as an
-optional format.
-
-### Model File Completeness
-
-A program should be able to load any *single file* on its own, with its declared dependencies being present (like Python modules).
-
-All initially specified `//pose` elements will be rigidly related to one
-another. You cannot refer to elements that do not exist inside that file.
-
-The goal here here is to keep things simple from a parsing perspective,
-especially for using model-absolute coordinate specification.
+Defining encapsulation could also pave the way for SDFormat to be a *non-viral*
+format, e.g. a library developer can merge multiple formats (potentially
+non-XML) together via SDFormat in code, without having to convert their models
+to some sort of SDFormat IR (which may not provide sufficient feature
+coverage), or have to reimplement / fork `libsdformat`.
 
 ### Guiding Motivation: Make Your Model an "API"
 
@@ -65,6 +62,16 @@ for abstraction!*
 
 If you need to use intermediate frames that are not intended to be used for
 public consumption, please prefix them with a single `_`, like Python.
+
+### Model File Completeness
+
+A program should be able to load any *single file* on its own, with its declared dependencies being present (like Python modules).
+
+All initially specified `//pose` elements will be rigidly related to one
+another. You cannot refer to elements that do not exist inside that file.
+
+The goal here here is to keep things simple from a parsing perspective,
+especially for using model-absolute coordinate specification.
 
 ### Positive Example
 
@@ -322,11 +329,8 @@ Proposed welding semantics, with somma dat nesting:
 
 `<include/>` *should not* be able to override canonical link.
 
- ???
-
-## "Viral" SDFormat
-
-SDFormat requires that included models be converted to SDFormat (e.g. including an URDF). This may prevent software packages from doing more complex composition where there may not be an exact mapping to SDFormat, or where this conversion is excessive overhead.
+*TODO(eric): I completely forgot the motivation for this... This now seems a
+wee bit dumb...*
 
 ## Open Questions
 
