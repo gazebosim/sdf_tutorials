@@ -380,9 +380,9 @@ the value of the `//frame[@attached_to]` attribute.
 Cycles in the `relative_to` attribute graph are not allowed and must be
 checked separately from the `attached_to` attribute graph.
 Following the `relative_to` attributes of the specified frames must lead to
-a frame expressed relative to the model frame, with the exception of
-`//world/frame/pose[@relative_to]` in which the terminal frame is the implicit
-world frame.
+a frame expressed relative to the model frame. The exceptions to this rule are
+`//world/frame/pose[@relative_to]` and `//world/model/pose[@relative_to]``in
+which the terminal frame is the implicit world frame.
 
 ~~~
 <model name="link_pose_relative_to">
