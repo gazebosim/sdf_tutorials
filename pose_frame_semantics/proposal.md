@@ -88,9 +88,11 @@ non-`//frame` elements. The following frame types are implicitly introduced:
 * Model frame: each model has a frame, but it can only be referenced by a
   `//link/pose` or `//frame/pose` element when its `@relative_to` attribute
   resolves to empty.
-* World frame: inertial reference frame to which a `//world/frame` can be
-attached. It can also be referred to via a `//model/pose` element when its
-`@relative_to` attribute resolves to empty.
+* World frame: each world has a fixed inertial reference frame that is
+  the default frame to which explicit world frames defined by `//world/frame`
+  are attached.
+  Model poses defined by `//model/pose` are interpreted relative to the implicit
+  world frame when the `//model/pose[@relative_to]` attribute is empty.
 
 These frames and their semantics are described below in more detail.
 
