@@ -232,7 +232,7 @@ converting from older, more permissive versions to the newer, stricter version.
 
 The `//model/frame` has two attributes, `name` and `attached_to`, and a child
 `<pose>` element that specifies the initial pose of the frame. Further details
-of the attributes of `//model/frame` is given below.
+of the attributes of `//model/frame` are given below.
 
 ### The `//model/frame[@name]` attribute
 
@@ -327,8 +327,8 @@ implicit frames specified by `//world/model`—must have unique names.
 ### The `//world/frame[@attached_to]` attribute
 
 The `//world/frame[@attached_to]` attribute specifies another frame to which
-this frame is attached. A `//world/frame` can be attached to an implicitl frame
-(defined by `//world` or `//world/model`) or to an explicitly frame defined by
+this frame is attached. A `//world/frame` can be attached to an implicit frame
+(defined by `//world` or `//world/model`) or to an explicit frame defined by
 `//world/frame`. If the `//world/frame[@attached_to]` attribute is not
 specified or is left empty, the frame will be attached to the world frame. If
 the attribute is specified, it must refer to a sibling `//world/frame` or
@@ -381,7 +381,7 @@ Cycles in the `relative_to` attribute graph are not allowed and must be
 checked separately from the `attached_to` attribute graph.
 Following the `relative_to` attributes of the specified frames must lead to
 a frame expressed relative to the model frame. The exceptions to this rule are
-`//world/frame/pose[@relative_to]` and `//world/model/pose[@relative_to]``in
+`//world/frame/pose[@relative_to]` and `//world/model/pose[@relative_to]` in
 which the terminal frame is the implicit world frame.
 
 ~~~
