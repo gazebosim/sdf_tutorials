@@ -967,39 +967,39 @@ There are *five* phases for validating the kinematics data in a model:
 7.  ***Pose relative_to graph checking:***
     Construct a `relative_to` directed graph for the model:
 
-    5.1 Add a vertex for the implicit model frame.
+    7.1 Add a vertex for the implicit model frame.
 
-    5.2 Add vertices for each `//model/link`, `//model/joint`, and
+    7.2 Add vertices for each `//model/link`, `//model/joint`, and
         `//model/frame`.
 
-    5.3 For each `//model/link`:
+    7.3 For each `//model/link`:
 
-    5.3.1 If `//link/pose[@relative_to]` exists and is not empty,
+    7.3.1 If `//link/pose[@relative_to]` exists and is not empty,
           add an edge from the link vertex to the vertex named in
           `//link/pose[@relative_to]`.
 
-    5.3.2 Otherwise (ie. if `//link/pose` or `//link/pose[@relative_to]` do not
+    7.3.2 Otherwise (ie. if `//link/pose` or `//link/pose[@relative_to]` do not
           exist or `//link/pose[@relative_to]` is an empty string `""`)
           add an edge from the link vertex to the implicit model frame vertex.
 
-    5.4 For each `//model/joint`:
+    7.4 For each `//model/joint`:
 
-    5.4.1 If `//joint/pose[@relative_to]` exists and is not empty,
+    7.4.1 If `//joint/pose[@relative_to]` exists and is not empty,
           add an edge from the joint vertex to the vertex named in
           `//joint/pose[@relative_to]`.
 
-    5.4.2 Otherwise (ie. if `//joint/pose` or `//joint/pose[@relative_to]` do not
+    7.4.2 Otherwise (ie. if `//joint/pose` or `//joint/pose[@relative_to]` do not
           exist or `//joint/pose[@relative_to]` is an empty string `""`)
           add an edge from the joint vertex to
           the child link vertex named in `//joint/child`.
 
-    5.5 For each `//model/frame`:
+    7.5 For each `//model/frame`:
 
-    5.5.1 If `//frame/pose[@relative_to]` exists and is not empty,
+    7.5.1 If `//frame/pose[@relative_to]` exists and is not empty,
           add an edge from the frame vertex to the vertex named in
           `//frame/pose[@relative_to]`.
 
-    5.5.2 Otherwise if `//frame[@attached_to` exists and is not empty
+    7.5.2 Otherwise if `//frame[@attached_to` exists and is not empty
           (ie. if `//frame[@attached_to` exists and is not an empty string `""`
           and one of the following is true: `//frame/pose` does not exist,
           `//frame/pose[@relative_to]` does not exist,
@@ -1007,11 +1007,11 @@ There are *five* phases for validating the kinematics data in a model:
           add an edge from the frame vertex to the vertex named in
           `//frame[@attached_to]`.
 
-    5.5.3 Otherwise (ie. if neither `//frame[@attached_to]` nor
+    7.5.3 Otherwise (ie. if neither `//frame[@attached_to]` nor
           `//frame/pose[@relative_to]` are specified)
           add an edge from the frame vertex to the implicit model frame vertex.
 
-    5.6 Verify that the graph has no cycles and that by following the directed
+    7.6 Verify that the graph has no cycles and that by following the directed
         edges, every vertex is connected to the implicit model frame.
 
 ## Addendum: Model Building, Contrast "Model-Absolute" vs "Element-Relative" Coordinates
