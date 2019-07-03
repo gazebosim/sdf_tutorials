@@ -900,10 +900,10 @@ It does not discuss proper validation of collision and visual geometries,
 link inertia, nested models, and many other parameters.
 Several of these phases are similar to the phases of parsing an sdf 1.4
 model in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
-In phases that differ from sdf 1.4, *italics* is used to signal the difference.
+In phases that differ from sdf 1.4, *italics* are used to signal the difference.
 For new phases, the ***Title:*** is highlighted.
 
-There are *five* phases for validating the kinematics data in a model:
+There are *seven* phases for validating the kinematics data in a model:
 
 1.  **XML parsing and schema validation:**
     Parse model file from XML into a tree data structure,
@@ -931,12 +931,12 @@ There are *five* phases for validating the kinematics data in a model:
     if "world" is specified as a link name but there is no sibling link
     with that name, then the joint is attached to a fixed reference frame.
 
-4.  ***Frame attached_to attribute checking:***
+4.  ***Check `//model/frame[@attached_to]` attribute values:***
     For each `//model/frame`, if the `attached_to` attribute exists and is not
     an empty string `""`, check that the value of the `attached_to` attribute
     matches the name of a sibling link, joint, or frame.
 
-5.  ***Frame attached_to graph checking:***
+5.  ***Check `//model/frame[@attached_to]` graph:***
     Construct an `attached_to` directed graph for the model:
 
     5.1 Add a vertex for each link in the model.
@@ -957,14 +957,14 @@ There are *five* phases for validating the kinematics data in a model:
         edges, every vertex is connected to a link, which is the link to which
         that frame is attached.
 
-6.  ***Pose relative_to attribute checking:***
+6.  ***Check `//pose[@relative_to]` attribute values:***
     For each `//model/link/pose`, `//model/joint/pose` and `//model/frame/pose`
     if the `relative_to` attribute exists and is not an empty string `""`,
     check that the value of the `relative_to` attribute
     matches the name of a link, joint, or frame that is a sibling of the element
     that contains the `//pose`.
 
-7.  ***Pose relative_to graph checking:***
+7.  ***Check `//pose[@relative_to]` graph:***
     Construct a `relative_to` directed graph for the model:
 
     7.1 Add a vertex for the implicit model frame.
