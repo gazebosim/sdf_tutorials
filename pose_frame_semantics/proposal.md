@@ -96,6 +96,14 @@ non-`//frame` elements. The following frame types are implicitly introduced:
 
 These frames and their semantics are described below in more detail.
 
+#### Alternatives considered
+
+Introducing implicit frames for other elements such as `//link/visual`,
+`//link/collision`, and `//link/sensor` was considered. However, it was
+determined that introducing these implicit frames adds unnecessary complexity
+to the SDFormat parser. It would also pollute the frame graph making it less
+efficient to traverse.
+
 ## Model Frame and Canonical Link
 
 ### Implicit frame defined by `//model/pose` attached to canonical link
@@ -131,7 +139,7 @@ be user-configurable but with a default value. These two models are equivalent:
 Future versions of SDFormat may require that the canonical link always be
 explicitly defined.
 
-Alternatives:
+#### Alternatives considered
 
 ~~~
 <!-- //link[@canonical] -->
@@ -166,7 +174,7 @@ achieve this by defining `//model/frame` with an identity pose. Example:
 Nested models will have their own individual model frames. (See pending Nesting
 proposal for nuances.)
 
-Alternatives:
+#### Alternatives considered
 
 * The model frame is named as the model's name as specified by the file (not
 overridden by `//include`). No link, joint, or frame can be specified using
@@ -229,6 +237,32 @@ requirement. To handle this, a validation tool will be created to identify
 models that violate this stricter naming requirement. Furthermore, the
 specification version will be incremented so that checks can be added when
 converting from older, more permissive versions to the newer, stricter version.
+
+#### Alternatives considered
+
+It was considered to specify the frame type in the `//frame[@attached_to]`
+and `//pose[@relative_to]` attributes in order to avoid this additional naming
+restriction.
+For example, the following approach uses a URI with the frame type encoded
+as the scheme.
+
+    <model name="model">
+      <link name="base"/>
+      <frame name="base"/>
+      <frame name="link_base">
+        <pose relative_to="link://base"/>    <!-- Relative to the link. -->
+      <frame name="frame_base">
+        <pose relative_to="frame://base"/>   <!-- Relative to the frame. -->
+    </model>
+
+While an approach like this would avoid the need for the new naming
+restrictions, it would either require always specifying the frame type in
+addition to the frame name or add complexity to the specification by allowing
+multiple ways to specify the same thing.
+Moreover, it was mentioned above that it can be very confusing when sibling
+elements of any type have identical names, which mitigates the need to
+support non-unique names for sibling elements.
+As such, the naming restriction is preferred.
 
 ## Details of `//model/frame`
 
@@ -719,6 +753,55 @@ The well-formed SDFormat file must have kinematics with a tree structure,
 pose `relative_to` frames specified for joints and child links, and no link poses.
 A validator could be created to identify SDF files that can be directly
 converted to URDF with minimal modifications based on these principles.
+
+#### Alternatives considered
+
+An even simpler approach to getting parity with URDF would be to add an
+attribute `//joint[@attached_to_child]` that specifies whether the implicit
+joint frame is attached to the child link (true) or the parent link (false).
+If `//joint/pose[@relative_to]` is unset, this attribute would determine
+the default value of `//joint/pose[@relative_to]`.
+For backwards compatibility, the attribute would default to true.
+In this example, setting that attribute to false would eliminate the need
+to specify the `//joint/pose[@relative_to]` attribute and the duplication
+of the parent link name.
+As seen below, the `//link/pose[@relative_to]` attributes still need to be set:
+
+    <model name="model">
+
+      <link name="link1"/>
+
+      <joint name="joint1" type="revolute">
+        <pose relative_to="link1">{xyz_L1L2} {rpy_L1L2}</pose>
+        <parent>link1</parent>
+        <child>link2</child>
+      </joint>
+      <link name="link2">
+        <pose relative_to="joint1" />
+      </link>
+
+      <joint name="joint2" type="revolute" attached_to_child="false">
+        <pose>{xyz_L1L3} {rpy_L1L3}</pose>
+        <parent>link1</parent>
+        <child>link3</child>
+      </joint>
+      <link name="link3">
+        <pose relative_to="joint2" />
+      </link>
+
+      <joint name="joint3" type="revolute" attached_to_child="false">
+        <pose>{xyz_L3L4} {rpy_L3L4}</pose>
+        <parent>link3</parent>
+        <child>link4</child>
+      </joint>
+      <link name="link4">
+        <pose relative_to="joint3" />
+      </link>
+
+    </model>
+
+This change was not included since parity with URDF can already be achieved
+with the other propsed functionality.
 
 ## Example: Parity with URDF using `//model/frame`
 
