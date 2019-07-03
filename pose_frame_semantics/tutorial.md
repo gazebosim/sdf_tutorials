@@ -572,7 +572,7 @@ There are three phases for validating the kinematics data in a model:
     [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
 
 2.  **Name attribute checking:**
-    Check that name attributes are not an empty string `""`, and that siblings
+    Check that name attributes are not an empty string `""`, and that sibling
     elements of the same type have unique names.
     This includes but is not limited to models, actors, links, joints,
     collisions, visuals, sensors, and lights.
@@ -608,3 +608,33 @@ Validation steps 1 and 2 are the same, but the procedure for checking
 parent and child names for joints must account for the `::` separator,
 which allows links to be specified as the descendants of sibling models
 of a joint.
+
+### Phases of parsing kinematics of an sdf world
+
+Parsing an sdf world file involves the first two steps in parsing a model
+followed by parsing each model according to the phases described above.
+The models can be parsed independently and in any order.
+These three phases are listed below:
+
+1.  **XML parsing and schema validation:**
+    Parse world file from XML into a tree data structure,
+    ensuring that there are no XML syntax errors and that the XML
+    data complies with the [schema](http://sdformat.org/schemas/root.xsd).
+    Schema `.xsd` files are generated from the `.sdf` specification files
+    when building `libsdformat` with the
+    [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
+
+2.  **Name attribute checking:**
+    Check that name attributes are not an empty string `""`, and that sibling
+    elements of the same type have unique names.
+    This check can be limited to `//world/model[@name]`
+    since other names will be checked in the following step.
+    This step is distinct from validation with the schema because the schema
+    only confirms the existence of name attributes, not their content.
+    Note that `libsdformat` does not currently perform this check when loading
+    an SDF using `sdf::readFile` or `sdf::readString` (see
+    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216).
+
+3.  **Model checking:**
+    Check each model according to the three phases of parsing kinematics of an
+    sdf model.

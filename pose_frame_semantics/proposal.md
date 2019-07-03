@@ -1014,6 +1014,40 @@ There are *seven* phases for validating the kinematics data in a model:
     7.6 Verify that the graph has no cycles and that by following the directed
         edges, every vertex is connected to the implicit model frame.
 
+## Phases of parsing kinematics of an sdf 1.7 world
+
+This section describes phases for parsing the kinematics of an sdf 1.7 world.
+Several of these phases are similar to the phases of parsing an sdf 1.4
+world in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
+In phases that differ from that document, *italics* are used to signal the difference.
+For new phases, the ***Title:*** is highlighted.
+
+There are *seven* phases for validating the kinematics data in a world:
+
+1.  **XML parsing and schema validation:**
+    Parse world file from XML into a tree data structure,
+    ensuring that there are no XML syntax errors and that the XML
+    data complies with the [schema](http://sdformat.org/schemas/root.xsd).
+    Schema `.xsd` files are generated from the `.sdf` specification files
+    when building `libsdformat` with the
+    [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
+
+2.  **Name attribute checking:**
+    Check that name attributes are not an empty string `""`, and that sibling
+    elements of *any* type have unique names.
+    This check can be limited to `//world/model[@name]`
+    *and `//world/frame[@name]`*
+    since other names will be checked in the following step.
+    This step is distinct from validation with the schema because the schema
+    only confirms the existence of name attributes, not their content.
+    Note that `libsdformat` does not currently perform this check when loading
+    an SDF using `sdf::readFile` or `sdf::readString` (see
+    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216).
+
+3.  **Model checking:**
+    Check each model according to the *seven* phases of parsing kinematics of an
+    sdf model.
+
 ## Addendum: Model Building, Contrast "Model-Absolute" vs "Element-Relative" Coordinates
 
 `X(0)` implies zero configuration, while `X(q)` implies a value at a given
