@@ -897,7 +897,7 @@ parsing for setting sentinel or default names for elements with missing names.
 
 This section describes phases for parsing the kinematics of an sdf 1.7 model.
 It does not discuss proper validation of collision and visual geometries,
-link inertia, and many other parameters.
+link inertia, nested models, and many other parameters.
 Several of these phases are similar to the phases of parsing an sdf 1.4
 model in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
 In phases that differ from sdf 1.4, *italics* is used to signal the difference.
