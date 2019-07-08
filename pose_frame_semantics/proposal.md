@@ -74,6 +74,9 @@ defined by its **attached to** frame.
 ### Explicit vs. Implicit frames
 
 Explicit frames are those defined by `//frame`, described below.
+While a `<frame>` element is permitted in many places in sdf 1.5, this proposal
+only permits a `<frame>` element to appear in `<model>` (`//model/frame`) and
+`<world>` (`//world/frame`) elements.
 
 Implicit frames are introduced for convenience, and are defined by
 non-`//frame` elements. The following frame types are implicitly introduced:
@@ -85,6 +88,11 @@ non-`//frame` elements. The following frame types are implicitly introduced:
 * Model frame: each model has a frame, but it can only be referenced by a
   `//link/pose` or `//frame/pose` element when its `@relative_to` attribute
   resolves to empty.
+* World frame: each world has a fixed inertial reference frame that is
+  the default frame to which explicit world frames defined by `//world/frame`
+  are attached.
+  Model poses defined by `//model/pose` are interpreted relative to the implicit
+  world frame when the `//model/pose[@relative_to]` attribute is empty.
 
 These frames and their semantics are described below in more detail.
 
@@ -258,9 +266,9 @@ As such, the naming restriction is preferred.
 
 ## Details of `//model/frame`
 
-While a `<frame>` element is permitted in many places in sdf 1.5, this proposal
-only permits a `<frame>` element to appear in a `<model>` (`//model/frame`).
-Further details of the attributes of this element are given below.
+The `//model/frame` has two attributes, `name` and `attached_to`, and a child
+`<pose>` element that specifies the initial pose of the frame. Further details
+of the attributes of `//model/frame` are given below.
 
 ### The `//model/frame[@name]` attribute
 
@@ -340,6 +348,57 @@ and thus indirectly attached to the canonical link.
 </model>
 ~~~
 
+## Details of `//world/frame`
+
+The `//world/frame` has two attributes, `name` and `attached_to`, and a child
+`<pose>` element that specifies the initial pose of the frame. Further details
+of the attributes of this `//world/frame` are given below.
+
+### The `//world/frame[@name]` attribute
+
+The `//world/frame[@name]` attribute specifies the name of the frame. To avoid
+ambiguity, sibling frames—explicit frames specified by `//world/frame` and
+implicit frames specified by `//world/model`—must have unique names.
+
+### The `//world/frame[@attached_to]` attribute
+
+The `//world/frame[@attached_to]` attribute specifies another frame to which
+this frame is attached. A `//world/frame` can be attached to an implicit frame
+(defined by `//world` or `//world/model`) or to an explicit frame defined by
+`//world/frame`. If the `//world/frame[@attached_to]` attribute is not
+specified or is left empty, the frame will be attached to the world frame. If
+the attribute is specified, it must refer to a sibling `//world/frame` or
+`//world/model`.
+
+When a a `//world/frame` is attached to a `//world/model`, it is indirectly
+attached to the canonical link of the model.
+
+Similar to `//model/frame`, cycles in the `attached_to` graph are not allowed.
+If a `//world/frame` is specified, recursively following the `attached_to`
+attributes of the specified frames must lead to the implicit world frame or to
+the canonical link of a sibling model.
+
+~~~
+<world name="frame_attaching">
+  <frame name="F0"/>                   <!-- VALID: Indirectly attached_to the implicit world frame. -->
+  <frame name="F1" attached_to=""/>    <!-- VALID: Indirectly attached_to the implicit world frame. -->
+  <frame name="F2" attached_to="F1"/>  <!-- VALID: Directly attached to F1, indirectly attached_to the implicit world frame via F1. -->
+  <frame name="F3" attached_to="A"/>   <!-- INVALID: no sibling frame named A. -->
+
+  <model name="M0">
+    <link name="L"/>                   <!-- Canonical link. -->
+  </model>
+  <frame name="F4" attached_to="M0"/>  <!-- Valid: Indirectly attached_to to the canonical link, L, of M0. -->
+</world>
+~~~
+
+~~~
+<world name="frame_attaching_cycle">
+  <frame name="F1" attached_to="F2"/>
+  <frame name="F2" attached_to="F1"/>  <!-- INVALID: cycle in attached_to graph does not lead to the implicit world frame. -->
+</world>
+~~~
+
 ## The `//pose[@relative_to]` attribute
 
 The `//pose[@relative_to]` attribute indicates the frame relative to which the initial
@@ -356,8 +415,10 @@ If the `//frame/pose[@relative_to]` attribute is empty or not set, it should def
 the value of the `//frame[@attached_to]` attribute.
 Cycles in the `relative_to` attribute graph are not allowed and must be
 checked separately from the `attached_to` attribute graph.
-Following the `relative_to` attributes of the specified frames must lead to a
-frame expressed relative to the model frame.
+Following the `relative_to` attributes of the specified frames must lead to
+a frame expressed relative to the model frame. The exceptions to this rule are
+`//world/frame/pose[@relative_to]` and `//world/model/pose[@relative_to]` in
+which the terminal frame is the implicit world frame.
 
 ~~~
 <model name="link_pose_relative_to">
@@ -437,6 +498,31 @@ frame expressed relative to the model frame.
   </frame>
   <frame name="cycle2">
     <pose relative_to="cycle1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
+  </frame>
+</model>
+~~~
+
+~~~
+<world name="world_frame_pose_relative_to"> <!-- Implicit world frame. Referred to as (W) -->
+  <frame name="F0">                         <!-- Frame indirectly attached_to the implicit world frame. -->
+    <pose>{X_WF0}</pose>                    <!-- Pose relative_to the attached_to frame (W) by default. -->
+  </frame>
+
+  <frame name="F1" attached_to="F0">        <!-- Frame directly attached_to another explicit frame (F0). -->
+    <pose>{X_F0F1}</pose>                   <!-- Pose relative_to the attached_to frame (F0 -> W) by default. -->
+  </frame>
+  <frame name="F2" attached_to="F0">        <!-- Frame directly attached_to another explicit frame (F0). -->
+    <pose relative_to="">{X_F0F2}</pose>    <!-- Pose relative_to the attached_to frame (F0 -> W) by default. -->
+  </frame>
+  <frame name="F3">                         <!-- Frame indirectly attached_to the implicit world frame. -->
+    <pose relative_to="F0">{X_F0F3}</pose>  <!-- Pose relative_to frame (F0 -> W). -->
+  </frame>
+
+  <frame name="cycle1">
+    <pose relative_to="cycle2">{X_C1C2}</pose>
+  </frame>
+  <frame name="cycle2">
+    <pose relative_to="cycle1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
   </frame>
 </model>
 ~~~
