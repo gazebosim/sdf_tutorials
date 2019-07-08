@@ -554,7 +554,7 @@ for child models (can they have same name as the parent model?),
 and the `::` delimiter are under
 discussion and subject to change.
 Please see the [proposal](/tutorials?tut=pose_frame_semantics_proposal)
-for the potential new behavior in SDF 2.0.
+for the potential new behavior in SDF 1.7.
 
 ### Phases of parsing kinematics of an sdf 1.4 model
 
