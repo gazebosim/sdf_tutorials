@@ -1132,11 +1132,11 @@ There are *seven* phases for validating the kinematics data in a world:
           add an edge from the frame vertex to the vertex named in
           `//frame[@attached_to]`.
 
-    7.5.3 Otherwise (ie. if neither `//frame[@attached_to]` nor
+    7.4.3 Otherwise (ie. if neither `//frame[@attached_to]` nor
           `//frame/pose[@relative_to]` are specified)
           add an edge from the frame vertex to the implicit world frame vertex.
 
-    7.6 Verify that the graph has no cycles and that by following the directed
+    7.5 Verify that the graph has no cycles and that by following the directed
         edges, every vertex is connected to the implicit world frame.
 
 ## Addendum: Model Building, Contrast "Model-Absolute" vs "Element-Relative" Coordinates
