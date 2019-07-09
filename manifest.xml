@@ -76,7 +76,7 @@
       <skill>intermediate</skill>
     </tutorial>
 
-    <tutorial title="Pose frame semantics: legacy behavior" ref='pose_frame_semantics' type='documentation'>
+    <tutorial title="Pose frame semantics" ref='pose_frame_semantics' type='documentation'>
       <markdown version="1.5">pose_frame_semantics/tutorial.md</markdown>
       <description>
         Describing existing behavior for element naming, definition of
@@ -132,13 +132,13 @@
         <tutorial>spec_shapes</tutorial>
         <tutorial>spec_materials</tutorial>
         <tutorial>spec_world</tutorial>
+        <tutorial>pose_frame_semantics</tutorial>
       </tutorials>
     </category>
 
-    <category title="SDF Pose Frame Semantics" skill="advanced" ref="pose_semantics_docs">
-      <description>This series of tutorials describes pose frame semantics in SDF.</description>
+    <category title="SDF Proposals" skill="advanced" ref="pose_semantics_docs">
+      <description>These proposals suggest new behavior in SDF.</description>
       <tutorials>
-        <tutorial>pose_frame_semantics</tutorial>
         <tutorial>pose_frame_semantics_proposal</tutorial>
       </tutorials>
     </category>

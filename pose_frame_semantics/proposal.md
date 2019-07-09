@@ -1,16 +1,16 @@
 # Pose Frame Semantics Proposal
 
 As described in the
-[tutorial on existing behavior for pose frame semantics](/tutorials?tut=pose_frame_semantics),
+[documentation on existing behavior for pose frame semantics](/tutorials?tut=pose_frame_semantics),
 `<frame>` elements were added to several elements, and
 the `frame` attribute string was added to `<pose>` elements in SDF version 1.5.
 Semantics for the frame element and attribute were not fully defined, however,
 so they have not yet been used.
-This document proposes a series of changes for SDF version 2.0 to
+This document proposes a series of changes for SDF version 1.7 to
 support semantics for more expressivity of kinematics and coordinate frames
 in SDFormat.
 This includes the ability to describe the kinematics of a URDF model
-with an SDF 2.0 file.
+with an SDF 1.7 file.
 
 **NOTE**: When describing elements or attributes,
 [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp) is used provide
@@ -220,7 +220,7 @@ names.
 ~~~
 
 ~~~
-<sdf version="2.0">
+<sdf version="1.7">
   <model name="model">
     <link name="base"/>
     <link name="attachment"/>
@@ -410,7 +410,7 @@ following the behavior from SDFormat 1.4.
 If `//joint/pose[@relative_to]` is empty or not set, it defaults to the child link's
 implicit frame, also following the behavior from SDFormat 1.4
 (see the "Parent frames in sdf 1.4" section of the
-[pose frame semantics tutorial](/tutorials?tut=pose_frame_semantics)).
+[pose frame semantics documentation](/tutorials?tut=pose_frame_semantics)).
 If the `//frame/pose[@relative_to]` attribute is empty or not set, it should default to
 the value of the `//frame[@attached_to]` attribute.
 Cycles in the `relative_to` attribute graph are not allowed and must be
@@ -586,7 +586,7 @@ group of frames:
 ## Example using the `//pose[@relative_to]` attribute
 
 For example, consider the following figure from the
-[previous tutorial about specifying pose](/tutorials?tut=specify_pose)
+[previous documentation about specifying pose](/tutorials?tut=specify_pose)
 that shows a parent link `P`, child link `C`, and joint `J` with joint frames
 `Jp` and `Jc` on the parent and child respectively.
 
@@ -641,7 +641,7 @@ For reference, equivalent expressions of `Jc` are defined as `Jc1` and `Jc2`.
 ### Example: Parity with URDF
 
 Recall the example URDF from the Parent frames in URDF section
-of the [Pose Frame Semantics: Legacy Behavior tutorial](/tutorials?tut=pose_frame_semantics)
+of the [Pose Frame Semantics: Legacy Behavior documentation](/tutorials?tut=pose_frame_semantics)
 that corresponds to the following image in the
 [URDF documentation](http://wiki.ros.org/urdf/XML/model):
 
