@@ -901,7 +901,7 @@ link inertia, nested models, and many other parameters.
 Several of these phases are similar to the phases of parsing an sdf 1.4
 model in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
 In phases that differ from sdf 1.4, *italics* are used to signal the difference.
-For new phases, the ***Title:*** is highlighted.
+For new phases, the ***Title:*** is italicized.
 
 There are *seven* phases for validating the kinematics data in a model:
 
@@ -1030,7 +1030,7 @@ This section describes phases for parsing the kinematics of an sdf 1.7 world.
 Several of these phases are similar to the phases of parsing an sdf 1.4
 world in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
 In phases that differ from that document, *italics* are used to signal the difference.
-For new phases, the ***Title:*** is highlighted.
+For new phases, the ***Title:*** is italicized.
 
 There are *seven* phases for validating the kinematics data in a world:
 
