@@ -41,11 +41,11 @@ This proposes to improve the expressivity of model specification in SDFormat by
 adding the ability to define arbitrary coordinate frames within a model and
 choose the frame relative to which each frame is defined.
 
-This allow frames to be used to compose information and minimize redundancy
-(e.g. specify a link's pose relative to its parent / inboard joint), and could
-be used to abstract other information (e.g. for inverse kinematics or visual
-servoing, specify and then a use a camera frame, rather than requiring a base
-link and some pose offset).
+This allows frames to be used to compose information and minimize redundancy,
+such as specifying a link's pose relative to its parent / inboard joint.
+It could also be used to abstract other information for inverse kinematics,
+visual servoing, or sensor calibration by defining a camera pose using a frame
+instead of a base link and pose offset.
 
 ## Terminology for frames and poses
 
