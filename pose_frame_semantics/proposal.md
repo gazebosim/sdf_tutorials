@@ -37,18 +37,15 @@ relative to which each subsequent frame is defined
 (see the "Parent frames" sections in the documentation for
 [Pose frame semantics: legacy behavior](/tutorials?tut=pose_frame_semantics)).
 
-To improve the expressivity of model specification in SDFormat, two features
-are being added:
+This proposes to improve the expressivity of model specification in SDFormat by
+adding the ability to define arbitrary coordinate frames within a model and
+choose the frame relative to which each frame is defined.
 
-* the ability to define arbitrary coordinate frames within a model
-* the ability to choose the frame relative to which each frame is defined
-
-These features allow frames to be used to compose information and minimize redundancy
-(e.g. specify the bottom center of table, add it to the world with that frame,
-then add an object to the top-left-back corner), and can be used to abstract
-physical attachments (e.g. specify a camera frame in a model to be used for
-inverse kinematics or visual servoing, without the need to also know the
-attached link).
+This allow frames to be used to compose information and minimize redundancy
+(e.g. specify a link's pose relative to its parent / inboard joint), and could
+be used to abstract other information (e.g. for inverse kinematics or visual
+servoing, specify and then a use a camera frame, rather than requiring a base
+link and some pose offset).
 
 ## Terminology for frames and poses
 
