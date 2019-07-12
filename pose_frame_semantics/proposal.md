@@ -545,6 +545,20 @@ have separate, valid graphs.
 </model>
 ~~~
 
+
+### Removal of `//joint/axis/use_parent_model_frame`
+
+As discussed in the [Model
+Kinematics](/tutorials?tut=spec_model_kinematics&cat=specification&#jointpose)
+document, this tag was introduced in SDFormat 1.5 to maintain backward
+compatibility with SDFormat 1.4 when specifying the unit vector along the axis
+of motion of a joint. However, it has become clear that the usefulness of this
+tag is outweighed by the confusion it creates as the resulting frame semantics
+of `//joint/axis/xyz` are inconsistent with the way other tags in SDFormat
+operate. Therefore, `//joint/axis/use_parent_model_frame` will be removed in
+SDFormat 1.7.
+
+
 ## Empty `//pose` and `//frame` elements imply identity pose
 
 With the use of the `//pose[@relative_to]` and `//frame[@attached_to]` attributes,
