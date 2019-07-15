@@ -140,14 +140,16 @@ may be disallowed by a future version of the spec.
 
 For joint types that have one or two degrees of freedom, the properties of the
 axes of rotation/translation are specified by the `<axis>` and `<axis2>` tags.
-Both tags contain the `<xyz>` which specifies the the unit vector along the
+Both tags contain the `<xyz>` tag which specifies the the unit vector along the
 axis of motion. In SDFormat versions 1.4 and earlier, this unit vector is
 expressed in the parent link's model frame. In SDFormat versions 1.5 and 1.6, by
 default, the unit vector is expressed in the joint frame that contains the
 `<axis>` tag. However, the tag `<use_parent_model_frame>` can be set to true to
 specify the unit vector in the parent link's model frame instead. This is used to
 replicate the behavior of the `<xyz>` tag in v1.4 and earlier. Note that the
-`<use_parent_model_frame>` tag may be removed in future version of SDFormat.
+`<use_parent_model_frame>` tag may be removed in a future version of SDFormat.
+
+For example:
 
     <model name="joint_axis">
       <link name="A"/>
