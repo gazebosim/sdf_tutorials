@@ -549,7 +549,7 @@ have separate, valid graphs.
 ### Removal of `//joint/axis/use_parent_model_frame`
 
 As discussed in the [Model
-Kinematics](/tutorials?tut=spec_model_kinematics&cat=specification&#jointpose)
+Kinematics](/tutorials?tut=spec_model_kinematics&cat=specification&#jointaxis)
 document, this tag was introduced in SDFormat 1.5 to maintain backward
 compatibility with SDFormat 1.4 when specifying the unit vector along the axis
 of motion of a joint. However, it has become clear that the usefulness of this
