@@ -890,14 +890,14 @@ parsing for setting sentinel or default names for elements with missing names.
     </model>
     ~~~
 
-## Phases of parsing kinematics of an sdf 1.7 model
+## Phases of parsing kinematics of an SDFormat 1.7 model
 
-This section describes phases for parsing the kinematics of an sdf 1.7 model.
+This section describes phases for parsing the kinematics of an SDFormat 1.7 model.
 It does not discuss proper validation of collision and visual geometries,
 link inertia, nested models, and many other parameters.
-Several of these phases are similar to the phases of parsing an sdf 1.4
+Several of these phases are similar to the phases of parsing an SDFormat 1.4
 model in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
-In phases that differ from sdf 1.4, *italics* are used to signal the difference.
+In phases that differ from SDFormat 1.4, *italics* are used to signal the difference.
 For new phases, the ***Title:*** is italicized.
 
 There are *seven* phases for validating the kinematics data in a model:
@@ -1021,10 +1021,10 @@ There are *seven* phases for validating the kinematics data in a model:
     7.6 Verify that the graph has no cycles and that by following the directed
         edges, every vertex is connected to the implicit model frame.
 
-## Phases of parsing kinematics of an sdf 1.7 world
+## Phases of parsing kinematics of an SDFormat 1.7 world
 
-This section describes phases for parsing the kinematics of an sdf 1.7 world.
-Several of these phases are similar to the phases of parsing an sdf 1.4
+This section describes phases for parsing the kinematics of an SDFormat 1.7 world.
+Several of these phases are similar to the phases of parsing an SDFormat 1.4
 world in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
 In phases that differ from that document, *italics* are used to signal the difference.
 For new phases, the ***Title:*** is italicized.
