@@ -136,10 +136,49 @@ may be disallowed by a future version of the spec.
       </joint>
     </model>
 
+### `<joint><axis>`
+
+For joint types that have one or two degrees of freedom, the properties of the
+axes of rotation/translation are specified by the `<axis>` and `<axis2>` tags.
+Both tags contain the `<xyz>` tag which specifies the the unit vector along the
+axis of motion. In SDFormat versions 1.4 and earlier, this unit vector is
+expressed in the parent link's model frame. In SDFormat versions 1.5 and 1.6, by
+default, the unit vector is expressed in the joint frame that contains the
+`<axis>` tag. However, the tag `<use_parent_model_frame>` can be set to true to
+specify the unit vector in the parent link's model frame instead. This is used to
+replicate the behavior of the `<xyz>` tag in v1.4 and earlier. Note that the
+`<use_parent_model_frame>` tag may be removed in a future version of SDFormat.
+
+For example:
+
+    <model name="joint_axis">
+      <link name="A"/>
+      <link name="B"/>
+      <link name="C"/>
+      <joint name="J1" type="revolute">
+        <pose>0 0 0 1.57 0 0</pose>
+        <parent>A</parent>
+        <child>B</child>
+        <axis>
+          <xyz>0 0 1</xyz> <!-- The xyz unit vector is expressed in the joint frame -->
+        </axis>
+      </joint>
+      <joint name="J2" type="revolute">
+        <parent>B</parent>
+        <child>C</child>
+        <axis>
+          <xyz>0 0 1</xyz> <!-- The xyz unit vector is expressed in the parent link's model frame. Thus, this axis is orthogonal to the axis of J1 -->
+          <use_parent_model_frame>true</use_parent_model_frame>
+        </axis>
+      </joint>
+    </model>
+
+### `<joint><pose>`
+
 For a joint with parent link frame `P` and child link frame `C`,
 the joint `<pose>` tag specifies the pose `X_CJc` of a joint frame `Jc` rigidly
-affixed to the child link.
-Similarly, a frame `Jp` is rigidly affixed to the parent body.
+attached to the child link.
+Similarly, a frame `Jp` is rigidly attached to the parent body.
 These frames are illustrated in the following figure.
 
 <!-- Figure Credit: Alejandro Castro -->
@@ -200,7 +239,7 @@ As discussed in the
 the `<origin>` tag is the URDF analog of the SDFormat `<pose>`.
 The joint origin defines the pose `X_PJp` of the joint frame `Jp` in the parent
 link frame.
-The joint frame `Jc` is rigidly affixed to the child link such that it coincides
+The joint frame `Jc` is rigidly attached to the child link such that it coincides
 with `Jp` in the zero configuration,
 and the child link frame is co-located with frame `Jc`.
 This is illustrated in the [URDF documentation](http://wiki.ros.org/urdf/XML/joint)
