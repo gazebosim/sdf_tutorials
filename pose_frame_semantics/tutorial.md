@@ -214,7 +214,7 @@ and
 
 For comparison, the behavior of parent frames in Unified Robot Description
 Format ([URDF](http://wiki.ros.org/urdf/XML/model)) is given in this section.
-A URDF files contains links, joints, collisions, visuals, and inertials
+A URDF file contains links, joints, collisions, visuals, and inertials
 like SDFormat, but with several significant differences.
 
 The first difference is that coordinate transformations are expressed using

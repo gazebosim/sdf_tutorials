@@ -4,7 +4,7 @@ A fundamental tool for robot modeling is the ability to concisely and
 intuitively express the relative position and orientation of model components
 in 3-D.
 
-Throughout the tutorials and documentation, the suffix `_A` is used to indicate
+Throughout the documentation, the suffix `_A` is used to indicate
 a kinematic quantity that is expressed w.r.t (with respect to) frame `A`. In addition,
 the suffix `_BA` is used to indicate a kinematic quantity that changes from being
 expressed w.r.t frame `A` to being expressed w.r.t frame `B`. For example, the
