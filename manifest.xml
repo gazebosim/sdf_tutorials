@@ -111,8 +111,8 @@
 
     <category title="Get Started" skill="beginner" ref="get_started">
       <description>
-        Welcome to the SDF tutorials! This is a great place to start, especially if you're a new SDF user.
-        Each category to the left presents a collection of relevant tutorials.
+        Welcome to the SDF documentation! This is a great place for new and experienced SDF users to start.
+        Each category to the left presents a collection of relevant documentation.
 
         Use the *Edit* button in the upper right corner of a tutorial page to go directly
         to its source at
@@ -125,7 +125,7 @@
     </category>
 
     <category title="SDF Specification" skill="beginner" ref="specification">
-      <description>This series of tutorials describes the SDF specification.</description>
+      <description>Here you’ll find explanations for elements of the SDF specification.</description>
       <tutorials>
         <tutorial>specify_pose</tutorial>
         <tutorial>spec_model_kinematics</tutorial>

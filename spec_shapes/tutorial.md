@@ -1,6 +1,6 @@
 # Adding shapes to a model with collisions and visuals in SDFormat
 
-This tutorial explains how to add geometric shapes to a model that describe the
+This documentation explains how to add geometric shapes to a model that describe the
 physical and visual characteristics of each link in a model.
 These characteristics are specified
 using `<visual>` and `<collision>` tags in SDFormat.
@@ -98,7 +98,7 @@ parent frame for this pose element is the parent link. However, a different
 frame of reference can be set using the `frame` attribute of the `<pose>` tag.
 For more information about the `<pose>` tag, see the [Specifying pose in
 SDFormat](/tutorials?tut=specify_pose&ver=1.4) and [Pose frame semantics
-](/tutorials?tut=pose_frame_semantics&ver=1.4) tutorials.
+](/tutorials?tut=pose_frame_semantics&ver=1.4) documentation.
 
 ## Composition of Shapes
 
@@ -143,4 +143,4 @@ A `<visual>` tag may also contain a `<material>` tag which is used to set the
 color and texture properties of a visual.
 The full specification for `<material>` can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=material).
-A tutorial that covers how to specify the color of a visual can be found [here](/tutorials?tut=spec_materials).
+Documentation on specifying the color of a visual can be found [here](/tutorials?tut=spec_materials).

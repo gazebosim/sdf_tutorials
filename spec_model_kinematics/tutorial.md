@@ -1,19 +1,19 @@
 # Specifying model kinematics in SDFormat
 
-This tutorial describes how to use SDFormat to model the kinematics of
+This documentation describes how SDFormat models the kinematics of
 articulated multibody systems with the `<model>`, `<link>`, `<joint>`,
 and `<pose>` tags, which can be briefly summarized as:
 
+* `<model>`: a container for links and joints that defines a complete robot or physical object
 * `<link>`: a rigid body (like a "link" in a chain)
 * `<joint>`: a kinematic relationship between links
 * `<pose>`: the relative position and orientation between two coordinate frames
-* `<model>`: a container for links and joints that defines a complete robot or physical object
 
 SDFormat links, joints, and models each have their own coordinate frames that
 can be offset using the `<pose>` tag.
 See the
-[previous tutorial](/tutorials?tut=specify_pose)
-about specifying poses for more detail on the `<pose>` tag.
+[documentation](/tutorials?tut=specify_pose)
+on specifying poses for more detail on the `<pose>` tag.
 
 ## `<model>`
 
@@ -21,7 +21,7 @@ The `<model>` tag serves as a named container for a group of links and joints.
 Its full specification can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=model).
 
-It is required to name the model using the `name` attribute.
+Models require names using the `name` attribute.
 For example, an empty model with no links or joints:
 
     <model name="empty" />
@@ -39,7 +39,7 @@ The `<link>` tag represents a named rigid body and must be the child of a `<mode
 Its full specification can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=link).
 
-It is also required for the link to be named using the `name` attribute.
+Links also require the `name` attribute.
 For example, a model with one link:
 
     <model name="one_link">
@@ -235,7 +235,7 @@ The kinematic topology of a URDF file must be a tree with no closed
 kinematic loops, and frames are defined recursively along each chain of
 links and joints.
 As discussed in the
-[previous tutorial](/tutorials?tut=specify_pose),
+[pose documentation](/tutorials?tut=specify_pose),
 the `<origin>` tag is the URDF analog of the SDFormat `<pose>`.
 The joint origin defines the pose `X_PJp` of the joint frame `Jp` in the parent
 link frame.
