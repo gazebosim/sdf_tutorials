@@ -104,6 +104,17 @@
       <skill>advanced</skill>
     </tutorial>
 
+    <tutorial title="Custom elements and attributes" ref='custom_elements_attributes_proposal' type='proposal'>
+      <markdown version="1.7">custom_elements_attributes/proposal.md</markdown>
+      <description>
+        Proposal for supporting custom elements and attributes in SDFormat and libsdformat.
+      </description>
+      <tags>
+        <tag>custom</tag>
+        <tag>extension</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
   </tutorials>
 
   <!-- *************************************** -->
@@ -140,6 +151,7 @@
       <description>These proposals suggest new behavior in SDF.</description>
       <tutorials>
         <tutorial>pose_frame_semantics_proposal</tutorial>
+        <tutorial>custom_elements_attributes_proposal</tutorial>
       </tutorials>
     </category>
 
