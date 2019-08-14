@@ -108,8 +108,11 @@ violates the uniqueness rules
 The current behavior of libsdformat is to ignore unknown elements, but to print
 a warning for unknown attributes. The proposed behavior is for libsdformat to
 stop issuing warnings if it detects an unknown attribute that is prefixed by
-a namespace prefix. Since default namespaces are not allowed, this amounts to
-checking if an attribute name contains the `:` character.
+a namespace prefix.  Since default namespaces are not allowed, this amounts to
+checking if an attribute name contains the `:` character. This relies on the
+[conformance requirement](https://www.w3.org/TR/xml-names/#Conformance) of the
+W3C recommendation that in a namespace-well-formed document, all element and
+attribute names contain either zero or one colon.
 
 The proposed API makes use of the `sdf::ElementPtr` (a pointer to
 `sdf::Element`) as the proxy to xml elements. libsdformat provides an
@@ -124,13 +127,20 @@ by calling `sdf::Element::GetAttribute()`. This function takes the attribute
 name as its first argument and returns an `sdf::ParamPtr` (a pointer to
 `sdf::Param`). libsdformat provides a function template `sdf::Param::Get<T>`
 that can be used to obtain the value of the attribute converted to the passed
-in type `T`.
+in type `T`. To get the value of a custom attribute, the name of the attribute
+passed to `GetAttribute` must contain the namespace prefix of the attribute.
+For example, if the custom attribute name is `mysim:customAttr`, the function
+call would be `GetAttribute("mysim:customAttr")`.
 
 Child elements of `sdf::ElementPtr` are obtained by calling
 `sdf::Element::GetElement()`. This function takes the names of the child
 element as its first argument and returns an `sdf::ElementPtr`, which can be
 further querried for more sibling or child elements using
 `sdf::Element::GetNextElement()` or `sdf::Element::GetElement()` respectively.
+To get an `sdf::ElementPtr` for a custom element, the name of the element
+passed to `GetElement` must contain the namespace prefix of the element.
+For example, if the custom element name is `foo:description`, the function call
+would be `GetElement("foo:description")`.
 
 #### Examples
 TODO
