@@ -197,7 +197,7 @@ attributes
       <mysim:transmission name="simple_trans">
         <mysim:type>transmission_interface/SimpleTransmission</mysim:type>
         <mysim:joint name="J1">
-          <mysim:hardwareInterface>EffortJointInterface</mysim:hardwareInterface>
+          <mysim:hardware_interface>EffortJointInterface</mysim:hardware_interface>
         </mysim:joint>
       </mysim:transmission>
     </model>
@@ -250,11 +250,11 @@ sdf::ElementPtr tranJointElement = transmission->GetElement("mysim:joint");
 auto tranJointName = tranJointElement->Get<std::string>("name");
 
 sdf::ElementPtr transHwInterfaceElement =
-    tranJointElement->GetElement("mysim:hardwareInterface");
+    tranJointElement->GetElement("mysim:hardware_interface");
 
 // Use of sdf::ElementPtr::Get<T>() to obtain the value of a child element
 auto tranHwInterface =
-    tranJointElement->Get<std::string>("mysim:hardwareInterface");
+    tranJointElement->Get<std::string>("mysim:hardware_interface");
 
 ```
 
