@@ -260,4 +260,30 @@ auto tranHwInterface =
 
 
 ### Rules for where custom elements and attributes can be used
-TODO
+
+The following are general rules that constrain where and how custom elements
+and attributes can be used in an SDFormat document.
+
+1. Custom elements and attributes can only add new information. They cannot be
+used to remove or replace information. For example, a user who wants to specify
+the dimensions of a `<cylinder>` element using its diameter instead of its
+radius, as is the case in the standard SDFormat specification, may not add
+a custom `<prefix:diameter>` element to replace `<radius>`. In the case of
+`<cylinder>`, `<radius>` is a required element and must be specified.
+
+1. Custom elements may not change the topology or parent-child relationship of
+XML elements in an SDFormat document. For example, links are always direct
+children of models. It is conceivable that a user might want to wrap a number
+of links in a model with a custom element to give them a certain semantics as
+in the following snippet. 
+
+    ```
+    <model name="M">
+      <prefix:kinematic_links>
+        <link name="L1"/>
+        <link name="L2"/>
+      </prefix:kinematic_links>
+    </model>
+    ```
+Since this changes the topology of the XML elements defined in the standard SDFormat
+specification, it is not permitted.
