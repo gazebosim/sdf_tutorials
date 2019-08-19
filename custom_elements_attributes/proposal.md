@@ -9,8 +9,8 @@ canonical library for parsing SDFormat files. As SDFormat gets more widely used
 by other applications, it is natural for developers of those applications to
 want to extend SDFormat beyond the latest standard to specify parameters for
 additional features they create. Since these features and their corresponding
-parameteres may start out being specific to each application, it may make more
-sense to make a custom extension rather than immediately tryng to extend the
+parameters may start out being specific to each application, it may make more
+sense to make a custom extension rather than immediately trying to extend the
 existing SDFormat specification. Thus, developers are forced to either
 implement their own parser instead of using libsdformat or resort to specifying
 their custom parameters in an external file and handle cross referencing in
@@ -65,7 +65,7 @@ displayed by the application at runtime.
 ```
 
 Attributes of custom elements may be specified without namespace prefixes. This
-can be justfied since these attributes are properties of the custom elements
+can be justified since these attributes are properties of the custom elements
 and would not clash with attributes used by the standard SDFormat
 specification. Requiring namespaces for such attributes would make SDFormat
 files too verbose. The following is an example of this usage:
