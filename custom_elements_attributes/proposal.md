@@ -76,7 +76,7 @@ files too verbose. The following is an example of this usage:
     <foo:vehicle name="V1" type="4wheel"/>
   </world>
 </sdf>
-``` 
+```
 
 In this example the attributes `name` and `type` of the custom element
 `foo:vehicle` appear without namespace.
@@ -165,8 +165,99 @@ passed to `GetElement` must contain the namespace prefix of the element.
 For example, if the custom element name is `foo:description`, the function call
 would be `GetElement("foo:description")`.
 
+An alternative, but more convenient, function to retreive the values of
+attributes or child elements is `sdf::Elemenet::Get<T>()`, where `T` is the
+type to which the value will be converted. The function takes the attribute or
+child element name as its first argument. The function assumes that the
+attribute or child element exists. If this assumption does not hold, the
+returned value is undefined. Since this function operates on attributes and
+elements, it is important to note its behavior when an attribute and a child
+element share the same name. In this case, the value of the child element is
+returned. To get the value of the attribute, `sdf::Element::GetAttribute()` can
+be called.
+
 #### Examples
-TODO
+
+Consider the following SDFormat file that utilizes custom elements and
+attributes
+
+```
+<?xml version="1.0" ?>
+<sdf xmlns:mysim="http://example.org/mysim/schema" version="1.6">
+  <world name="W" mysim:type="2d">
+    <mysim:description>Description of this world</mysim:description>
+    <model name="M1">
+      <link name="L1" mysim:custom_attr_str="A" mysim:custom_attr_int="5" />
+      <link name="L2" />
+      <joint name="J1" type="revolute">
+        <parent>L1</parent>
+        <child>L2</child>
+      </joint>
+
+      <mysim:transmission name="simple_trans">
+        <mysim:type>transmission_interface/SimpleTransmission</mysim:type>
+        <mysim:joint name="J1">
+          <mysim:hardwareInterface>EffortJointInterface</mysim:hardwareInterface>
+        </mysim:joint>
+      </mysim:transmission>
+    </model>
+  </world>
+</sdf>
+```
+
+The code that retrieves the custom elements and attributes is given by
+
+```
+
+#include "sdf/sdf.hh"
+
+const std::string SDF_TEST_FILE = /* Fill in with file path */
+
+sdf::Root root;
+root.Load(SDF_TEST_FILE);
+
+const sdf::World *world = root.WorldByIndex(0);
+
+// Use of sdf::World::Element() to obtain an sdf::ElementPtr object
+sdf::ElementPtr worldElement = world->Element();
+
+// Use of sdf::ElementPtr::GetAttribute()
+sdf::ParamPtr typeParam = worldElement->GetAttribute("mysim:type");
+std::string simType;
+// Use of sdf::ParamPtr::Get<T>()
+typeParam->Get<std::string>(simType);
+
+const sdf::Model *model = world->ModelByIndex(0);
+
+const sdf::Link *link1 = model->LinkByIndex(0);
+// Use of sdf::Link::Element() to obtain an sdf::ElementPtr object
+sdf::ElementPtr link1Element = link1->Element();
+
+// Use of sdf::ElementPtr::Get<T>() to obtain the value of an attribute
+auto customAttrStr = link1Element->Get<std::string>("mysim:custom_attr_str");
+
+auto customAttrInt = link1Element->Get<int>("mysim:custom_attr_int");
+
+// Use of sdf::Model::Element() to obtain an sdf::ElementPtr object
+sdf::ElementPtr modelElement = model->Element();
+
+sdf::ElementPtr transmission = modelElement->GetElement("mysim:transmission");
+auto transmissionName = transmission->Get<std::string>("name");
+
+auto transmissionType = transmission->Get<std::string>("mysim:type");
+
+sdf::ElementPtr tranJointElement = transmission->GetElement("mysim:joint");
+auto tranJointName = tranJointElement->Get<std::string>("name");
+
+sdf::ElementPtr transHwInterfaceElement =
+    tranJointElement->GetElement("mysim:hardwareInterface");
+
+// Use of sdf::ElementPtr::Get<T>() to obtain the value of a child element
+auto tranHwInterface =
+    tranJointElement->Get<std::string>("mysim:hardwareInterface");
+
+```
+
 
 ### Rules for where custom elements and attributes can be used
 TODO
