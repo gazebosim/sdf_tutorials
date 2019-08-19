@@ -64,10 +64,27 @@ displayed by the application at runtime.
 </sdf>
 ```
 
-As shown in the example, it is customary to set the value of the namespace,
-i.e, the namespace name, to the URI containing the schema of the namespace.
-Note, however, that libsdformat treats the provided URI as any other string
-literal with no special meaning.
+Attributes of custom elements may be specified without namespace prefixes. This
+can be justfied since these attributes are properties of the custom elements
+and would not clash with attributes used by the standard SDFormat
+specification. Requiring namespaces for such attributes would make SDFormat
+files too verbose. The following is an example of this usage:
+
+```
+<sdf xmlns:foo="http://example.org/schema">
+  <world name="W" foo:type="2d">
+    <foo:vehicle name="V1" type="4wheel"/>
+  </world>
+</sdf>
+``` 
+
+In this example the attributes `name` and `type` of the custom element
+`foo:vehicle` appear without namespace.
+
+As shown in the examples so far, it is customary to set the value of the
+namespace, i.e, the namespace name, to the URI containing the schema of the
+namespace. Note, however, that libsdformat treats the provided URI as any other
+string literal with no special meaning.
 
 Namespaces may be declared on any element of SDFormat.
 Although not enforced by libsdformat, users should comply with the namespace
