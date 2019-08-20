@@ -2,8 +2,8 @@
 
 Conceptually, a world in SDFormat is a environment in which models can be
 instantiated and simulated by a physics engine. A world is created using the
-`<world>` tag. It can contain various elements, but in this tutorial, only the
-`<model>` element is covered as we describe how to create a simulation world
+`<world>` tag. It can contain various elements, but this documentation only covers the
+`<model>` element as we describe how to create a simulation world
 composed of various models. The full specification of `<world>` can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=world).
 
@@ -121,7 +121,7 @@ later get inserted into a world by using the `<include>` tag. Example:
 As can be seen in the example, the models `ground`, `box`, and `sphere` are
 defined in the files `ground.sdf`, `box.sdf`, and `sphere.sdf` respectively. In
 `simple_world.sdf` the `<include>` tag is used to include the models in the
-world. The pose of the each model can be overridden by the `<pose>` child tag
+world. The pose of each model can be overridden by the `<pose>` child tag
 of `<include>`. This is demonstrated in the example where the pose of the
 sphere in the original definition of the model was `1 2 3 0 0 0` but gets
 overridden to `10 0 2 0 0 0` when inserted into the world. Since the name of
@@ -158,7 +158,7 @@ provided below. Note that the `<static>` tag is used in the ground model to
 indicate that the model does not behave as a dynamic object and should be
 considered only for its collision and visual properties. More about the
 `<static>` tag can be found in the [Inertial
-Properties](/tutorials?tut=spec_inertial) documentation.
+Properties](/tutorials?tut=spec_inertial) documentation (coming soon).
 
 ```xml
 <?xml version="1.0" ?>

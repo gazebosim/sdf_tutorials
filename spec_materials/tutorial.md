@@ -6,7 +6,7 @@ A `<visual>` tag may contain a `<material>` tag which is used to set the
 color and texture properties of a visual.
 The full specification for `<material>` can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=material).
-In this tutorial, we will only look at specifying the color of a visual.
+In this documentation, we will only look at specifying the color of a visual.
 A more detailed tutorial covering image textures and material scripts can be
 found [here](http://gazebosim.org/tutorials?tut=color_model).
 
@@ -14,7 +14,7 @@ SDFormat uses the
 [Blinn-Phong](https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_shading_model)
 shading model for specifying how materials are to be rendered. This shading
 model contains four components that combine to form the final color: ambient,
-diffuse, specular, and emissive. The [OpenGL Programming guide chapter on
+diffuse, specular, and emissive. The [OpenGL Programming Guide chapter on
 Lighting](http://www.glprogramming.com/red/chapter05.html) has detailed
 information on what this specification means. SDFormat defines the
 corresponding tags,
@@ -173,4 +173,3 @@ above.
 </sdf>
 
 ```
-

@@ -76,7 +76,7 @@
       <skill>intermediate</skill>
     </tutorial>
 
-    <tutorial title="Pose frame semantics: legacy behavior" ref='pose_frame_semantics' type='documentation'>
+    <tutorial title="Pose frame semantics" ref='pose_frame_semantics' type='documentation'>
       <markdown version="1.5">pose_frame_semantics/tutorial.md</markdown>
       <description>
         Describing existing behavior for element naming, definition of
@@ -91,9 +91,9 @@
     </tutorial>
 
     <tutorial title="Pose frame semantics: proposed behavior" ref='pose_frame_semantics_proposal' type='proposal'>
-      <markdown version="2.0">pose_frame_semantics/proposal.md</markdown>
+      <markdown version="1.7">pose_frame_semantics/proposal.md</markdown>
       <description>
-        Proposing new behavior for SDF 2.0, including semantics for the
+        Proposing new behavior for SDF 1.7, including semantics for the
         pose frame attribute, the frame element, new rules
         for element naming, and corresponding examples.
       </description>
@@ -111,8 +111,8 @@
 
     <category title="Get Started" skill="beginner" ref="get_started">
       <description>
-        Welcome to the SDF tutorials! This is a great place to start, especially if you're a new SDF user.
-        Each category to the left presents a collection of relevant tutorials.
+        Welcome to the SDF documentation! This is a great place for new and experienced SDF users to start.
+        Each category to the left presents a collection of relevant documentation.
 
         Use the *Edit* button in the upper right corner of a tutorial page to go directly
         to its source at
@@ -125,20 +125,20 @@
     </category>
 
     <category title="SDF Specification" skill="beginner" ref="specification">
-      <description>This series of tutorials describes the SDF specification.</description>
+      <description>Here you’ll find explanations for elements of the SDF specification.</description>
       <tutorials>
         <tutorial>specify_pose</tutorial>
         <tutorial>spec_model_kinematics</tutorial>
         <tutorial>spec_shapes</tutorial>
         <tutorial>spec_materials</tutorial>
         <tutorial>spec_world</tutorial>
+        <tutorial>pose_frame_semantics</tutorial>
       </tutorials>
     </category>
 
-    <category title="SDF Pose Frame Semantics" skill="advanced" ref="pose_semantics_docs">
-      <description>This series of tutorials describes pose frame semantics in SDF.</description>
+    <category title="SDF Proposals" skill="advanced" ref="pose_semantics_docs">
+      <description>These proposals suggest new behavior in SDF.</description>
       <tutorials>
-        <tutorial>pose_frame_semantics</tutorial>
         <tutorial>pose_frame_semantics_proposal</tutorial>
       </tutorials>
     </category>

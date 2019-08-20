@@ -1,19 +1,19 @@
 # Specifying model kinematics in SDFormat
 
-This tutorial describes how to use SDFormat to model the kinematics of
+This documentation describes how SDFormat models the kinematics of
 articulated multibody systems with the `<model>`, `<link>`, `<joint>`,
 and `<pose>` tags, which can be briefly summarized as:
 
+* `<model>`: a container for links and joints that defines a complete robot or physical object
 * `<link>`: a rigid body (like a "link" in a chain)
 * `<joint>`: a kinematic relationship between links
 * `<pose>`: the relative position and orientation between two coordinate frames
-* `<model>`: a container for links and joints that defines a complete robot or physical object
 
 SDFormat links, joints, and models each have their own coordinate frames that
 can be offset using the `<pose>` tag.
 See the
-[previous tutorial](/tutorials?tut=specify_pose)
-about specifying poses for more detail on the `<pose>` tag.
+[documentation](/tutorials?tut=specify_pose)
+on specifying poses for more detail on the `<pose>` tag.
 
 ## `<model>`
 
@@ -21,7 +21,7 @@ The `<model>` tag serves as a named container for a group of links and joints.
 Its full specification can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=model).
 
-It is required to name the model using the `name` attribute.
+Models require names using the `name` attribute.
 For example, an empty model with no links or joints:
 
     <model name="empty" />
@@ -39,7 +39,7 @@ The `<link>` tag represents a named rigid body and must be the child of a `<mode
 Its full specification can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=link).
 
-It is also required for the link to be named using the `name` attribute.
+Links also require the `name` attribute.
 For example, a model with one link:
 
     <model name="one_link">
@@ -136,6 +136,45 @@ may be disallowed by a future version of the spec.
       </joint>
     </model>
 
+### `<joint><axis>`
+
+For joint types that have one or two degrees of freedom, the properties of the
+axes of rotation/translation are specified by the `<axis>` and `<axis2>` tags.
+Both tags contain the `<xyz>` tag which specifies the the unit vector along the
+axis of motion. In SDFormat versions 1.4 and earlier, this unit vector is
+expressed in the parent link's model frame. In SDFormat versions 1.5 and 1.6, by
+default, the unit vector is expressed in the joint frame that contains the
+`<axis>` tag. However, the tag `<use_parent_model_frame>` can be set to true to
+specify the unit vector in the parent link's model frame instead. This is used to
+replicate the behavior of the `<xyz>` tag in v1.4 and earlier. Note that the
+`<use_parent_model_frame>` tag may be removed in a future version of SDFormat.
+
+For example:
+
+    <model name="joint_axis">
+      <link name="A"/>
+      <link name="B"/>
+      <link name="C"/>
+      <joint name="J1" type="revolute">
+        <pose>0 0 0 1.57 0 0</pose>
+        <parent>A</parent>
+        <child>B</child>
+        <axis>
+          <xyz>0 0 1</xyz> <!-- The xyz unit vector is expressed in the joint frame -->
+        </axis>
+      </joint>
+      <joint name="J2" type="revolute">
+        <parent>B</parent>
+        <child>C</child>
+        <axis>
+          <xyz>0 0 1</xyz> <!-- The xyz unit vector is expressed in the parent link's model frame. Thus, this axis is orthogonal to the axis of J1 -->
+          <use_parent_model_frame>true</use_parent_model_frame>
+        </axis>
+      </joint>
+    </model>
+
+### `<joint><pose>`
+
 For a joint with parent link frame `P` and child link frame `C`,
 the joint `<pose>` tag specifies the pose `X_CJc` of a joint frame `Jc` rigidly
 attached to the child link.
@@ -196,7 +235,7 @@ The kinematic topology of a URDF file must be a tree with no closed
 kinematic loops, and frames are defined recursively along each chain of
 links and joints.
 As discussed in the
-[previous tutorial](/tutorials?tut=specify_pose),
+[pose documentation](/tutorials?tut=specify_pose),
 the `<origin>` tag is the URDF analog of the SDFormat `<pose>`.
 The joint origin defines the pose `X_PJp` of the joint frame `Jp` in the parent
 link frame.
