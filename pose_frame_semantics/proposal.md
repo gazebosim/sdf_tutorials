@@ -933,7 +933,7 @@ There are *seven* phases for validating the kinematics data in a model:
     only confirms the existence of name attributes, not their content.
     Note that `libsdformat` does not currently perform this check when loading
     an SDF using `sdf::readFile` or `sdf::readString` (see
-    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216).
+    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216)).
 
 3.  **Joint parent/child name checking:**
     For each joint, check that the parent and child link names are different
@@ -1063,7 +1063,7 @@ There are *seven* phases for validating the kinematics data in a world:
     only confirms the existence of name attributes, not their content.
     Note that `libsdformat` does not currently perform this check when loading
     an SDF using `sdf::readFile` or `sdf::readString` (see
-    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216).
+    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216)).
 
 3.  **Model checking:**
     Check each model according to the *seven* phases of parsing kinematics of an
