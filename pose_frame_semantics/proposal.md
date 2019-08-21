@@ -179,12 +179,16 @@ this name.
 * The model frame be explicitly referable to using the **reserved name**
 `"model_frame"`. No link, joint, or frame can be specified using this name.
 
-## Name conflicts between explicit and implicit frames
+## Name conflicts and scoping rules for explicit and implicit frames
 
 As frames are referenced in several attributes by name, it is necessary to
-avoid naming conflicts between frames defined in `//model/frame`,
-`//model/link`, and `//model/joint`.
-This motivates the naming rule proposed in the following section.
+avoid naming conflicts between frames defined in `//world/frame`,
+`//world/model`, `//model/frame`, `//model/link`, and `//model/joint`.
+This motivates the scoping and naming rules proposed in the following sections.
+
+### Scoping rules for referencing frames by name
+
+
 
 ### Element naming rule: unique names for all sibling elements
 
