@@ -188,7 +188,64 @@ This motivates the scoping and naming rules proposed in the following sections.
 
 ### Scoping rules for referencing frames by name
 
+To ensure that multiple copies of the same model can co-exist as siblings
+in a world, separate scopes are defined for each model so that only the
+explicit `//model/frame` and implicit `//model/link` and `/model/joint` frames
+can be referenced from within a model.
+From the world scope, only the explicit `//world/frame` and implicit
+`/world/model` frames can be referenced.
 
+For example, the following world has three scopes, one each for the world,
+`model_1`, and `model_2`.
+The world scope contains the explicit `//world/frame` named `explicit_frame`
+and the implicit model frames `model_1` and `model_2`.
+The `model_1` and `model_2` scopes each contain frames named `explicit_frame`
+and `link`, but there is no name conflict because they are in separate scopes.
+
+~~~
+<world name="frame_scope">
+  <frame name="explicit_frame"/>
+  <model name="model_1">
+    <frame name="explicit_frame"/>
+    <link name="link"/>
+  </model>
+  <model name="model_2">
+    <frame name="explicit_frame"/>
+    <link name="link"/>
+  </model>
+</world>
+~~~
+
+In the following example, there are three frames in the model scope:
+the implicit link frames `base` and `attachment` and the implicit
+joint frame `attachment`.
+Referring to a frame named `attachment` is ambiguous in this case,
+which inspires the element naming rule in the following section.
+
+~~~
+<model name="model">
+  <link name="base"/>
+  <link name="attachment"/>
+  <joint name="attachment" type="fixed">
+    <parent>base</parent>
+    <child>attachment</child>
+  </joint>
+</model>
+~~~
+
+#### Alternatives considered
+
+It was considered to not use any scoping at all, such that any frame could
+be referenced by name from any other part of the world.
+This would make naming conflicts much more common as you could not include
+two copies of the same model in a world without giving unique names to the
+links, joints, and explicit frames.
+
+Another approach instead of scoping is to treat the xml hierarchy like a
+filesystem and use familiar operators such as `/` and `..` to specify frame
+references directly in the hierarchy.
+This adds significant complexity and difficulty and deviates from the current
+practice of specifying parent and child links for a joint by name.
 
 ### Element naming rule: unique names for all sibling elements
 
@@ -202,8 +259,9 @@ as `link1`/`link2` or used as a suffix `front_right_wheel_joint`
 / `front_right_steering_joint`, which helps to further ensure name uniqueness
 across element types.
 Furthermore, the frame semantics proposed in this document use the names of
-sibling elements `//model/frame`, `//model/link` and `//model/joint` to refer
-to frames.
+sibling elements `//world/frame` and `//world/model` in the world scope
+and `//model/frame`, `//model/link` and `//model/joint` in the model scope
+to refer to frames.
 Thus for the sake of consistency, all named sibling elements must have unique
 names.
 
@@ -344,6 +402,9 @@ and thus indirectly attached to the canonical link.
 ~~~
 <model name="frame_attaching_cycle">
   <link name="L"/>
+
+  <frame name="F0" attached_to="F0"/>  <!-- INVALID: cycle in attached_to graph does not lead to link. -->
+
   <frame name="F1" attached_to="F2"/>
   <frame name="F2" attached_to="F1"/>  <!-- INVALID: cycle in attached_to graph does not lead to link. -->
 </model>
@@ -395,6 +456,8 @@ the canonical link of a sibling model.
 
 ~~~
 <world name="frame_attaching_cycle">
+  <frame name="F0" attached_to="F0"/>  <!-- INVALID: cycle in attached_to graph does not lead to the implicit world frame. -->
+
   <frame name="F1" attached_to="F2"/>
   <frame name="F2" attached_to="F1"/>  <!-- INVALID: cycle in attached_to graph does not lead to the implicit world frame. -->
 </world>
@@ -403,17 +466,21 @@ the canonical link of a sibling model.
 ## The `//pose[@relative_to]` attribute
 
 The `//pose[@relative_to]` attribute indicates the frame relative to which the initial
-pose of the frame is expressed.
-This applies equally to `//frame/pose`, `//link/pose`, and `//joint/pose`
-elements.
-If `//link/pose[@relative_to]` is empty or not set, it defaults to the model frame,
-following the behavior from SDFormat 1.4.
-If `//joint/pose[@relative_to]` is empty or not set, it defaults to the child link's
-implicit frame, also following the behavior from SDFormat 1.4
+pose of an object is expressed.
+This applies equally to the pose of explicit frames (`//frame/pose`),
+implicit frames (`//model/pose`, `//link/pose`, and `//joint/pose`),
+and objects without named frames
+(`//collision/pose`, `//light/pose`, `//sensor/pose`, `//visual/pose`).
+For all elements other than `//frame/pose`, if the `//pose[@relative_to]`
+attribute is empty or not set, it defaults to the behavior from SDFormat 1.4
 (see the "Parent frames in sdf 1.4" section of the
 [pose frame semantics documentation](/tutorials?tut=pose_frame_semantics)).
-If the `//frame/pose[@relative_to]` attribute is empty or not set, it should default to
+This corresponds to a default of the model frame for `//link/pose` and
+the child link's implicit frame for `//joint/pose`.
+If the `//frame/pose[@relative_to]` attribute is empty or not set, it defaults to
 the value of the `//frame[@attached_to]` attribute.
+If the `//pose[@relative_to]` attribute exists and is not empty, its value
+must match the name of an explicit or implicit frame in the current scope.
 Cycles in the `relative_to` attribute graph are not allowed and must be
 checked separately from the `attached_to` attribute graph.
 Following the `relative_to` attributes of the specified frames must lead to
@@ -431,6 +498,13 @@ which the terminal frame is the implicit world frame.
   </link>
   <link name="L3">
     <pose relative_to="L1">{X_L1L3}</pose>  <!-- Pose relative_to link frame (L1 -> M). -->
+  </link>
+  <link name="L4">
+    <pose relative_to="A">{X_AL4}</pose>    <!-- INVALID: no frame in model scope named A. -->
+  </link>
+
+  <link name="cycle0">
+    <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
   </link>
 
   <link name="cycle1">
@@ -484,14 +558,21 @@ which the terminal frame is the implicit world frame.
     <pose>{X_MF0}</pose>                    <!-- Pose relative_to the attached_to frame (M) by default. -->
   </frame>
 
-  <frame name="F1" attached_to="L">          <!-- Frame directly attached_to link L. -->
+  <frame name="F1" attached_to="L">         <!-- Frame directly attached_to link L. -->
     <pose>{X_LF1}</pose>                    <!-- Pose relative_to the attached_to frame (L -> M) by default. -->
   </frame>
-  <frame name="F2" attached_to="L">          <!-- Frame directly attached_to link L. -->
+  <frame name="F2" attached_to="L">         <!-- Frame directly attached_to link L. -->
     <pose relative_to="">{X_LF2}</pose>     <!-- Pose relative_to the attached_to frame (L -> M) by default. -->
   </frame>
   <frame name="F3">                         <!-- Frame indirectly attached_to canonical link L via model frame. -->
     <pose relative_to="L">{X_LF3}</pose>    <!-- Pose relative_to link frame L -> M. -->
+  </frame>
+  <frame name="F4">
+    <pose relative_to="A">{X_AF4}</pose>    <!-- INVALID: no frame in model scope named A. -->
+  </frame>
+
+  <frame name="cycle0">
+    <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
   </frame>
 
   <frame name="cycle1">
@@ -501,6 +582,32 @@ which the terminal frame is the implicit world frame.
     <pose relative_to="cycle1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
   </frame>
 </model>
+~~~
+
+~~~
+<world name="scope_relative_to">
+  <frame name="W"/>                           <!-- Explicit world frame. -->
+
+  <model name="M1">
+    <frame name="F">                          <!-- Frame indirectly attached to canonical link link L via model frame. -->
+      <pose>{X_MF}</pose>                     <!-- Pose relative_to the attached_to frame (M) by default. -->
+    </frame>
+    <link name="L">
+      <collision name="C">
+        <pose relative_to="F">{X_FC}</pose>   <!-- Pose relative to explicit frame F (F -> M) in this model's scope. -->
+      </collision>
+      <visual name="V">
+        <pose relative_to="F">{X_FV}</pose>   <!-- Pose relative to explicit frame F (F -> M) in this model's scope. -->
+      </visual>
+
+      <light name="L">                        <!-- Name matches that of containing link, which is permitted. -->
+        <pose relative_to="F">{X_FL}</pose>   <!-- Pose relative to explicit frame F (F -> M) in this model's scope. -->
+      </light>
+    </link>
+
+    <frame name="F1" attached_to="L">         <!-- . -->
+  </model>
+</world>
 ~~~
 
 ~~~
