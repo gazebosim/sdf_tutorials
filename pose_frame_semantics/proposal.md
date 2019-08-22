@@ -719,7 +719,9 @@ group of frames:
 </frame>
 ~~~
 
-## Example using the `//pose[@relative_to]` attribute
+## Examples
+
+### Example using the `//pose[@relative_to]` attribute
 
 For example, consider the following figure from the
 [previous documentation about specifying pose](/tutorials?tut=specify_pose)
@@ -939,7 +941,7 @@ As seen below, the `//link/pose[@relative_to]` attributes still need to be set:
 This change was not included since parity with URDF can already be achieved
 with the other propsed functionality.
 
-## Example: Parity with URDF using `//model/frame`
+### Example: Parity with URDF using `//model/frame`
 
 One application of the `<frame>` tag is to organize the model so that the pose
 values are all stored in a single part of the model and referenced
@@ -996,6 +998,146 @@ in the previous section.
 
 In this case, `joint1_frame` is rigidly attached to `link1`, `joint3_frame` is
 rigidly attached to `link3`, etc.
+
+### Example: Using `//pose[@relative_to]` for co-located elements within a link
+
+There is often duplication of pose information in elements attached to links.
+For example, the following link has two LED light sources, which each have
+co-located collision, visual, and light tags, and the pose data is duplicated
+within each element.
+
+    <model name="model_with_duplicated_poses">
+      <link name="link_with_LEDs">
+        <light name="led1_light" type="point">
+          <pose>0.1 0 0 0 0 0</pose>
+        </light>
+        <collision name="led1_collision">
+          <pose>0.1 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led1_visual">
+          <pose>0.1 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+
+        <light name="led2_light" type="point">
+          <pose>-0.1 0 0 0 0 0</pose>
+        </light>
+        <collision name="led2_collision">
+          <pose>-0.1 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led2_visual">
+          <pose>-0.1 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+By creating explicit frames at the model scope, the `//pose[@relative_to]`
+attribute can be used to specify the collision, visual, and light poses
+without duplication.
+
+    <model name="model_with_explicit_frames">
+      <frame name="led1" attached_to="link_with_LEDs">
+          <pose>0.1 0 0 0 0 0</pose>
+      </frame>
+      <frame name="led2" attached_to="link_with_LEDs">
+          <pose>-0.1 0 0 0 0 0</pose>
+      </frame>
+
+      <link name="link_with_LEDs">
+        <light name="led1_light" type="point">
+          <pose relative_to="led1" />
+        </light>
+        <collision name="led1_collision">
+          <pose relative_to="led1" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led1_visual">
+          <pose relative_to="led1" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+
+        <light name="led2_light" type="point">
+          <pose relative_to="led2" />
+        </light>
+        <collision name="led2_collision">
+          <pose relative_to="led2" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led2_visual">
+          <pose relative_to="led2" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+#### Alternatives considered:
+
+Instead of permitting elements inside a link from using the
+`//pose[@relative_to]` attribute at the model scope, one could allow
+implicit frames for elements inside a link (like `//link/collision`,
+`//link/visual`, etc.) and/or explicit link frames `//link/frame` and allow any
+poses of any element to be `relative_to` explicit or implicit frames
+defined by sibling elements.
+
+    <model name="model_with_explicit_link_frames">
+      <frame name="F"/>                   <!-- Explicit frame F in model scope. -->
+      <frame name="M"/>                   <!-- Explicit frame F in model scope. -->
+      <link name="L">
+        <frame name="F">                  <!-- Explicit frame F in link L scope. -->
+          <pose>{X_LF}</pose>
+        </frame>
+        <light name="led1" type="point">
+          <pose relative_to="F" />        <!-- Valid: Pose relative_to frame F in link scope. -->
+        </light>
+        <light name="led2" type="point">
+          <pose relative_to="M" />        <!-- INVALID: frame M not in link scope. -->
+        </light>
+      </link>
+    </model>
+
+While there may be use cases that benefit from embedding explicit frames
+inside their `attached_to` link, it is more complex to have additional
+scopes in which frames must be resolved and limits the ability to
+reference frames across links.
+Furthermore increasing the number of implicit frames increases the size
+of the frame graph and adds complexity to the parsing task.
+This approach is not recommended as its utility is outweighed by
+its complexity.
 
 ## Element naming rule: reserved names
 
