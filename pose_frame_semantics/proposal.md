@@ -1114,11 +1114,11 @@ There are *seven* phases for validating the kinematics data in a model:
         is reached.
 
 7.  ***Check `//pose[@relative_to]` attribute values:***
-    For each `//model/link/pose`, `//model/joint/pose` and `//model/frame/pose`
+    For each `//pose` that is not `//model/pose` (ie. `//link/pose`,
+    `//joint/pose`, `//frame/pose`, `//collision/pose`, `//light/pose`, etc.),
     if the `relative_to` attribute exists and is not an empty string `""`,
     check that the value of the `relative_to` attribute
-    matches the name of a link, joint, or frame that is a sibling of the element
-    that contains the `//pose`.
+    matches the name of a link, joint, or frame in this model's scope.
 
 8.  ***Check `//pose[@relative_to]` graph:***
     Construct a `relative_to` directed graph for the model with each vertex
@@ -1170,6 +1170,9 @@ There are *seven* phases for validating the kinematics data in a model:
 
     8.6 Verify that the graph has no cycles and that by following the directed
         edges, every vertex is connected to the implicit model frame.
+        Other poses in the model such as `//collision/pose` and `//light/pose`
+        do not need to be checked for cycles since they do not have named
+        frames.
 
 ## Phases of parsing kinematics of an SDFormat 1.7 world
 
