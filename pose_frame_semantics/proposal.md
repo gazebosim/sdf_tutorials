@@ -471,22 +471,24 @@ This applies equally to the pose of explicit frames (`//frame/pose`),
 implicit frames (`//model/pose`, `//link/pose`, and `//joint/pose`),
 and objects without named frames
 (`//collision/pose`, `//light/pose`, `//sensor/pose`, `//visual/pose`).
-For all elements other than `//frame/pose`, if the `//pose[@relative_to]`
-attribute is empty or not set, it defaults to the behavior from SDFormat 1.4
+If the `//pose[@relative_to]` attribute is not an empty string `""`, its value
+must match the name of an explicit or implicit frame in the current scope.
+If the `//pose[@relative_to]` attribute does not exist or is empty,
+the default behavior for all elements other than `//frame/pose` is the
+behavior from SDFormat 1.4
 (see the "Parent frames in sdf 1.4" section of the
 [pose frame semantics documentation](/tutorials?tut=pose_frame_semantics)).
-This corresponds to a default of the model frame for `//link/pose` and
-the child link's implicit frame for `//joint/pose`.
-If the `//frame/pose[@relative_to]` attribute is empty or not set, it defaults to
-the value of the `//frame[@attached_to]` attribute.
-If the `//pose[@relative_to]` attribute exists and is not empty, its value
-must match the name of an explicit or implicit frame in the current scope.
+This corresponds to `//link/pose` `relative_to` the model frame by default
+and `//joint/pose` `relative_to` the child link's implicit frame by default.
+If the `//frame/pose[@relative_to]` attribute does not exist or is empty,
+it defaults to the value of the `//frame[@attached_to]` attribute.
+
 Cycles in the `relative_to` attribute graph are not allowed and must be
 checked separately from the `attached_to` attribute graph.
-Following the `relative_to` attributes of the specified frames must lead to
-a frame expressed relative to the model frame. The exceptions to this rule are
-`//world/frame/pose[@relative_to]` and `//world/model/pose[@relative_to]` in
-which the terminal frame is the implicit world frame.
+Following the `relative_to` attributes of the specified frames in the model
+scope must lead to a frame expressed relative to the model frame.
+In the world scope, following the `relative_to` attributes must lead to
+the implicit world frame.
 
 ~~~
 <model name="link_pose_relative_to">
@@ -585,9 +587,11 @@ which the terminal frame is the implicit world frame.
 ~~~
 
 ~~~
-<world name="scope_relative_to">
-  <frame name="W0"/>                          <!-- Frame attached_to world frame by default. -->
-  <frame name="W1">                           <!-- Frame attached_to world frame by default. -->
+<world name="scope_relative_to">              <!-- Implicit world frame. Referred to as (W) -->
+  <frame name="W0">                           <!-- Frame attached_to implicit world frame by default. -->
+    <pose>{X_WW0}</pose>                      <!-- Pose relative_to the attached_to frame (W) by default. -->
+  </frame>
+  <frame name="W1">                           <!-- Frame attached_to implicit world frame by default. -->
     <pose relative_to="W0">{X_W0W1}</pose>    <!-- Pose relative_to explicit frame W0. -->
   </frame>
 
@@ -631,19 +635,9 @@ which the terminal frame is the implicit world frame.
 ~~~
 
 ~~~
-<world name="world_frame_pose_relative_to"> <!-- Implicit world frame. Referred to as (W) -->
-  <frame name="F0">                         <!-- Frame indirectly attached_to the implicit world frame. -->
-    <pose>{X_WF0}</pose>                    <!-- Pose relative_to the attached_to frame (W) by default. -->
-  </frame>
-
-  <frame name="F1" attached_to="F0">        <!-- Frame directly attached_to another explicit frame (F0). -->
-    <pose>{X_F0F1}</pose>                   <!-- Pose relative_to the attached_to frame (F0 -> W) by default. -->
-  </frame>
-  <frame name="F2" attached_to="F0">        <!-- Frame directly attached_to another explicit frame (F0). -->
-    <pose relative_to="">{X_F0F2}</pose>    <!-- Pose relative_to the attached_to frame (F0 -> W) by default. -->
-  </frame>
-  <frame name="F3">                         <!-- Frame indirectly attached_to the implicit world frame. -->
-    <pose relative_to="F0">{X_F0F3}</pose>  <!-- Pose relative_to frame (F0 -> W). -->
+<world name="world_frame_cycles">
+  <frame name="cycle0">
+    <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
   </frame>
 
   <frame name="cycle1">
