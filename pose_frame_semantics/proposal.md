@@ -586,10 +586,15 @@ which the terminal frame is the implicit world frame.
 
 ~~~
 <world name="scope_relative_to">
-  <frame name="W"/>                           <!-- Explicit world frame. -->
+  <frame name="W0"/>                          <!-- Frame attached_to world frame by default. -->
+  <frame name="W1">                           <!-- Frame attached_to world frame by default. -->
+    <pose relative_to="W0">{X_W0W1}</pose>    <!-- Pose relative_to explicit frame W0. -->
+  </frame>
 
   <model name="M1">
-    <frame name="F">                          <!-- Frame indirectly attached to canonical link link L via model frame. -->
+    <pose>{X_WM1}</pose>                      <!-- Model pose relative_to world frame by default. -->
+
+    <frame name="F">                          <!-- Frame indirectly attached_to canonical link link L via model frame. -->
       <pose>{X_MF}</pose>                     <!-- Pose relative_to the attached_to frame (M) by default. -->
     </frame>
     <link name="L">
@@ -605,7 +610,22 @@ which the terminal frame is the implicit world frame.
       </light>
     </link>
 
-    <frame name="F1" attached_to="L">         <!-- . -->
+    <frame name="F1" attached_to="L">         <!-- Frame directly attached_to link L. -->
+      <pose relative_to="C">{X_CL}</pose>     <!-- INVALID: no frame named C in this scope (collisions don't have implicit frames). -->
+    </frame>
+    <frame name="F2" attached_to="L">         <!-- Frame directly attached_to link L. -->
+      <pose relative_to="W0">{X_W0L}</pose>   <!-- INVALID: no frame named W0 in this scope (can't access world scope from within model). -->
+    </frame>
+  </model>
+
+  <frame name="W2" attached_to="M1"/>         <!-- Frame indirectly attached_to canonical link L of model M1. -->
+  <frame name="W3">                           <!-- Frame attached_to world frame by default. -->
+    <pose relative_to="M1">{X_M1W3}</pose>    <!-- Pose relative_to implicit model frame M1. -->
+  </frame>
+
+  <model name="M2">
+    <pose relative_to="W3">{X_W3M2}</pose>    <!-- Pose relative_to explicit frame W3. -->
+    <link name="L"/>
   </model>
 </world>
 ~~~
