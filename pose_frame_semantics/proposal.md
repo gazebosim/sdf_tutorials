@@ -1218,6 +1218,8 @@ There are *seven* phases for validating the kinematics data in a model:
     For each `//model/frame`, if the `attached_to` attribute exists and is not
     an empty string `""`, check that the value of the `attached_to` attribute
     matches the name of a sibling link, joint, or frame.
+    The `//frame[@attached_to]` value must not match `//frame[@name]`,
+    as this would cause a graph cycle.
 
 6.  ***Check `//model/frame[@attached_to]` graph:***
     Construct an `attached_to` directed graph for the model with each vertex
@@ -1348,6 +1350,8 @@ There are *seven* phases for validating the kinematics data in a world:
     For each `//world/frame`, if the `attached_to` attribute exists and is not
     an empty string `""`, check that the value of the `attached_to` attribute
     matches the name of a sibling model or frame.
+    The `//frame[@attached_to]` value must not match `//frame[@name]`,
+    as this would cause a graph cycle.
 
 5.  ***Check `//world/frame[@attached_to]` graph:***
     Construct an `attached_to` directed graph for the world with each vertex
