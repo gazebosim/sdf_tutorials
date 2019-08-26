@@ -190,10 +190,10 @@ This motivates the scoping and naming rules proposed in the following sections.
 
 To ensure that multiple copies of the same model can co-exist as siblings
 in a world, separate scopes are defined for each model so that only the
-explicit `//model/frame` and implicit `//model/link` and `/model/joint` frames
+explicit `//model/frame` and implicit `//model/link` and `//model/joint` frames
 can be referenced from within a model.
 From the world scope, only the explicit `//world/frame` and implicit
-`/world/model` frames can be referenced.
+`//world/model` frames can be referenced.
 
 For example, the following world has three scopes, one each for the world,
 `model_1`, and `model_2`.
