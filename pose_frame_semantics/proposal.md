@@ -933,7 +933,7 @@ There are *seven* phases for validating the kinematics data in a model:
     only confirms the existence of name attributes, not their content.
     Note that `libsdformat` does not currently perform this check when loading
     an SDF using `sdf::readFile` or `sdf::readString` (see
-    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216).
+    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216)).
 
 3.  **Joint parent/child name checking:**
     For each joint, check that the parent and child link names are different
@@ -942,85 +942,90 @@ There are *seven* phases for validating the kinematics data in a model:
     if "world" is specified as a link name but there is no sibling link
     with that name, then the joint is attached to a fixed reference frame.
 
-4.  ***Check `//model/frame[@attached_to]` attribute values:***
+4.  ***Check `//model[@canonical_link]` attribute value:***
+    If the `//model[@canonical_link]` attribute exists and is not an empty
+    string `""`, check that the value of the `canonical_link` attribute
+    matches the name of a link in this model.
+
+5.  ***Check `//model/frame[@attached_to]` attribute values:***
     For each `//model/frame`, if the `attached_to` attribute exists and is not
     an empty string `""`, check that the value of the `attached_to` attribute
     matches the name of a sibling link, joint, or frame.
 
-5.  ***Check `//model/frame[@attached_to]` graph:***
+6.  ***Check `//model/frame[@attached_to]` graph:***
     Construct an `attached_to` directed graph for the model with each vertex
     representing a frame:
 
-    5.1 Add a vertex for the implicit frame of each link in the model.
+    6.1 Add a vertex for the implicit frame of each link in the model.
 
-    5.2 Add a vertex for the implicit model frame with an edge connecting to the
+    6.2 Add a vertex for the implicit model frame with an edge connecting to the
         vertex of the model's canonical link.
 
-    5.3 Add vertices for the implicit frame of each joint with an edge
+    6.3 Add vertices for the implicit frame of each joint with an edge
         connecting from the joint to the vertex of its child link.
 
-    5.4 For each `//model/frame`:
+    6.4 For each `//model/frame`:
 
-    5.4.1 Add a vertex to the graph.
+    6.4.1 Add a vertex to the graph.
 
-    5.4.2 If `//model/frame[@attached_to]` exists and is not empty,
+    6.4.2 If `//model/frame[@attached_to]` exists and is not empty,
           add an edge from the added vertex to the vertex
           named in the `//model/frame[@attached_to]` attribute.
 
-    5.4.3 Otherwise (ie. if the `//model/frame[@attached_to]` attribute
+    6.4.3 Otherwise (ie. if the `//model/frame[@attached_to]` attribute
           does not exist or is an empty string `""`),
           add an edge from the added vertex to the model frame vertex.
 
-    5.5 Verify that the graph has no cycles and that by following the directed
+    6.5 Verify that the graph has no cycles and that by following the directed
         edges, every vertex is connected to a link.
         To identify the link to which each frame is attached, start from the
         vertex for that frame, and follow the directed edges until a link
         is reached.
 
-6.  ***Check `//pose[@relative_to]` attribute values:***
+7.  ***Check `//pose[@relative_to]` attribute values:***
     For each `//model/link/pose`, `//model/joint/pose` and `//model/frame/pose`
     if the `relative_to` attribute exists and is not an empty string `""`,
     check that the value of the `relative_to` attribute
     matches the name of a link, joint, or frame that is a sibling of the element
     that contains the `//pose`.
 
-7.  ***Check `//pose[@relative_to]` graph:***
+8.  ***Check `//pose[@relative_to]` graph:***
     Construct a `relative_to` directed graph for the model with each vertex
     representing a frame:
 
-    7.1 Add a vertex for the implicit model frame.
+    8.1 Add a vertex for the implicit model frame.
 
-    7.2 Add vertices for each `//model/link`, `//model/joint`, and
+    8.2 Add vertices for each `//model/link`, `//model/joint`, and
         `//model/frame`.
 
-    7.3 For each `//model/link`:
+    8.3 For each `//model/link`:
 
-    7.3.1 If `//link/pose[@relative_to]` exists and is not empty,
+    8.3.1 If `//link/pose[@relative_to]` exists and is not empty,
           add an edge from the link vertex to the vertex named in
           `//link/pose[@relative_to]`.
 
-    7.3.2 Otherwise (ie. if `//link/pose` or `//link/pose[@relative_to]` do not
+    8.3.2 Otherwise (ie. if `//link/pose` or `//link/pose[@relative_to]` do not
           exist or `//link/pose[@relative_to]` is an empty string `""`)
           add an edge from the link vertex to the implicit model frame vertex.
 
-    7.4 For each `//model/joint`:
+    8.4 For each `//model/joint`:
 
-    7.4.1 If `//joint/pose[@relative_to]` exists and is not empty,
+    8.4.1 If `//joint/pose[@relative_to]` exists and is not empty,
           add an edge from the joint vertex to the vertex named in
           `//joint/pose[@relative_to]`.
 
-    7.4.2 Otherwise (ie. if `//joint/pose` or `//joint/pose[@relative_to]` do not
+    8.4.2 Otherwise (ie. if `//joint/pose` or `//joint/pose[@relative_to]` do not
           exist or `//joint/pose[@relative_to]` is an empty string `""`)
           add an edge from the joint vertex to
           the child link vertex named in `//joint/child`.
 
-    7.5 For each `//model/frame`:
+    8.5 For each `//model/frame`:
 
-    7.5.1 If `//frame/pose[@relative_to]` exists and is not empty,
+    8.5.1 If `//frame/pose[@relative_to]` exists and is not empty,
           add an edge from the frame vertex to the vertex named in
           `//frame/pose[@relative_to]`.
 
-    7.5.2 Otherwise if `//frame[@attached_to]` exists and is not empty
+    8.5.2 Otherwise if `//frame[@attached_to]` exists and is not empty
           (ie. if `//frame[@attached_to]` exists and is not an empty string `""`
           and one of the following is true: `//frame/pose` does not exist,
           `//frame/pose[@relative_to]` does not exist, or
@@ -1028,11 +1033,11 @@ There are *seven* phases for validating the kinematics data in a model:
           add an edge from the frame vertex to the vertex named in
           `//frame[@attached_to]`.
 
-    7.5.3 Otherwise (ie. if neither `//frame[@attached_to]` nor
+    8.5.3 Otherwise (ie. if neither `//frame[@attached_to]` nor
           `//frame/pose[@relative_to]` are specified)
           add an edge from the frame vertex to the implicit model frame vertex.
 
-    7.6 Verify that the graph has no cycles and that by following the directed
+    8.6 Verify that the graph has no cycles and that by following the directed
         edges, every vertex is connected to the implicit model frame.
 
 ## Phases of parsing kinematics of an SDFormat 1.7 world
@@ -1063,7 +1068,7 @@ There are *seven* phases for validating the kinematics data in a world:
     only confirms the existence of name attributes, not their content.
     Note that `libsdformat` does not currently perform this check when loading
     an SDF using `sdf::readFile` or `sdf::readString` (see
-    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216).
+    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216)).
 
 3.  **Model checking:**
     Check each model according to the *seven* phases of parsing kinematics of an
