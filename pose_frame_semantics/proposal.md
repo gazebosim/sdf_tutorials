@@ -1001,7 +1001,7 @@ rigidly attached to `link3`, etc.
 
 ### Example: Using `//pose[@relative_to]` for co-located elements within a link
 
-There is often duplication of pose information in elements attached to links.
+The pose information of elements attached to links is often duplicated.
 For example, the following link has two LED light sources, which each have
 co-located collision, visual, and light tags, and the pose data is duplicated
 within each element.
@@ -1131,9 +1131,9 @@ defined by sibling elements.
     </model>
 
 While there may be use cases that benefit from embedding explicit frames
-inside their `attached_to` link, it is more complex to have additional
-scopes in which frames must be resolved and limits the ability to
-reference frames across links.
+inside their `attached_to` link, doing so adds unnecessary complexity.
+Frames would require additional scopes to be resolved, and the ability
+to reference frames across links would be limited.
 Furthermore increasing the number of implicit frames increases the size
 of the frame graph and adds complexity to the parsing task.
 This approach is not recommended as its utility is outweighed by
