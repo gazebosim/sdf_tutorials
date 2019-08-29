@@ -134,7 +134,7 @@ a namespace prefix.  Since default namespaces are not allowed, this amounts to
 checking if an attribute name contains the `:` character. This relies on the
 [conformance requirement](https://www.w3.org/TR/xml-names/#Conformance) of the
 W3C recommendation that in a namespace-well-formed document, all element and
-attribute names contain either zero or one colon.
+attribute names contain either zero or one colons.
 
 The proposed API makes use of the `sdf::ElementPtr` (a pointer to
 `sdf::Element`) as the proxy to XML elements. libsdformat provides an
@@ -207,9 +207,9 @@ attributes
 The code that retrieves the custom elements and attributes is given by
 
 ```
+...
 
 #include "sdf/sdf.hh"
-
 const std::string SDF_TEST_FILE = /* Fill in with file path */
 
 sdf::Root root;
@@ -255,6 +255,7 @@ sdf::ElementPtr transHwInterfaceElement =
 auto tranHwInterface =
     tranJointElement->Get<std::string>("mysim:hardware_interface");
 
+...
 ```
 
 
