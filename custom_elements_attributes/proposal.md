@@ -104,14 +104,14 @@ namespaces. The scoping rules state:
 Example:
 
 ```
-<model name="M1" xmlns:mysim="https://example.org/mysim/schema">
-  <mysim:custom_elem>Description of this world</mysim:custom_elem> <!--Valid use of <mysim:custom_elem>-->
-  <link name="L" mysim:custom_attr="A" /> <!--Valid use of <mysim:custom_attr>-->
+<model name="M1" xmlns:flatland="https://example.org/flatland/schema">
+  <flatland:custom_elem>Description of this world</flatland:custom_elem> <!--Valid use of <flatland:custom_elem>-->
+  <link name="L" flatland:custom_attr="A" /> <!--Valid use of <flatland:custom_attr>-->
 </model>
 
 <model name="M2">
-  <mysim:custom_elem>Description of this world</mysim:custom_elem> <!--Invalid use of <mysim:custom_elem>. The mysim prefix is not in scope-->
-  <link name="L" mysim:custom_attr="A" /> <!--Invalid use of <mysim:custom_attr>-->
+  <flatland:custom_elem>Description of this world</flatland:custom_elem> <!--Invalid use of <flatland:custom_elem>. The flatland prefix is not in scope-->
+  <link name="L" flatland:custom_attr="A" /> <!--Invalid use of <flatland:custom_attr>-->
 </model>
 
 ```
@@ -121,7 +121,7 @@ rules apply only to namespace prefixes. The following is an example that
 violates the uniqueness rules
 
 ```
-<model name="M1" xmlns:mysim="https://example.org/mysim/schema" xmlns:mysim="https://example.org/some_other_schema">
+<model name="M1" xmlns:flatland="https://example.org/flatland/schema" xmlns:flatland="https://example.org/some_other_schema">
 </model>
 ```
 
@@ -148,8 +148,8 @@ Once an `sdf::ElementPtr` object is available, its attributes can be retrieved
 by calling `sdf::Element::GetAttribute()`. To get the value of a custom
 attribute, the name of the attribute passed to `GetAttribute` must contain the
 namespace prefix of the attribute. For example, if the custom attribute name is
-`mysim:custom_attr`, the function call would be
-`GetAttribute("mysim:custom_attr")`.
+`flatland:custom_attr`, the function call would be
+`GetAttribute("flatland:custom_attr")`.
 
 Child elements of `sdf::ElementPtr` are obtained by calling
 `sdf::Element::GetElement()`. This function takes the names of the child
@@ -172,23 +172,23 @@ attributes
 
 ```
 <?xml version="1.0" ?>
-<sdf xmlns:mysim="http://example.org/mysim/schema" version="1.6">
-  <world name="W" mysim:type="2d">
-    <mysim:description>Description of this world</mysim:description>
+<sdf xmlns:flatland="http://example.org/flatland/schema" version="1.6">
+  <world name="W" flatland:type="2d">
+    <flatland:description>Description of this world</flatland:description>
     <model name="M1">
-      <link name="L1" mysim:custom_attr_str="A" mysim:custom_attr_int="5" />
+      <link name="L1" flatland:custom_attr_str="A" flatland:custom_attr_int="5" />
       <link name="L2" />
       <joint name="J1" type="revolute">
         <parent>L1</parent>
         <child>L2</child>
       </joint>
 
-      <mysim:transmission name="simple_trans">
-        <mysim:type>transmission_interface/SimpleTransmission</mysim:type>
-        <mysim:joint name="J1">
-          <mysim:hardware_interface>EffortJointInterface</mysim:hardware_interface>
-        </mysim:joint>
-      </mysim:transmission>
+      <flatland:transmission name="simple_trans">
+        <flatland:type>transmission_interface/SimpleTransmission</flatland:type>
+        <flatland:joint name="J1">
+          <flatland:hardware_interface>EffortJointInterface</flatland:hardware_interface>
+        </flatland:joint>
+      </flatland:transmission>
     </model>
   </world>
 </sdf>
@@ -211,7 +211,7 @@ const sdf::World *world = root.WorldByIndex(0);
 sdf::ElementPtr worldElement = world->Element();
 
 // Use of sdf::ElementPtr::GetAttribute()
-sdf::ParamPtr typeParam = worldElement->GetAttribute("mysim:type");
+sdf::ParamPtr typeParam = worldElement->GetAttribute("flatland:type");
 std::string simType;
 // Use of sdf::ParamPtr::Get<T>()
 typeParam->Get<std::string>(simType);
@@ -223,27 +223,27 @@ const sdf::Link *link1 = model->LinkByIndex(0);
 sdf::ElementPtr link1Element = link1->Element();
 
 // Use of sdf::ElementPtr::Get<T>() to obtain the value of an attribute
-auto customAttrStr = link1Element->Get<std::string>("mysim:custom_attr_str");
+auto customAttrStr = link1Element->Get<std::string>("flatland:custom_attr_str");
 
-auto customAttrInt = link1Element->Get<int>("mysim:custom_attr_int");
+auto customAttrInt = link1Element->Get<int>("flatland:custom_attr_int");
 
 // Use of sdf::Model::Element() to obtain an sdf::ElementPtr object
 sdf::ElementPtr modelElement = model->Element();
 
-sdf::ElementPtr transmission = modelElement->GetElement("mysim:transmission");
+sdf::ElementPtr transmission = modelElement->GetElement("flatland:transmission");
 auto transmissionName = transmission->Get<std::string>("name");
 
-auto transmissionType = transmission->Get<std::string>("mysim:type");
+auto transmissionType = transmission->Get<std::string>("flatland:type");
 
-sdf::ElementPtr tranJointElement = transmission->GetElement("mysim:joint");
+sdf::ElementPtr tranJointElement = transmission->GetElement("flatland:joint");
 auto tranJointName = tranJointElement->Get<std::string>("name");
 
 sdf::ElementPtr transHwInterfaceElement =
-    tranJointElement->GetElement("mysim:hardware_interface");
+    tranJointElement->GetElement("flatland:hardware_interface");
 
 // Use of sdf::ElementPtr::Get<T>() to obtain the value of a child element
 auto tranHwInterface =
-    tranJointElement->Get<std::string>("mysim:hardware_interface");
+    tranJointElement->Get<std::string>("flatland:hardware_interface");
 
 ...
 ```
