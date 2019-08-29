@@ -86,12 +86,16 @@ namespace, i.e, the namespace name, to the URI containing the schema of the
 namespace. Note, however, that libsdformat treats the provided URI as any other
 string literal with no special meaning.
 
-Namespaces may be declared on any element of SDFormat.
-Although not enforced by libsdformat, users should comply with the namespace
-[scoping](https://www.w3.org/TR/xml-names/#scoping) and
+This proposal advocates for a convention where namespaces are declared only in
+the root element of an SDFormat file. This means only the `<sdf>` tag in an
+SDFormat file file may have the `xmlns:` attribute.
+
+However, the proposal still allows for namespaces to be declared on any element
+of SDFormat. Although not enforced by libsdformat, users should comply with the
+namespace [scoping](https://www.w3.org/TR/xml-names/#scoping) and
 [uniqueness](https://www.w3.org/TR/xml-names/#uniqAttrs) rules defined in the
-[W3C Recommendation](https://www.w3.org/TR/xml-names) when declaring namespaces.
-The scoping rules state:
+[W3C Recommendation](https://www.w3.org/TR/xml-names) when declaring such
+namespaces. The scoping rules state:
 
 > The scope of a namespace declaration declaring a prefix extends from the
 > beginning of the start-tag in which it appears to the end of the
@@ -111,11 +115,6 @@ Example:
 </model>
 
 ```
-
-This proposal advocates for a convention where namespaces are declared only in
-the root element of an SDFormat file. This means only the `<sdf>` tag in an
-SDFormat world file or the topmost `<model>` tag in an SDFormat model file may
-have the `xmlns:` attribute.
 
 Since default namespaces are not permitted in this proposal, the uniqueness
 rules apply only to namespace prefixes. The following is an example that
