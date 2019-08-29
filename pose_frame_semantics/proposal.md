@@ -248,6 +248,10 @@ references directly in the hierarchy.
 This adds significant complexity and difficulty and deviates from the current
 practice of specifying parent and child links for a joint by name.
 
+The current proposal is the most conservative and should allow for more
+expansive (but possibly more complex) scoping rules to be incorporated
+while maintaining compatibility.
+
 ### Element naming rule: unique names for all sibling elements
 
 <!-- TODO(eric): These naming rules should stay in this proposal, but should
@@ -1310,8 +1314,8 @@ There are *seven* phases for validating the kinematics data in a model:
     8.6 Verify that the graph has no cycles and that by following the directed
         edges, every vertex is connected to the implicit model frame.
         Other poses in the model such as `//collision/pose` and `//light/pose`
-        do not need to be checked for cycles since they do not have named
-        frames.
+        do not need to be checked for cycles since they do not create
+        implicitly named frames.
 
 ## Phases of parsing kinematics of an SDFormat 1.7 world
 
