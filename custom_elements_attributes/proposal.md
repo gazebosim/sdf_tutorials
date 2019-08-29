@@ -145,14 +145,11 @@ accomplished by calling `Element()` on the corresponding classes `sdf::World`,
 element is obtained by calling `sdf::Root::Element()`.
 
 Once an `sdf::ElementPtr` object is available, its attributes can be retrieved
-by calling `sdf::Element::GetAttribute()`. This function takes the attribute
-name as its first argument and returns an `sdf::ParamPtr` (a pointer to
-`sdf::Param`). libsdformat provides a function template `sdf::Param::Get<T>`
-that can be used to obtain the value of the attribute converted to the passed
-in type `T`. To get the value of a custom attribute, the name of the attribute
-passed to `GetAttribute` must contain the namespace prefix of the attribute.
-For example, if the custom attribute name is `mysim:custom_attr`, the function
-call would be `GetAttribute("mysim:custom_attr")`.
+by calling `sdf::Element::GetAttribute()`. To get the value of a custom
+attribute, the name of the attribute passed to `GetAttribute` must contain the
+namespace prefix of the attribute. For example, if the custom attribute name is
+`mysim:custom_attr`, the function call would be
+`GetAttribute("mysim:custom_attr")`.
 
 Child elements of `sdf::ElementPtr` are obtained by calling
 `sdf::Element::GetElement()`. This function takes the names of the child
@@ -165,15 +162,8 @@ For example, if the custom element name is `foo:description`, the function call
 would be `GetElement("foo:description")`.
 
 An alternative, but more convenient, function to retreive the values of
-attributes or child elements is `sdf::Elemenet::Get<T>()`, where `T` is the
-type to which the value will be converted. The function takes the attribute or
-child element name as its first argument. The function assumes that the
-attribute or child element exists. If this assumption does not hold, the
-returned value is undefined. Since this function operates on attributes and
-elements, it is important to note its behavior when an attribute and a child
-element share the same name. In this case, the value of the child element is
-returned. To get the value of the attribute, `sdf::Element::GetAttribute()` can
-be called.
+attributes or child elements is `sdf::Elemenet::Get<T>()`. Refer to the API
+[documentation](http://sdformat.org/api) for its usage.
 
 #### Examples
 
