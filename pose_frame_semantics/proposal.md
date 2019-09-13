@@ -483,8 +483,8 @@ the default behavior for all elements other than `//frame/pose` is the
 behavior from SDFormat 1.4
 (see the "Parent frames in sdf 1.4" section of the
 [pose frame semantics documentation](/tutorials?tut=pose_frame_semantics)).
-This corresponds to `//link/pose` `relative_to` the model frame by default
-and `//joint/pose` `relative_to` the child link's implicit frame by default.
+This corresponds to `//link/pose` relative to the model frame by default
+and `//joint/pose` relative to the child link's implicit frame by default.
 If the `//frame/pose[@relative_to]` attribute does not exist or is empty,
 it defaults to the value of the `//frame[@attached_to]` attribute.
 
