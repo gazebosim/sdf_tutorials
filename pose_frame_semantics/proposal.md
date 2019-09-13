@@ -211,8 +211,8 @@ and `link`, but there is no name conflict because they are in separate scopes.
     <link name="link"/>
   </model>
   <model name="model_2">
-    <frame name="explicit_frame"/>
-    <link name="link"/>
+    <frame name="explicit_frame"/>  <!-- VALID: name is unique in this model. -->
+    <link name="link"/>             <!-- VALID: name is unique in this model. -->
   </model>
 </world>
 ~~~
@@ -221,13 +221,14 @@ In the following example, there are three frames in the model scope:
 the implicit link frames `base` and `attachment` and the implicit
 joint frame `attachment`.
 Referring to a frame named `attachment` is ambiguous in this case,
-which inspires the element naming rule in the following section.
+which inspires the element naming rule in the following section
+that disallows name conflicts like this.
 
 ~~~
 <model name="model">
   <link name="base"/>
   <link name="attachment"/>
-  <joint name="attachment" type="fixed">
+  <joint name="attachment" type="fixed">  <!-- INVALID: joint name should not match name of sibling link. -->
     <parent>base</parent>
     <child>attachment</child>
   </joint>
@@ -1186,7 +1187,10 @@ model in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics
 In phases that differ from SDFormat 1.4, *italics* are used to signal the difference.
 For new phases, the ***Title:*** is italicized.
 
-There are *seven* phases for validating the kinematics data in a model:
+There are *seven* phases for validating the kinematics data in a model.
+In libsdformat, the `sdf::readFile` and `sdf::readString` API's perform parsing
+stage 1, and `sdf::Root::Load` is proposed to perform all parsing stages.
+Each API returns an error code if errors are found during parsing.
 
 1.  **XML parsing and schema validation:**
     Parse model file from XML into a tree data structure,
@@ -1203,9 +1207,6 @@ There are *seven* phases for validating the kinematics data in a model:
     collisions, visuals, sensors, and lights.
     This step is distinct from validation with the schema because the schema
     only confirms the existence of name attributes, not their content.
-    Note that `libsdformat` does not currently perform this check when loading
-    an SDF using `sdf::readFile` or `sdf::readString` (see
-    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216)).
 
 3.  **Joint parent/child name checking:**
     For each joint, check that the parent and child link names are different
@@ -1343,9 +1344,6 @@ There are *seven* phases for validating the kinematics data in a world:
     since other names will be checked in the following step.
     This step is distinct from validation with the schema because the schema
     only confirms the existence of name attributes, not their content.
-    Note that `libsdformat` does not currently perform this check when loading
-    an SDF using `sdf::readFile` or `sdf::readString` (see
-    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216)).
 
 3.  **Model checking:**
     Check each model according to the *seven* phases of parsing kinematics of an

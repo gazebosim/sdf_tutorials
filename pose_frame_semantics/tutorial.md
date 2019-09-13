@@ -561,7 +561,10 @@ for the potential new behavior in SDF 1.7.
 This section describes phases for parsing the kinematics of an sdf 1.4 model.
 It does not discuss proper validation of collision and visual geometries,
 link inertia, and many other parameters.
-There are three phases for validating the kinematics data in a model:
+There are three phases for validating the kinematics data in a model.
+In libsdformat, the `sdf::readFile` and `sdf::readString` API's perform parsing
+stage 1, and `sdf::Root::Load` performs parsing stages 1 and 2.
+Each API returns an error code if errors are found during parsing.
 
 1.  **XML parsing and schema validation:**
     Parse model file from XML into a tree data structure,
@@ -578,9 +581,6 @@ There are three phases for validating the kinematics data in a model:
     collisions, visuals, sensors, and lights.
     This step is distinct from validation with the schema because the schema
     only confirms the existence of name attributes, not their content.
-    Note that `libsdformat` does not currently perform this check when loading
-    an SDF using `sdf::readFile` or `sdf::readString` (see
-    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216)).
 
 3.  **Joint parent/child name checking:**
     For each joint, check that the parent and child link names are different
@@ -631,9 +631,6 @@ These three phases are listed below:
     since other names will be checked in the following step.
     This step is distinct from validation with the schema because the schema
     only confirms the existence of name attributes, not their content.
-    Note that `libsdformat` does not currently perform this check when loading
-    an SDF using `sdf::readFile` or `sdf::readString` (see
-    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216)).
 
 3.  **Model checking:**
     Check each model according to the three phases of parsing kinematics of an
