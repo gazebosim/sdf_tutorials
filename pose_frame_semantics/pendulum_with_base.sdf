@@ -1,0 +1,107 @@
+<sdf version="1.6">
+  <model name="pendulum_with_base">
+    <link name="base">
+      <inertial>
+        <pose>0 0 0.1 0 0 0</pose>
+        <mass>120</mass>
+        <inertia>
+          <ixx>46</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>46</iyy>
+          <iyz>0</iyz>
+          <izz>90</izz>
+        </inertia>
+      </inertial>
+      <collision name="col_plate_on_ground">
+        <pose>0 0 0.01 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.8</radius>
+            <length>0.02</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="vis_plate_on_ground">
+        <pose>0 0 0.01 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.8</radius>
+            <length>0.02</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Grey</name>
+          </script>
+        </material>
+      </visual>
+      <visual name="vis_pole">
+        <pose>-0.275 0 0.6 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.2 0.2 1.2</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Grey</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+    <link name="pendulum">
+      <pose>0 0.5 1.0 1.5 0 0</pose>
+      <inertial>
+        <mass>12</mass>
+        <inertia>
+          <ixx>0.85</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.85</iyy>
+          <iyz>0</iyz>
+          <izz>0.04</izz>
+        </inertia>
+      </inertial>
+      <visual name="vis_joint">
+        <pose>-0.05 0 0.5 0 1.5708 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>0.3</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Grey</name>
+          </script>
+        </material>
+      </visual>
+      <visual name="vis_pendulum">
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>1.0</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Grey</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+    <joint name="joint" type="revolute">
+      <parent>base</parent>
+      <child>pendulum</child>
+      <pose>0 0 0.5 0 0 0</pose>
+      <axis>
+        <xyz>1 0 0</xyz>
+      </axis>
+    </joint>
+  </model>
+</sdf>
