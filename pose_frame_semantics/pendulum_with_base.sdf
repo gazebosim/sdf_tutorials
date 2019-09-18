@@ -1,8 +1,8 @@
 <sdf version="1.6">
   <model name="pendulum_with_base">
     <link name="base">
+      <pose>0 0 0.3 0 0 0</pose>
       <inertial>
-        <pose>0 0 0.1 0 0 0</pose>
         <mass>120</mass>
         <inertia>
           <ixx>46</ixx>
@@ -14,7 +14,7 @@
         </inertia>
       </inertial>
       <collision name="col_plate_on_ground">
-        <pose>0 0 0.01 0 0 0</pose>
+        <pose>0 0 -0.29 0 0 0</pose>
         <geometry>
           <cylinder>
             <radius>0.8</radius>
@@ -23,7 +23,7 @@
         </geometry>
       </collision>
       <visual name="vis_plate_on_ground">
-        <pose>0 0 0.01 0 0 0</pose>
+        <pose>0 0 -0.29 0 0 0</pose>
         <geometry>
           <cylinder>
             <radius>0.8</radius>
@@ -38,7 +38,7 @@
         </material>
       </visual>
       <visual name="vis_pole">
-        <pose>-0.275 0 0.6 0 0 0</pose>
+        <pose>-0.275 0 0.3 0 0 0</pose>
         <geometry>
           <box>
             <size>0.2 0.2 1.2</size>
