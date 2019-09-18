@@ -677,7 +677,7 @@ have separate, valid graphs.
 ~~~
 
 
-### Removal of `//joint/axis/use_parent_model_frame`
+### Replace `//joint/axis/use_parent_model_frame` with `//joint/axis/xyz[@expressed_in]`
 
 As discussed in the [Model
 Kinematics](/tutorials?tut=spec_model_kinematics&cat=specification&#jointaxis)
@@ -689,6 +689,58 @@ of `//joint/axis/xyz` are inconsistent with the way other tags in SDFormat
 operate. Therefore, `//joint/axis/use_parent_model_frame` will be removed in
 SDFormat 1.7.
 
+In order to accommodate migration from the above feature, as well as improve
+expressiveness, SDFormat 1.7 will add `//joint/axis/xyz[@expressed_in]` to
+modify the orientation of this vector. An empty string / default value implies
+the joint's initial orientation. Any valid frame can be referred to from here.
+This also applies for `//joint/axis2`.
+
+As an example, an SDFormat 1.6 joint like this:
+
+~~~
+<model name="example">
+  ...
+  <joint name="joint" type="revolute">
+    <pose>{X_MJ}</pose>
+    <parent>{parent}</parent>
+    <child>{child}</child>
+    <axis>
+      <xyz>{xyz_axis_M}</xyz>
+      <use_parent_model_frame>true</use_parent_model_frame>
+    </axis>
+  </joint>
+</model>
+~~~
+
+becomes the following in SDFormat 1.7, taking note of [how to refer to model frames](#referencing-the-implicit-model-frame):
+
+~~~
+<model name="example">
+  ...
+  <frame name="model_frame"/>
+  <joint name="joint" type="revolute">
+    <pose>{X_MJ}</pose>
+    <parent>{parent}</parent>
+    <child>{child}</child>
+    <axis>
+      <xyz expressed_in="model_frame">{xyz_axis_M}</xyz>
+    </axis>
+  </joint>
+</model>
+~~~
+
+#### Alternatives Considered
+
+If `//use_parent_model_frame` is removed, then migration is still necessary for
+the given `//joint/axis/xyz`. SDFormat's current conversion code (in
+`src/Converter.cc`) is only for changing the basic structure of a document, and
+this change would require more involved changes.
+
+<!--
+TODO(eric): Is it true this will be easy? Does `Converter.cc` have the logic
+necessary to add a frame if it doesn't already exist, or if it does, either use
+some other name, fail, or whatever?
+-->
 
 ## Empty `//pose` and `//frame` elements imply identity pose
 
