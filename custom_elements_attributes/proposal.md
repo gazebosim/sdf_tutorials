@@ -34,9 +34,9 @@ proposal will describe
 
 ### Specifying custom elements and attributes
 
-> **Note**: TinyXML, used by libsdformat to parse SDFormat files, does have native
-> support XML namespaces. Some of the following requirements and conventions
-> are in place due to this limitation.
+> **Note**: TinyXML, used by libsdformat to parse SDFormat files, does not have
+> native support for XML namespaces. Some of the following requirements and
+> conventions are in place due to this limitation.
 
 To avoid name clashes with future versions of SDFormat and to ensure the
 interoperability of SDFormat files between various software, custom elements
@@ -57,7 +57,7 @@ that the world uses 2 dimensional physics and a **custom element**
 displayed by the application at runtime.
 
 ```
-<sdf xmlns:foo="http://example.org/schema">
+<sdf version="1.6" xmlns:foo="http://example.org/schema">
   <world name="W" foo:type="2d">
     <foo:description>Description of this world</foo:description>
   </world>
@@ -71,7 +71,7 @@ specification. Requiring namespaces for such attributes would make SDFormat
 files too verbose. The following is an example of this usage:
 
 ```
-<sdf xmlns:foo="http://example.org/schema">
+<sdf version="1.6" xmlns:foo="http://example.org/schema">
   <world name="W" foo:type="2d">
     <foo:vehicle name="V1" type="4wheel"/>
   </world>
@@ -87,8 +87,8 @@ namespace. Note, however, that libsdformat treats the provided URI as any other
 string literal with no special meaning.
 
 This proposal advocates for a convention where namespaces are declared only in
-the root element of an SDFormat file. This means only the `<sdf>` tag in an
-SDFormat file file may have the `xmlns:` attribute.
+the root element of an SDFormat file. This would mean only the `<sdf>` tag in
+an SDFormat file may have the `xmlns:` attribute.
 
 However, the proposal still allows for namespaces to be declared on any element
 of SDFormat. Although not enforced by libsdformat, users should comply with the
@@ -154,14 +154,18 @@ namespace prefix of the attribute. For example, if the custom attribute name is
 Child elements of `sdf::ElementPtr` are obtained by calling
 `sdf::Element::GetElement()`. This function takes the names of the child
 element as its first argument and returns an `sdf::ElementPtr`, which can be
-further querried for more sibling or child elements using
+further queried for more sibling or child elements using
 `sdf::Element::GetNextElement()` or `sdf::Element::GetElement()` respectively.
 To get an `sdf::ElementPtr` for a custom element, the name of the element
-passed to `GetElement` must contain the namespace prefix of the element.
-For example, if the custom element name is `foo:description`, the function call
-would be `GetElement("foo:description")`.
+passed to `GetElement` must contain the namespace prefix of the element. For
+example, if the custom element name is `foo:description`, the function call
+would be `GetElement("foo:description")`. Note that
+`sdf::Element::GetElement()` can modify the underlying `sdf::Element`
+by adding a child element with the provided argument if the child element does
+not already exist. Thus, it is safer to first check if the child element exists
+using `sdf::Element::HasElement()`.
 
-An alternative, but more convenient, function to retreive the values of
+An alternative, but more convenient, function to retrieve the values of
 attributes or child elements is `sdf::Elemenet::Get<T>()`. Refer to the API
 [documentation](http://sdformat.org/api) for its usage.
 
@@ -197,9 +201,10 @@ attributes
 The code that retrieves the custom elements and attributes is given by
 
 ```
+#include "sdf/sdf.hh"
+
 ...
 
-#include "sdf/sdf.hh"
 const std::string SDF_TEST_FILE = /* Fill in with file path */
 
 sdf::Root root;
