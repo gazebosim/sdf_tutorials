@@ -154,27 +154,43 @@ explicitly defined.
 
 ### Referencing the implicit model frame
 
-This proposal suggests that the implicit model frame can be referred to using
-the reserved name `__model__`.
+This proposal suggests that the implicit model frame can be referred to.
+
+From child elements of a given model, the "internal implicit model frame" can
+be referred to using the reserved name `__model__`.
+
+From outside of a given model, the "external implicit model frame" can be
+referred to using the model's specified name.
 
 Nested models will have their own individual model frames. (See pending Nesting
 proposal for nuances.)
 
 #### Alternatives considered
 
-* The model frame is named as the model's name as specified by the file (not
-overridden by `//include`). No link, joint, or frame can be specified using
-this name.
-* The implicit model frame cannot be referred to explicitly. This makes
-implementation complicated when handling default frames (e.g. `@relative_to`),
-and also complicates migration via `Converter.cc` when handling things like
+The first alternative was to make the model frame be explicitly named as the
+model name specified by the file (not overridden by `//include`). No link,
+joint, or frame can be specified using this name.
+
+The caveat with this is that it be confusing if/when more complex references
+are supported via nesting.
+
+The second alternative was to prevent the implicit model frame from being
+referred to explicitly.
+
+For this solution, implementation could become complicated / ambiguous when
+handling default frames. For example, `""` could be used as the token for the
+model / world frame. Additionally, `@relative_to` defaults to `""`, but in some
+contexts this may imply the model frame, the parent element frame, the child link frame, etc.
+
+It also complicates migration via `Converter.cc` when handling things like
 replacing `//joint/axis/use_parent_frame` with
-`//joint/axis/xyz[@expressed_in]`.
+`//joint/axis/xyz[@expressed_in]`. Being able to reference `__model__` /
+`__world__` makes implementation a bit more straightforward.
 
 ### Referencing the implicit world frame
 
-The implicit frame for a `//world` element is `__world__`, rather than
-`__model__`.
+The "internal implicit frame: for a `//world` element is `__world__` (rather
+than `__model__`). This frame may not be referred to within `//model` elements.
 
 ## Name conflicts and scoping rules for explicit and implicit frames
 
@@ -638,6 +654,20 @@ the implicit world frame.
 ~~~
 
 ~~~
+<world name="model_pose_relative_to">
+  <model name="noframe0">
+    <pose relative_to="noframe0">{X_N0N0}</pose>  <!-- INVALID: no frame named noframe0 in this scope. -->
+    ...
+  </model>
+
+  <model name="cycle0">
+    <pose relative_to="__model__">{X_C0C0}</pose> <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
+    ...
+  </model>
+</world>
+~~~
+
+~~~
 <world name="world_frame_cycles">
   <frame name="cycle0">
     <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
@@ -688,7 +718,7 @@ SDFormat 1.7.
 
 In order to accommodate migration from the above feature, as well as improve
 expressiveness, SDFormat 1.7 will add `//joint/axis/xyz[@expressed_in]` to
-modify the orientation of this vector. An empty string / default value implies
+modify the orientation of this vector. An empty string or default value implies
 the joint's initial orientation. Any valid frame can be referred to from here.
 This also applies for `//joint/axis2`.
 
@@ -698,7 +728,7 @@ As an example, an SDFormat 1.6 joint like this:
 <model name="example">
   ...
   <joint name="joint" type="revolute">
-    <pose>{X_MJ}</pose>
+    <pose>{X_CJ}</pose>
     <parent>{parent}</parent>
     <child>{child}</child>
     <axis>
@@ -715,7 +745,7 @@ becomes the following in SDFormat 1.7:
 <model name="example">
   ...
   <joint name="joint" type="revolute">
-    <pose>{X_MJ}</pose>
+    <pose>{X_CJ}</pose>
     <parent>{parent}</parent>
     <child>{child}</child>
     <axis>
