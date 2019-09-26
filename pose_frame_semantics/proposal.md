@@ -154,30 +154,43 @@ explicitly defined.
 
 ### Referencing the implicit model frame
 
-While it would be useful to explicitly refer to a model frame by the model
-name, there are two complications: it may conflict with link names, and for
-model composition, users may be able to override the model name via
-`//include`.
+This proposal suggests that the implicit model frame can be referred to.
 
-This proposal suggests that instead of auto-assigning a model frame, the
-specification provides a means to use the *value* of the model frame (rather
-than implicitly allocate a name and restrict that name's usage). A user can
-achieve this by defining `//model/frame` with an identity pose. Example:
+From child elements of a given model, the "internal implicit model frame" can
+be referred to using the reserved name `__model__`.
 
-    <model name="test_model">
-      <frame name="model_frame"/>
-    </model>
+From outside of a given model, the "external implicit model frame" can be
+referred to using the model's specified name.
 
 Nested models will have their own individual model frames. (See pending Nesting
 proposal for nuances.)
 
 #### Alternatives considered
 
-* The model frame is named as the model's name as specified by the file (not
-overridden by `//include`). No link, joint, or frame can be specified using
-this name.
-* The model frame be explicitly referable to using the **reserved name**
-`"model_frame"`. No link, joint, or frame can be specified using this name.
+The first alternative was to make the model frame be explicitly named as the
+model name specified by the file (not overridden by `//include`). No link,
+joint, or frame can be specified using this name.
+
+The caveat with this is that it be confusing if/when more complex references
+are supported via nesting.
+
+The second alternative was to prevent the implicit model frame from being
+referred to explicitly.
+
+For this solution, implementation could become complicated / ambiguous when
+handling default frames. For example, `""` could be used as the token for the
+model / world frame. Additionally, `@relative_to` defaults to `""`, but in some
+contexts this may imply the model frame, the parent element frame, the child link frame, etc.
+
+It also complicates migration via `Converter.cc` when handling things like
+replacing `//joint/axis/use_parent_frame` with
+`//joint/axis/xyz[@expressed_in]`. Being able to reference `__model__` /
+`__world__` makes implementation a bit more straightforward.
+
+### Referencing the implicit world frame
+
+The "internal implicit frame: for a `//world` element is `__world__` (rather
+than `__model__`). This frame may not be referred to within `//model` elements.
 
 ## Name conflicts and scoping rules for explicit and implicit frames
 
@@ -641,6 +654,20 @@ the implicit world frame.
 ~~~
 
 ~~~
+<world name="model_pose_relative_to">
+  <model name="noframe0">
+    <pose relative_to="noframe0">{X_N0N0}</pose>  <!-- INVALID: no frame named noframe0 in this scope. -->
+    ...
+  </model>
+
+  <model name="cycle0">
+    <pose relative_to="__model__">{X_C0C0}</pose> <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
+    ...
+  </model>
+</world>
+~~~
+
+~~~
 <world name="world_frame_cycles">
   <frame name="cycle0">
     <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
@@ -677,7 +704,7 @@ have separate, valid graphs.
 ~~~
 
 
-### Removal of `//joint/axis/use_parent_model_frame`
+### Replace `//joint/axis/use_parent_model_frame` with `//joint/axis/xyz[@expressed_in]`
 
 As discussed in the [Model
 Kinematics](/tutorials?tut=spec_model_kinematics&cat=specification&#jointaxis)
@@ -689,6 +716,51 @@ of `//joint/axis/xyz` are inconsistent with the way other tags in SDFormat
 operate. Therefore, `//joint/axis/use_parent_model_frame` will be removed in
 SDFormat 1.7.
 
+In order to accommodate migration from the above feature, as well as improve
+expressiveness, SDFormat 1.7 will add `//joint/axis/xyz[@expressed_in]` to
+modify the orientation of this vector. An empty string or default value implies
+the joint's initial orientation. Any valid frame can be referred to from here.
+This also applies for `//joint/axis2`.
+
+As an example, an SDFormat 1.6 joint like this:
+
+~~~
+<model name="example">
+  ...
+  <joint name="joint" type="revolute">
+    <pose>{X_CJ}</pose>
+    <parent>{parent}</parent>
+    <child>{child}</child>
+    <axis>
+      <xyz>{xyz_axis_M}</xyz>
+      <use_parent_model_frame>true</use_parent_model_frame>
+    </axis>
+  </joint>
+</model>
+~~~
+
+becomes the following in SDFormat 1.7:
+
+~~~
+<model name="example">
+  ...
+  <joint name="joint" type="revolute">
+    <pose>{X_CJ}</pose>
+    <parent>{parent}</parent>
+    <child>{child}</child>
+    <axis>
+      <xyz expressed_in="__model__">{xyz_axis_M}</xyz>
+    </axis>
+  </joint>
+</model>
+~~~
+
+#### Alternatives Considered
+
+Migration for `//jonit/axis/xyz` is absolutely necessary if
+`//use_parent_model_frame` is removed. SDFormat's current conversion code (in
+`src/Converter.cc`) is only for changing the basic structure of a document, and
+this change would require more involved changes.
 
 ## Empty `//pose` and `//frame` elements imply identity pose
 
@@ -739,8 +811,6 @@ that shows a parent link `P`, child link `C`, and joint `J` with joint frames
 [[file:../spec_model_kinematics/joint_frames.svg|600px]]
 
 An sdformat representation of this model is given below.
-The frame named `model_frame` is created so that the implicit model frame
-can be referenced explicitly.
 The pose of the parent link `P` is specified relative to the implicit
 model frame, while the pose of the other
 elements is specified relative to other named frames.
@@ -750,10 +820,8 @@ For reference, equivalent expressions of `Jc` are defined as `Jc1` and `Jc2`.
 
     <model name="M">
 
-      <frame name="model_frame" />
-
       <link name="P">
-        <pose relative_to="model_frame">{X_MP}</pose>
+        <pose relative_to="__model__">{X_MP}</pose>
       </link>
 
       <link name="C">
@@ -1163,12 +1231,22 @@ in the simulation.
     </model>
     ~~~
 
-* Names that start and end with double underscores (eg. `__wheel__`) are reserved
-for use by library implementors. For example, such names might be useful during
-parsing for setting sentinel or default names for elements with missing names.
+* Names that start and end with double underscores (eg. `__wheel__`) are
+reserved for use by library implementors and the specification. For example,
+such names might be useful during parsing for setting sentinel or default names
+for elements with missing names. If explicitly stated, they can be referred to
+(e.g. `__model__` / `__world__` for implicit model / world frames, respectively). Examples:
 
     ~~~
-    <model name="__model__"/><!-- INVALID: name starts and ends with __. -->
+    <model name="__model__"/><!-- INVALID: name starts and ends with __, and is reserved. -->
+    ~~~
+
+    ~~~
+    <model name="model">
+      <!-- VALID: Both frames are equivalent. -->
+      <frame name="frame1"/>
+      <frame name="frame2" attached_to="__model__"/>
+    </model>
     ~~~
 
     ~~~
@@ -1268,7 +1346,7 @@ Each API returns an error code if errors are found during parsing.
     Construct a `relative_to` directed graph for the model with each vertex
     representing a frame:
 
-    8.1 Add a vertex for the implicit model frame.
+    8.1 Add a vertex for the implicit model frame `__model__`.
 
     8.2 Add vertices for each `//model/link`, `//model/joint`, and
         `//model/frame`.
@@ -1360,7 +1438,7 @@ There are *seven* phases for validating the kinematics data in a world:
     Construct an `attached_to` directed graph for the world with each vertex
     representing a frame:
 
-    5.1 Add a vertex for the implicit world frame.
+    5.1 Add a vertex for the implicit world frame `__world__`.
 
     5.2 Add a vertex for each model in the world.
 
