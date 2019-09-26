@@ -152,7 +152,7 @@ explicitly defined.
 </model>
 ~~~
 
-### Referencing the implicit model frame
+### Referencing the implicit model frame via `__model__` or model name
 
 This proposal suggests that the implicit model frame can be referred to.
 
@@ -187,10 +187,43 @@ replacing `//joint/axis/use_parent_frame` with
 `//joint/axis/xyz[@expressed_in]`. Being able to reference `__model__` /
 `__world__` makes implementation a bit more straightforward.
 
-### Referencing the implicit world frame
+### Referencing the implicit world frame via `__world__`
 
-The "internal implicit frame: for a `//world` element is `__world__` (rather
-than `__model__`). This frame may not be referred to within `//model` elements.
+The "internal implicit frame" for a `//world` element is `__world__` (rather
+than `__model__`). This frame may not be referred to within `//model` elements,
+*except* for specifying `//joint/parent`.
+
+### Removal of implicit `world` link name
+
+To reduce ambiguity, `world` should be removed, and  `__world__` should become
+the only way to reference the world frame or link.
+
+The primary caveat here is backwards compatibility: downstream applications may
+rely on the explicit string literal `"world"`.
+
+Before:
+
+~~~
+<model name="joint_to_world">
+  <link name="my_link"/>
+  <joint name="my_joint">
+    <parent>world</parent>
+    <child>my_link</child>
+  </joint>
+</model>
+~~~
+
+After:
+
+~~~
+<model name="joint_to_world">
+  <link name="my_link"/>
+  <joint name="my_joint">
+    <parent>__world__</parent>
+    <child>my_link</child>
+  </joint>
+</model>
+~~~
 
 ## Name conflicts and scoping rules for explicit and implicit frames
 
