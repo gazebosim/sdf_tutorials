@@ -186,45 +186,24 @@ contexts this may imply the model frame, the parent element frame, the child lin
 It also complicates migration via `Converter.cc` when handling things like
 replacing `//joint/axis/use_parent_frame` with
 `//joint/axis/xyz[@expressed_in]`. Being able to reference `__model__` /
-`__world__` makes implementation a bit more straightforward.
+`world` makes implementation a bit more straightforward.
 
-### Referencing the implicit world frame via `__world__`
+### Referencing the implicit world frame via `world`
 
-The "internal implicit frame" for a `//world` element is `__world__` (rather
-than `__model__`). This frame may not be referred to within `//model` elements,
-*except* for specifying `//joint/parent`.
+The "internal implicit frame" for a `//world` element is `world` (rather
+than `__model__` or `__world__`). This may not be referred to within `//model`
+elements, *except* for specifying `//joint/parent`.
 
-### Removal of implicit `world` link name
+#### Alternatives considered
 
-To reduce ambiguity, `world` should be removed, and  `__world__` should become
-the only way to reference the world frame or link.
+Two possible alternatives are (a) have both `__world__` for the world frame and
+`world` for the world link or (b) use `__world__` for both.
 
-The primary caveat here is backwards compatibility: downstream applications may
-rely on the explicit string literal `"world"`.
-
-Before:
-
-~~~
-<model name="joint_to_world">
-  <link name="my_link"/>
-  <joint name="my_joint">
-    <parent>world</parent>
-    <child>my_link</child>
-  </joint>
-</model>
-~~~
-
-After:
-
-~~~
-<model name="joint_to_world">
-  <link name="my_link"/>
-  <joint name="my_joint">
-    <parent>__world__</parent>
-    <child>my_link</child>
-  </joint>
-</model>
-~~~
+(a) was decided against because it seemed redundant given that `world` could be
+referenced both as a frame and a link, which is consistent with implicit frames
+for links. (b) was decided against because it would create additional churn to
+support both `world` and `__world__` up to a point, and then switch over to
+`__world__`.
 
 ## Name conflicts and scoping rules for explicit and implicit frames
 
@@ -1269,7 +1248,7 @@ in the simulation.
 reserved for use by library implementors and the specification. For example,
 such names might be useful during parsing for setting sentinel or default names
 for elements with missing names. If explicitly stated, they can be referred to
-(e.g. `__model__` / `__world__` for implicit model / world frames, respectively). Examples:
+(e.g. `__model__` / `world` for implicit model / world frames, respectively). Examples:
 
     ~~~
     <model name="__model__"/><!-- INVALID: name starts and ends with __, and is reserved. -->
@@ -1472,7 +1451,7 @@ There are *seven* phases for validating the kinematics data in a world:
     Construct an `attached_to` directed graph for the world with each vertex
     representing a frame:
 
-    5.1 Add a vertex for the implicit world frame `__world__`.
+    5.1 Add a vertex for the implicit world frame `world`.
 
     5.2 Add a vertex for each model in the world.
 
