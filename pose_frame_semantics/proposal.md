@@ -154,13 +154,14 @@ explicitly defined.
 
 ### Referencing the implicit model frame via `__model__` or model name
 
-This proposal suggests that the implicit model frame can be referred to.
+This proposal suggests different ways to reference the implicit model frame
+depending on the context.
 
 From child elements of a given model, the "internal implicit model frame" can
-be referred to using the reserved name `__model__`.
+be referenced using the reserved name `__model__`.
 
 From outside of a given model, the "external implicit model frame" can be
-referred to using the model's specified name.
+referenced using the model's specified name.
 
 Nested models will have their own individual model frames. (See pending Nesting
 proposal for nuances.)
