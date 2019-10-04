@@ -71,25 +71,28 @@ defined by its **attached to** frame.
 ### Explicit vs. Implicit frames
 
 Explicit frames are those defined by `//frame`, described below.
-While a `<frame>` element is permitted in many places in sdf 1.5, this proposal
-only permits a `<frame>` element to appear in `<model>` (`//model/frame`) and
-`<world>` (`//world/frame`) elements.
+While a `//frame` element is permitted in many places in sdf 1.5, this proposal
+only permits a `//frame` element to appear as `//model/frame` and
+`//world/frame` elements.
 
 Implicit frames are introduced for convenience, and are defined by
 non-`//frame` elements. The following frame types are implicitly introduced:
 
-* Link frames: each link has a frame named `//link[@name]`, attached to the
+* Link frames: each link has a frame named `//link[@name]` attached to the
   link at its origin defined by `//link/pose`.
-* Joint frames: each joint has a frame named `//joint[@name]`, attached to the
+* Joint frames: each joint has a frame named `//joint[@name]` attached to the
   child link at the joint's origin defined by `//joint/pose`.
-* Model frame: each model has a frame, but it can only be referenced by a
-  `//link/pose` or `//frame/pose` element when its `@relative_to` attribute
-  resolves to empty.
+* Model frame: each model has a frame that can be referenced explicitly
+  using `__model__`. The model frame can also be referenced implicitly when
+  `//link/pose[@relative_to]` resolves to empty or both
+  `//frame[@attached_to]` and `//frame/pose[@relative_to]` resolve
+  to empty.
 * World frame: each world has a fixed inertial reference frame that is
   the default frame to which explicit world frames defined by `//world/frame`
   are attached.
   Model poses defined by `//model/pose` are interpreted relative to the implicit
-  world frame when the `//model/pose[@relative_to]` attribute is empty.
+  world frame when the `//model/pose[@relative_to]` attribute is set to either
+  `world` or empty.
 
 These frames and their semantics are described below in more detail.
 
@@ -152,7 +155,7 @@ explicitly defined.
 </model>
 ~~~
 
-### Referencing the implicit model frame
+### Referencing the implicit model frame via `__model__` or model name
 
 This proposal suggests different ways to reference the implicit model frame
 depending on the context.
@@ -185,13 +188,25 @@ contexts this may imply the model frame, the parent element frame, the child lin
 
 It also complicates migration via `Converter.cc` when handling things like
 replacing `//joint/axis/use_parent_frame` with
-`//joint/axis/xyz[@expressed_in]`. Being able to reference `__model__` /
-`__world__` makes implementation a bit more straightforward.
+`//joint/axis/xyz[@expressed_in]`. Being able to reference `__model__` makes
+implementation a bit more straightforward.
 
-### Referencing the implicit world frame
+### Referencing the implicit world frame via `world`
 
-The "internal implicit frame: for a `//world` element is `__world__` (rather
-than `__model__`). This frame may not be referred to within `//model` elements.
+The "internal implicit frame" for a `//world` element is `world` (rather
+than `__model__` or `__world__`). This may not be referred to within `//model`
+elements, *except* for specifying `//joint/parent`.
+
+#### Alternatives considered
+
+Two possible alternatives are (a) have both `__world__` for the world frame and
+`world` for the world link or (b) use `__world__` for both.
+
+(a) was decided against because it seemed redundant given that `world` could be
+referenced both as a frame and a link, which is consistent with implicit frames
+for links. (b) was decided against because it would create additional churn to
+support both `world` and `__world__` up to a point, and then switch over to
+`__world__`.
 
 ## Name conflicts and scoping rules for explicit and implicit frames
 
@@ -1236,7 +1251,7 @@ in the simulation.
 reserved for use by library implementors and the specification. For example,
 such names might be useful during parsing for setting sentinel or default names
 for elements with missing names. If explicitly stated, they can be referred to
-(e.g. `__model__` / `__world__` for implicit model / world frames, respectively). Examples:
+(e.g. `__model__` / `world` for implicit model / world frames, respectively). Examples:
 
     ~~~
     <model name="__model__"/><!-- INVALID: name starts and ends with __, and is reserved. -->
@@ -1439,7 +1454,7 @@ There are *seven* phases for validating the kinematics data in a world:
     Construct an `attached_to` directed graph for the world with each vertex
     representing a frame:
 
-    5.1 Add a vertex for the implicit world frame `__world__`.
+    5.1 Add a vertex for the implicit world frame `world`.
 
     5.2 Add a vertex for each model in the world.
 
