@@ -72,19 +72,21 @@ defined by its **attached to** frame.
 
 Explicit frames are those defined by `//frame`, described below.
 While a `//frame` element is permitted in many places in sdf 1.5, this proposal
-only permits a `//frame` element to appear in `//model` (`//model/frame`) and
-`//world` (`//world/frame`) elements.
+only permits a `//frame` element to appear as `//model/frame` and
+`//world/frame` elements.
 
 Implicit frames are introduced for convenience, and are defined by
 non-`//frame` elements. The following frame types are implicitly introduced:
 
-* Link frames: each link has a frame named `//link[@name]`, attached to the
+* Link frames: each link has a frame named `//link[@name]` attached to the
   link at its origin defined by `//link/pose`.
-* Joint frames: each joint has a frame named `//joint[@name]`, attached to the
+* Joint frames: each joint has a frame named `//joint[@name]` attached to the
   child link at the joint's origin defined by `//joint/pose`.
-* Model frame: each model has a frame, and can either be referred to explicitly
-  using `__model__` or implicitly when `@relative_to` resolves to empty in
-  either `//link/pose` or `//frame/pose` elements.
+* Model frame: each model has a frame that can be referenced explicitly
+  using `__model__`. The model frame can also be referenced implicitly when
+  `//link/pose[@relative_to]` resolves to empty or both
+  `//frame[@attached_to]` and `//frame/pose[@relative_to]` resolve
+  to empty.
 * World frame: each world has a fixed inertial reference frame that is
   the default frame to which explicit world frames defined by `//world/frame`
   are attached.
