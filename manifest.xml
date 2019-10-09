@@ -115,7 +115,19 @@
       </tags>
       <skill>advanced</skill>
     </tutorial>
-  </tutorials>
+
+    <tutorial title='Composition and nesting' ref='nesting' type='documentation'>
+      <markdown version='1.5'>nesting/legacy_behavior.md</markdown>
+      <description>
+          Describing existing behavior for model level composition.
+      </description>
+      <tags>
+        <tag>nesting</tag>
+        <tag>composition</tag>
+      </tags>
+      <skill>intermediate</skill>
+    </tutorial>
+ </tutorials>
 
   <!-- *************************************** -->
   <categories>
@@ -144,6 +156,7 @@
         <tutorial>spec_materials</tutorial>
         <tutorial>spec_world</tutorial>
         <tutorial>pose_frame_semantics</tutorial>
+        <tutorial>nesting</tutorial>
       </tutorials>
     </category>
 
