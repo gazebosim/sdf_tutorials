@@ -13,6 +13,7 @@ improve usability.
 ## Document summary
 
 The proposal includes the following sections:
+
 * Motivation: An explanation of the background and rationale behind the proposal
 * Proposed changes: Each addition to or subtraction from the existing SDFormat
 version’s design, definitions, semantics and syntax, organized under
