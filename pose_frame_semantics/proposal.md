@@ -1,24 +1,34 @@
 # Pose Frame Semantics Proposal
 
-As described in the
-[documentation on existing behavior for pose frame semantics](/tutorials?tut=pose_frame_semantics),
-`<frame>` elements were added to several elements, and
-the `frame` attribute string was added to `<pose>` elements in SDF version 1.5.
-Semantics for the frame element and attribute were not fully defined, however,
-so they have not yet been used.
-This document proposes a series of changes for SDF version 1.7 to
-support semantics for more expressivity of kinematics and coordinate frames
-in SDFormat.
-This includes the ability to describe the kinematics of a URDF model
-with an SDF 1.7 file.
+This proposal suggests a series of changes intended to support semantics for
+more expressivity of kinematics and coordinate frames in SDFormat 1.7.
+SDFormat 1.5 added `<frame>` elements to several elements, and the frame
+attribute string to `<pose>` elements, as described in the
+[documentation on existing behavior for pose frame semantics](/tutorials?tut=pose_frame_semantics).
+Semantics for the frame element and attribute were not fully defined, so they
+have not yet been used.
+The changes proposed here are intended to fully define the frame element to
+improve usability.
 
-**NOTE**: When describing elements or attributes,
-[XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp) is used provide
-concise context.
-For example, a single `<model>` tag is referred to as `//model` using XPath.
+## Document summary
+
+The proposal includes the following sections:
+* Motivation: An explanation of the background and rationale behind the proposal
+* Proposed changes: Each addition to or subtraction from the existing SDFormat
+version’s design, definitions, semantics and syntax, organized under
+subsections of related concepts
+* Examples: Long form code samples of the proposed changes
+* Parsing phases: Updated phases of parsing kinematics necessary for
+SDFormat 1.7 models and worlds
+
+## Syntax
+
+The proposal uses [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp)
+to describe elements and attributes concisely.
+For example, `<model>` tags are referred to as `//model` using XPath.
 XPath is even more concise for referring to nested tags and attributes.
-In the following example, the `<link>` inside the `<model>` tag is referenced
-as `//model/link` and the `name` attribute as `//model[@name]`:
+In the following example, `<link>` elements inside `<model>` tags are
+referenced as `//model/link` and  model `name` attributes as `//model[@name]`:
 
     <model name="model_name">
       <link/>
@@ -47,36 +57,48 @@ It could also be used to abstract other information for inverse kinematics,
 visual servoing, or sensor calibration by defining a camera pose using a frame
 instead of a base link and pose offset.
 
-## Terminology for frames and poses
+## Proposed changes
+
+The following sections are the proposed changes regarding the semantics of
+SDFormat 1.7’s frame element and supporting topics.
+Top level sections may encompass subsections of proposed changes that fall
+under the same purview.
+Each section or subsection describes a proposed change, the details
+surrounding it, how it differs from existing functionality, and why the change
+is necessary.
+Some sections include examples and alternatives considered.
+
+### 1 Terminology
+
+#### 1.1 Frames and poses
 
 Each pose must be defined **relative to** (or be measured in) a certain frame.
-This is captured by the attribute `//pose[@relative_to]`, described below.
+This is acheived by the attribute `//pose[@relative_to]`, described below.
 
 Arbitrary frames are defined with the `//frame` tag.
 A frame must have a name (`//frame[@name]`),
 be **attached to** another frame or link (`//frame[@attached_to]`),
 and have a defined pose (`//frame/pose`).
-Further details are given below.
+Further details of the change include:
 
-It is important to mention:
-
-* A pose being defined **relative to** a given frame does not imply that it
-will be **attached to** a given frame.
+* A pose defined **relative to** a given frame does not imply it is
+ **attached to** that frame.
 * A pose's **relative to** frame only defines its *initial configuration*;
 any movement due to degrees of freedom will only result in a new pose as
 defined by its **attached to** frame.
     * This is done in order to support a "Model-Absolute" paradigm for model
     building; see the Addendum on Model Building for further discussion.
 
-### Explicit vs. Implicit frames
+SDFormat 1.5 defined no semantics for frames and poses.
+These changes allow SDFormat 1.7 to minimize redundancy in poses and offsets
+and make relationships between physical elements easier to interpret.
 
-Explicit frames are those defined by `//frame`, described below.
-While a `//frame` element is permitted in many places in sdf 1.5, this proposal
-only permits a `//frame` element to appear as `//model/frame` and
-`//world/frame` elements.
+#### 1.2 Explicit vs. implicit frames
 
-Implicit frames are introduced for convenience, and are defined by
-non-`//frame` elements. The following frame types are implicitly introduced:
+Explicit frame elements (`//frame`) must only appear in `//model`
+(`//model/frame`) and `//world` (`//world/frame`) elements.
+Implicit frames,  defined by non-frame elements, must be introduced for convenience.
+The following frame types are implicitly introduced:
 
 * Link frames: each link has a frame named `//link[@name]` attached to the
   link at its origin defined by `//link/pose`.
@@ -94,9 +116,12 @@ non-`//frame` elements. The following frame types are implicitly introduced:
   world frame when the `//model/pose[@relative_to]` attribute is set to either
   `world` or empty.
 
-These frames and their semantics are described below in more detail.
+SDFormat 1.5 permitted explicit `//frame` elements in many places.
+SDFormat 1.7 limits `//frame` elements to `//model` and `//world` since
+this provides equivalent functionality with much less complexity required in
+the SDFormat parser.
 
-#### Alternatives considered
+##### 1.2.1 Alternatives considered
 
 Introducing implicit frames for other elements such as `//link/visual`,
 `//link/collision`, and `//link/sensor` was considered. However, it was
@@ -104,22 +129,53 @@ determined that introducing these implicit frames adds unnecessary complexity
 to the SDFormat parser. It would also pollute the frame graph making it less
 efficient to traverse.
 
-## Model Frame and Canonical Link
+#### 1.3 Empty `//pose` and `//frame` elements imply identity pose
 
-### Implicit frame defined by `//model/pose` attached to canonical link
+Empty `//pose` elements must be interpreted as equivalent to the identity pose.
 
-Each model has an implicit frame defined by the `//model/pose` element.
-This is typically called the "model frame" and
-is the frame relative to which all `//link/pose` elements are interpreted
-in SDFormat 1.4.
-The SDFormat 1.4 specification does not clearly state to which link the
-model frame is attached, but Gazebo has a convention of choosing the first
-`<link>` element listed as a child of a `<model>` as the `attached_to` link
-and referring to this as the model's Canonical Link
-(see [Model.cc from gazebo 10.1.0](https://bitbucket.org/osrf/gazebo/src/gazebo10_10.1.0/gazebo/physics/Model.cc#lines-130:132)).
+~~~
+<pose />
+<pose>0 0 0 0 0 0</pose>
+~~~
 
-The canonical link should become part of SDFormat's specification, and should
-be user-configurable but with a default value. These two models are equivalent:
+~~~
+<pose relative_to='frame_name' />
+<pose relative_to='frame_name'>0 0 0 0 0 0</pose>
+~~~
+
+Likewise, empty `//frame` elements must be interpreted as having an identity
+pose relative to `//frame[@attached_to]`.
+
+~~~
+<frame name="F" attached_to="A" />
+<frame name="F" attached_to="A">
+  <pose />
+</frame>
+<frame name="F" attached_to="A">
+  <pose relative_to="A" />
+</frame>
+<frame name="F" attached_to="A">
+  <pose relative_to="A">0 0 0 0 0 0</pose>
+</frame>
+~~~
+
+In SDFormat 1.5, an identity pose is specified by omitting the tag or with an
+explicit `<pose>0 0 0 0 0 0</pose>`.
+This change is a convenience to reduce verbosity, because there are many
+expected cases where a frame is defined relative to another frame with no
+additional pose offset.
+
+### 2 Model Frame and canonical Link
+
+#### 2.1 Implicit frame defined by `//model/pose` attached to canonical link
+
+Each model must have at least one link designated as the canonical link.
+This link defines the implicit frame of the model.
+The implicit frame is defined by the `//model/pose` element, typically
+called the "model frame".
+It must be user-configurable, but with a default value.
+
+These two models are equivalent:
 
 ~~~
 <!-- //model[@canonical_link] -->
@@ -136,10 +192,20 @@ be user-configurable but with a default value. These two models are equivalent:
 </model>
 ~~~
 
-Future versions of SDFormat may require that the canonical link always be
-explicitly defined.
+In SDFormat 1.4, the model frame is the frame relative to which all
+`//link/pose` elements are interpreted.
+The SDFormat 1.4 specification does not clearly state to which link the model
+frame is attached, but Gazebo has a convention of choosing the first `//link`
+element listed as a child of a `//model` as the `@attached_to` link and
+referring to this as the model's Canonical Link
+(see [Model.cc from gazebo 10.1.0](https://bitbucket.org/osrf/gazebo/src/gazebo10_10.1.0/gazebo/physics/Model.cc#lines-130:132)).
 
-#### Alternatives considered
+In SDFormat 1.5, a model without links is considered valid, but its implicit
+frame is not well-defined since it is not clear where the frame is attached.
+It is necessary to specify what a canonical link is because the model frame
+must be attached to this link.
+
+##### 2.1.1 Alternatives considered
 
 ~~~
 <!-- //link[@canonical] -->
@@ -155,21 +221,24 @@ explicitly defined.
 </model>
 ~~~
 
-### Referencing the implicit model frame via `__model__` or model name
+#### 2.2 Referencing the implicit model frame via `__model__` or model name
 
-This proposal suggests different ways to reference the implicit model frame
+SDFormat 1.7 must provide a means to reference the implicit model frame
 depending on the context.
 
 From child elements of a given model, the "internal implicit model frame" can
 be referenced using the reserved name `__model__`.
-
 From outside of a given model, the "external implicit model frame" can be
 referenced using the model's specified name.
 
 Nested models will have their own individual model frames. (See pending Nesting
 proposal for nuances.)
 
-#### Alternatives considered
+Previous versions of SDFormat did not have the `@attached_to` and `@relative_to`
+attributes, so there was no way to refer to frames by name.
+The ability to reference `__model__` makes implementation more straightforward.
+
+##### 2.2.1 Alternatives considered
 
 The first alternative was to make the model frame be explicitly named as the
 model name specified by the file (not overridden by `//include`). No link,
@@ -188,18 +257,20 @@ contexts this may imply the model frame, the parent element frame, the child lin
 
 It also complicates migration via `Converter.cc` when handling things like
 replacing `//joint/axis/use_parent_frame` with
-`//joint/axis/xyz[@expressed_in]`. Being able to reference `__model__` makes
-implementation a bit more straightforward.
+`//joint/axis/xyz[@expressed_in]`.
 
-### Referencing the implicit world frame via `world`
+#### 2.3 Referencing the implicit world frame via `world`
 
-The "internal implicit frame" for a `//world` element is `world` (rather
+The "internal implicit frame" for a `//world` element must be `world` (rather
 than `__model__` or `__world__`). This may not be referred to within `//model`
 elements, *except* for specifying `//joint/parent`.
 
-#### Alternatives considered
+For the same reasons as the implicit model frame, the ability to reference
+`world` makes implementation more straightforward.
 
-Two possible alternatives are (a) have both `__world__` for the world frame and
+##### 2.3.1 Alternatives considered
+
+Two possible alternatives were (a) have both `__world__` for the world frame and
 `world` for the world link or (b) use `__world__` for both.
 
 (a) was decided against because it seemed redundant given that `world` could be
@@ -208,17 +279,17 @@ for links. (b) was decided against because it would create additional churn to
 support both `world` and `__world__` up to a point, and then switch over to
 `__world__`.
 
-## Name conflicts and scoping rules for explicit and implicit frames
+### 3 Name conflicts and scoping rules for explicit and implicit frames
 
 As frames are referenced in several attributes by name, it is necessary to
 avoid naming conflicts between frames defined in `//world/frame`,
 `//world/model`, `//model/frame`, `//model/link`, and `//model/joint`.
 This motivates the scoping and naming rules proposed in the following sections.
 
-### Scoping rules for referencing frames by name
+#### 3.1 Scoping rules for referencing frames by name
 
 To ensure that multiple copies of the same model can co-exist as siblings
-in a world, separate scopes are defined for referencing frames by name:
+in a world, separate scopes must be defined for referencing frames by name:
 
 * Model scope: each model has its own scope in which explicit `//model/frame`
   and implicit `//model/link` and `//model/joint` frames can be referenced.
@@ -264,9 +335,9 @@ that disallows name conflicts like this.
 </model>
 ~~~
 
-#### Alternatives considered
+##### 3.1.1 Alternatives considered
 
-It was considered to not use any scoping at all, such that any frame could
+One alternative was to not use any scoping at all, such that any frame could
 be referenced by name from any other part of the world.
 This would make naming conflicts much more common as you could not include
 two copies of the same model in a world without giving unique names to the
@@ -282,23 +353,22 @@ The current proposal is the most conservative and should allow for more
 expansive (but possibly more complex) scoping rules to be incorporated
 while maintaining compatibility.
 
-### Element naming rule: unique names for all sibling elements
+#### 3.2 Unique names for all sibling elements
 
 <!-- TODO(eric): These naming rules should stay in this proposal, but should
 then transition to a nesting / scoping proposal once they land. -->
 
-While it was not explicitly disallowed in previous versions of the spec, it
-can be very confusing when sibling elements of any type have identical names.
-In practice, many models include the element type in the name, whether numbered
-as `link1`/`link2` or used as a suffix `front_right_wheel_joint`
-/ `front_right_steering_joint`, which helps to further ensure name uniqueness
-across element types.
+All named sibling elements must have unique names.
+Uniqueness is forced so that referencing implicit frames is not ambiguous, e.g.
+you cannot have a link and joint share an implicit frame name.
+
+One method of ensuring name uniqueness across element types is by adopting the
+practice of including the element type in model names.
+For example, numbering models as `link1` / `link2` or using element types as a
+suffix, like `front_right_wheel_joint` / `front_right_steering_joint`.
 Furthermore, the frame semantics proposed in this document use the names of
-sibling elements `//world/frame` and `//world/model` in the world scope
-and `//model/frame`, `//model/link` and `//model/joint` in the model scope
-to refer to frames.
-Thus for the sake of consistency, all named sibling elements must have unique
-names.
+sibling elements `//model/frame`, `//model/link` and `//model/joint` to refer
+to frames.
 
 ~~~
 <sdf version="1.4">
@@ -326,13 +396,19 @@ names.
 </sdf>
 ~~~
 
-There are some existing SDFormat models that may not comply with this new
-requirement. To handle this, a validation tool will be created to identify
-models that violate this stricter naming requirement. Furthermore, the
-specification version will be incremented so that checks can be added when
-converting from older, more permissive versions to the newer, stricter version.
+Some existing SDFormat models may not comply with this requirement.
+* A validation tool will need to be created to identify models that violate
+this requirement.
+* The specification version is incremented to 1.7 so that checks can be added
+when converting to the newer, stricter version.
 
-#### Alternatives considered
+SDFormat 1.5 is more permissive and does not explicitly disallow identical
+sibling names.
+This change is necessary because frames are referenced in several attributes by name.
+It is necessary to avoid naming conflicts between frames defined in
+`//model/frame`, `//model/link` and `//model/joint`.
+
+##### 3.2.1 Alternatives considered
 
 It was considered to specify the frame type in the `//frame[@attached_to]`
 and `//pose[@relative_to]` attributes in order to avoid this additional naming
@@ -358,16 +434,68 @@ elements of any type have identical names, which mitigates the need to
 support non-unique names for sibling elements.
 As such, the naming restriction is preferred.
 
-## Details of `//model/frame`
+#### 3.3 Reserved names
 
-The `//model/frame` has two attributes, `name` and `attached_to`, and a child
-`<pose>` element that specifies the initial pose of the frame. Further details
-of the attributes of `//model/frame` are given below.
+Entities in a simulation must not use `world` as a name. It has a special
+interpretation when specified as a parent or child link of a joint.
 
-### The `//model/frame[@name]` attribute
+    ~~~
+    <model name="world"/><!-- INVALID: world is a reserved name. -->
+    <model name="world_model"/><!-- VALID -->
+    ~~~
 
-The `//model/frame[@name]` attribute specifies the name of a `<frame>`.
-It is a required attribute, and can be used by other frames in the `attached_to`
+    ~~~
+    <model name="model">
+      <link name="world"/><!-- INVALID: world is a reserved name. -->
+      <link name="world_link"/><!-- VALID -->
+    </model>
+    ~~~
+
+Names starting and ending with double underscores (eg. `__wheel__`) must be
+reserved for use by library implementors and the specification. For example,
+such names might be useful during parsing for setting sentinel or default names
+for elements with missing names.
+If explicitly stated, they can be referred to
+(e.g. `__model__` / `world` for implicit model / world frames, respectively).
+
+    ~~~
+    <model name="__model__"/><!-- INVALID: name starts and ends with __, and is reserved. -->
+    ~~~
+
+    ~~~
+    <model name="model">
+      <!-- VALID: Both frames are equivalent. -->
+      <frame name="frame1"/>
+      <frame name="frame2" attached_to="__model__"/>
+    </model>
+    ~~~
+
+    ~~~
+    <model name="model">
+      <link name="__link__"/><!-- INVALID: name starts and ends with __. -->
+    </model>
+    ~~~
+
+In SDFormat 1.5, when a joint specifies “world” as its parent or child link,
+its behavior is inconsistent and depends on the existence of a sibling link named “world”.
+If such a sibling link exists, that link will be used as the parent / child,
+but if no sibling link exists, then a static link fixed to the world frame is used instead.
+These changes reduce the inconsistency by disallowing sibling links named “world”.
+
+### 4 Details of `//model/frame`
+
+The `//model/frame` must have two attributes, `@name` and `@attached_to`, as well
+as a child `//pose` element that specifies the initial pose of the frame.
+Further details of the attributes of `//model/frame` are given in the following subsections.
+
+SDFormat 1.5 introduced `//model/frame` and its attributes,
+but left the semantics undefined.
+It is necessary to define these semantics so the element and attributes can be utilized.
+
+#### 4.1 The `//model/frame[@name]` attribute
+
+The `//model/frame[@name]` attribute must specify the name of a `//frame`.
+It is a required attribute, and can be used by other frames in the `@attached_to`
 and `//pose[@relative_to]` attributes to refer to this frame.
 As stated in a previous section, all sibling elements must have unique names to
 avoid ambiguity when referring to frames by name.
@@ -395,15 +523,15 @@ avoid ambiguity when referring to frames by name.
 </model>
 ~~~
 
-### The `//model/frame[@attached_to]` attribute
+#### 4.2 The `//model/frame[@attached_to]` attribute
 
-The `//model/frame[@attached_to]` attribute specifies the link to which the
-`<frame>` is attached.
+The `//model/frame[@attached_to]` attribute must specify the link to which the
+`//frame` is attached.
 It is an optional attribute.
-If it is specified, it must contain the name of a sibling explicit or
-implicit frame.
-Cycles in the `attached_to` graph are not allowed.
-If a `//frame` is specified, recursively following the `attached_to` attributes
+If it is specified, it must contain the name of an explicit or implicit frame
+in the current scope.
+Cycles in the `@attached_to` graph are not allowed.
+If a `//frame` is specified, recursively following the `@attached_to` attributes
 of the specified frames must lead to the name of a link.
 If the attribute is not specified, the frame is attached to the model frame
 and thus indirectly attached to the canonical link.
@@ -445,24 +573,31 @@ and thus indirectly attached to the canonical link.
 </model>
 ~~~
 
-## Details of `//world/frame`
+### 5 Details of `//world/frame`
 
-The `//world/frame` has two attributes, `name` and `attached_to`, and a child
-`<pose>` element that specifies the initial pose of the frame. Further details
-of the attributes of this `//world/frame` are given below.
+The `//world/frame` must have two attributes, `@name` and `@attached_to`,
+and a child `//pose` element that specifies the initial pose of the frame.
+Further details of the attributes of `//world/frame` are given in the following subsections.
 
-### The `//world/frame[@name]` attribute
+SDFormat 1.5 introduced `//world/frame` and its attributes, but left the semantics undefined.
+It is necessary to define these semantics so the element and attributes can be utilized.
 
-The `//world/frame[@name]` attribute specifies the name of the frame. To avoid
-ambiguity, sibling frames—explicit frames specified by `//world/frame` and
-implicit frames specified by `//world/model`—must have unique names.
+#### 5.1 The `//world/frame[@name]` attribute
 
-### The `//world/frame[@attached_to]` attribute
+The `//world/frame[@name]` attribute must specify the name of the frame.
 
-The `//world/frame[@attached_to]` attribute specifies another frame to which
-this frame is attached. A `//world/frame` can be attached to an implicit frame
+To avoid ambiguity, sibling frames — explicit frames specified by `//world/frame` and
+implicit frames specified by `//world/model`— must have unique names.
+
+#### 5.2 The `//world/frame[@attached_to]` attribute
+
+The `//world/frame[@attached_to]` attribute must specify another frame to which
+this frame is attached.
+
+A `//world/frame` can be attached to an implicit frame
 (defined by `//world` or `//world/model`) or to an explicit frame defined by
-`//world/frame`. If the `//world/frame[@attached_to]` attribute is not
+`//world/frame`.
+If the `//world/frame[@attached_to]` attribute is not
 specified or is left empty, the frame will be attached to the world frame. If
 the attribute is specified, it must refer to a sibling `//world/frame` or
 `//world/model`.
@@ -470,8 +605,8 @@ the attribute is specified, it must refer to a sibling `//world/frame` or
 When a a `//world/frame` is attached to a `//world/model`, it is indirectly
 attached to the canonical link of the model.
 
-Similar to `//model/frame`, cycles in the `attached_to` graph are not allowed.
-If a `//world/frame` is specified, recursively following the `attached_to`
+Similar to `//model/frame`, cycles in the `@attached_to` graph are not allowed.
+If a `//world/frame` is specified, recursively following the `@attached_to`
 attributes of the specified frames must lead to the implicit world frame or to
 the canonical link of a sibling model.
 
@@ -498,31 +633,32 @@ the canonical link of a sibling model.
 </world>
 ~~~
 
-## The `//pose[@relative_to]` attribute
+### 6 Details of `//pose[@relative_to]` attribute
 
-The `//pose[@relative_to]` attribute indicates the frame relative to which the initial
-pose of an object is expressed.
-This applies equally to the pose of explicit frames (`//frame/pose`),
+The `//pose[@relative_to]` attribute must indicate the frame relative to which
+the initial pose of the frame is expressed.
+This must be applied equally to the pose of explicit frames (`//frame/pose`),
 implicit frames (`//model/pose`, `//link/pose`, and `//joint/pose`),
 and objects without named frames
 (`//collision/pose`, `//light/pose`, `//sensor/pose`, `//visual/pose`).
-If the `//pose[@relative_to]` attribute is not an empty string `""`, its value
+
+* If the `//pose[@relative_to]` attribute is not an empty string `""`, its value
 must match the name of an explicit or implicit frame in the current scope.
-If the `//pose[@relative_to]` attribute does not exist or is empty,
+* If the `//pose[@relative_to]` attribute does not exist or is empty,
 the default behavior for all elements other than `//frame/pose` is the
 behavior from SDFormat 1.4
 (see the "Parent frames in sdf 1.4" section of the
 [pose frame semantics documentation](/tutorials?tut=pose_frame_semantics)).
-This corresponds to `//link/pose` relative to the model frame by default
+  * This corresponds to `//link/pose` relative to the model frame by default
 and `//joint/pose` relative to the child link's implicit frame by default.
-If the `//frame/pose[@relative_to]` attribute does not exist or is empty,
+* If the `//frame/pose[@relative_to]` attribute does not exist or is empty,
 it defaults to the value of the `//frame[@attached_to]` attribute.
 
-Cycles in the `relative_to` attribute graph are not allowed and must be
-checked separately from the `attached_to` attribute graph.
-Following the `relative_to` attributes of the specified frames in the model
+Cycles in the `@relative_to` attribute graph are not allowed and must be
+checked separately from the `@attached_to` attribute graph.
+Following the `@relative_to` attributes of the specified frames in the model
 scope must lead to a frame expressed relative to the model frame.
-In the world scope, following the `relative_to` attributes must lead to
+In the world scope, following the `@relative_to` attributes must lead to
 the implicit world frame.
 
 ~~~
@@ -700,7 +836,7 @@ the implicit world frame.
 
 The following example may look like it has a graph cycle since frame `F1` is
 `attached_to` link `L2`, and the pose of link `L2` is `relative_to` frame `F1`.
-It is not a cycle, however, since the `attached_to` and `relative_to` attributes
+It is not a cycle, however, since the `@attached_to` and `@relative_to` attributes
 have separate, valid graphs.
 
 ~~~
@@ -719,24 +855,19 @@ have separate, valid graphs.
 </model>
 ~~~
 
+SDFormat 1.5 added the `//pose[@frame]` attribute, but the semantics were left undefined.
+Defining the semantics of `//pose[@frame]`, now `//pose[@relative_to]`,
+is necessary to allow the use of the attribute.
 
-### Replace `//joint/axis/use_parent_model_frame` with `//joint/axis/xyz[@expressed_in]`
+### 7 Replace `//joint/axis/use_parent_model_frame` with `//joint/axis/xyz[@expressed_in]`
 
-As discussed in the [Model
-Kinematics](/tutorials?tut=spec_model_kinematics&cat=specification&#jointaxis)
-document, this tag was introduced in SDFormat 1.5 to maintain backward
-compatibility with SDFormat 1.4 when specifying the unit vector along the axis
-of motion of a joint. However, it has become clear that the usefulness of this
-tag is outweighed by the confusion it creates as the resulting frame semantics
-of `//joint/axis/xyz` are inconsistent with the way other tags in SDFormat
-operate. Therefore, `//joint/axis/use_parent_model_frame` will be removed in
-SDFormat 1.7.
+The `//joint/axis/use_parent_model_frame` tag must be removed in SDFormat 1.7.,
+and `//joint/axis/xyz[@expressed_in]` must be added to modify the orientation
+of this vector.
 
-In order to accommodate migration from the above feature, as well as improve
-expressiveness, SDFormat 1.7 will add `//joint/axis/xyz[@expressed_in]` to
-modify the orientation of this vector. An empty string or default value implies
-the joint's initial orientation. Any valid frame can be referred to from here.
-This also applies for `//joint/axis2`.
+An empty string or default value implies the joint's initial orientation.
+Any valid frame can be referred to from here.
+This also applies to `//joint/axis2`.
 
 As an example, an SDFormat 1.6 joint like this:
 
@@ -755,7 +886,7 @@ As an example, an SDFormat 1.6 joint like this:
 </model>
 ~~~
 
-becomes the following in SDFormat 1.7:
+Becomes the following in SDFormat 1.7:
 
 ~~~
 <model name="example">
@@ -771,62 +902,42 @@ becomes the following in SDFormat 1.7:
 </model>
 ~~~
 
-#### Alternatives Considered
+SDFormat 1.5 introduced this tag to maintain backwards compatibility with
+SDFormat 1.4 when specifying the unit vector along the axis of motion of a joint.
+
+The removal is necessary now because it has become clear that the usefulness of
+this tag is outweighed by the confusion it creates,
+as the resulting frame semantics of `//joint/axis/xyz` are inconsistent with the
+way other tags in SDFormat operate.
+The addition of `//joint/axis/xyz[@expressed_in]` accommodates the migration from
+`use_parent_model` and improves expressiveness.
+
+#### 7.1 Alternatives considered
 
 Migration for `//jonit/axis/xyz` is absolutely necessary if
 `//use_parent_model_frame` is removed. SDFormat's current conversion code (in
 `src/Converter.cc`) is only for changing the basic structure of a document, and
 this change would require more involved changes.
 
-## Empty `//pose` and `//frame` elements imply identity pose
-
-With the use of the `//pose[@relative_to]` and `//frame[@attached_to]` attributes,
-there are many expected cases when a frame is defined relative to another frame
-with no additional pose offset.
-To reduce verbosity, empty pose elements are interpreted as equivalent to the
-identity pose, as illustrated by the following pairs of equivalent poses:
-
-~~~
-<pose />
-<pose>0 0 0 0 0 0</pose>
-~~~
-
-~~~
-<pose relative_to='frame_name' />
-<pose relative_to='frame_name'>0 0 0 0 0 0</pose>
-~~~
-
-Likewise, empty `//frame` elements are interpreted as having an identity pose
-relative to `//frame[@attached_to]`, as illustrated by the following equivalent
-group of frames:
-
-~~~
-<frame name="F" attached_to="A" />
-<frame name="F" attached_to="A">
-  <pose />
-</frame>
-<frame name="F" attached_to="A">
-  <pose relative_to="A" />
-</frame>
-<frame name="F" attached_to="A">
-  <pose relative_to="A">0 0 0 0 0 0</pose>
-</frame>
-~~~
-
 ## Examples
 
-### Example using the `//pose[@relative_to]` attribute
+The following sections provide more in-depth examples of the major concepts
+proposed in the above sections.
+The examples highlight SDFormat 1.7’s powerful expressiveness for constructing
+models using relative coordinate frames.
 
-For example, consider the following figure from the
-[previous documentation about specifying pose](/tutorials?tut=specify_pose)
-that shows a parent link `P`, child link `C`, and joint `J` with joint frames
+### 1 The `//pose[@relative_to]` attribute
+
+Consider the following figure from the
+[specifying pose documentation](/tutorials?tut=specify_pose).
+It shows a parent link `P`, child link `C`, and joint `J` with joint frames
 `Jp` and `Jc` on the parent and child respectively.
 
 <!-- Figure Credit: Alejandro Castro -->
 
 [[file:../spec_model_kinematics/joint_frames.svg|600px]]
 
-An sdformat representation of this model is given below.
+An SDFormat representation of this model is given below.
 The pose of the parent link `P` is specified relative to the implicit
 model frame, while the pose of the other
 elements is specified relative to other named frames.
@@ -866,20 +977,18 @@ For reference, equivalent expressions of `Jc` are defined as `Jc1` and `Jc2`.
 
     </model>
 
-### Example: Parity with URDF
+#### 1.1 The `//pose[@relative_to]` attribute parity with URDF
 
-Recall the example URDF from the Parent frames in URDF section
-of the [Pose Frame Semantics: Legacy Behavior documentation](/tutorials?tut=pose_frame_semantics)
-that corresponds to the following image in the
-[URDF documentation](http://wiki.ros.org/urdf/XML/model):
+The following image from the URDF documentation corresponds to the example URDF from the
+"Parent frames in URDF" section of the
+[Pose Frame Semantics: Legacy Behavior documentation](/tutorials?tut=pose_frame_semantics).
 
 <img src="http://wiki.ros.org/urdf/XML/model?action=AttachFile&do=get&target=link.png"
      alt="urdf coordinate frames"
      height="500"/>
 
-That URDF model can be expressed with identical
-kinematics as an SDF by using link and joint names in the pose `relative_to`
-attribute.
+The same URDF model can be expressed with identical kinematics with SDFormat
+by using link and joint names in the pose `@relative_to` attribute.
 
     <model name="model">
 
@@ -914,7 +1023,7 @@ attribute.
 
     </model>
 
-The difference between the URDF and SDF expressions is shown in the patch below:
+The difference between the URDF and SDFormat expressions is shown in the patch below:
 
 ~~~diff
 --- model.urdf
@@ -979,10 +1088,10 @@ by directly copying `xyz` and `rpy` values and without performing any
 coordinate transformations.
 The well-formed SDFormat file must have kinematics with a tree structure,
 pose `relative_to` frames specified for joints and child links, and no link poses.
-A validator could be created to identify SDF files that can be directly
+A validator could be created to identify SDFormat files that can be directly
 converted to URDF with minimal modifications based on these principles.
 
-#### Alternatives considered
+##### 1.1.1 Alternatives considered
 
 An even simpler approach to getting parity with URDF would be to add an
 attribute `//joint[@attached_to_child]` that specifies whether the implicit
@@ -1029,11 +1138,11 @@ As seen below, the `//link/pose[@relative_to]` attributes still need to be set:
     </model>
 
 This change was not included since parity with URDF can already be achieved
-with the other propsed functionality.
+with the other proposed functionality.
 
-### Example: Parity with URDF using `//model/frame`
+### 2 `//model/frame` parity with URDF
 
-One application of the `<frame>` tag is to organize the model so that the pose
+One application of the `//frame` tag is to organize the model so that the pose
 values are all stored in a single part of the model and referenced
 by name elsewhere.
 For example, the following is equivalent to the SDFormat model discussed
@@ -1089,7 +1198,7 @@ in the previous section.
 In this case, `joint1_frame` is rigidly attached to `link1`, `joint3_frame` is
 rigidly attached to `link3`, etc.
 
-### Example: Using `//pose[@relative_to]` for co-located elements within a link
+### 3 Using `//pose[@relative_to]` for co-located elements within a link
 
 The pose information of elements attached to links is often duplicated.
 For example, the following link has two LED light sources, which each have
@@ -1195,13 +1304,13 @@ without duplication.
       </link>
     </model>
 
-#### Alternatives considered:
+#### 3.1 Alternatives considered
 
 Instead of permitting elements inside a link from using the
 `//pose[@relative_to]` attribute at the model scope, one could allow
 implicit frames for elements inside a link (like `//link/collision`,
 `//link/visual`, etc.) and/or explicit link frames `//link/frame` and allow any
-poses of any element to be `relative_to` explicit or implicit frames
+poses of any element to be `@relative_to` explicit or implicit frames
 defined by sibling elements.
 
     <model name="model_with_explicit_link_frames">
@@ -1221,65 +1330,24 @@ defined by sibling elements.
     </model>
 
 While there may be use cases that benefit from embedding explicit frames
-inside their `attached_to` link, doing so adds unnecessary complexity.
+inside their `@attached_to` link, doing so adds unnecessary complexity.
 Frames would require additional scopes to be resolved, and the ability
 to reference frames across links would be limited.
-Furthermore increasing the number of implicit frames increases the size
+Furthermore, increasing the number of implicit frames increases the size
 of the frame graph and adds complexity to the parsing task.
 This approach is not recommended as its utility is outweighed by
 its complexity.
 
-## Element naming rule: reserved names
+## Phases of parsing kinematics
 
-* Since `world` has a special interpretation when specified as a parent
-or child link of a joint, it should not be used as a name for any entities
-in the simulation.
-
-    ~~~
-    <model name="world"/><!-- INVALID: world is a reserved name. -->
-    <model name="world_model"/><!-- VALID -->
-    ~~~
-
-    ~~~
-    <model name="model">
-      <link name="world"/><!-- INVALID: world is a reserved name. -->
-      <link name="world_link"/><!-- VALID -->
-    </model>
-    ~~~
-
-* Names that start and end with double underscores (eg. `__wheel__`) are
-reserved for use by library implementors and the specification. For example,
-such names might be useful during parsing for setting sentinel or default names
-for elements with missing names. If explicitly stated, they can be referred to
-(e.g. `__model__` / `world` for implicit model / world frames, respectively). Examples:
-
-    ~~~
-    <model name="__model__"/><!-- INVALID: name starts and ends with __, and is reserved. -->
-    ~~~
-
-    ~~~
-    <model name="model">
-      <!-- VALID: Both frames are equivalent. -->
-      <frame name="frame1"/>
-      <frame name="frame2" attached_to="__model__"/>
-    </model>
-    ~~~
-
-    ~~~
-    <model name="model">
-      <link name="__link__"/><!-- INVALID: name starts and ends with __. -->
-    </model>
-    ~~~
-
-## Phases of parsing kinematics of an SDFormat 1.7 model
-
-This section describes phases for parsing the kinematics of an SDFormat 1.7 model.
-It does not discuss proper validation of collision and visual geometries,
-link inertia, nested models, and many other parameters.
-Several of these phases are similar to the phases of parsing an SDFormat 1.4
-model in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
+The following sections describe the phases for parsing the kinematics of an
+SDFormat 1.7 model and world.
+Several of the phases in each section are similar to the phases of parsing in
+SDFormat 1.4 in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
 In phases that differ from SDFormat 1.4, *italics* are used to signal the difference.
 For new phases, the ***Title:*** is italicized.
+
+### 1 Model
 
 There are *seven* phases for validating the kinematics data in a model.
 In libsdformat, the `sdf::readFile` and `sdf::readString` API's perform parsing
@@ -1412,7 +1480,7 @@ Each API returns an error code if errors are found during parsing.
         do not need to be checked for cycles since they do not create
         implicitly named frames.
 
-## Phases of parsing kinematics of an SDFormat 1.7 world
+### 2 World
 
 This section describes phases for parsing the kinematics of an SDFormat 1.7 world.
 Several of these phases are similar to the phases of parsing an SDFormat 1.4
