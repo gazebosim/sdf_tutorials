@@ -116,6 +116,8 @@ properties of the included model.
   * `<pose>`: Overrides the pose of the nested model. The pose is specified
   with respect to the parent model frame.
   * `<static>`: Overrides the static value of the included model.
+  * `<plugin>`: A plugin element to be added to the list of plugins associated
+  with the included model.
 
 The following example shows the use of the `<include>` tag to create a model
 that contains multiple instances of the `sphere` model shown in the earlier
