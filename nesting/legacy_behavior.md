@@ -95,13 +95,14 @@ model using the `<include>` tag. The `<uri>` child element specifies the path
 to the model directory. In the `libsdformat` implementation, the input to the
 `<uri>` element can be one of the following
 
-  * A path that begins with `model://`. Such paths are searched in a global
-    directory defined by an environment variable.
   * A path that begins `file:///`. Such paths specify the absolute path to the
     model directory.
   * A path that begins with `file://`. Such paths specify the relative path to the
     model directory. The path is relative to the runtime path of the
     application that uses `libsdformat`.
+  * A path that begins with a user defined prefix, such as `model://`.
+    `libsdformat` lets users specify a custom prefix and a corresponding path
+    to be searched when a URI with the custom prefix is found.
   * A path with no prefix. Such paths specify the relative path to the
     model directory. The path is relative to the runtime path of the
     application that uses `libsdformat`.
