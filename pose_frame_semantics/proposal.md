@@ -14,12 +14,12 @@ improve usability.
 
 The proposal includes the following sections:
 
-* Motivation: An explanation of the background and rationale behind the proposal
-* Proposed changes: Each addition to or subtraction from the existing SDFormat
+* [Motivation](#motivation): An explanation of the background and rationale behind the proposal
+* [Proposed changes](#proposed-changes): Each addition to or subtraction from the existing SDFormat
 version’s design, definitions, semantics and syntax, organized under
 subsections of related concepts
-* Examples: Long form code samples of the proposed changes
-* Parsing phases: Updated phases of parsing kinematics necessary for
+* [Examples](#examples): Long form code samples of the proposed changes
+* [Parsing phases](#phases-of-parsing-kinematics): Updated phases of parsing kinematics necessary for
 SDFormat 1.7 models and worlds
 
 ## Syntax
@@ -74,7 +74,7 @@ Some sections include examples and alternatives considered.
 #### 1.1 Frames and poses
 
 Each pose must be defined **relative to** (or be measured in) a certain frame.
-This is acheived by the attribute `//pose[@relative_to]`, described below.
+This is achieved by the attribute `//pose[@relative_to]`, [described below](#6-details-of-pose-relative_to-attribute).
 
 Arbitrary frames are defined with the `//frame` tag.
 A frame must have a name (`//frame[@name]`),
@@ -88,7 +88,7 @@ Further details of the change include:
 any movement due to degrees of freedom will only result in a new pose as
 defined by its **attached to** frame.
     * This is done in order to support a "Model-Absolute" paradigm for model
-    building; see the Addendum on Model Building for further discussion.
+    building; see the [Addendum on Model Building](#addendum-model-building-contrast-model-absolute-vs-element-relative-coordinates) for further discussion.
 
 SDFormat 1.5 defined no semantics for frames and poses.
 These changes allow SDFormat 1.7 to minimize redundancy in poses and offsets
