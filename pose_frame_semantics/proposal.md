@@ -29,7 +29,7 @@ to describe elements and attributes concisely.
 For example, `<model>` tags are referred to as `//model` using XPath.
 XPath is even more concise for referring to nested tags and attributes.
 In the following example, `<link>` elements inside `<model>` tags are
-referenced as `//model/link` and  model `name` attributes as `//model[@name]`:
+referenced as `//model/link` and  model `name` attributes as `//model/@name`:
 
     <model name="model_name">
       <link/>
@@ -74,11 +74,11 @@ Some sections include examples and alternatives considered.
 #### 1.1 Frames and poses
 
 Each pose must be defined **relative to** (or be measured in) a certain frame.
-This is achieved by the attribute `//pose[@relative_to]`, [described below](#6-details-of-pose-relative_to-attribute).
+This is achieved by the attribute `//pose/@relative_to`, [described below](#6-details-of-pose-relative_to-attribute).
 
 Arbitrary frames are defined with the `//frame` tag.
-A frame must have a name (`//frame[@name]`),
-be **attached to** another frame or link (`//frame[@attached_to]`),
+A frame must have a name (`//frame/@name`),
+be **attached to** another frame or link (`//frame/@attached_to`),
 and have a defined pose (`//frame/pose`).
 Further details of the change include:
 
@@ -101,20 +101,20 @@ Explicit frame elements (`//frame`) must only appear in `//model`
 Implicit frames,  defined by non-frame elements, must be introduced for convenience.
 The following frame types are implicitly introduced:
 
-* Link frames: each link has a frame named `//link[@name]` attached to the
+* Link frames: each link has a frame named `//link/@name` attached to the
   link at its origin defined by `//link/pose`.
-* Joint frames: each joint has a frame named `//joint[@name]` attached to the
+* Joint frames: each joint has a frame named `//joint/@name` attached to the
   child link at the joint's origin defined by `//joint/pose`.
 * Model frame: each model has a frame that can be referenced explicitly
   using `__model__`. The model frame can also be referenced implicitly when
-  `//link/pose[@relative_to]` resolves to empty or both
-  `//frame[@attached_to]` and `//frame/pose[@relative_to]` resolve
+  `//link/pose/@relative_to` resolves to empty or both
+  `//frame/@attached_to` and `//frame/pose/@relative_to` resolve
   to empty.
 * World frame: each world has a fixed inertial reference frame that is
   the default frame to which explicit world frames defined by `//world/frame`
   are attached.
   Model poses defined by `//model/pose` are interpreted relative to the implicit
-  world frame when the `//model/pose[@relative_to]` attribute is set to either
+  world frame when the `//model/pose/@relative_to` attribute is set to either
   `world` or empty.
 
 SDFormat 1.5 permitted explicit `//frame` elements in many places.
@@ -145,7 +145,7 @@ Empty `//pose` elements must be interpreted as equivalent to the identity pose.
 ~~~
 
 Likewise, empty `//frame` elements must be interpreted as having an identity
-pose relative to `//frame[@attached_to]`.
+pose relative to `//frame/@attached_to`.
 
 ~~~
 <frame name="F" attached_to="A" />
@@ -179,7 +179,7 @@ It must be user-configurable, but with a default value.
 These two models are equivalent:
 
 ~~~
-<!-- //model[@canonical_link] -->
+<!-- //model/@canonical_link -->
 <model name="test_model" canonical_link="link1">
   <link name="link1"/>
   <link name="link2"/>
@@ -209,7 +209,7 @@ must be attached to this link.
 ##### 2.1.1 Alternatives considered
 
 ~~~
-<!-- //link[@canonical] -->
+<!-- //link/@canonical -->
 <model name="test_model">
   <link name="link1" canonical="true"/>
 </model>
@@ -258,7 +258,7 @@ contexts this may imply the model frame, the parent element frame, the child lin
 
 It also complicates migration via `Converter.cc` when handling things like
 replacing `//joint/axis/use_parent_frame` with
-`//joint/axis/xyz[@expressed_in]`.
+`//joint/axis/xyz/@expressed_in`.
 
 #### 2.3 Referencing the implicit world frame via `world`
 
@@ -411,8 +411,8 @@ It is necessary to avoid naming conflicts between frames defined in
 
 ##### 3.2.1 Alternatives considered
 
-It was considered to specify the frame type in the `//frame[@attached_to]`
-and `//pose[@relative_to]` attributes in order to avoid this additional naming
+It was considered to specify the frame type in the `//frame/@attached_to`
+and `//pose/@relative_to` attributes in order to avoid this additional naming
 restriction.
 For example, the following approach uses a URI with the frame type encoded
 as the scheme.
@@ -493,11 +493,11 @@ SDFormat 1.5 introduced `//model/frame` and its attributes,
 but left the semantics undefined.
 It is necessary to define these semantics so the element and attributes can be utilized.
 
-#### 4.1 The `//model/frame[@name]` attribute
+#### 4.1 The `//model/frame/@name` attribute
 
-The `//model/frame[@name]` attribute must specify the name of a `//frame`.
+The `//model/frame/@name` attribute must specify the name of a `//frame`.
 It is a required attribute, and can be used by other frames in the `@attached_to`
-and `//pose[@relative_to]` attributes to refer to this frame.
+and `//pose/@relative_to` attributes to refer to this frame.
 As stated in a previous section, all sibling elements must have unique names to
 avoid ambiguity when referring to frames by name.
 
@@ -524,9 +524,9 @@ avoid ambiguity when referring to frames by name.
 </model>
 ~~~
 
-#### 4.2 The `//model/frame[@attached_to]` attribute
+#### 4.2 The `//model/frame/@attached_to` attribute
 
-The `//model/frame[@attached_to]` attribute must specify the link to which the
+The `//model/frame/@attached_to` attribute must specify the link to which the
 `//frame` is attached.
 It is an optional attribute.
 If it is specified, it must contain the name of an explicit or implicit frame
@@ -583,22 +583,22 @@ Further details of the attributes of `//world/frame` are given in the following 
 SDFormat 1.5 introduced `//world/frame` and its attributes, but left the semantics undefined.
 It is necessary to define these semantics so the element and attributes can be utilized.
 
-#### 5.1 The `//world/frame[@name]` attribute
+#### 5.1 The `//world/frame/@name` attribute
 
-The `//world/frame[@name]` attribute must specify the name of the frame.
+The `//world/frame/@name` attribute must specify the name of the frame.
 
 To avoid ambiguity, sibling frames — explicit frames specified by `//world/frame` and
 implicit frames specified by `//world/model`— must have unique names.
 
-#### 5.2 The `//world/frame[@attached_to]` attribute
+#### 5.2 The `//world/frame/@attached_to` attribute
 
-The `//world/frame[@attached_to]` attribute must specify another frame to which
+The `//world/frame/@attached_to` attribute must specify another frame to which
 this frame is attached.
 
 A `//world/frame` can be attached to an implicit frame
 (defined by `//world` or `//world/model`) or to an explicit frame defined by
 `//world/frame`.
-If the `//world/frame[@attached_to]` attribute is not
+If the `//world/frame/@attached_to` attribute is not
 specified or is left empty, the frame will be attached to the world frame. If
 the attribute is specified, it must refer to a sibling `//world/frame` or
 `//world/model`.
@@ -634,26 +634,26 @@ the canonical link of a sibling model.
 </world>
 ~~~
 
-### 6 Details of `//pose[@relative_to]` attribute
+### 6 Details of `//pose/@relative_to` attribute
 
-The `//pose[@relative_to]` attribute must indicate the frame relative to which
+The `//pose/@relative_to` attribute must indicate the frame relative to which
 the initial pose of the frame is expressed.
 This must be applied equally to the pose of explicit frames (`//frame/pose`),
 implicit frames (`//model/pose`, `//link/pose`, and `//joint/pose`),
 and objects without named frames
 (`//collision/pose`, `//light/pose`, `//sensor/pose`, `//visual/pose`).
 
-* If the `//pose[@relative_to]` attribute is not an empty string `""`, its value
+* If the `//pose/@relative_to` attribute is not an empty string `""`, its value
 must match the name of an explicit or implicit frame in the current scope.
-* If the `//pose[@relative_to]` attribute does not exist or is empty,
+* If the `//pose/@relative_to` attribute does not exist or is empty,
 the default behavior for all elements other than `//frame/pose` is the
 behavior from SDFormat 1.4
 (see the "Parent frames in sdf 1.4" section of the
 [pose frame semantics documentation](/tutorials?tut=pose_frame_semantics)).
   * This corresponds to `//link/pose` relative to the model frame by default
 and `//joint/pose` relative to the child link's implicit frame by default.
-* If the `//frame/pose[@relative_to]` attribute does not exist or is empty,
-it defaults to the value of the `//frame[@attached_to]` attribute.
+* If the `//frame/pose/@relative_to` attribute does not exist or is empty,
+it defaults to the value of the `//frame/@attached_to` attribute.
 
 Cycles in the `@relative_to` attribute graph are not allowed and must be
 checked separately from the `@attached_to` attribute graph.
@@ -856,14 +856,14 @@ have separate, valid graphs.
 </model>
 ~~~
 
-SDFormat 1.5 added the `//pose[@frame]` attribute, but the semantics were left undefined.
-Defining the semantics of `//pose[@frame]`, now `//pose[@relative_to]`,
+SDFormat 1.5 added the `//pose/@frame` attribute, but the semantics were left undefined.
+Defining the semantics of `//pose/@frame`, now `//pose/@relative_to`,
 is necessary to allow the use of the attribute.
 
-### 7 Replace `//joint/axis/use_parent_model_frame` with `//joint/axis/xyz[@expressed_in]`
+### 7 Replace `//joint/axis/use_parent_model_frame` with `//joint/axis/xyz/@expressed_in`
 
 The `//joint/axis/use_parent_model_frame` tag must be removed in SDFormat 1.7.,
-and `//joint/axis/xyz[@expressed_in]` must be added to modify the orientation
+and `//joint/axis/xyz/@expressed_in` must be added to modify the orientation
 of this vector.
 
 An empty string or default value implies the joint's initial orientation.
@@ -910,7 +910,7 @@ The removal is necessary now because it has become clear that the usefulness of
 this tag is outweighed by the confusion it creates,
 as the resulting frame semantics of `//joint/axis/xyz` are inconsistent with the
 way other tags in SDFormat operate.
-The addition of `//joint/axis/xyz[@expressed_in]` accommodates the migration from
+The addition of `//joint/axis/xyz/@expressed_in` accommodates the migration from
 `use_parent_model` and improves expressiveness.
 
 #### 7.1 Alternatives considered
@@ -927,7 +927,7 @@ proposed in the above sections.
 The examples highlight SDFormat 1.7’s powerful expressiveness for constructing
 models using relative coordinate frames.
 
-### 1 The `//pose[@relative_to]` attribute
+### 1 The `//pose/@relative_to` attribute
 
 Consider the following figure from the
 [specifying pose documentation](/tutorials?tut=specify_pose).
@@ -974,11 +974,11 @@ For reference, equivalent expressions of `Jc` are defined as `Jc1` and `Jc2`.
         <pose relative_to="J" />
       </frame>
 
-      <frame name="Jc2" attached_to="J" /> <!-- Jc2 == Jc1, since //pose[@relative_to] defaults to J. -->
+      <frame name="Jc2" attached_to="J" /> <!-- Jc2 == Jc1, since //pose/@relative_to defaults to J. -->
 
     </model>
 
-#### 1.1 The `//pose[@relative_to]` attribute parity with URDF
+#### 1.1 The `//pose/@relative_to` attribute parity with URDF
 
 The following image from the URDF documentation corresponds to the example URDF from the
 "Parent frames in URDF" section of the
@@ -1095,15 +1095,15 @@ converted to URDF with minimal modifications based on these principles.
 ##### 1.1.1 Alternatives considered
 
 An even simpler approach to getting parity with URDF would be to add an
-attribute `//joint[@attached_to_child]` that specifies whether the implicit
+attribute `//joint/@attached_to_child` that specifies whether the implicit
 joint frame is attached to the child link (true) or the parent link (false).
-If `//joint/pose[@relative_to]` is unset, this attribute would determine
-the default value of `//joint/pose[@relative_to]`.
+If `//joint/pose/@relative_to` is unset, this attribute would determine
+the default value of `//joint/pose/@relative_to`.
 For backwards compatibility, the attribute would default to true.
 In this example, setting that attribute to false would eliminate the need
-to specify the `//joint/pose[@relative_to]` attribute and the duplication
+to specify the `//joint/pose/@relative_to` attribute and the duplication
 of the parent link name.
-As seen below, the `//link/pose[@relative_to]` attributes still need to be set:
+As seen below, the `//link/pose/@relative_to` attributes still need to be set:
 
     <model name="model">
 
@@ -1199,7 +1199,7 @@ in the previous section.
 In this case, `joint1_frame` is rigidly attached to `link1`, `joint3_frame` is
 rigidly attached to `link3`, etc.
 
-### 3 Using `//pose[@relative_to]` for co-located elements within a link
+### 3 Using `//pose/@relative_to` for co-located elements within a link
 
 The pose information of elements attached to links is often duplicated.
 For example, the following link has two LED light sources, which each have
@@ -1250,7 +1250,7 @@ within each element.
       </link>
     </model>
 
-By creating explicit frames at the model scope, the `//pose[@relative_to]`
+By creating explicit frames at the model scope, the `//pose/@relative_to`
 attribute can be used to specify the collision, visual, and light poses
 without duplication.
 
@@ -1308,7 +1308,7 @@ without duplication.
 #### 3.1 Alternatives considered
 
 Instead of permitting elements inside a link from using the
-`//pose[@relative_to]` attribute at the model scope, one could allow
+`//pose/@relative_to` attribute at the model scope, one could allow
 implicit frames for elements inside a link (like `//link/collision`,
 `//link/visual`, etc.) and/or explicit link frames `//link/frame` and allow any
 poses of any element to be `@relative_to` explicit or implicit frames
@@ -1378,19 +1378,19 @@ Each API returns an error code if errors are found during parsing.
     if "world" is specified as a link name but there is no sibling link
     with that name, then the joint is attached to a fixed reference frame.
 
-4.  ***Check `//model[@canonical_link]` attribute value:***
-    If the `//model[@canonical_link]` attribute exists and is not an empty
+4.  ***Check `//model/@canonical_link` attribute value:***
+    If the `//model/@canonical_link` attribute exists and is not an empty
     string `""`, check that the value of the `canonical_link` attribute
     matches the name of a link in this model.
 
-5.  ***Check `//model/frame[@attached_to]` attribute values:***
+5.  ***Check `//model/frame/@attached_to` attribute values:***
     For each `//model/frame`, if the `attached_to` attribute exists and is not
     an empty string `""`, check that the value of the `attached_to` attribute
     matches the name of a sibling link, joint, or frame.
-    The `//frame[@attached_to]` value must not match `//frame[@name]`,
+    The `//frame/@attached_to` value must not match `//frame/@name`,
     as this would cause a graph cycle.
 
-6.  ***Check `//model/frame[@attached_to]` graph:***
+6.  ***Check `//model/frame/@attached_to` graph:***
     Construct an `attached_to` directed graph for the model with each vertex
     representing a frame:
 
@@ -1406,11 +1406,11 @@ Each API returns an error code if errors are found during parsing.
 
     6.4.1 Add a vertex to the graph.
 
-    6.4.2 If `//model/frame[@attached_to]` exists and is not empty,
+    6.4.2 If `//model/frame/@attached_to` exists and is not empty,
           add an edge from the added vertex to the vertex
-          named in the `//model/frame[@attached_to]` attribute.
+          named in the `//model/frame/@attached_to` attribute.
 
-    6.4.3 Otherwise (ie. if the `//model/frame[@attached_to]` attribute
+    6.4.3 Otherwise (ie. if the `//model/frame/@attached_to` attribute
           does not exist or is an empty string `""`),
           add an edge from the added vertex to the model frame vertex.
 
@@ -1420,14 +1420,14 @@ Each API returns an error code if errors are found during parsing.
         vertex for that frame, and follow the directed edges until a link
         is reached.
 
-7.  ***Check `//pose[@relative_to]` attribute values:***
+7.  ***Check `//pose/@relative_to` attribute values:***
     For each `//pose` that is not `//model/pose` (ie. `//link/pose`,
     `//joint/pose`, `//frame/pose`, `//collision/pose`, `//light/pose`, etc.),
     if the `relative_to` attribute exists and is not an empty string `""`,
     check that the value of the `relative_to` attribute
     matches the name of a link, joint, or frame in this model's scope.
 
-8.  ***Check `//pose[@relative_to]` graph:***
+8.  ***Check `//pose/@relative_to` graph:***
     Construct a `relative_to` directed graph for the model with each vertex
     representing a frame:
 
@@ -1438,41 +1438,41 @@ Each API returns an error code if errors are found during parsing.
 
     8.3 For each `//model/link`:
 
-    8.3.1 If `//link/pose[@relative_to]` exists and is not empty,
+    8.3.1 If `//link/pose/@relative_to` exists and is not empty,
           add an edge from the link vertex to the vertex named in
-          `//link/pose[@relative_to]`.
+          `//link/pose/@relative_to`.
 
-    8.3.2 Otherwise (ie. if `//link/pose` or `//link/pose[@relative_to]` do not
-          exist or `//link/pose[@relative_to]` is an empty string `""`)
+    8.3.2 Otherwise (ie. if `//link/pose` or `//link/pose/@relative_to` do not
+          exist or `//link/pose/@relative_to` is an empty string `""`)
           add an edge from the link vertex to the implicit model frame vertex.
 
     8.4 For each `//model/joint`:
 
-    8.4.1 If `//joint/pose[@relative_to]` exists and is not empty,
+    8.4.1 If `//joint/pose/@relative_to` exists and is not empty,
           add an edge from the joint vertex to the vertex named in
-          `//joint/pose[@relative_to]`.
+          `//joint/pose/@relative_to`.
 
-    8.4.2 Otherwise (ie. if `//joint/pose` or `//joint/pose[@relative_to]` do not
-          exist or `//joint/pose[@relative_to]` is an empty string `""`)
+    8.4.2 Otherwise (ie. if `//joint/pose` or `//joint/pose/@relative_to` do not
+          exist or `//joint/pose/@relative_to` is an empty string `""`)
           add an edge from the joint vertex to
           the child link vertex named in `//joint/child`.
 
     8.5 For each `//model/frame`:
 
-    8.5.1 If `//frame/pose[@relative_to]` exists and is not empty,
+    8.5.1 If `//frame/pose/@relative_to` exists and is not empty,
           add an edge from the frame vertex to the vertex named in
-          `//frame/pose[@relative_to]`.
+          `//frame/pose/@relative_to`.
 
-    8.5.2 Otherwise if `//frame[@attached_to]` exists and is not empty
-          (ie. if `//frame[@attached_to]` exists and is not an empty string `""`
+    8.5.2 Otherwise if `//frame/@attached_to` exists and is not empty
+          (ie. if `//frame/@attached_to` exists and is not an empty string `""`
           and one of the following is true: `//frame/pose` does not exist,
-          `//frame/pose[@relative_to]` does not exist, or
-          `//frame/pose[@relative_to]` is an empty string `""`)
+          `//frame/pose/@relative_to` does not exist, or
+          `//frame/pose/@relative_to` is an empty string `""`)
           add an edge from the frame vertex to the vertex named in
-          `//frame[@attached_to]`.
+          `//frame/@attached_to`.
 
-    8.5.3 Otherwise (ie. if neither `//frame[@attached_to]` nor
-          `//frame/pose[@relative_to]` are specified)
+    8.5.3 Otherwise (ie. if neither `//frame/@attached_to` nor
+          `//frame/pose/@relative_to` are specified)
           add an edge from the frame vertex to the implicit model frame vertex.
 
     8.6 Verify that the graph has no cycles and that by following the directed
@@ -1502,8 +1502,8 @@ There are *seven* phases for validating the kinematics data in a world:
 2.  **Name attribute checking:**
     Check that name attributes are not an empty string `""`, and that sibling
     elements of *any* type have unique names.
-    This check can be limited to `//world/model[@name]`
-    *and `//world/frame[@name]`*
+    This check can be limited to `//world/model/@name`
+    *and `//world/frame/@name`*
     since other names will be checked in the following step.
     This step is distinct from validation with the schema because the schema
     only confirms the existence of name attributes, not their content.
@@ -1512,14 +1512,14 @@ There are *seven* phases for validating the kinematics data in a world:
     Check each model according to the *seven* phases of parsing kinematics of an
     sdf model.
 
-4.  ***Check `//world/frame[@attached_to]` attribute values:***
+4.  ***Check `//world/frame/@attached_to` attribute values:***
     For each `//world/frame`, if the `attached_to` attribute exists and is not
     an empty string `""`, check that the value of the `attached_to` attribute
     matches the name of a sibling model or frame.
-    The `//frame[@attached_to]` value must not match `//frame[@name]`,
+    The `//frame/@attached_to` value must not match `//frame/@name`,
     as this would cause a graph cycle.
 
-5.  ***Check `//world/frame[@attached_to]` graph:***
+5.  ***Check `//world/frame/@attached_to` graph:***
     Construct an `attached_to` directed graph for the world with each vertex
     representing a frame:
 
@@ -1531,11 +1531,11 @@ There are *seven* phases for validating the kinematics data in a world:
 
     5.3.1 Add a vertex to the graph.
 
-    5.3.2 If `//world/frame[@attached_to]` exists and is not empty,
+    5.3.2 If `//world/frame/@attached_to` exists and is not empty,
           add an edge from the added vertex to the vertex named in the
-          `//world/frame[@attached_to]` attribute.
+          `//world/frame/@attached_to` attribute.
 
-    5.3.3 Otherwise (ie. if the `//world/frame[@attached_to]` attribute
+    5.3.3 Otherwise (ie. if the `//world/frame/@attached_to` attribute
           does not exist or is an empty string `""`),
           add an edge from the added vertex to the implicit world frame vertex.
 
@@ -1548,14 +1548,14 @@ There are *seven* phases for validating the kinematics data in a world:
         corresponding to that vertex is attached to the canonical link of that
         model.
 
-6.  ***Check `//pose[@relative_to]` attribute values:***
+6.  ***Check `//pose/@relative_to` attribute values:***
     For each `//model/pose` and `//world/frame/pose`
     if the `relative_to` attribute exists and is not an empty string `""`,
     check that the value of the `relative_to` attribute
     matches the name of a model or frame that is a sibling of the element
     that contains the `//pose`.
 
-7.  ***Check `//pose[@relative_to]` graph:***
+7.  ***Check `//pose/@relative_to` graph:***
     Construct a `relative_to` directed graph for the model with each vertex
     representing a frame:
 
@@ -1565,31 +1565,31 @@ There are *seven* phases for validating the kinematics data in a world:
 
     7.3 For each `//world/model`:
 
-    7.3.1 If `//world/model/pose[@relative_to]` exists and is not empty,
+    7.3.1 If `//world/model/pose/@relative_to` exists and is not empty,
           add an edge from the model vertex to the vertex named in
-          `//world/model/pose[@relative_to]`.
+          `//world/model/pose/@relative_to`.
 
     7.3.2 Otherwise (ie. if `//world/model/pose` or
-          `//world/model/pose[@relative_to]` do not
-          exist or `//world/model/pose[@relative_to]` is an empty string `""`)
+          `//world/model/pose/@relative_to` do not
+          exist or `//world/model/pose/@relative_to` is an empty string `""`)
           add an edge from the model vertex to the implicit world frame vertex.
 
     7.4 For each `//world/frame`:
 
-    7.4.1 If `//frame/pose[@relative_to]` exists and is not empty,
+    7.4.1 If `//frame/pose/@relative_to` exists and is not empty,
           add an edge from the frame vertex to the vertex named in
-          `//frame/pose[@relative_to]`.
+          `//frame/pose/@relative_to`.
 
-    7.4.2 Otherwise if `//frame[@attached_to]` exists and is not empty
-          (ie. if `//frame[@attached_to]` exists and is not an empty string `""`
+    7.4.2 Otherwise if `//frame/@attached_to` exists and is not empty
+          (ie. if `//frame/@attached_to` exists and is not an empty string `""`
           and one of the following is true: `//frame/pose` does not exist,
-          `//frame/pose[@relative_to]` does not exist, or
-          `//frame/pose[@relative_to]` is an empty string `""`)
+          `//frame/pose/@relative_to` does not exist, or
+          `//frame/pose/@relative_to` is an empty string `""`)
           add an edge from the frame vertex to the vertex named in
-          `//frame[@attached_to]`.
+          `//frame/@attached_to`.
 
-    7.4.3 Otherwise (ie. if neither `//frame[@attached_to]` nor
-          `//frame/pose[@relative_to]` are specified)
+    7.4.3 Otherwise (ie. if neither `//frame/@attached_to` nor
+          `//frame/pose/@relative_to` are specified)
           add an edge from the frame vertex to the implicit world frame vertex.
 
     7.5 Verify that the graph has no cycles and that by following the directed
