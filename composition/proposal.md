@@ -184,11 +184,11 @@ name, not the model name specified by the included file.
 Semantics:
 
 * `//joint/parent` and `//joint/child` can cross model boundaries
-* `//frame[@attached_to]` can cross
-* `//frame[@attached_to]` *can* refer to links outside of a given model, as long
+* `//frame/@attached_to` can cross
+* `//frame/@attached_to` *can* refer to links outside of a given model, as long
 as it
-* `//model[@canonical_link]` *cannot* cross model boundaries
-* The default `//pose[@relative_to]` will refer to the *closest* enclosing
+* `//model/@canonical_link` *cannot* cross model boundaries
+* The default `//pose/@relative_to` will refer to the *closest* enclosing
 `//model`, not the file.
 
 ### Example: Simple Cross-Referencing
