@@ -117,13 +117,12 @@
     </tutorial>
 
     <tutorial title="Roadmap" ref='roadmap' type='documentation'>
-      <markdown version="1.7">custom_elements_attributes/proposal.md</markdown>
+      <markdown version="1.7">developers/roadmap.md</markdown>
       <description>
         Proposal for supporting custom elements and attributes in SDFormat and libsdformat.
       </description>
       <tags>
-        <tag>custom</tag>
-        <tag>extension</tag>
+        <tag>roadmap</tag>
       </tags>
       <skill>advanced</skill>
     </tutorial>
