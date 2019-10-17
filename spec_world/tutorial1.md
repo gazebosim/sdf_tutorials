@@ -2,8 +2,8 @@
 
 Conceptually, a world in SDFormat is a environment in which models can be
 instantiated and simulated by a physics engine. A world is created using the
-`<world>` tag. It can contain various elements, but in this tutorial, only the
-`<model>` element is covered as we describe how to create a simulation world
+`<world>` tag. It can contain various elements, but this documentation only covers the
+`<model>` element as we describe how to create a simulation world
 composed of various models. The full specification of `<world>` can be found
 [here](http://sdformat.org/spec?ver=1.4&elem=world).
 
@@ -58,14 +58,14 @@ the world. However, it has some drawbacks.
 
 ## Models defined in other files
 
-To mitigate these issues SDFormat v1.5 introduced the `<include>` tag inside
+To mitigate these issues SDFormat v1.4 introduced the `<include>` tag inside
 `<world>`. With this approach, models can be defined in separate files and
 later get inserted into a world by using the `<include>` tag. Example:
 
 ```xml
-<!--ground.sdf-->
+<!--ground/ground.sdf-->
 <?xml version="1.0" ?>
-<sdf version="1.5">
+<sdf version="1.4">
   <model name="ground">
     <link name="body">
       ...
@@ -75,9 +75,18 @@ later get inserted into a world by using the `<include>` tag. Example:
 ```
 
 ```xml
-<!--box.sdf-->
+<!--ground/model.config-->
 <?xml version="1.0" ?>
-<sdf version="1.5">
+<model>
+  <name>ground</name>
+  <sdf version="1.4">ground.sdf</sdf>
+</model>
+```
+
+```xml
+<!--box/box.sdf-->
+<?xml version="1.0" ?>
+<sdf version="1.4">
   <model name="box">
     <link name="body">
       ...
@@ -87,9 +96,18 @@ later get inserted into a world by using the `<include>` tag. Example:
 ```
 
 ```xml
-<!--sphere.sdf-->
+<!--box/model.config-->
 <?xml version="1.0" ?>
-<sdf version="1.5">
+<model>
+  <name>box</name>
+  <sdf version="1.4">box.sdf</sdf>
+</model>
+```
+
+```xml
+<!--sphere/sphere.sdf-->
+<?xml version="1.0" ?>
+<sdf version="1.4">
   <model name="sphere">
     <pose>1 2 3 0 0 0</pose>
     <link name="body">
@@ -100,18 +118,27 @@ later get inserted into a world by using the `<include>` tag. Example:
 ```
 
 ```xml
+<!--sphere/model.config-->
+<?xml version="1.0" ?>
+<model>
+  <name>sphere</name>
+  <sdf version="1.4">sphere.sdf</sdf>
+</model>
+```
+
+```xml
 <!--simple_world.sdf-->
 <?xml version="1.0" ?>
-<sdf version="1.5">
+<sdf version="1.4">
 <world name="simple_world">
     <include>
-      <uri>ground.sdf</uri>      
+      <uri>ground</uri>      
     </include>
     <include>
-      <uri>box.sdf</uri>      
+      <uri>box</uri>      
     </include>
     <include>
-      <uri>sphere.sdf</uri>      
+      <uri>sphere</uri>      
       <pose>10 0 2 0 0 0</pose>
     </include>
   </world>
@@ -119,26 +146,27 @@ later get inserted into a world by using the `<include>` tag. Example:
 ```
 
 As can be seen in the example, the models `ground`, `box`, and `sphere` are
-defined in the files `ground.sdf`, `box.sdf`, and `sphere.sdf` respectively. In
+defined in the files `ground/ground.sdf`, `box/box.sdf`, and
+`sphere/sphere.sdf` respectively along with their `model.config` files. In
 `simple_world.sdf` the `<include>` tag is used to include the models in the
-world. The pose of the each model can be overridden by the `<pose>` child tag
-of `<include>`. This is demonstrated in the example where the pose of the
-sphere in the original definition of the model was `1 2 3 0 0 0` but gets
-overridden to `10 0 2 0 0 0` when inserted into the world. Since the name of
-a model has to be unique, `<include>` also provides a mechanism for overriding
-the name of the included model. Thus, it is possible to create two instances of
-the same model with different names as shown in the following example.
+world. The pose of each model can be overridden by the `<pose>` child tag of
+`<include>`. This is demonstrated in the example where the pose of the sphere
+in the original definition of the model was `1 2 3 0 0 0` but gets overridden
+to `10 0 2 0 0 0` when inserted into the world. Since the name of a model has
+to be unique, `<include>` also provides a mechanism for overriding the name of
+the included model. Thus, it is possible to create two instances of the same
+model with different names as shown in the following example.
 
 ```xml
 <?xml version="1.0" ?>
 <sdf version="1.5">
 <world name="simple_world_two_boxes">
     <include>
-      <uri>box.sdf</uri>      
+      <uri>box</uri>      
       <name>box1</name>
     </include>
     <include>
-      <uri>box.sdf</uri>      
+      <uri>box</uri>      
       <name>box2</name>
       <pose>4 0 1 0 0 0</pose>
     </include>
@@ -158,7 +186,7 @@ provided below. Note that the `<static>` tag is used in the ground model to
 indicate that the model does not behave as a dynamic object and should be
 considered only for its collision and visual properties. More about the
 `<static>` tag can be found in the [Inertial
-Properties](/tutorials?tut=spec_inertial) documentation.
+Properties](/tutorials?tut=spec_inertial) documentation (coming soon).
 
 ```xml
 <?xml version="1.0" ?>

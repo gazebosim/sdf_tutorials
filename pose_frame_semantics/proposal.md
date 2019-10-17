@@ -1,16 +1,16 @@
 # Pose Frame Semantics Proposal
 
 As described in the
-[tutorial on existing behavior for pose frame semantics](/tutorials?tut=pose_frame_semantics),
+[documentation on existing behavior for pose frame semantics](/tutorials?tut=pose_frame_semantics),
 `<frame>` elements were added to several elements, and
 the `frame` attribute string was added to `<pose>` elements in SDF version 1.5.
 Semantics for the frame element and attribute were not fully defined, however,
 so they have not yet been used.
-This document proposes a series of changes for SDF version 2.0 to
+This document proposes a series of changes for SDF version 1.7 to
 support semantics for more expressivity of kinematics and coordinate frames
 in SDFormat.
 This includes the ability to describe the kinematics of a URDF model
-with an SDF 2.0 file.
+with an SDF 1.7 file.
 
 **NOTE**: When describing elements or attributes,
 [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp) is used provide
@@ -37,18 +37,15 @@ relative to which each subsequent frame is defined
 (see the "Parent frames" sections in the documentation for
 [Pose frame semantics: legacy behavior](/tutorials?tut=pose_frame_semantics)).
 
-To improve the expressivity of model specification in SDFormat, two features
-are being added:
+This proposes to improve the expressivity of model specification in SDFormat by
+adding the ability to define arbitrary coordinate frames within a model and
+choose the frame relative to which each frame is defined.
 
-* the ability to define arbitrary coordinate frames within a model
-* the ability to choose the frame relative to which each frame is defined
-
-These features allow frames to be used to compose information and minimize redundancy
-(e.g. specify the bottom center of table, add it to the world with that frame,
-then add an object to the top-left-back corner), and can be used to abstract
-physical attachments (e.g. specify a camera frame in a model to be used for
-inverse kinematics or visual servoing, without the need to also know the
-attached link).
+This allows frames to be used to compose information and minimize redundancy,
+such as specifying a link's pose relative to its parent / inboard joint.
+It could also be used to abstract other information for inverse kinematics,
+visual servoing, or sensor calibration by defining a camera pose using a frame
+instead of a base link and pose offset.
 
 ## Terminology for frames and poses
 
@@ -74,25 +71,28 @@ defined by its **attached to** frame.
 ### Explicit vs. Implicit frames
 
 Explicit frames are those defined by `//frame`, described below.
-While a `<frame>` element is permitted in many places in sdf 1.5, this proposal
-only permits a `<frame>` element to appear in `<model>` (`//model/frame`) and
-`<world>` (`//world/frame`) elements.
+While a `//frame` element is permitted in many places in sdf 1.5, this proposal
+only permits a `//frame` element to appear as `//model/frame` and
+`//world/frame` elements.
 
 Implicit frames are introduced for convenience, and are defined by
 non-`//frame` elements. The following frame types are implicitly introduced:
 
-* Link frames: each link has a frame named `//link[@name]`, attached to the
+* Link frames: each link has a frame named `//link[@name]` attached to the
   link at its origin defined by `//link/pose`.
-* Joint frames: each joint has a frame named `//joint[@name]`, attached to the
+* Joint frames: each joint has a frame named `//joint[@name]` attached to the
   child link at the joint's origin defined by `//joint/pose`.
-* Model frame: each model has a frame, but it can only be referenced by a
-  `//link/pose` or `//frame/pose` element when its `@relative_to` attribute
-  resolves to empty.
+* Model frame: each model has a frame that can be referenced explicitly
+  using `__model__`. The model frame can also be referenced implicitly when
+  `//link/pose[@relative_to]` resolves to empty or both
+  `//frame[@attached_to]` and `//frame/pose[@relative_to]` resolve
+  to empty.
 * World frame: each world has a fixed inertial reference frame that is
   the default frame to which explicit world frames defined by `//world/frame`
   are attached.
   Model poses defined by `//model/pose` are interpreted relative to the implicit
-  world frame when the `//model/pose[@relative_to]` attribute is empty.
+  world frame when the `//model/pose[@relative_to]` attribute is set to either
+  `world` or empty.
 
 These frames and their semantics are described below in more detail.
 
@@ -155,39 +155,132 @@ explicitly defined.
 </model>
 ~~~
 
-### Referencing the implicit model frame
+### Referencing the implicit model frame via `__model__` or model name
 
-While it would be useful to explicitly refer to a model frame by the model
-name, there are two complications: it may conflict with link names, and for
-model composition, users may be able to override the model name via
-`//include`.
+This proposal suggests different ways to reference the implicit model frame
+depending on the context.
 
-This proposal suggests that instead of auto-assigning a model frame, the
-specification provides a means to use the *value* of the model frame (rather
-than implicitly allocate a name and restrict that name's usage). A user can
-achieve this by defining `//model/frame` with an identity pose. Example:
+From child elements of a given model, the "internal implicit model frame" can
+be referenced using the reserved name `__model__`.
 
-    <model name="test_model">
-      <frame name="model_frame"/>
-    </model>
+From outside of a given model, the "external implicit model frame" can be
+referenced using the model's specified name.
 
 Nested models will have their own individual model frames. (See pending Nesting
 proposal for nuances.)
 
 #### Alternatives considered
 
-* The model frame is named as the model's name as specified by the file (not
-overridden by `//include`). No link, joint, or frame can be specified using
-this name.
-* The model frame be explicitly referable to using the **reserved name**
-`"model_frame"`. No link, joint, or frame can be specified using this name.
+The first alternative was to make the model frame be explicitly named as the
+model name specified by the file (not overridden by `//include`). No link,
+joint, or frame can be specified using this name.
 
-## Name conflicts between explicit and implicit frames
+The caveat with this is that it be confusing if/when more complex references
+are supported via nesting.
+
+The second alternative was to prevent the implicit model frame from being
+referred to explicitly.
+
+For this solution, implementation could become complicated / ambiguous when
+handling default frames. For example, `""` could be used as the token for the
+model / world frame. Additionally, `@relative_to` defaults to `""`, but in some
+contexts this may imply the model frame, the parent element frame, the child link frame, etc.
+
+It also complicates migration via `Converter.cc` when handling things like
+replacing `//joint/axis/use_parent_frame` with
+`//joint/axis/xyz[@expressed_in]`. Being able to reference `__model__` makes
+implementation a bit more straightforward.
+
+### Referencing the implicit world frame via `world`
+
+The "internal implicit frame" for a `//world` element is `world` (rather
+than `__model__` or `__world__`). This may not be referred to within `//model`
+elements, *except* for specifying `//joint/parent`.
+
+#### Alternatives considered
+
+Two possible alternatives are (a) have both `__world__` for the world frame and
+`world` for the world link or (b) use `__world__` for both.
+
+(a) was decided against because it seemed redundant given that `world` could be
+referenced both as a frame and a link, which is consistent with implicit frames
+for links. (b) was decided against because it would create additional churn to
+support both `world` and `__world__` up to a point, and then switch over to
+`__world__`.
+
+## Name conflicts and scoping rules for explicit and implicit frames
 
 As frames are referenced in several attributes by name, it is necessary to
-avoid naming conflicts between frames defined in `//model/frame`,
-`//model/link`, and `//model/joint`.
-This motivates the naming rule proposed in the following section.
+avoid naming conflicts between frames defined in `//world/frame`,
+`//world/model`, `//model/frame`, `//model/link`, and `//model/joint`.
+This motivates the scoping and naming rules proposed in the following sections.
+
+### Scoping rules for referencing frames by name
+
+To ensure that multiple copies of the same model can co-exist as siblings
+in a world, separate scopes are defined for referencing frames by name:
+
+* Model scope: each model has its own scope in which explicit `//model/frame`
+  and implicit `//model/link` and `//model/joint` frames can be referenced.
+* World scope: the world has a separate scope in which explicit `//world/frame`
+  and implicit `//world/model` frames can be referenced.
+
+For example, the following world has three scopes, one each for the world,
+`model_1`, and `model_2`.
+The world scope contains the explicit `//world/frame` named `explicit_frame`
+and the implicit model frames `model_1` and `model_2`.
+The `model_1` and `model_2` scopes each contain frames named `explicit_frame`
+and `link`, but there is no name conflict because they are in separate scopes.
+
+~~~
+<world name="frame_scope">
+  <frame name="explicit_frame"/>
+  <model name="model_1">
+    <frame name="explicit_frame"/>
+    <link name="link"/>
+  </model>
+  <model name="model_2">
+    <frame name="explicit_frame"/>  <!-- VALID: name is unique in this model. -->
+    <link name="link"/>             <!-- VALID: name is unique in this model. -->
+  </model>
+</world>
+~~~
+
+In the following example, there are three frames in the model scope:
+the implicit link frames `base` and `attachment` and the implicit
+joint frame `attachment`.
+Referring to a frame named `attachment` is ambiguous in this case,
+which inspires the element naming rule in the following section
+that disallows name conflicts like this.
+
+~~~
+<model name="model">
+  <link name="base"/>
+  <link name="attachment"/>
+  <joint name="attachment" type="fixed">  <!-- INVALID: joint name should not match name of sibling link. -->
+    <parent>base</parent>
+    <child>attachment</child>
+  </joint>
+</model>
+~~~
+
+#### Alternatives considered
+
+It was considered to not use any scoping at all, such that any frame could
+be referenced by name from any other part of the world.
+This would make naming conflicts much more common as you could not include
+two copies of the same model in a world without giving unique names to the
+links, joints, and explicit frames.
+
+Another approach instead of scoping is to treat the xml hierarchy like a
+filesystem and use familiar operators such as `/` and `..` to specify frame
+references directly in the hierarchy.
+This adds significant complexity and difficulty and deviates from the current
+practice of specifying parent and child links for a joint by name.
+
+The current proposal is the most conservative and should allow for more
+expansive (but possibly more complex) scoping rules to be incorporated
+while maintaining compatibility.
 
 ### Element naming rule: unique names for all sibling elements
 
@@ -201,8 +294,9 @@ as `link1`/`link2` or used as a suffix `front_right_wheel_joint`
 / `front_right_steering_joint`, which helps to further ensure name uniqueness
 across element types.
 Furthermore, the frame semantics proposed in this document use the names of
-sibling elements `//model/frame`, `//model/link` and `//model/joint` to refer
-to frames.
+sibling elements `//world/frame` and `//world/model` in the world scope
+and `//model/frame`, `//model/link` and `//model/joint` in the model scope
+to refer to frames.
 Thus for the sake of consistency, all named sibling elements must have unique
 names.
 
@@ -220,7 +314,7 @@ names.
 ~~~
 
 ~~~
-<sdf version="2.0">
+<sdf version="1.7">
   <model name="model">
     <link name="base"/>
     <link name="attachment"/>
@@ -343,6 +437,9 @@ and thus indirectly attached to the canonical link.
 ~~~
 <model name="frame_attaching_cycle">
   <link name="L"/>
+
+  <frame name="F0" attached_to="F0"/>  <!-- INVALID: cycle in attached_to graph does not lead to link. -->
+
   <frame name="F1" attached_to="F2"/>
   <frame name="F2" attached_to="F1"/>  <!-- INVALID: cycle in attached_to graph does not lead to link. -->
 </model>
@@ -394,6 +491,8 @@ the canonical link of a sibling model.
 
 ~~~
 <world name="frame_attaching_cycle">
+  <frame name="F0" attached_to="F0"/>  <!-- INVALID: cycle in attached_to graph does not lead to the implicit world frame. -->
+
   <frame name="F1" attached_to="F2"/>
   <frame name="F2" attached_to="F1"/>  <!-- INVALID: cycle in attached_to graph does not lead to the implicit world frame. -->
 </world>
@@ -402,23 +501,29 @@ the canonical link of a sibling model.
 ## The `//pose[@relative_to]` attribute
 
 The `//pose[@relative_to]` attribute indicates the frame relative to which the initial
-pose of the frame is expressed.
-This applies equally to `//frame/pose`, `//link/pose`, and `//joint/pose`
-elements.
-If `//link/pose[@relative_to]` is empty or not set, it defaults to the model frame,
-following the behavior from SDFormat 1.4.
-If `//joint/pose[@relative_to]` is empty or not set, it defaults to the child link's
-implicit frame, also following the behavior from SDFormat 1.4
+pose of an object is expressed.
+This applies equally to the pose of explicit frames (`//frame/pose`),
+implicit frames (`//model/pose`, `//link/pose`, and `//joint/pose`),
+and objects without named frames
+(`//collision/pose`, `//light/pose`, `//sensor/pose`, `//visual/pose`).
+If the `//pose[@relative_to]` attribute is not an empty string `""`, its value
+must match the name of an explicit or implicit frame in the current scope.
+If the `//pose[@relative_to]` attribute does not exist or is empty,
+the default behavior for all elements other than `//frame/pose` is the
+behavior from SDFormat 1.4
 (see the "Parent frames in sdf 1.4" section of the
-[pose frame semantics tutorial](/tutorials?tut=pose_frame_semantics)).
-If the `//frame/pose[@relative_to]` attribute is empty or not set, it should default to
-the value of the `//frame[@attached_to]` attribute.
+[pose frame semantics documentation](/tutorials?tut=pose_frame_semantics)).
+This corresponds to `//link/pose` relative to the model frame by default
+and `//joint/pose` relative to the child link's implicit frame by default.
+If the `//frame/pose[@relative_to]` attribute does not exist or is empty,
+it defaults to the value of the `//frame[@attached_to]` attribute.
+
 Cycles in the `relative_to` attribute graph are not allowed and must be
 checked separately from the `attached_to` attribute graph.
-Following the `relative_to` attributes of the specified frames must lead to
-a frame expressed relative to the model frame. The exceptions to this rule are
-`//world/frame/pose[@relative_to]` and `//world/model/pose[@relative_to]` in
-which the terminal frame is the implicit world frame.
+Following the `relative_to` attributes of the specified frames in the model
+scope must lead to a frame expressed relative to the model frame.
+In the world scope, following the `relative_to` attributes must lead to
+the implicit world frame.
 
 ~~~
 <model name="link_pose_relative_to">
@@ -430,6 +535,13 @@ which the terminal frame is the implicit world frame.
   </link>
   <link name="L3">
     <pose relative_to="L1">{X_L1L3}</pose>  <!-- Pose relative_to link frame (L1 -> M). -->
+  </link>
+  <link name="L4">
+    <pose relative_to="A">{X_AL4}</pose>    <!-- INVALID: no frame in model scope named A. -->
+  </link>
+
+  <link name="cycle0">
+    <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
   </link>
 
   <link name="cycle1">
@@ -483,14 +595,21 @@ which the terminal frame is the implicit world frame.
     <pose>{X_MF0}</pose>                    <!-- Pose relative_to the attached_to frame (M) by default. -->
   </frame>
 
-  <frame name="F1" attached_to="L">          <!-- Frame directly attached_to link L. -->
+  <frame name="F1" attached_to="L">         <!-- Frame directly attached_to link L. -->
     <pose>{X_LF1}</pose>                    <!-- Pose relative_to the attached_to frame (L -> M) by default. -->
   </frame>
-  <frame name="F2" attached_to="L">          <!-- Frame directly attached_to link L. -->
+  <frame name="F2" attached_to="L">         <!-- Frame directly attached_to link L. -->
     <pose relative_to="">{X_LF2}</pose>     <!-- Pose relative_to the attached_to frame (L -> M) by default. -->
   </frame>
   <frame name="F3">                         <!-- Frame indirectly attached_to canonical link L via model frame. -->
     <pose relative_to="L">{X_LF3}</pose>    <!-- Pose relative_to link frame L -> M. -->
+  </frame>
+  <frame name="F4">
+    <pose relative_to="A">{X_AF4}</pose>    <!-- INVALID: no frame in model scope named A. -->
+  </frame>
+
+  <frame name="cycle0">
+    <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
   </frame>
 
   <frame name="cycle1">
@@ -503,19 +622,71 @@ which the terminal frame is the implicit world frame.
 ~~~
 
 ~~~
-<world name="world_frame_pose_relative_to"> <!-- Implicit world frame. Referred to as (W) -->
-  <frame name="F0">                         <!-- Frame indirectly attached_to the implicit world frame. -->
-    <pose>{X_WF0}</pose>                    <!-- Pose relative_to the attached_to frame (W) by default. -->
+<world name="scope_relative_to">              <!-- Implicit world frame. Referred to as (W) -->
+  <frame name="W0">                           <!-- Frame attached_to implicit world frame by default. -->
+    <pose>{X_WW0}</pose>                      <!-- Pose relative_to the attached_to frame (W) by default. -->
+  </frame>
+  <frame name="W1">                           <!-- Frame attached_to implicit world frame by default. -->
+    <pose relative_to="W0">{X_W0W1}</pose>    <!-- Pose relative_to explicit frame W0. -->
   </frame>
 
-  <frame name="F1" attached_to="F0">        <!-- Frame directly attached_to another explicit frame (F0). -->
-    <pose>{X_F0F1}</pose>                   <!-- Pose relative_to the attached_to frame (F0 -> W) by default. -->
+  <model name="M1">
+    <pose>{X_WM1}</pose>                      <!-- Model pose relative_to world frame by default. -->
+
+    <frame name="F">                          <!-- Frame indirectly attached_to canonical link link L via model frame. -->
+      <pose>{X_MF}</pose>                     <!-- Pose relative_to the attached_to frame (M) by default. -->
+    </frame>
+    <link name="L">
+      <collision name="C">
+        <pose relative_to="F">{X_FC}</pose>   <!-- Pose relative to explicit frame F (F -> M) in this model's scope. -->
+      </collision>
+      <visual name="V">
+        <pose relative_to="F">{X_FV}</pose>   <!-- Pose relative to explicit frame F (F -> M) in this model's scope. -->
+      </visual>
+
+      <light name="L">                        <!-- Name matches that of containing link, which is permitted. -->
+        <pose relative_to="F">{X_FL}</pose>   <!-- Pose relative to explicit frame F (F -> M) in this model's scope. -->
+      </light>
+    </link>
+
+    <frame name="F1" attached_to="L">         <!-- Frame directly attached_to link L. -->
+      <pose relative_to="C">{X_CL}</pose>     <!-- INVALID: no frame named C in this scope (collisions don't have implicit frames). -->
+    </frame>
+    <frame name="F2" attached_to="L">         <!-- Frame directly attached_to link L. -->
+      <pose relative_to="W0">{X_W0L}</pose>   <!-- INVALID: no frame named W0 in this scope (can't access world scope from within model). -->
+    </frame>
+  </model>
+
+  <frame name="W2" attached_to="M1"/>         <!-- Frame indirectly attached_to canonical link L of model M1. -->
+  <frame name="W3">                           <!-- Frame attached_to world frame by default. -->
+    <pose relative_to="M1">{X_M1W3}</pose>    <!-- Pose relative_to implicit model frame M1. -->
   </frame>
-  <frame name="F2" attached_to="F0">        <!-- Frame directly attached_to another explicit frame (F0). -->
-    <pose relative_to="">{X_F0F2}</pose>    <!-- Pose relative_to the attached_to frame (F0 -> W) by default. -->
-  </frame>
-  <frame name="F3">                         <!-- Frame indirectly attached_to the implicit world frame. -->
-    <pose relative_to="F0">{X_F0F3}</pose>  <!-- Pose relative_to frame (F0 -> W). -->
+
+  <model name="M2">
+    <pose relative_to="W3">{X_W3M2}</pose>    <!-- Pose relative_to explicit frame W3. -->
+    <link name="L"/>
+  </model>
+</world>
+~~~
+
+~~~
+<world name="model_pose_relative_to">
+  <model name="noframe0">
+    <pose relative_to="noframe0">{X_N0N0}</pose>  <!-- INVALID: no frame named noframe0 in this scope. -->
+    ...
+  </model>
+
+  <model name="cycle0">
+    <pose relative_to="__model__">{X_C0C0}</pose> <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
+    ...
+  </model>
+</world>
+~~~
+
+~~~
+<world name="world_frame_cycles">
+  <frame name="cycle0">
+    <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
   </frame>
 
   <frame name="cycle1">
@@ -547,6 +718,65 @@ have separate, valid graphs.
   </link>
 </model>
 ~~~
+
+
+### Replace `//joint/axis/use_parent_model_frame` with `//joint/axis/xyz[@expressed_in]`
+
+As discussed in the [Model
+Kinematics](/tutorials?tut=spec_model_kinematics&cat=specification&#jointaxis)
+document, this tag was introduced in SDFormat 1.5 to maintain backward
+compatibility with SDFormat 1.4 when specifying the unit vector along the axis
+of motion of a joint. However, it has become clear that the usefulness of this
+tag is outweighed by the confusion it creates as the resulting frame semantics
+of `//joint/axis/xyz` are inconsistent with the way other tags in SDFormat
+operate. Therefore, `//joint/axis/use_parent_model_frame` will be removed in
+SDFormat 1.7.
+
+In order to accommodate migration from the above feature, as well as improve
+expressiveness, SDFormat 1.7 will add `//joint/axis/xyz[@expressed_in]` to
+modify the orientation of this vector. An empty string or default value implies
+the joint's initial orientation. Any valid frame can be referred to from here.
+This also applies for `//joint/axis2`.
+
+As an example, an SDFormat 1.6 joint like this:
+
+~~~
+<model name="example">
+  ...
+  <joint name="joint" type="revolute">
+    <pose>{X_CJ}</pose>
+    <parent>{parent}</parent>
+    <child>{child}</child>
+    <axis>
+      <xyz>{xyz_axis_M}</xyz>
+      <use_parent_model_frame>true</use_parent_model_frame>
+    </axis>
+  </joint>
+</model>
+~~~
+
+becomes the following in SDFormat 1.7:
+
+~~~
+<model name="example">
+  ...
+  <joint name="joint" type="revolute">
+    <pose>{X_CJ}</pose>
+    <parent>{parent}</parent>
+    <child>{child}</child>
+    <axis>
+      <xyz expressed_in="__model__">{xyz_axis_M}</xyz>
+    </axis>
+  </joint>
+</model>
+~~~
+
+#### Alternatives Considered
+
+Migration for `//jonit/axis/xyz` is absolutely necessary if
+`//use_parent_model_frame` is removed. SDFormat's current conversion code (in
+`src/Converter.cc`) is only for changing the basic structure of a document, and
+this change would require more involved changes.
 
 ## Empty `//pose` and `//frame` elements imply identity pose
 
@@ -583,10 +813,12 @@ group of frames:
 </frame>
 ~~~
 
-## Example using the `//pose[@relative_to]` attribute
+## Examples
+
+### Example using the `//pose[@relative_to]` attribute
 
 For example, consider the following figure from the
-[previous tutorial about specifying pose](/tutorials?tut=specify_pose)
+[previous documentation about specifying pose](/tutorials?tut=specify_pose)
 that shows a parent link `P`, child link `C`, and joint `J` with joint frames
 `Jp` and `Jc` on the parent and child respectively.
 
@@ -595,8 +827,6 @@ that shows a parent link `P`, child link `C`, and joint `J` with joint frames
 [[file:../spec_model_kinematics/joint_frames.svg|600px]]
 
 An sdformat representation of this model is given below.
-The frame named `model_frame` is created so that the implicit model frame
-can be referenced explicitly.
 The pose of the parent link `P` is specified relative to the implicit
 model frame, while the pose of the other
 elements is specified relative to other named frames.
@@ -606,10 +836,8 @@ For reference, equivalent expressions of `Jc` are defined as `Jc1` and `Jc2`.
 
     <model name="M">
 
-      <frame name="model_frame" />
-
       <link name="P">
-        <pose relative_to="model_frame">{X_MP}</pose>
+        <pose relative_to="__model__">{X_MP}</pose>
       </link>
 
       <link name="C">
@@ -641,7 +869,7 @@ For reference, equivalent expressions of `Jc` are defined as `Jc1` and `Jc2`.
 ### Example: Parity with URDF
 
 Recall the example URDF from the Parent frames in URDF section
-of the [Pose Frame Semantics: Legacy Behavior tutorial](/tutorials?tut=pose_frame_semantics)
+of the [Pose Frame Semantics: Legacy Behavior documentation](/tutorials?tut=pose_frame_semantics)
 that corresponds to the following image in the
 [URDF documentation](http://wiki.ros.org/urdf/XML/model):
 
@@ -803,7 +1031,7 @@ As seen below, the `//link/pose[@relative_to]` attributes still need to be set:
 This change was not included since parity with URDF can already be achieved
 with the other propsed functionality.
 
-## Example: Parity with URDF using `//model/frame`
+### Example: Parity with URDF using `//model/frame`
 
 One application of the `<frame>` tag is to organize the model so that the pose
 values are all stored in a single part of the model and referenced
@@ -861,6 +1089,146 @@ in the previous section.
 In this case, `joint1_frame` is rigidly attached to `link1`, `joint3_frame` is
 rigidly attached to `link3`, etc.
 
+### Example: Using `//pose[@relative_to]` for co-located elements within a link
+
+The pose information of elements attached to links is often duplicated.
+For example, the following link has two LED light sources, which each have
+co-located collision, visual, and light tags, and the pose data is duplicated
+within each element.
+
+    <model name="model_with_duplicated_poses">
+      <link name="link_with_LEDs">
+        <light name="led1_light" type="point">
+          <pose>0.1 0 0 0 0 0</pose>
+        </light>
+        <collision name="led1_collision">
+          <pose>0.1 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led1_visual">
+          <pose>0.1 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+
+        <light name="led2_light" type="point">
+          <pose>-0.1 0 0 0 0 0</pose>
+        </light>
+        <collision name="led2_collision">
+          <pose>-0.1 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led2_visual">
+          <pose>-0.1 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+By creating explicit frames at the model scope, the `//pose[@relative_to]`
+attribute can be used to specify the collision, visual, and light poses
+without duplication.
+
+    <model name="model_with_explicit_frames">
+      <frame name="led1" attached_to="link_with_LEDs">
+          <pose>0.1 0 0 0 0 0</pose>
+      </frame>
+      <frame name="led2" attached_to="link_with_LEDs">
+          <pose>-0.1 0 0 0 0 0</pose>
+      </frame>
+
+      <link name="link_with_LEDs">
+        <light name="led1_light" type="point">
+          <pose relative_to="led1" />
+        </light>
+        <collision name="led1_collision">
+          <pose relative_to="led1" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led1_visual">
+          <pose relative_to="led1" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+
+        <light name="led2_light" type="point">
+          <pose relative_to="led2" />
+        </light>
+        <collision name="led2_collision">
+          <pose relative_to="led2" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="led2_visual">
+          <pose relative_to="led2" />
+          <geometry>
+            <box>
+              <size>0.01 0.01 0.001</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+#### Alternatives considered:
+
+Instead of permitting elements inside a link from using the
+`//pose[@relative_to]` attribute at the model scope, one could allow
+implicit frames for elements inside a link (like `//link/collision`,
+`//link/visual`, etc.) and/or explicit link frames `//link/frame` and allow any
+poses of any element to be `relative_to` explicit or implicit frames
+defined by sibling elements.
+
+    <model name="model_with_explicit_link_frames">
+      <frame name="F"/>                   <!-- Explicit frame F in model scope. -->
+      <frame name="M"/>                   <!-- Explicit frame F in model scope. -->
+      <link name="L">
+        <frame name="F">                  <!-- Explicit frame F in link L scope. -->
+          <pose>{X_LF}</pose>
+        </frame>
+        <light name="led1" type="point">
+          <pose relative_to="F" />        <!-- Valid: Pose relative_to frame F in link scope. -->
+        </light>
+        <light name="led2" type="point">
+          <pose relative_to="M" />        <!-- INVALID: frame M not in link scope. -->
+        </light>
+      </link>
+    </model>
+
+While there may be use cases that benefit from embedding explicit frames
+inside their `attached_to` link, doing so adds unnecessary complexity.
+Frames would require additional scopes to be resolved, and the ability
+to reference frames across links would be limited.
+Furthermore increasing the number of implicit frames increases the size
+of the frame graph and adds complexity to the parsing task.
+This approach is not recommended as its utility is outweighed by
+its complexity.
+
 ## Element naming rule: reserved names
 
 * Since `world` has a special interpretation when specified as a parent
@@ -879,12 +1247,22 @@ in the simulation.
     </model>
     ~~~
 
-* Names that start and end with double underscores (eg. `__wheel__`) are reserved
-for use by library implementors. For example, such names might be useful during
-parsing for setting sentinel or default names for elements with missing names.
+* Names that start and end with double underscores (eg. `__wheel__`) are
+reserved for use by library implementors and the specification. For example,
+such names might be useful during parsing for setting sentinel or default names
+for elements with missing names. If explicitly stated, they can be referred to
+(e.g. `__model__` / `world` for implicit model / world frames, respectively). Examples:
 
     ~~~
-    <model name="__model__"/><!-- INVALID: name starts and ends with __. -->
+    <model name="__model__"/><!-- INVALID: name starts and ends with __, and is reserved. -->
+    ~~~
+
+    ~~~
+    <model name="model">
+      <!-- VALID: Both frames are equivalent. -->
+      <frame name="frame1"/>
+      <frame name="frame2" attached_to="__model__"/>
+    </model>
     ~~~
 
     ~~~
@@ -892,6 +1270,261 @@ parsing for setting sentinel or default names for elements with missing names.
       <link name="__link__"/><!-- INVALID: name starts and ends with __. -->
     </model>
     ~~~
+
+## Phases of parsing kinematics of an SDFormat 1.7 model
+
+This section describes phases for parsing the kinematics of an SDFormat 1.7 model.
+It does not discuss proper validation of collision and visual geometries,
+link inertia, nested models, and many other parameters.
+Several of these phases are similar to the phases of parsing an SDFormat 1.4
+model in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
+In phases that differ from SDFormat 1.4, *italics* are used to signal the difference.
+For new phases, the ***Title:*** is italicized.
+
+There are *seven* phases for validating the kinematics data in a model.
+In libsdformat, the `sdf::readFile` and `sdf::readString` API's perform parsing
+stage 1, and `sdf::Root::Load` is proposed to perform all parsing stages.
+Each API returns an error code if errors are found during parsing.
+
+1.  **XML parsing and schema validation:**
+    Parse model file from XML into a tree data structure,
+    ensuring that there are no XML syntax errors and that the XML
+    data complies with the [schema](http://sdformat.org/schemas/root.xsd).
+    Schema `.xsd` files are generated from the `.sdf` specification files
+    when building `libsdformat` with the
+    [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
+
+2.  **Name attribute checking:**
+    Check that name attributes are not an empty string `""`, and that sibling
+    elements of *any* type have unique names.
+    This includes but is not limited to models, actors, links, joints,
+    collisions, visuals, sensors, and lights.
+    This step is distinct from validation with the schema because the schema
+    only confirms the existence of name attributes, not their content.
+
+3.  **Joint parent/child name checking:**
+    For each joint, check that the parent and child link names are different
+    and that each match the name of a sibling link to the joint,
+    with the following exception:
+    if "world" is specified as a link name but there is no sibling link
+    with that name, then the joint is attached to a fixed reference frame.
+
+4.  ***Check `//model[@canonical_link]` attribute value:***
+    If the `//model[@canonical_link]` attribute exists and is not an empty
+    string `""`, check that the value of the `canonical_link` attribute
+    matches the name of a link in this model.
+
+5.  ***Check `//model/frame[@attached_to]` attribute values:***
+    For each `//model/frame`, if the `attached_to` attribute exists and is not
+    an empty string `""`, check that the value of the `attached_to` attribute
+    matches the name of a sibling link, joint, or frame.
+    The `//frame[@attached_to]` value must not match `//frame[@name]`,
+    as this would cause a graph cycle.
+
+6.  ***Check `//model/frame[@attached_to]` graph:***
+    Construct an `attached_to` directed graph for the model with each vertex
+    representing a frame:
+
+    6.1 Add a vertex for the implicit frame of each link in the model.
+
+    6.2 Add a vertex for the implicit model frame with an edge connecting to the
+        vertex of the model's canonical link.
+
+    6.3 Add vertices for the implicit frame of each joint with an edge
+        connecting from the joint to the vertex of its child link.
+
+    6.4 For each `//model/frame`:
+
+    6.4.1 Add a vertex to the graph.
+
+    6.4.2 If `//model/frame[@attached_to]` exists and is not empty,
+          add an edge from the added vertex to the vertex
+          named in the `//model/frame[@attached_to]` attribute.
+
+    6.4.3 Otherwise (ie. if the `//model/frame[@attached_to]` attribute
+          does not exist or is an empty string `""`),
+          add an edge from the added vertex to the model frame vertex.
+
+    6.5 Verify that the graph has no cycles and that by following the directed
+        edges, every vertex is connected to a link.
+        To identify the link to which each frame is attached, start from the
+        vertex for that frame, and follow the directed edges until a link
+        is reached.
+
+7.  ***Check `//pose[@relative_to]` attribute values:***
+    For each `//pose` that is not `//model/pose` (ie. `//link/pose`,
+    `//joint/pose`, `//frame/pose`, `//collision/pose`, `//light/pose`, etc.),
+    if the `relative_to` attribute exists and is not an empty string `""`,
+    check that the value of the `relative_to` attribute
+    matches the name of a link, joint, or frame in this model's scope.
+
+8.  ***Check `//pose[@relative_to]` graph:***
+    Construct a `relative_to` directed graph for the model with each vertex
+    representing a frame:
+
+    8.1 Add a vertex for the implicit model frame `__model__`.
+
+    8.2 Add vertices for each `//model/link`, `//model/joint`, and
+        `//model/frame`.
+
+    8.3 For each `//model/link`:
+
+    8.3.1 If `//link/pose[@relative_to]` exists and is not empty,
+          add an edge from the link vertex to the vertex named in
+          `//link/pose[@relative_to]`.
+
+    8.3.2 Otherwise (ie. if `//link/pose` or `//link/pose[@relative_to]` do not
+          exist or `//link/pose[@relative_to]` is an empty string `""`)
+          add an edge from the link vertex to the implicit model frame vertex.
+
+    8.4 For each `//model/joint`:
+
+    8.4.1 If `//joint/pose[@relative_to]` exists and is not empty,
+          add an edge from the joint vertex to the vertex named in
+          `//joint/pose[@relative_to]`.
+
+    8.4.2 Otherwise (ie. if `//joint/pose` or `//joint/pose[@relative_to]` do not
+          exist or `//joint/pose[@relative_to]` is an empty string `""`)
+          add an edge from the joint vertex to
+          the child link vertex named in `//joint/child`.
+
+    8.5 For each `//model/frame`:
+
+    8.5.1 If `//frame/pose[@relative_to]` exists and is not empty,
+          add an edge from the frame vertex to the vertex named in
+          `//frame/pose[@relative_to]`.
+
+    8.5.2 Otherwise if `//frame[@attached_to]` exists and is not empty
+          (ie. if `//frame[@attached_to]` exists and is not an empty string `""`
+          and one of the following is true: `//frame/pose` does not exist,
+          `//frame/pose[@relative_to]` does not exist, or
+          `//frame/pose[@relative_to]` is an empty string `""`)
+          add an edge from the frame vertex to the vertex named in
+          `//frame[@attached_to]`.
+
+    8.5.3 Otherwise (ie. if neither `//frame[@attached_to]` nor
+          `//frame/pose[@relative_to]` are specified)
+          add an edge from the frame vertex to the implicit model frame vertex.
+
+    8.6 Verify that the graph has no cycles and that by following the directed
+        edges, every vertex is connected to the implicit model frame.
+        Other poses in the model such as `//collision/pose` and `//light/pose`
+        do not need to be checked for cycles since they do not create
+        implicitly named frames.
+
+## Phases of parsing kinematics of an SDFormat 1.7 world
+
+This section describes phases for parsing the kinematics of an SDFormat 1.7 world.
+Several of these phases are similar to the phases of parsing an SDFormat 1.4
+world in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
+In phases that differ from that document, *italics* are used to signal the difference.
+For new phases, the ***Title:*** is italicized.
+
+There are *seven* phases for validating the kinematics data in a world:
+
+1.  **XML parsing and schema validation:**
+    Parse world file from XML into a tree data structure,
+    ensuring that there are no XML syntax errors and that the XML
+    data complies with the [schema](http://sdformat.org/schemas/root.xsd).
+    Schema `.xsd` files are generated from the `.sdf` specification files
+    when building `libsdformat` with the
+    [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
+
+2.  **Name attribute checking:**
+    Check that name attributes are not an empty string `""`, and that sibling
+    elements of *any* type have unique names.
+    This check can be limited to `//world/model[@name]`
+    *and `//world/frame[@name]`*
+    since other names will be checked in the following step.
+    This step is distinct from validation with the schema because the schema
+    only confirms the existence of name attributes, not their content.
+
+3.  **Model checking:**
+    Check each model according to the *seven* phases of parsing kinematics of an
+    sdf model.
+
+4.  ***Check `//world/frame[@attached_to]` attribute values:***
+    For each `//world/frame`, if the `attached_to` attribute exists and is not
+    an empty string `""`, check that the value of the `attached_to` attribute
+    matches the name of a sibling model or frame.
+    The `//frame[@attached_to]` value must not match `//frame[@name]`,
+    as this would cause a graph cycle.
+
+5.  ***Check `//world/frame[@attached_to]` graph:***
+    Construct an `attached_to` directed graph for the world with each vertex
+    representing a frame:
+
+    5.1 Add a vertex for the implicit world frame `world`.
+
+    5.2 Add a vertex for each model in the world.
+
+    5.3 For each `//world/frame`:
+
+    5.3.1 Add a vertex to the graph.
+
+    5.3.2 If `//world/frame[@attached_to]` exists and is not empty,
+          add an edge from the added vertex to the vertex named in the
+          `//world/frame[@attached_to]` attribute.
+
+    5.3.3 Otherwise (ie. if the `//world/frame[@attached_to]` attribute
+          does not exist or is an empty string `""`),
+          add an edge from the added vertex to the implicit world frame vertex.
+
+    5.4 Verify that the graph has no cycles and that by following the directed
+        edges, every vertex is connected to a model or the implicit world frame.
+        If the directed edges lead from a vertex to the implicit world frame,
+        then the `//world/frame` corresponding to that vertex is a fixed
+        inertial frame.
+        If the directed edges lead to a model, then the `//world/frame`
+        corresponding to that vertex is attached to the canonical link of that
+        model.
+
+6.  ***Check `//pose[@relative_to]` attribute values:***
+    For each `//model/pose` and `//world/frame/pose`
+    if the `relative_to` attribute exists and is not an empty string `""`,
+    check that the value of the `relative_to` attribute
+    matches the name of a model or frame that is a sibling of the element
+    that contains the `//pose`.
+
+7.  ***Check `//pose[@relative_to]` graph:***
+    Construct a `relative_to` directed graph for the model with each vertex
+    representing a frame:
+
+    7.1 Add a vertex for the implicit world frame.
+
+    7.2 Add vertices for each `//world/model` and `//world/frame`.
+
+    7.3 For each `//world/model`:
+
+    7.3.1 If `//world/model/pose[@relative_to]` exists and is not empty,
+          add an edge from the model vertex to the vertex named in
+          `//world/model/pose[@relative_to]`.
+
+    7.3.2 Otherwise (ie. if `//world/model/pose` or
+          `//world/model/pose[@relative_to]` do not
+          exist or `//world/model/pose[@relative_to]` is an empty string `""`)
+          add an edge from the model vertex to the implicit world frame vertex.
+
+    7.4 For each `//world/frame`:
+
+    7.4.1 If `//frame/pose[@relative_to]` exists and is not empty,
+          add an edge from the frame vertex to the vertex named in
+          `//frame/pose[@relative_to]`.
+
+    7.4.2 Otherwise if `//frame[@attached_to]` exists and is not empty
+          (ie. if `//frame[@attached_to]` exists and is not an empty string `""`
+          and one of the following is true: `//frame/pose` does not exist,
+          `//frame/pose[@relative_to]` does not exist, or
+          `//frame/pose[@relative_to]` is an empty string `""`)
+          add an edge from the frame vertex to the vertex named in
+          `//frame[@attached_to]`.
+
+    7.4.3 Otherwise (ie. if neither `//frame[@attached_to]` nor
+          `//frame/pose[@relative_to]` are specified)
+          add an edge from the frame vertex to the implicit world frame vertex.
+
+    7.5 Verify that the graph has no cycles and that by following the directed
+        edges, every vertex is connected to the implicit world frame.
 
 ## Addendum: Model Building, Contrast "Model-Absolute" vs "Element-Relative" Coordinates
 
