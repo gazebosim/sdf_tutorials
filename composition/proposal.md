@@ -1,138 +1,105 @@
-# Model Composition: Proposal
+# Model composition: Proposed behavior
+
+## Document summary
+
+The proposal includes the following sections:
+
+*   Motivation: background and rationale.
+*   Proposed changes: Each additon / subtraction to SDFormat.
+*   Examples: Long form code samples.
 
 ## Motivation
 
-At present, SDFormat has an `//include` tag. However, it may have issues with
-encapsulation / "viral" format requirements and namespacing. These are
-described below.
+When constructing models of robots, composition / nesting is extremely useful
+when making nontrivial assemblies, and especially when handling different
+versions of worlds or robots (e.g. adding multiple instances of a robot, or
+swapping out grippers).
 
-These are incorporated into a new suggested parsing order to acommodate these
-motivations.
+As described in the [legacy behavior tutorial](/tutorials?tut=spec_world),
+SDFormat 1.6 has the `//include` tag which accommodates these use cases, but it
+does not provide guidance on modularity / encapsulation, and by the same token
+does not strictly define how relationships among assemblies should be defined.
 
-### Proposed Update: Phases of Parsing Composition of of SDFormat 1.7 Model
+<!--
+TODO: At what scope could parsing stages be added, where custom model formats
+could be loaded? May be very difficult...
+-->
 
-*TODO(eric): Write this.*
+## Proposed changes
 
-For the motivation of each of these stages, please see below.
+### Usability: Permit direct files in `//include/uri`
 
-## Encapsulation
+Specifying a directory permits usage of `model.config` manifests, which permits
+better compatibilty for a model when being loaded by software with different
+SDFormat specification support. However, it then requires overhead that may not
+matter for some applications.
 
-Any set of models are effectively an "API". They has publicly referencable
-elements (links, joints, frames, and possibly sub-models).
+This proposal suggests that `//include/uri` permits referencing files directly.
 
-At present, there is no specification on how encapsulated an included file
-should be, and at what stage of construction inclusion is permitted. Both of
-these drive reusability of existing models, and what modifications are necessary
-for composition.
+### Bottom-Up Encapsulation for Files
 
-Some example circumstances:
+To enable "bottom-up" assemblies (or piece part design) to maximize modularity,
+individual files should generally be viewed as standalone: all references in
+the file should only refer to items "under" that file (e.g. links, joints, or
+frames defined in the file, or links, joints, or frames defined in included
+files). This entails that:
 
-* Can the included file refer to joints that it does not define?
-    * Example: Adding a gripper to an IIWA. There may be a weld pose based on the pneumatic or electric flange.
-    * What if including a model in one context completely changes the topology
-    from another context, unintentionally?
-* How well does abstraction work?
-    * Can links be renamed, and can aliased be left, possiblye with pose offsets?
+* Individual files should *not* be able to have a deferred reference to
+something that isn't defined in that file (like Python modules).
+* In conjunction with the [pose frame semantics proposal](/tutorials?tut=pose_frame_semantics_proposal),
+all initially specified `//pose` elements within a file should be rigidly
+related to one another, and should not be able to have their poses mutated by
+an external site (to simplify pose resolution).
 
-Defining encapsulation could also pave the way for SDFormat to be a *non-viral*
-format, e.g. a library developer can merge multiple formats (potentially
-non-XML) together via SDFormat in code, without having to convert their models
-to some sort of SDFormat IR (which may not provide sufficient feature
-coverage), or have to reimplement / fork `libsdformat`.
+#### Do not permit overriding canonical link
 
-### Guiding Motivation: Make Your Model an "API"
+`<include/>` *should not* be able to override canonical link.
 
-*TODO(eric): I want to present this, but can't think of a better location.*
+### Encourage using models as an "API": abstraction and conventions
+
+Assemblies require interfaces, and those interfaces should be able to conceal internal details while still providing useful abstractions, such as welding
+points when swapping out components.
 
 As such, you should consider levels of abstraction; use frames frequently,
 especially for mounting points. If that mounting point physically moves at some
 point, you update your model, and any downstream references can be left
 untouched.
 
-*TODO(eric): For the abstraction argument, //joint/parent and //joint/child
-should really be able to refer to a frame - then a frame can be used completely
-for abstraction!*
-
 If you need to use intermediate frames that are not intended to be used for
 public consumption, please prefix them with a single `_`, like Python.
 
-### Model File Completeness
+#### Permit `//joint/parent` and `//joint/child` to refer to frames
 
-A program should be able to load any *single file* on its own, with its declared dependencies being present (like Python modules).
+This allows joints (like welds) to be abstracted, and thus can simplify
+swapping out components.
 
-All initially specified `//pose` elements will be rigidly related to one
-another. You cannot refer to elements that do not exist inside that file.
+**WARNING**: This would motivate preserving frames through saving SDFormat
+files via Gazebo / libsdformat, esp. if they become the "API".
 
-The goal here here is to keep things simple from a parsing perspective,
-especially for using model-absolute coordinate specification.
+### Posturing frame for `//include/pose`.
 
-### Positive Example
+It is useful to place an object using a semantic relationship between two
+objects, e.g. place the bottom-center of a mug upright on the top-center of a
+table.
 
-If composing and welding an arm and a gripper:
+This can be achieved by specifying `//include/posture_frame`, e.g.:
 
-~~~xml
-<!-- arm.sdf -->
-<model name="arm">
-    <link name="body"/>
-</model>
+~~~
+<include>
+    <uri>file://table.sdf</uri>
+    <posture_frame>bottom_left_log</posture_frame>
+    <pose/>
+</include>
+<include>
+    <uri>file://mug.sdf</uri>
+    <posture_frame>bottom_center</posture_frame>
+    <pose relative_to="table/top_center"/>
+</include>
 ~~~
 
-~~~xml
-<!-- gripper.sdf -->
-<model name="gripper">
-    <link name="body"/>
-</model>
-~~~
+# **TODO**: Need to work on following text!
 
-~~~xml
-<model name="arm_and_gripper">
-    <include file="arm.sdf"/>
-    <include file="gripper.sdf">
-        <pose frame="arm">{X_AG}</pose>
-    </include>
-    <joint name="weld" type="fixed">
-        <parent>arm/body</parent>
-        <child>gripper/body</child>
-    </joint>
-</model>
-~~~
-
-### Negative Example
-
-You cannot achieve the above by defining the weld in the gripper itself:
-
-~~~xml
-<!-- arm.sdf: Same as above. -->
-~~~
-
-~~~xml
-<!-- gripper_with_weld.sdf -->
-<model name="gripper">
-    <pose>{X_AG}</pose>
-    <link name="gripper">
-    <joint name="weld" type="fixed">
-        <parent>arm/body</parent> <!-- INVALID: Does not exist in this file -->
-        <child>gripper/body</child>
-    </joint>
-</model>
-~~~
-
-~~~xml
-<model name="arm_and_gripper">
-    <include file="arm.sdf"/>
-    <include file="gripper_with_weld.sdf"/>
-</model>
-~~~
-
-<!-- TODO(eric): Will this mess up Anzu workflows? Should there be some sort of
-     specification welding? Perhaps along the lines of kinematic models? -->
-
-## Namespacing: Syntax and Semantics
-
-There is no explicit specification about namespacing, relative references or
-absolute references, etc.
-
-`<insert text from pro-pose-al>`
+### Namespacing
 
 ### Element Nesting
 
@@ -190,8 +157,76 @@ as it
 * `//model/@canonical_link` *cannot* cross model boundaries
 * The default `//pose/@relative_to` will refer to the *closest* enclosing
 `//model`, not the file.
+ 
+## Examples
 
-### Example: Simple Cross-Referencing
+
+### Positive Example
+
+If composing and welding an arm and a gripper:
+
+~~~xml
+<!-- arm.sdf -->
+<model name="arm">
+    <link name="body"/>
+</model>
+~~~
+
+~~~xml
+<!-- gripper.sdf -->
+<model name="gripper">
+    <link name="body"/>
+</model>
+~~~
+
+~~~xml
+<model name="arm_and_gripper">
+    <include file="arm.sdf">
+        <uri>arm.sdf</uri>
+    </include>
+    <include>
+        <uri>gripper.sdf</uri>
+        <pose frame="arm">{X_AG}</pose>
+    </include>
+    <joint name="weld" type="fixed">
+        <parent>arm/body</parent>
+        <child>gripper/body</child>
+    </joint>
+</model>
+~~~
+
+### Negative Example
+
+You cannot achieve the above by defining the weld in the gripper itself:
+
+~~~xml
+<!-- arm.sdf: Same as above. -->
+~~~
+
+~~~xml
+<!-- gripper_with_weld.sdf -->
+<model name="gripper">
+    <pose>{X_AG}</pose>
+    <link name="gripper">
+    <joint name="weld" type="fixed">
+        <parent>arm/body</parent> <!-- INVALID: Does not exist in this file -->
+        <child>gripper/body</child>
+    </joint>
+</model>
+~~~
+
+~~~xml
+<model name="arm_and_gripper">
+    <include>
+        <uri>arm.sdf</uri>
+    </include>
+    <include>
+        <uri>gripper_with_weld.sdf</uri>
+    </include>
+</model>
+~~~
+
+### Simple Cross-Referencing
 
 Consider the following example model, all defined in a single file:
 
@@ -221,7 +256,7 @@ Consider the following example model, all defined in a single file:
 This implies that for scoping, it is *extremely* important that the parser to
 know that it's working with a single model file.
 
-### Example: Robot Arm with Gripper
+### Robot Arm with Gripper
 
 Frames:
 
@@ -286,7 +321,8 @@ Proposed welding semantics, with somma dat nesting:
             <name>arm</name>
             <pose>{X_MR1}</pose>
         </include>
-        <include file="flange_electric">
+        <include>
+            <uri>file://flange_electric.sdf</uri>
             <pose frame="arm/flange_origin"/>
         </include>
         <include file="gripper" pose_model_frame="origin">
@@ -317,70 +353,3 @@ Proposed welding semantics, with somma dat nesting:
 
 </model>
 ```
-
-### Do not permit overriding canonical link
-
-`<include/>` *should not* be able to override canonical link.
-
-*TODO(eric): I completely forgot the motivation for this... This now seems a
-wee bit dumb...*
-
-## Open Questions
-
-### Purely Kinematic Models?
-
-This document may implicitly permit a model that is purely kinematic, or rather,
-defined purely as frames, relative to the model frame.
-
-Opinions:
-
-* Eric: I am in favor of this, as it is useful for gripper or camera offsets
-that may admit other welding afterwards.
-    * For gripper offsets, it is true that these may be actual physical bodies;
-    I am fine with them being as such, as long as people don't put crappy /
-    useless inertial values there. If they do, then it's more or less abuse.
-    * However: Due to the current state of using absolute coordinates, and thus
-    only permitting frame welding via joints, there is no mechanism to support
-    purely kinematic welding. We should really fix this.
-    Perhaps if we define some mechanism to place a model's initial pose, and
-    permit external specification of frame fixturing?
-
-Motivating Example: Scene-fixed camera calibration results - frames only
-
-    <!-- Scene cameras: `M` will be affixed to some world-affixed frame -->
-    <model name="camera_calibration_scene_fixed">
-      <frame name="camera_001_rgb">
-        <pose>{X_MC1}</pose>
-      </frame>
-      <frame name="camera_001_depth" attached_to="camera_001_rgb">
-        <pose>{X_C1D}</pose>
-      </frame>
-      <!-- ... -->
-    </model>
-
-    <!-- Wrist cameras: `M` will be affixed to wrist -->
-    <model name="camera_calibration_scene_fixed">
-      <frame name="camera_011_rgb">
-        <pose>{X_MC11}</pose>
-      </frame>
-      <frame name="camera_011_depth" attached_to="camera_011_rgb">
-        <pose>{X_C11D}</pose>
-      </frame>
-    </model>
-
-*TODO(eric): As an alternative, make some sort of `//frame_group` tag?*
-
-### Permit inlined `//include`?
-
-In order to permit different levels of abstraction (e.g. for frame groups, or
-for adding certain collision elements), should it be possible to `//include` an
-element, but dump it into the current scope?
-
-Kind of like `from my_module import *` in Python... which is recommended
-against...
-
-However, it *is* super useful to be able add a set of frames and welding
-semantics... But that would break encapsulation? Should that just be deferred
-to text processing???
-
-## 
