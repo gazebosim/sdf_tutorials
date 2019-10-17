@@ -133,6 +133,7 @@ efficient to traverse.
 #### 1.3 Empty `//pose` and `//frame` elements imply identity pose
 
 Empty `//pose` elements must be interpreted as equivalent to the identity pose.
+In the following examples, the `//pose` elements in each pair are equivalent to each other.
 
 ~~~
 <pose />
@@ -146,15 +147,19 @@ Empty `//pose` elements must be interpreted as equivalent to the identity pose.
 
 Likewise, empty `//frame` elements must be interpreted as having an identity
 pose relative to `//frame[@attached_to]`.
+The four frame elements below are equivalent.
 
 ~~~
 <frame name="F" attached_to="A" />
+
 <frame name="F" attached_to="A">
   <pose />
 </frame>
+
 <frame name="F" attached_to="A">
   <pose relative_to="A" />
 </frame>
+
 <frame name="F" attached_to="A">
   <pose relative_to="A">0 0 0 0 0 0</pose>
 </frame>
@@ -166,17 +171,21 @@ This change is a convenience to reduce verbosity, because there are many
 expected cases where a frame is defined relative to another frame with no
 additional pose offset.
 
-### 2 Model Frame and canonical Link
+### 2 Model frame and canonical link
 
 #### 2.1 Implicit frame defined by `//model/pose` attached to canonical link
 
 Each model must have at least one link designated as the canonical link.
-This link defines the implicit frame of the model.
+The implicit frame of the model is attached to this link.
+
 The implicit frame is defined by the `//model/pose` element, typically
 called the "model frame".
 It must be user-configurable, but with a default value.
 
-These two models are equivalent:
+The name of the canonical link can be specified in the `//model/@canonical_link` attribute.
+If it is not specified, then the first `//link` element in the model is chosen as the canonical link.
+
+The following two models are equivalent:
 
 ~~~
 <!-- //model[@canonical_link] -->
