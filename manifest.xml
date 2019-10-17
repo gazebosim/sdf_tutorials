@@ -116,8 +116,8 @@
       <skill>advanced</skill>
     </tutorial>
 
-    <tutorial title='Composition and nesting: Legacy' ref='nesting' type='documentation'>
-      <markdown version='1.5'>nesting/legacy_behavior.md</markdown>
+    <tutorial title='Model Composition' ref='nesting' type='documentation'>
+      <markdown version='1.5'>composition/legacy_behavior.md</markdown>
       <description>
           Describing existing behavior for model level composition.
       </description>
@@ -128,8 +128,8 @@
       <skill>intermediate</skill>
     </tutorial>
 
-    <tutorial title="Composition and nesting: Proposal" ref='nesting_proposal' type='proposal'>
-      <markdown version="2.0">nesting/proposal.md</markdown>
+    <tutorial title="Model Composition: Proposed behavior" ref='composition_proposal' type='proposal'>
+      <markdown version="2.0">composition/proposal.md</markdown>
       <description>
           Propose new beahvior for model level composition.
       </description>
@@ -178,6 +178,7 @@
       <tutorials>
         <tutorial>pose_frame_semantics_proposal</tutorial>
         <tutorial>custom_elements_attributes_proposal</tutorial>
+        <tutorial>composition_proposal</tutorial>
       </tutorials>
     </category>
 

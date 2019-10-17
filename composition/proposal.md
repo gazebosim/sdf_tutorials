@@ -1,4 +1,4 @@
-# Model Nesting Proposal
+# Model Composition: Proposal
 
 ## Motivation
 
@@ -10,13 +10,6 @@ These are incorporated into a new suggested parsing order to acommodate these
 motivations.
 
 ### Proposed Update: Phases of Parsing Composition of of SDFormat 1.7 Model
-
-Building on top of:
-
-* http://sdformat.org/tutorials?tut=pose_frame_semantics&#Phasesofparsingkinematicsofansdf1.4model
-* http://sdformat.org/tutorials?tut=pose_frame_semantics_proposal&cat=pose_semantics_docs&branch=pose_frame_parsing_proposal
-
-The proposed updates are:
 
 *TODO(eric): Write this.*
 
