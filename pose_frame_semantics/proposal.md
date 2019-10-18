@@ -1149,7 +1149,7 @@ As seen below, the `//link/pose/@relative_to` attributes still need to be set:
 This change was not included since parity with URDF can already be achieved
 with the other proposed functionality.
 
-### 2 `//model/frame` parity with URDF
+### 2 Parity with URDF using `//model/frame`
 
 One application of the `//frame` tag is to organize the model so that the pose
 values are all stored in a single part of the model and referenced
