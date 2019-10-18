@@ -91,7 +91,7 @@ defined by its **attached to** frame.
     building; see the [Addendum on Model Building](#addendum-model-building-contrast-model-absolute-vs-element-relative-coordinates) for further discussion.
 
 Defining these semantics, which were missing from SDFormat 1.5,
-minimizes redundancy in poses and offsets and make relationships between physical elements easier to interpret
+minimizes redundancy in poses and offsets and makeslo relationships between physical elements easier to interpret
 
 #### 1.2 Explicit vs. implicit frames
 
