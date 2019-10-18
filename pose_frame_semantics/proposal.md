@@ -90,9 +90,8 @@ defined by its **attached to** frame.
     * This is done in order to support a "Model-Absolute" paradigm for model
     building; see the [Addendum on Model Building](#addendum-model-building-contrast-model-absolute-vs-element-relative-coordinates) for further discussion.
 
-SDFormat 1.5 defined no semantics for frames and poses.
-These changes allow SDFormat 1.7 to minimize redundancy in poses and offsets
-and make relationships between physical elements easier to interpret.
+Defining these semantics, which were missing from SDFormat 1.5,
+minimizes redundancy in poses and offsets and make relationships between physical elements easier to interpret
 
 #### 1.2 Explicit vs. implicit frames
 
@@ -449,17 +448,17 @@ As such, the naming restriction is preferred.
 Entities in a simulation must not use `world` as a name. It has a special
 interpretation when specified as a parent or child link of a joint.
 
-    ~~~
-    <model name="world"/><!-- INVALID: world is a reserved name. -->
-    <model name="world_model"/><!-- VALID -->
-    ~~~
+~~~
+<model name="world"/><!-- INVALID: world is a reserved name. -->
+<model name="world_model"/><!-- VALID -->
+~~~
 
-    ~~~
-    <model name="model">
-      <link name="world"/><!-- INVALID: world is a reserved name. -->
-      <link name="world_link"/><!-- VALID -->
-    </model>
-    ~~~
+~~~
+<model name="model">
+  <link name="world"/><!-- INVALID: world is a reserved name. -->
+  <link name="world_link"/><!-- VALID -->
+</model>
+~~~
 
 Names starting and ending with double underscores (eg. `__wheel__`) must be
 reserved for use by library implementors and the specification. For example,
@@ -468,23 +467,23 @@ for elements with missing names.
 If explicitly stated, they can be referred to
 (e.g. `__model__` / `world` for implicit model / world frames, respectively).
 
-    ~~~
-    <model name="__model__"/><!-- INVALID: name starts and ends with __, and is reserved. -->
-    ~~~
+~~~
+<model name="__model__"/><!-- INVALID: name starts and ends with __, and is reserved. -->
+~~~
 
-    ~~~
-    <model name="model">
-      <!-- VALID: Both frames are equivalent. -->
-      <frame name="frame1"/>
-      <frame name="frame2" attached_to="__model__"/>
-    </model>
-    ~~~
+~~~
+<model name="model">
+  <!-- VALID: Both frames are equivalent. -->
+  <frame name="frame1"/>
+  <frame name="frame2" attached_to="__model__"/>
+</model>
+~~~
 
-    ~~~
-    <model name="model">
-      <link name="__link__"/><!-- INVALID: name starts and ends with __. -->
-    </model>
-    ~~~
+~~~
+<model name="model">
+  <link name="__link__"/><!-- INVALID: name starts and ends with __. -->
+</model>
+~~~
 
 In SDFormat 1.5, when a joint specifies “world” as its parent or child link,
 its behavior is inconsistent and depends on the existence of a sibling link named “world”.
@@ -987,7 +986,7 @@ For reference, equivalent expressions of `Jc` are defined as `Jc1` and `Jc2`.
 
     </model>
 
-#### 1.1 The `//pose/@relative_to` attribute parity with URDF
+#### 1.1 Parity with URDF using `//pose/@relative_to`
 
 The following image from the URDF documentation corresponds to the example URDF from the
 "Parent frames in URDF" section of the
