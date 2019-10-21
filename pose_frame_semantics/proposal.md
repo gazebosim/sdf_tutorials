@@ -104,17 +104,16 @@ The following frame types are implicitly introduced:
   link at its origin defined by `//link/pose`.
 * Joint frames: each joint has a frame named `//joint/@name` attached to the
   child link at the joint's origin defined by `//joint/pose`.
-* Model frame: each model has a frame that can be referenced explicitly
-  using `__model__`. The model frame can also be referenced implicitly when
-  `//link/pose/@relative_to` resolves to empty or both
-  `//frame/@attached_to` and `//frame/pose/@relative_to` resolve
-  to empty.
-* World frame: each world has a fixed inertial reference frame that is
+* Model frame: each model has a frame that is attached to one of its links
+  (see [section 2.1](#2-1-implicit-frame-defined-by-model-pose-attached-to-canonical-link)
+  for the definition of a model's canonical link).
+  Depending on the context, a model frame can be referenced with `__model__`
+  or `//model/@name` (see [section 2.2](#2-2-referencing-the-implicit-model-frame-via-__model__-or-model-name)).
+  The model frame is the default frame to which explicit model frames
+  defined by `//model/frame` are attached.
+* World frame: each world has a fixed inertial reference frame named `world` that is
   the default frame to which explicit world frames defined by `//world/frame`
   are attached.
-  Model poses defined by `//model/pose` are interpreted relative to the implicit
-  world frame when the `//model/pose/@relative_to` attribute is set to either
-  `world` or empty.
 
 SDFormat 1.5 permitted explicit `//frame` elements in many places.
 SDFormat 1.7 limits `//frame` elements to `//model` and `//world` since
@@ -343,6 +342,16 @@ that disallows name conflicts like this.
   </joint>
 </model>
 ~~~
+
+In SDFormat 1.4, the only objects referenced by name are the links
+named in `//joint/parent` and `//joint/child`, and the names are always
+scoped to the current model.
+In SDFormat 1.5, the `::` delimiter is used to indicate that the target
+link is within a nested model, but the scope is still limited to
+objects contained in the current model.
+With the addition of `//world/frame` and `//world/model/pose/@relative_to`,
+it is necessary to consider the world scope separately from each
+model's scope to avoid name conflicts and ensure encapsulation.
 
 ##### 3.1.1 Alternatives considered
 
