@@ -12,8 +12,8 @@ version supported by the given release of the library:
 * `libsdformat6`:
     * 6.2.0 (released): C++11, SDFormat 1.6.
 * `libsdformat7`:
-    * 7.0.0 (**not released**): C++14, SDFormat 1.7. *This may never be
-    released? No listed downloads / releases?*
+    * 7.0.0 (**not released**): C++14, SDFormat 1.7. *This was an intermediate
+    version that has no need to be released.*
 * `libsdformat8`:
     * 8.3.0 (released): C++17, SDFormat 1.6.
     * 8.4.0 (**not released**): ?
