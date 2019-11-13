@@ -35,6 +35,8 @@ specification (as well as the caveats):
 * [ignition Gazebo](https://ignitionrobotics.org/libs/gazebo)
     * 2.10.0 (**released**): libsdformat8, SDFormat 1.6, but supports only a subset:
         * Does not support directly nested models
+    * 3.0.0 (**target: Dec. 2019**): libsdformat9, SDFormat 1.7, but only a subset:
+        * Does not support directly nested models
 * [Drake](https://github.com/RobotLocomotion/drake/releases):
     * 0.10.0 - 0.11.0 (**released**): SDFormat 1.6, but deviates:
         * Does not support directly nested models
