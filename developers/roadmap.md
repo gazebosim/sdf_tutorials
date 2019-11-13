@@ -15,10 +15,9 @@ version supported by the given release of the library:
     * 7.0.0 (**not released**): C++14, SDFormat 1.7. *This was an intermediate
     version that has no need to be released.*
 * `libsdformat8`:
-    * 8.3.0 (released): C++17, SDFormat 1.6.
-    * 8.4.0 (**not released**): ?
+    * 8.5.0 (released): C++17, SDFormat 1.6.
 * `libsdformat9`: For use in Ignition Gazebo.
-    * 9.0.0 (**target: Dec. 2019**): C++14, SDFormat 1.7.
+    * 9.0.0 (**target: Dec. 2019**): C++17, SDFormat 1.7.
 
 ## Downstream Library Support
 
