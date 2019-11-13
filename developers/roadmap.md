@@ -9,6 +9,8 @@ For more information, see [Changelog](https://bitbucket.org/osrf/sdformat/src/de
 The following list provides a high-level summary of the specification and C++
 version supported by the given release of the library:
 
+* `libsdformat4`:
+    * 4.4.0 (released): C++11, SDFormat 1.6.
 * `libsdformat6`:
     * 6.2.0 (released): C++11, SDFormat 1.6.
 * `libsdformat7`:
@@ -26,10 +28,12 @@ recent releases of some downstream projects and their support of the
 specification (as well as the caveats):
 
 * [Classic Gazebo](http://gazebosim.org/#status)
-    * 10 (**released**): SDFormat 1.6
-    * 11 (**target: Jan. 2020**): SDFormat 1.7
+    * 7 (**released**): libsdformat4, SDFormat 1.6
+    * 9 (**released**): libsdformat6, SDFormat 1.6
+    * 10 (**released**): libsdformat6, SDFormat 1.6
+    * 11 (**target: Jan. 2020**): libsdformat9, SDFormat 1.7
 * [ignition Gazebo](https://ignitionrobotics.org/libs/gazebo)
-    * 2.10.0 (**released**): SDFormat 1.6, but deviates:
+    * 2.10.0 (**released**): libsdformat8, SDFormat 1.6, but supports only a subset:
         * Does not support directly nested models
 * [Drake](https://github.com/RobotLocomotion/drake/releases):
     * 0.10.0 - 0.11.0 (**released**): SDFormat 1.6, but deviates:
