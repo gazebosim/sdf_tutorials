@@ -115,6 +115,18 @@
       </tags>
       <skill>advanced</skill>
     </tutorial>
+
+    <tutorial title="Roadmap" ref='roadmap' type='documentation'>
+      <markdown version="1.7">developers/roadmap.md</markdown>
+      <description>
+        Proposal for supporting custom elements and attributes in SDFormat and libsdformat.
+      </description>
+      <tags>
+        <tag>roadmap</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
   </tutorials>
 
   <!-- *************************************** -->
@@ -152,6 +164,13 @@
       <tutorials>
         <tutorial>pose_frame_semantics_proposal</tutorial>
         <tutorial>custom_elements_attributes_proposal</tutorial>
+      </tutorials>
+    </category>
+
+    <category title="For Developers" skill="advanced" ref="developers">
+      <description>Implementation information for developers.</description>
+      <tutorials>
+        <tutorial>roadmap</tutorial>
       </tutorials>
     </category>
 
