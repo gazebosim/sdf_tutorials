@@ -38,7 +38,7 @@ specification (as well as the caveats):
     * 3.0.0 (**target: Dec. 2019**): libsdformat9, SDFormat 1.7, but only a subset:
         * Does not support directly nested models
 * [Drake](https://github.com/RobotLocomotion/drake/releases):
-    * 0.10.0 - 0.11.0 (**released**): SDFormat 1.6, but deviates:
+    * 0.10.0 - 0.12.0 (**released**): SDFormat 1.6, but deviates:
         * Does not support directly nested models
         * Does not support specifying poses of free-floating bodies (as initial
         conditions).
