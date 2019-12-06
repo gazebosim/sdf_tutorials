@@ -173,8 +173,9 @@ additional pose offset.
 
 #### 2.1 Implicit frame defined by `//model/pose` attached to canonical link
 
-Each model must have at least one link designated as the canonical link.
+Each non-static model must have at least one link designated as the canonical link.
 The implicit frame of the model is attached to this link.
+This implicit frame of a static model is attached to the world.
 
 The implicit frame is defined by the `//model/pose` element, typically
 called the "model frame".
