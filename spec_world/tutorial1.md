@@ -256,7 +256,7 @@ Properties](/tutorials?tut=spec_inertial) documentation (coming soon).
 </sdf>
 ```
 
-## <a id="appendix">Appendix</a>
+## Appendix
 
 The `<world>` tag has a required `name` attribute. It can be used to
 differentiate between multiple worlds running in parallel. However, this is not
