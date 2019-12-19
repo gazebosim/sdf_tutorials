@@ -98,7 +98,7 @@ taken until the model is found:
 
   1. For a URI that begins with a user defined prefix, such as `model://`,
      `libsdformat` lets users specify a custom prefix and a corresponding set
-     of directories to be searched when a URI with the custom prefix is found.
+     of paths to be searched when a URI with the custom prefix is found.
 
   1. `libsdformat` treats the URI as a directory path and proceeds to search
      for it within its installation `share` path.
@@ -156,6 +156,69 @@ example.
 </model>
 ```
 
+`libsdformat`'s current implementation of the `<include>` tag works by copying
+all links and joints of the child model into the parent model with their poses
+modified to be relative to the parent model frame. To avoid name collisions,
+the name of the nested model followed by `::` is prepended to the names of
+these links and joints. The following example shows how this works. Consider
+the following model named `ChildModel` and its parent model `ParentModel`
+
+```
+<model name="ChildModel">
+  <link name="L1">
+    <pose>0 1 0 0 0 0</pose>
+    <visual name="v1">
+      <geometry>
+        <sphere>
+          <radius>0.1</radius>
+        </sphere>
+      </geometry>
+    </visual>
+  </link>
+  <link name="L2"/>
+  <joint name="J1">
+    <parent>L1</parent>
+    <child>L2</child>
+  </joint>
+</model>
+```
+
+```
+<model name="ParentModel">
+  <include>
+    <uri>/path/to/ChildModel</uri>
+    <pose>1 0 1 0 0 0</pose>
+  </include>
+</model>
+```
+
+The result of processing `ParentModel` results in the following model
+
+```
+<model name="ParentModel">
+  <link name="ChildModel::L1">
+    <pose>1 1 1 0 0 0</pose> <!-- Note the modified pose -->
+    <visual name="v1"> <!-- Names of child elements of link are not modified -->
+      <geometry>
+        <sphere>
+          <radius>0.1</radius>
+        </sphere>
+      </geometry>
+    </visual>
+  </link>
+  <link name="ChildModel::L2"/>
+  <joint name="ChildModel::J1">
+    <parent>ChildModel::L1</parent>
+    <child>ChildModel::L2</child>
+  </joint>
+</model>
+```
+
+> **Note** Due to a bug in libsdformat, the `xyz` vector of joint axes in
+nested models is always interpreted to be expressed in the model frame
+regardless of the value of the `<use_parent_model_frame>` element.
+
+
 ## Characteristics of nested models 
 
 Whether nested by direct definition or through the use of the `<include>` tag,
@@ -201,13 +264,17 @@ Joints can connect links from the parent model to links in the nested model.
 Normal rules apply for referencing links found in the parent model. Links in
 nested models are referenced by using a `model_name::link_name` syntax where
 `model_name` is the name of the model as defined by the `<name>` of the model
-definition or as overridden by the `<include><name>`. The link from the nested
-model can be referenced in either the `<parent>` or `<child>` elements of the
-joint.
+definition or as overridden by the `<include><name>`. While this syntax is
+imposed by `libsdformat` when model's are composed using the `<include>` tag by
+virtue of it prepending link and joint names with `model_name::`, the current
+specification does not dictate how child elements are referenced. Nevertheless,
+this documentation assumes this syntax as the convention for referencing nested
+elements.
 
-Note, however, that `libsdformat` does not currently check that nested model
-links referenced by joints are valid. This responsibility is left for
-downstream applications.
+The link from the nested model can be referenced in either the `<parent>` or
+`<child>` elements of the joint. Note, however, that `libsdformat` does not
+currently check that nested model links referenced by joints are valid. This
+responsibility is left for downstream applications.
 
 The following snippet demonstrates a fixed joint between one link in the parent
 model and another in a nested model:
@@ -255,8 +322,9 @@ snippet demonstrates this usage:
 
 A joint in a child model can access a link in the parent model or a sibling
 model with the syntax `model_name::link_name`. However, this is not recommended
-as it requires hard coding the name of the parent sibling model in the
-definition of the child model.
+as it breaks encapsulation. The model is no longer standalone, and requires
+hard coding the name of the parent sibling model in the definition of the child
+model.
 
 
 <!--# References-->
