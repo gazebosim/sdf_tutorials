@@ -1,4 +1,4 @@
-# Composition and Nesting
+# Composition
 
 This document describes SDFormat's support for model level composition in which
 a model can be constructed from other models nested within itself.
@@ -101,8 +101,8 @@ to the model directory. In the `libsdformat` implementation, the input to the
     model directory. The path is relative to the runtime path of the
     application that uses `libsdformat`.
   * A path that begins with a user defined prefix, such as `model://`.
-    `libsdformat` lets users specify a custom prefix and a corresponding path
-    to be searched when a URI with the custom prefix is found.
+    `libsdformat` lets users specify a custom prefix and a corresponding set of
+    paths to be searched when a URI with the custom prefix is found.
   * A path with no prefix. Such paths specify the relative path to the
     model directory. The path is relative to the runtime path of the
     application that uses `libsdformat`.
