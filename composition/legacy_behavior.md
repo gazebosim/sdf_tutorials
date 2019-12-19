@@ -91,21 +91,35 @@ More details about the directory structure can be found
 #### Including a model
 
 A model that has been defined in a model database can be added to a parent
-model using the `<include>` tag. The `<uri>` child element specifies the path
-to the model directory. In the `libsdformat` implementation, the input to the
-`<uri>` element can be one of the following
+model using the `<include>` tag. The `<uri>` child element specifies the
+location of the model directory. In the `libsdformat`, the URI specified in the
+`<uri>` element is handled in the manner and order shown below. Each step is
+taken until the model is found:
 
-  * A path that begins `file:///`. Such paths specify the absolute path to the
-    model directory.
-  * A path that begins with `file://`. Such paths specify the relative path to the
-    model directory. The path is relative to the runtime path of the
-    application that uses `libsdformat`.
-  * A path that begins with a user defined prefix, such as `model://`.
-    `libsdformat` lets users specify a custom prefix and a corresponding set of
-    paths to be searched when a URI with the custom prefix is found.
-  * A path with no prefix. Such paths specify the relative path to the
-    model directory. The path is relative to the runtime path of the
-    application that uses `libsdformat`.
+  1. For a URI that begins with a user defined prefix, such as `model://`,
+     `libsdformat` lets users specify a custom prefix and a corresponding set
+     of directories to be searched when a URI with the custom prefix is found.
+
+  1. `libsdformat` treats the URI as a directory path and proceeds to search
+     for it within its installation `share` path.
+
+  1. `libsdformat` treats the URI as a directory path an proceeds to search for
+     it in the file system. If the URI is an absolute path, `libsdformat`
+     checks if the path exists. Otherwise, `libsdformat` searches for the path
+     relative to the current working directory of the process that uses
+     `libsdformat`.
+
+  1. If the environment variable `SDF_PATH` is set, `libsdformat` forms a new
+     path by appending the URI to the contents of `SDF_PATH` and checks if
+     the path exists.
+
+  1. `libsdformat` treats the URI as a directory path and forms a new path by
+     appending it to the current working directory of the process. It then
+     checks if this path exists.
+
+  1. Finally, `libsdformat` uses a mechanism by which users can register
+     a custom callback function for URIs that could not be found by any of the
+     previous methods.
 
 The `<include>` tag contains additional child elements that specify certain
 properties of the included model.
@@ -126,16 +140,16 @@ example.
 ```
 <model name="PM">
   <include>
-    <uri>file://sphere</uri>
+    <uri>/path/to/sphere</uri>
     <pose>0 0 0.5 0 0 0</pose>
   </include>
   <include>
-    <uri>file://sphere</uri>
+    <uri>/path/to/sphere</uri>
     <name>sphere1</name>
     <pose>0 0 1 0 0 0</pose>
   </include>
   <include>
-    <uri>file://sphere</uri>
+    <uri>/path/to/sphere</uri>
     <name>sphere2</name>
     <pose>1 0 1 0 0 0</pose>
   </include>
@@ -158,7 +172,7 @@ Consider the following example.
 ```
 <model name="PM">
   <include>
-    <uri>file://sphere</uri>
+    <uri>/path/to/sphere</uri>
     <pose>0 0 0.5 0 0 0</pose>
     <name>sphere</name>
   </include>
@@ -202,7 +216,7 @@ model and another in a nested model:
 <model name="spheres">
   <link name="body"/>
   <include>
-    <uri>file://sphere</uri>
+    <uri>/path/to/sphere</uri>
     <pose>0 0 0.5 0 0 0</pose>
     <name>sphere</name>
   </include>
@@ -223,12 +237,12 @@ snippet demonstrates this usage:
 <model name="spheres">
   <link name="body"/>
   <include>
-    <uri>file://sphere</uri>
+    <uri>/path/to/sphere</uri>
     <pose>0 0 0.5 0 0 0</pose>
     <name>sphere1</name>
   </include>
   <include>
-    <uri>file://sphere</uri>
+    <uri>/path/to/sphere</uri>
     <pose>1 0 0.5 0 0 0</pose>
     <name>sphere2</name>
   </include>
