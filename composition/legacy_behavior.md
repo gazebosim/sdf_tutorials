@@ -156,6 +156,8 @@ example.
 </model>
 ```
 
+#### libsdformat's implementation of `<include>` in models
+
 `libsdformat`'s current implementation of the `<include>` tag works by copying
 all links and joints of the child model into the parent model with their poses
 modified to be relative to the parent model frame. To avoid name collisions,
@@ -325,6 +327,39 @@ model with the syntax `model_name::link_name`. However, this is not recommended
 as it breaks encapsulation. The model is no longer standalone, and requires
 hard coding the name of the parent sibling model in the definition of the child
 model.
+
+## Using `<include>` in `<world>`
+
+When the `<include>` tag is used in worlds the included model is simply copied
+into the world with its properties modified as specified by elements such as
+`<include><name>` and `<include><pose>`. Other than these modifications, the
+model behaves as though it was defined directly inside the world element. The
+child elemnts of the `<include>` tag, such as `<uri>`, `<name>` and `<pose>`
+are processed by `libsdformat` as described in the [Including
+a model](#including-a-model) section.
+
+The following example shows the use of the `<include>` tag to create a world
+that contains multiple instances of the `sphere` model shown in the earlier
+example.
+
+```
+<world name="W">
+  <include>
+    <uri>/path/to/sphere</uri>
+    <pose>0 0 0.5 0 0 0</pose>
+  </include>
+  <include>
+    <uri>/path/to/sphere</uri>
+    <name>sphere1</name>
+    <pose>0 0 1 0 0 0</pose>
+  </include>
+  <include>
+    <uri>/path/to/sphere</uri>
+    <name>sphere2</name>
+    <pose>1 0 1 0 0 0</pose>
+  </include>
+</model>
+```
 
 
 <!--# References-->
