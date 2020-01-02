@@ -104,6 +104,9 @@ The following frame types are implicitly introduced:
   link at its origin defined by `//link/pose`.
 * Joint frames: each joint has a frame named `//joint/@name` attached to the
   child link at the joint's origin defined by `//joint/pose`.
+  As a direct consequence, `world` is no longer permitted to be specified
+  as a child link of a joint, since that would break encapsulation of the
+  model.
 * Model frame: each model has a frame that is attached to one of its links
   (see [section 2.1](#2-1-implicit-frame-defined-by-model-pose-attached-to-canonical-link)
   for the definition of a model's canonical link).
