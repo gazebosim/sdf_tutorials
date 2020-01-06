@@ -1385,7 +1385,7 @@ Each API returns an error code if errors are found during parsing.
 
 2.  **Name attribute checking:**
     Check that name attributes are not an empty string `""`,
-    *that they are not reserved (`__.*__` or `world`)* and that sibling
+    *that they are not reserved (*`__.*__` *or* `world`*)* and that sibling
     elements of *any* type have unique names.
     This includes but is not limited to models, actors, links, joints,
     collisions, visuals, sensors, and lights.
@@ -1522,7 +1522,7 @@ There are *seven* phases for validating the kinematics data in a world:
 
 2.  **Name attribute checking:**
     Check that name attributes are not an empty string `""`,
-    *that they are not reserved (`__.*__` or `world`)* and that sibling
+    *that they are not reserved (*`__.*__` *or* `world`*)* and that sibling
     elements of *any* type have unique names.
     This check can be limited to `//world/model/@name`
     *and `//world/frame/@name`*
