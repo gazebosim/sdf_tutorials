@@ -104,6 +104,9 @@ The following frame types are implicitly introduced:
   link at its origin defined by `//link/pose`.
 * Joint frames: each joint has a frame named `//joint/@name` attached to the
   child link at the joint's origin defined by `//joint/pose`.
+  As a direct consequence, `world` is no longer permitted to be specified
+  as a child link of a joint, since that would break encapsulation of the
+  model.
 * Model frame: each model has a frame that is attached to one of its links
   (see [section 2.1](#2-1-implicit-frame-defined-by-model-pose-attached-to-canonical-link)
   for the definition of a model's canonical link).
@@ -1381,7 +1384,8 @@ Each API returns an error code if errors are found during parsing.
     [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
 
 2.  **Name attribute checking:**
-    Check that name attributes are not an empty string `""`, and that sibling
+    Check that name attributes are not an empty string `""`,
+    *that they are not reserved (*`__.*__` *or* `world`*)* and that sibling
     elements of *any* type have unique names.
     This includes but is not limited to models, actors, links, joints,
     collisions, visuals, sensors, and lights.
@@ -1392,8 +1396,8 @@ Each API returns an error code if errors are found during parsing.
     For each joint, check that the parent and child link names are different
     and that each match the name of a sibling link to the joint,
     with the following exception:
-    if "world" is specified as a link name but there is no sibling link
-    with that name, then the joint is attached to a fixed reference frame.
+    if "world" is specified as a *parent* link name,
+    then the joint is attached to a fixed reference frame.
 
 4.  ***Check `//model/@canonical_link` attribute value:***
     If the `//model/@canonical_link` attribute exists and is not an empty
@@ -1517,7 +1521,8 @@ There are *seven* phases for validating the kinematics data in a world:
     [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
 
 2.  **Name attribute checking:**
-    Check that name attributes are not an empty string `""`, and that sibling
+    Check that name attributes are not an empty string `""`,
+    *that they are not reserved (*`__.*__` *or* `world`*)* and that sibling
     elements of *any* type have unique names.
     This check can be limited to `//world/model/@name`
     *and `//world/frame/@name`*
