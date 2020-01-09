@@ -28,10 +28,10 @@ into the parent model with the help of the `<include>` tag.
 
 Models can be nested inside other models by directly defining the nested model
 inside the `<model>` tag of the parent model. The following snippet shows
-a nested model `sphere` defined inside a parent model `PM`.
+a nested model `sphere` defined inside a parent model `Pm`.
 
 ```
-<model name="PM">
+<model name="Pm">
   <link name="body"/>
   <model name="sphere">
     <pose>0 0 0.5 0 0 0</pose>
@@ -40,6 +40,9 @@ a nested model `sphere` defined inside a parent model `PM`.
 </model>
 
 ``` 
+> **Note** The current version of libsdformat's DOM API does not support models
+> defined directly inside parent models. Such models can be accessed, using the
+> `Element` API.
 
 ### Defining models in separate files
 
@@ -138,7 +141,7 @@ that contains multiple instances of the `sphere` model shown in the earlier
 example.
 
 ```
-<model name="PM">
+<model name="Pm">
   <include>
     <uri>/path/to/sphere</uri>
     <pose>0 0 0.5 0 0 0</pose>
@@ -226,16 +229,13 @@ regardless of the value of the `<use_parent_model_frame>` element.
 Whether nested by direct definition or through the use of the `<include>` tag,
 the following characteristics are true about nested models.
 
-<!--TODO-->
-<!--* Name uniqueness of sibling nested models-->
-
 ### Pose and nested models 
 
 The pose of a nested model is expressed with respect to the parent model.
 Consider the following example.
 
 ```
-<model name="PM">
+<model name="Pm">
   <include>
     <uri>/path/to/sphere</uri>
     <pose>0 0 0.5 0 0 0</pose>
@@ -251,14 +251,14 @@ Consider the following example.
 </model>
 ```
 
-The pose of the `sphere` model is translated `0.5m` in the `z` direction
-relative to the origin of `PM`.
+The pose of the `sphere` model is translated 0.5 meter in the `z` direction
+relative to the origin of `Pm`.
 
 The poses of links inside a nested model are expressed with respect to the
 frame of the model that contains them. In the example above, the pose of link
-`L1` is translated `1m` in the `x` direction relative to the origin of `M1`
-, which, in turn is translated `1m` in the `y` direction relative to the origin
-of `PM`.
+`L1` is translated 1 meter in the `x` direction relative to the origin of `M1`
+, which, in turn is translated 1 meter in the `y` direction relative to the origin
+of `Pm`.
 
 ### Joints and nested models 
 
@@ -334,7 +334,7 @@ When the `<include>` tag is used in worlds the included model is simply copied
 into the world with its properties modified as specified by elements such as
 `<include><name>` and `<include><pose>`. Other than these modifications, the
 model behaves as though it was defined directly inside the world element. The
-child elemnts of the `<include>` tag, such as `<uri>`, `<name>` and `<pose>`
+child elements of the `<include>` tag, such as `<uri>`, `<name>` and `<pose>`
 are processed by `libsdformat` as described in the [Including
 a model](#including-a-model) section.
 
