@@ -1418,7 +1418,8 @@ Each API returns an error code if errors are found during parsing.
 
     6.1 Add a vertex for the implicit frame of each link in the model.
 
-    6.2 Add a vertex for the implicit model frame with an edge connecting to the
+    6.2 Add a vertex for the implicit model frame. If the model is not static,
+        add an edge connecting this vertex to the
         vertex of the model's canonical link.
 
     6.3 Add vertices for the implicit frame of each joint with an edge
@@ -1568,8 +1569,8 @@ There are *seven* phases for validating the kinematics data in a world:
         then the `//world/frame` corresponding to that vertex is a fixed
         inertial frame.
         If the directed edges lead to a model, then the `//world/frame`
-        corresponding to that vertex is attached to the canonical link of that
-        model.
+        corresponding to that vertex is attached to the implicit model frame
+        of that model.
 
 6.  ***Check `//pose/@relative_to` attribute values:***
     For each `//model/pose` and `//world/frame/pose`
