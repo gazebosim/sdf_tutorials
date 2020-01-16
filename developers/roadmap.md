@@ -43,6 +43,6 @@ specification (as well as the caveats):
         * Does not support specifying poses of free-floating bodies (as initial
         conditions).
         * Adds extra semantics to `//pose/frame` and `//frame` elements.
-    * 0.1x.0 (**released**): SDFormat 1.7.
+    * 0.14.0 (**released**): SDFormat 1.7.
 
 If you would like your project listed here, please [make a pull request](https://bitbucket.org/osrf/sdf_tutorials/pull-requests/).
