@@ -94,14 +94,33 @@ More details about the directory structure can be found
 #### Including a model
 
 A model that has been defined in a model database can be added to a parent
-model using the `<include>` tag. The `<uri>` child element specifies the
-location of the model directory. In the `libsdformat`, the URI specified in the
-`<uri>` element is handled in the manner and order shown below. Each step is
-taken until the model is found:
+model using the `<include>` tag.
+The `<include>` tag may contain the following elements that specify the
+location of the model and optionally override some of its properties:
 
-  1. For a URI that begins with a user defined prefix, such as `model://`,
-     `libsdformat` lets users specify a custom prefix and a corresponding set
-     of paths to be searched when a URI with the custom prefix is found.
+  * `<uri>`: A string used to indicate the location of the model directory to
+  be included. This is described in more detail below.
+  * `<name>`: Overrides the name of the nested model. References from the
+  parent model to elements inside the nested model must take into account this
+  new name. This new name must also be unique among sibling nested models.
+  * `<pose>`: Overrides the pose of the nested model. The pose is specified
+  with respect to the parent model frame.
+  * `<static>`: Overrides the static value of the included model.
+  * `<plugin>`: A plugin element to be added to the list of plugins associated
+  with the included model.
+
+In `libsdformat`, the contents of the `<uri>` element are passed to the
+[sdf::findFile](https://bitbucket.org/osrf/sdformat/src/1a3f95acdc3cd86ab99713f85ddb2c54226c4de9/src/SDF.cc#lines-58:167)
+function defined in
+[sdf/SDFImpl.hh](https://bitbucket.org/osrf/sdformat/src/1a3f95acdc3cd86ab99713f85ddb2c54226c4de9/include/sdf/SDFImpl.hh#lines-55:65).
+This function searches for the model files using the steps in the following
+order until the model is found:
+
+  1. Users can define paths on their system associated with a specific URI
+     scheme using [sdf::addURIPath](https://bitbucket.org/osrf/sdformat/src/1a3f95acdc3cd86ab99713f85ddb2c54226c4de9/include/sdf/SDFImpl.hh#lines-67:72).
+     For example, if `sdf::addURIPath("model://", path);` has been called,
+     including a `<uri>model:://sphere</uri>` will search the folder in `path`
+     for subfolders named `sphere`.
 
   1. `libsdformat` treats the URI as a directory path and proceeds to search
      for it within its installation `share` path.
@@ -123,18 +142,6 @@ taken until the model is found:
   1. Finally, `libsdformat` uses a mechanism by which users can register
      a custom callback function for URIs that could not be found by any of the
      previous methods.
-
-The `<include>` tag contains additional child elements that specify certain
-properties of the included model.
-
-  * `<name>`: Overrides the name of the nested model. References from the
-  parent model to elements inside the nested model must take into account this
-  new name. This new name must also be unique among sibling nested models.
-  * `<pose>`: Overrides the pose of the nested model. The pose is specified
-  with respect to the parent model frame.
-  * `<static>`: Overrides the static value of the included model.
-  * `<plugin>`: A plugin element to be added to the list of plugins associated
-  with the included model.
 
 The following example shows the use of the `<include>` tag to create a model
 that contains multiple instances of the `sphere` model shown in the earlier
