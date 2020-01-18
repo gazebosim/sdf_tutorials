@@ -106,7 +106,7 @@ taken until the model is found:
   1. `libsdformat` treats the URI as a directory path and proceeds to search
      for it within its installation `share` path.
 
-  1. `libsdformat` treats the URI as a directory path an proceeds to search for
+  1. `libsdformat` treats the URI as a directory path and proceeds to search for
      it in the file system. If the URI is an absolute path, `libsdformat`
      checks if the path exists. Otherwise, `libsdformat` searches for the path
      relative to the current working directory of the process that uses
