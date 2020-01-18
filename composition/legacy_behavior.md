@@ -219,7 +219,8 @@ The result of processing `ParentModel` results in the following model
 </model>
 ```
 
-> **Note** Due to a bug in libsdformat, the `xyz` vector of joint axes in
+> **Note** Due to a [bug in libsdformat](https://bitbucket.org/osrf/sdformat/issues/219),
+the `xyz` vector of joint axes in
 nested models is always interpreted to be expressed in the model frame
 regardless of the value of the `<use_parent_model_frame>` element.
 
