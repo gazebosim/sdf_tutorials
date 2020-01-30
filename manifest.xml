@@ -127,7 +127,18 @@
       <skill>advanced</skill>
     </tutorial>
 
-  </tutorials>
+    <tutorial title='Composition' ref='composition' type='documentation'>
+      <markdown version='1.5'>composition/legacy_behavior.md</markdown>
+      <description>
+          Describing existing behavior of composition in SDFormat.
+      </description>
+      <tags>
+        <tag>nesting</tag>
+        <tag>composition</tag>
+      </tags>
+      <skill>intermediate</skill>
+    </tutorial>
+ </tutorials>
 
   <!-- *************************************** -->
   <categories>
@@ -156,6 +167,7 @@
         <tutorial>spec_materials</tutorial>
         <tutorial>spec_world</tutorial>
         <tutorial>pose_frame_semantics</tutorial>
+        <tutorial>composition</tutorial>
       </tutorials>
     </category>
 
