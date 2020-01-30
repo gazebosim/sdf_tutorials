@@ -119,7 +119,7 @@ order until the model is found:
   1. Users can define paths on their system associated with a specific URI
      scheme using [sdf::addURIPath](https://bitbucket.org/osrf/sdformat/src/1a3f95acdc3cd86ab99713f85ddb2c54226c4de9/include/sdf/SDFImpl.hh#lines-67:72).
      For example, if `sdf::addURIPath("model://", path);` has been called,
-     including a `<uri>model:://sphere</uri>` will search the folder in `path`
+     including a `<uri>model://sphere</uri>` will search the folder in `path`
      for subfolders named `sphere`.
 
   1. `libsdformat` treats the URI as a directory path and proceeds to search
@@ -166,14 +166,14 @@ example.
 </model>
 ```
 
-#### libsdformat's implementation of `<include>` in models
+#### `libsdformat`'s implementation of `<include>` in models
 
 `libsdformat`'s current implementation of the `<include>` tag works by copying
 all links and joints of the child model into the parent model with their poses
 modified to be relative to the parent model frame. To avoid name collisions,
 the name of the nested model followed by `::` is prepended to the names of
 these links and joints. The following example shows how this works. Consider
-the following model named `ChildModel` and its parent model `ParentModel`
+the following model named `ChildModel` and its parent model `ParentModel`:
 
 ```
 <model name="ChildModel">
