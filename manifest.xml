@@ -116,10 +116,21 @@
       <skill>advanced</skill>
     </tutorial>
 
-    <tutorial title='Model Composition' ref='nesting' type='documentation'>
+    <tutorial title="Roadmap" ref='roadmap' type='documentation'>
+      <markdown version="1.7">developers/roadmap.md</markdown>
+      <description>
+        Proposal for supporting custom elements and attributes in SDFormat and libsdformat.
+      </description>
+      <tags>
+        <tag>roadmap</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
+    <tutorial title='Composition' ref='composition' type='documentation'>
       <markdown version='1.5'>composition/legacy_behavior.md</markdown>
       <description>
-          Describing existing behavior for model level composition.
+          Describing existing behavior of composition in SDFormat.
       </description>
       <tags>
         <tag>nesting</tag>
@@ -128,18 +139,17 @@
       <skill>intermediate</skill>
     </tutorial>
 
-    <tutorial title="Model Composition: Proposed behavior" ref='composition_proposal' type='proposal'>
+    <tutorial title="Composition: Proposed behavior" ref='composition_proposal' type='proposal'>
       <markdown version="2.0">composition/proposal.md</markdown>
       <description>
-          Propose new beahvior for model level composition.
+          Propose new behavior for model level composition.
       </description>
       <tags>
-        <tag>include</tag>
-        <tag>model</tag>
+        <tag>nesting</tag>
+        <tag>composition</tag>
       </tags>
       <skill>advanced</skill>
     </tutorial>
-
  </tutorials>
 
   <!-- *************************************** -->
@@ -169,7 +179,7 @@
         <tutorial>spec_materials</tutorial>
         <tutorial>spec_world</tutorial>
         <tutorial>pose_frame_semantics</tutorial>
-        <tutorial>nesting</tutorial>
+        <tutorial>composition</tutorial>
       </tutorials>
     </category>
 
@@ -179,6 +189,13 @@
         <tutorial>pose_frame_semantics_proposal</tutorial>
         <tutorial>custom_elements_attributes_proposal</tutorial>
         <tutorial>composition_proposal</tutorial>
+      </tutorials>
+    </category>
+
+    <category title="For Developers" skill="advanced" ref="developers">
+      <description>Implementation information for developers.</description>
+      <tutorials>
+        <tutorial>roadmap</tutorial>
       </tutorials>
     </category>
 

@@ -627,7 +627,7 @@ These three phases are listed below:
 2.  **Name attribute checking:**
     Check that name attributes are not an empty string `""`, and that sibling
     elements of the same type have unique names.
-    This check can be limited to `//world/model[@name]`
+    This check can be limited to `//world/model/@name`
     since other names will be checked in the following step.
     This step is distinct from validation with the schema because the schema
     only confirms the existence of name attributes, not their content.
