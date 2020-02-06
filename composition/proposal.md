@@ -324,14 +324,14 @@ As an example:
 ~~~xml
 <model name="super_model">
   <include model_pose_frame="bottom_left_leg">
-      <name>table</name>
-      <uri>file://table.sdf</uri>
-      <pose/>
+    <name>table</name>
+    <uri>file://table.sdf</uri>
+    <pose/>
   </include>
   <include model_pose_frame="bottom_center">
-      <name>mug</name>
-      <uri>file://mug.sdf</uri>
-      <pose relative_to="table::top_center"/>
+    <name>mug</name>
+    <uri>file://mug.sdf</uri>
+    <pose relative_to="table::top_center"/>
   </include>
 </model>
 ~~~
@@ -380,11 +380,11 @@ The following is intended to work:
 ~~~xml
 <!-- gripper.sdf -->
 <model name="gripper">
-    <link name="body"/>
+  <link name="body"/>
 
-    <frame name="mount_point" attached_to="body">
-      <pose>{X_GCg}</pose>
-    </frame>
+  <frame name="mount_point" attached_to="body">
+    <pose>{X_GCg}</pose>
+  </frame>
 </model>
 ~~~
 
@@ -420,24 +420,24 @@ You cannot achieve the above by defining the weld in the gripper itself, e.g. by
 ~~~xml
 <!-- BAD_gripper_with_weld.sdf -->
 <model name="gripper">
-    <pose>{X_AG}</pose>
-    <link name="gripper">
-    <joint name="weld" type="fixed">
-        <parent>::arm::body</parent> <!-- ERROR: Does not exist in this file -->
-        <child>body</child>
-    </joint>
+  <pose>{X_AG}</pose>
+  <link name="gripper">
+  <joint name="weld" type="fixed">
+    <parent>::arm::body</parent> <!-- ERROR: Does not exist in this file -->
+    <child>body</child>
+  </joint>
 </model>
 ~~~
 
 ~~~xml
 <!-- BAD_arm_and_gripper.sdf -->
 <model name="arm_and_gripper">
-    <include>
-        <uri>arm.sdf</uri>
-    </include>
-    <include>
-        <uri>gripper_with_weld.sdf</uri>
-    </include>
+  <include>
+    <uri>arm.sdf</uri>
+  </include>
+  <include>
+    <uri>gripper_with_weld.sdf</uri>
+  </include>
 </model>
 ~~~
 
@@ -463,51 +463,51 @@ Files:
 ~~~xml
 <!-- arm.sdf -->
 <model name="arm">
-    <link name="link"/>
-    <frame name="flange_mount">
-      <pose frame="link">{X_ADa}</pose>
-    </frame>
+  <link name="link"/>
+  <frame name="flange_mount">
+    <pose frame="link">{X_ADa}</pose>
+  </frame>
 </model>
 ~~~
 
 ~~~xml
 <!-- flange_electric.sdf -->
 <model name="flange_electric">
-    <link name="body"/>
+  <link name="body"/>
 
-    <frame name="mount">
-      <pose frame="body">{X_FDf}</pose>
-    </frame>
+  <frame name="mount">
+    <pose frame="body">{X_FDf}</pose>
+  </frame>
 
-    <frame name="gripper_mount">
-      <pose frame="body">{X_FCf}</pose>
-    </frame>
+  <frame name="gripper_mount">
+    <pose frame="body">{X_FCf}</pose>
+  </frame>
 </model>
 ~~~
 
 ~~~xml
 <!-- flange_pneumatic.sdf -->
 <model name="flange_pneumatic">
-    <link name="body"/>
+  <link name="body"/>
 
-    <frame name="mount">
-      <pose frame="body">{X_FDf}</pose>
-    </frame>
+  <frame name="mount">
+    <pose frame="body">{X_FDf}</pose>
+  </frame>
 
-    <frame name="gripper_mount">
-      <pose frame="body">{X_FCf}</pose>
-    </frame>
+  <frame name="gripper_mount">
+    <pose frame="body">{X_FCf}</pose>
+  </frame>
 </model>
 ~~~
 
 ~~~xml
 <!-- gripper.sdf -->
 <model name="gripper">
-    <link name="gripper"/>
+  <link name="gripper"/>
 
-    <frame name="mount">
-        <pose>{X_GCg}</pose>
-    </frame>
+  <frame name="mount">
+      <pose>{X_GCg}</pose>
+  </frame>
 </model>
 ~~~
 
