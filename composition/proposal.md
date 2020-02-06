@@ -549,7 +549,7 @@ With the proposed nesting, defining `R1` as `robot_1`s model frame, and `R2`
     <include file="arm.sdf">
       <name>arm</name>
       <uri>file://arm.sdf</uri>
-      <pose>{X_MR2}</pose>
+      <pose relative_to="::robot_1::__model__">{X_R1R2}</pose>
     </include>
     <include model_pose_frame="mount">
       <name>flange</name>
