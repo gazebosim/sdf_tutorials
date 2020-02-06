@@ -96,6 +96,11 @@ it would be ideal to have all of these items refer to frames (implicit and
 explicit). `//pose` and `//frame` already refer to frames, so making joints
 to refer to frames would also simplify things.
 
+The implementation for this should generally stay the same, with the only
+change being that the frame's underlying link would be referred to, and the
+default `//joint/pose/@relative_to` would end up incorporting the child frame's
+pose.
+
 This allows easier swapping out of components.
 
 **WARNING**: This would motivate preserving frames through saving SDFormat
