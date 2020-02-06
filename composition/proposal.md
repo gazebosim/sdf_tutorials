@@ -281,7 +281,7 @@ Only the following elements can be added to a model via an `/include`:
 
 ##### 1.4.2 `//include/pose`
 
-`//include/pose` dictactes how to override the model's pose defined via
+`//include/pose` dictates how to override the model's pose defined via
 `//model/pose`. When this is specified, *all* poses in the included model will
 be rigidly transformed by the given pose (regardless of joint fixtures),
 relative to the included `//model/@canonical_link`.
