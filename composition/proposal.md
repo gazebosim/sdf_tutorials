@@ -1,11 +1,22 @@
 # Model composition: Proposed behavior
 
+## Introduction
+
+This proposal suggests changes to the semantics of composition, targetting
+SDFormat 1.8. As described in the
+[legacy behavior tutorial](/tutorials?tut=composition), SDFormat 1.6 has the
+`//include` tag which admits composition, but it does not have many explicit
+provisions for encapsulation and modularity, as well as the ability to include
+models of other formats. This changes proposed here intend to specify the
+encapsulation to admit better semantics for assembly, and a means to make the
+`//include` tag admit other models.
+
 ## Document summary
 
 The proposal includes the following sections:
 
 *   Motivation: background and rationale.
-*   Proposed changes: Each additon / subtraction to SDFormat.
+*   Proposed changes: Each additon / subtraction to SDFormat and `libsdformat`.
 *   Examples: Long form code samples.
 
 ## Motivation
@@ -15,34 +26,48 @@ when making nontrivial assemblies, and especially when handling different
 versions of worlds or robots (e.g. adding multiple instances of a robot, or
 swapping out grippers).
 
-As described in the [legacy behavior tutorial](/tutorials?tut=spec_world),
-SDFormat 1.6 has the `//include` tag which accommodates these use cases, but it
-does not provide guidance on modularity / encapsulation, and by the same token
-does not strictly define how relationships among assemblies should be defined.
+At present (SDFormat 1.7), the nesting a model via the `//include` tag or via
+direct elements has not been explicitly specified to perform the same
+operations, part of the reason being that nesting directly is not actually implemented in the current `libsdformat` (9.1.0). Nesting of models generally
+implies that the elements can be referred via a form of scope, such as
+`{scope}::{name}`. However, `::` is not a special token and thus can be
+used to create "false" hierarchy or potential collision. Additionally, there is
+no way for elements within the same file to refer "up" to another element, e.g. with in a robot assembly, adding a weld between a gripper and an arm when the
+two are sibiling models.
 
-<!--
-TODO: At what scope could parsing stages be added, where custom model formats
-could be loaded? May be very difficult...
--->
+For posturing an included model, there is no means by which the user can
+specify which included frame to posture via `//include/pose`. The target frame
+to move will be the
+[canonical link](/tutorials?tut=pose_frame_semantics_proposal#2-model-frame-and-canonical-link).
+Therfore, if you wanted to weld a gripper to an end effector, but the canonical
+link for the gripper is not at the weld point (or it has multiple potential
+weld points), you must duplicate this information in the top-level.
+
+For including models, it is nice to have access to other model types, e.g.
+including a custom model specified as a `*.yaml` or connecting to some other
+legacy format. Generally, the interface between models only really needs access
+to explicit and implicit frames (for welding joints, attaching sensors, etc.).
+The present implementation of `//include` requires that SDFormat know
+*everything* about the included model, whereas a user cound instead provide an
+adapter to provide the minimal information necessary for assembly.
 
 ## Proposed changes
 
-### Usability: Permit direct files in `//include/uri`
+### 0 Terminology
 
-Specifying a directory permits usage of `model.config` manifests, which permits
-better compatibilty for a model when being loaded by software with different
-SDFormat specification support. However, it then requires overhead that may not
-matter for some applications.
+* **interface elements** - Minimum elements necessary for assembling models.
+These should really be names and frames (implicit and explicit), and
+transitively, the links they refer to.
 
-This proposal suggests that `//include/uri` permits referencing files directly.
+### 1 Nesting and Encapsulation
 
-### Bottom-Up Encapsulation for Files
+#### 1.1 Standalone Components Individual Files
 
 To enable "bottom-up" assemblies (or piece part design) to maximize modularity,
 individual files should generally be viewed as standalone: all references in
 the file should only refer to items "under" that file (e.g. links, joints, or
 frames defined in the file, or links, joints, or frames defined in included
-files). This entails that:
+files). More explicitly:
 
 * Individual files should *not* be able to have a deferred reference to
 something that isn't defined in that file (like Python modules).
@@ -51,90 +76,45 @@ all initially specified `//pose` elements within a file should be rigidly
 related to one another, and should not be able to have their poses mutated by
 an external site (to simplify pose resolution).
 
-#### Do not permit overriding canonical link
-
-`<include/>` *should not* be able to override canonical link.
-
-### Encourage using models as an "API": abstraction and conventions
+#### 1.2 Interface Elements
 
 Assemblies require interfaces, and those interfaces should be able to conceal internal details while still providing useful abstractions, such as welding
 points when swapping out components.
 
-As such, you should consider levels of abstraction; use frames frequently,
-especially for mounting points. If that mounting point physically moves at some
-point, you update your model, and any downstream references can be left
-untouched.
+As such, you should consider levels of abstraction and interface. In this case,
+frames will be in the main interface point.
 
-If you need to use intermediate frames that are not intended to be used for
-public consumption, please prefix them with a single `_`, like Python.
+This permits a user to specify a mounting point as an interface, move that
+within the model, and not have to update other downstream components.
 
-#### Permit `//joint/parent` and `//joint/child` to refer to frames
+##### 1.2.1 Frame Naming Suggestion
 
-This allows joints (like welds) to be abstracted, and thus can simplify
-swapping out components.
+If you need to use intermediate within frames that are not intended to be used
+for public consumption, please prefix them with a single `_`, like Python.
+
+##### 1.2.2 Scope of Interface Elements
+
+To avoid the complication of inter-element ambiguity, or multiple levels of
+scope resolution, all interface elements within an immediate `//model` should be
+referencable by only *one* level of nesting. If there are two levels of nesting for a name (e.g. `a::b::frame`), then `a` and `b` will be models. `b` will
+never be a link or a visual or anything else.
+
+##### 1.2.3 `//joint/parent` and `//joint/child` become frames, not just links
+
+Assuming that assembly happens either by posturing (e.g. `//pose/@relative_to`),
+attaching (`//frame/@attached_to`), or joints (`//joint`), then it would be
+ideal to have all of these items refer to frames. `//pose` and `//frame`
+already refer to frames, so admitting joints to refer to frames would also
+simplify things.
+
+This allows easier swapping out of components.
 
 **WARNING**: This would motivate preserving frames through saving SDFormat
 files via Gazebo / libsdformat, esp. if they become the "API".
 
-### Posturing frame for `//include/pose`.
+#### 1.3 Name Scoping and Cross-Referencing
 
-It is useful to place an object using a semantic relationship between two
-objects, e.g. place the bottom-center of a mug upright on the top-center of a
-table.
-
-This can be achieved by specifying `//include/posture_frame`, e.g.:
-
-~~~
-<include>
-    <uri>file://table.sdf</uri>
-    <posture_frame>bottom_left_log</posture_frame>
-    <pose/>
-</include>
-<include>
-    <uri>file://mug.sdf</uri>
-    <posture_frame>bottom_center</posture_frame>
-    <pose relative_to="table/top_center"/>
-</include>
-~~~
-
-# **TODO**: Need to work on following text!
-
-### Namespacing
-
-### Element Nesting
-
-Within a single `//model`, there should only be *one* level of nesting. Thus,
-there is no complication of inter-element ambiguity, or multiple levels of
-scope resolution.
-
-*TODO(eric): Update this if we permit //link/frame... but the more I write, the
-more I strongly dislike adding complexity solely for the sake of sugar...*
-
-For example, an atlernative formulation to the abstract frame placement, placing
-`X_PJp` relative to the link element.
-
-~~~xml
-<model name="abstract_joint_frames">
-  <link name="parent"/>
-  <frame name="parent_j1" attached_to="parent">
-    <pose>{X_PJp}</pose>
-  </frame>
-  <joint name="joint1">
-    <pose frame="parent/j1"/>
-    <parent>parent</parent>
-    <child>child</child>
-  </joint>
-  <link name="child">
-    <pose frame="joint1">{X_JcC}</pose>
-    <!-- Or: <pose frame="parent_j1">{X_JcC}</pose> -->
-  </link>
-</model>
-~~~
-
-*TODO(eric): [See discussion](https://bitbucket.org/osrf/sdf_tutorials/pull-requests/14/pose-frame-semantics-suggested-semantics/activity#comment-100143077).
-Determine explicit semantics about references for `//link/frame`.*
-
-### Model Nesting: Cross-Referencing
+#### 1.3.1 Basics
 
 Syntax:
 
@@ -158,10 +138,59 @@ as it
 * The default `//pose/@relative_to` will refer to the *closest* enclosing
 `//model`, not the file.
  
-## Examples
+#### 1.3.2 Model Frame Cross-Reference
 
+For a model named `{name}`, the only way to refer to the model frame is by
+specifying `{name}::__model__`. Referring to `{name}` is invalid.
 
-### Positive Example
+This implies that for a name like `a::b`, `a` is a model, `b` is a frame. For a
+name like `a::b::c`, `a` and `b` are models, and `c` is the frame.
+
+#### 1.4 Posturing Frame for `//include/pose`
+
+It is useful to place an object using a semantic relationship between two
+objects, e.g. place the bottom-center of a mug upright on the top-center of a
+table.
+
+This can be achieved by specifying `//include/pose/@posture_frame`, e.g.:
+
+~~~
+<include>
+    <uri>file://table.sdf</uri>
+    <pose posture_frame="bottom_left_log"/>
+</include>
+<include>
+    <uri>file://mug.sdf</uri>
+    <pose posture_frame="bottom_center" relative_to="table/top_center"/>
+</include>
+~~~
+
+##### Do not permit overriding canonical link
+
+`<include/>` *should not* be able to override canonical link.
+
+#### 1.5 Minimal Interface Types for Non-SDFormat Models
+
+... Suggested API goes here.
+
+#### 1.6 Extras
+
+Need to sort these out...
+
+##### Usability: Permit direct files in `//include/uri`
+
+Specifying a directory permits usage of `model.config` manifests, which permits
+better compatibilty for a model when being loaded by software with different
+SDFormat specification support. However, it then requires overhead that may not
+matter for some applications.
+
+This proposal suggests that `//include/uri` permits referencing files directly.
+
+### Examples
+
+TODO: These are currently old.
+
+#### Weld Arm and Gripper
 
 If composing and welding an arm and a gripper:
 
@@ -189,13 +218,13 @@ If composing and welding an arm and a gripper:
         <pose frame="arm">{X_AG}</pose>
     </include>
     <joint name="weld" type="fixed">
-        <parent>arm/body</parent>
-        <child>gripper/body</child>
+        <parent>arm::body</parent>
+        <child>gripper::body</child>
     </joint>
 </model>
 ~~~
 
-### Negative Example
+#### Negative Example
 
 You cannot achieve the above by defining the weld in the gripper itself:
 
@@ -209,8 +238,8 @@ You cannot achieve the above by defining the weld in the gripper itself:
     <pose>{X_AG}</pose>
     <link name="gripper">
     <joint name="weld" type="fixed">
-        <parent>arm/body</parent> <!-- INVALID: Does not exist in this file -->
-        <child>gripper/body</child>
+        <parent>arm::body</parent> <!-- INVALID: Does not exist in this file -->
+        <child>gripper::body</child>
     </joint>
 </model>
 ~~~
@@ -226,7 +255,7 @@ You cannot achieve the above by defining the weld in the gripper itself:
 </model>
 ~~~
 
-### Simple Cross-Referencing
+#### Simple Cross-Referencing
 
 Consider the following example model, all defined in a single file:
 
@@ -237,7 +266,7 @@ Consider the following example model, all defined in a single file:
 
     <model name="child1">
         <link name="link1">
-            <pose frame="/link1"/>  <!-- VALID: Refers to parent's link1 -->
+            <pose frame="::link1"/>  <!-- VALID: Refers to parent's link1 -->
             <pose frame="link1"/>  <!-- INVALID: Circular -->
         </link>
         <frame name="some_frame">
@@ -247,7 +276,7 @@ Consider the following example model, all defined in a single file:
 
     <model name="child2">
         <link name="link1">
-            <pose frame="/child1/link1"/>  <!-- VALID: Refers to child1's link1 -->
+            <pose frame="::child1::link1"/>  <!-- VALID: Refers to child1's link1 -->
         </link>
     </model>
 </model>
@@ -256,7 +285,7 @@ Consider the following example model, all defined in a single file:
 This implies that for scoping, it is *extremely* important that the parser to
 know that it's working with a single model file.
 
-### Robot Arm with Gripper
+#### Robot Arm with Gripper
 
 Frames:
 
