@@ -67,14 +67,15 @@ To enable "bottom-up" assemblies (or piece part design) to maximize modularity,
 individual files should generally be viewed as standalone: all references in
 the file should only refer to items "under" that file (e.g. links, joints, or
 frames defined in the file, or links, joints, or frames defined in included
-files). More explicitly:
+files).
 
-* Individual files should *not* be able to have a deferred reference to
+Individual files should *not* be able to have a deferred reference to
 something that isn't defined in that file (like Python modules).
-* In conjunction with the [pose frame semantics proposal](/tutorials?tut=pose_frame_semantics_proposal),
+
+In conjunction with the [pose frame semantics proposal](/tutorials?tut=pose_frame_semantics_proposal),
 all initially specified `//pose` elements within a file should be rigidly
 related to one another, and should not be able to have their poses mutated by
-an external site (to simplify pose resolution).
+an external site (in order to simplify pose resolution).
 
 #### 1.2 Interface Elements
 
@@ -86,14 +87,6 @@ frames will be in the main interface point.
 
 This permits a user to specify a mounting point as an interface, move that
 within the model, and not have to update other downstream components.
-
-##### 1.2.1 Scope of Interface Elements
-
-To avoid the complication of inter-element ambiguity, or multiple levels of
-scope resolution, all interface elements within an immediate `//model` should be
-referencable by only *one* level of nesting. If there are two levels of nesting
-for a name (e.g. `a::b::c`), then `a` and `b` will be models, and `c` will most
-likely be a frame. `b` will never be a link or a visual or anything else.
 
 ##### 1.2.2 `//joint/parent` and `//joint/child` become frames, not just links
 
@@ -119,21 +112,33 @@ in Python.
 
 #### 1.3 Name Scoping and Cross-Referencing
 
-#### 1.3.1 Scoping Types
+#### 1.3.1 Reserved Delimiter Token `::`
 
-There are only two types of scopes allowed: current scope (e.g. `mid_link`,
-`mid_model::mid_link`) and absolute scope (e.g. `::top_model::mid_model::mid_link`). Current scope can reference, but it can only reference *down* into nested models; relatve references can not be made
-*up* into parent models.
+The delimiter token `::` is intended to form scope, and thus should be
+reserved. No element names can be defined using this token.
 
-Scopes are syntax-based, i.e. defined by file or element composition. Welding
-joints, affixing frames, etc., does not change the scope of an element.
-Absolute scope is anchored according to the current *file* and its root
-element. If a document is a model, then the root model is *not* part of the
-absolute scope. However, if the document is a world file, then any root model
-is part of the absolute scope.
+*Alternatives Considered*: It would be more ideal to use `/` as the delimiter
+token, more in line with ROS. However, for legacy with existing Gazebo usages,
+SDFormat will stick with `::` for now.
+
+#### 1.3.2 Reference Types
+
+There are only two types of references allowed: **relative references**
+(e.g. `mid_link`, `mid_model::mid_link`) or **absolute references**
+(e.g. `::top_model::mid_model::mid_link`).
+
+Relative references can have no delimiters (immediate neighbors) or it can have
+delimiters, but the it can only reference *down* into nested models; relative
+references can not be made *up* into parent models. The only way to go up is to
+use absolute references.
+
+References contexts are defined by the files they belong in, as well as the element composition. Absolute references are anchored according to the current
+*file* and its root element. If a document is a model, then the root model is
+*not* part of the absolute scope. However, if the document is a world file,
+then any root model is part of the absolute scope.
 
 This convention is chosen to be a conservative start and avoid the need for
-shadowing.
+shadowing logic or trying to figure out relative reference syntax using `::`.
 
 The following inline examples have repeated elements just to show different
 flavors of the same expression, or invalid versions of an given expression. For
@@ -216,12 +221,20 @@ For a world file:
 </sdf>
 ~~~
 
-#### 1.3.2 No Implicit Names
+##### 1.3.2 Scope of Interface Elements
+
+To avoid the complication of inter-element ambiguity, or multiple levels of
+scope resolution, all interface elements within an immediate `//model` should be
+referencable by only *one* level of nesting. If there are two levels of nesting
+for a name (e.g. `a::b::c`), then `a` and `b` will be models, and `c` will most
+likely be a frame. `b` will never be a link or a visual or anything else.
+
+##### 1.3.3 No Implicit Name References
 
 There is no "implicit name" resolution; if a name does not exist in a
 requested scope, it is an error.
 
-##### 1.3.2.1 Model Frame Cross-Reference
+###### 1.3.3.1 Model Frame Cross-References
 
 For a model named `{name}`, the only way to refer to the model frame is by
 specifying `{name}::__model__`. Referring to `{name}` is invalid.
@@ -229,7 +242,7 @@ specifying `{name}::__model__`. Referring to `{name}` is invalid.
 This implies that for a name like `a::b`, `a` is a model, `b` is a frame. For a
 name like `a::b::c`, `a` and `b` are models, and `c` is the frame.
 
-#### 1.3.3 Cross-Referencing Rules
+##### 1.3.4 Cross-Referencing Rules
 
 Cross-referencing is only allowed between elements *in or under the same file*.
 
@@ -249,7 +262,7 @@ immediate parent `//model`.
 
 #### 1.4 `//include` Semantics
 
-#### 1.4.1 Permissible `//include` Elements
+##### 1.4.1 Permissible `//include` Elements
 
 `//include` can *only* be used to include models, not worlds.
 
@@ -396,6 +409,9 @@ The following is intended to work:
   </joint>
 </model>
 ~~~
+
+Note how there are no repetitions / inversions of values like `{X_ACa}` and
+`{X_GCg}`.
 
 ##### 1.2 Negative Example
 
