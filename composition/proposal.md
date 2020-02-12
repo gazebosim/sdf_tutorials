@@ -9,7 +9,7 @@ SDFormat 1.8. As described in the
 provisions for encapsulation and modularity, as well as the ability to include
 models of other formats. This changes proposed here intend to specify the
 encapsulation to admit better semantics for assembly, and a means to make the
-`//include` tag admit other models.
+`//include` tag admit models specified in other formats.
 
 ## Document summary
 
