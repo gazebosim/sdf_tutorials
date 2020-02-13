@@ -192,14 +192,9 @@ For a world file:
     <frame name="world_frame"/>
 
     <model name="top_model">
-      <frame name="top_frame" relative_to="world_frame"/> <!-- VALID / ERROR ???? -->
-      <!-- Question: Is the above valid or an error?
-      With current setup, can `//model/link/pose` or `//model/joint/pose` have
-      `@relative_to` refer to a world frame? Or is it only via `//model/pose`?
-      This may make backwards compatibility hard...
-      -->
-      <frame name="top_frame" relative_to="::world_frame"/>  <!-- VALID -->
-      <frame name="top_frame" relative_to="::simple_world::world_frame"/>  <!-- ERROR: Root world not part of scope. -->
+      <frame name="top_frame" attached_to="world_frame"/> <!-- ERROR: Bad scope.-->
+      <frame name="top_frame" attached_to="::world_frame"/>  <!-- VALID -->
+      <frame name="top_frame" attached_to="::simple_world::world_frame"/>  <!-- ERROR: Root world not part of scope. -->
 
       <link name="top_link">
         <pose relative_to="top_frame"/>  <!-- VALID -->
