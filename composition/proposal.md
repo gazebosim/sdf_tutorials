@@ -351,7 +351,7 @@ models, and `model://` URIs for Gazebo models.
 
 #### 1.5 Minimal Interface Types for Non-SDFormat Models
 
-**TODO**: Add this in.
+**TODO(eric.cousineau)**: Add this in a follow-up PR.
 
 ### Examples
 
