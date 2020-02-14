@@ -8,7 +8,7 @@ Eric Cousineau `<eric.cousineau@tri.global>`
 * **SDFormat Version**: 1.7
 * **`libsdformat` Version**: 9.0
 
-## Introudction
+## Introduction
 
 This proposal suggests a series of changes intended to support semantics for
 more expressivity of kinematics and coordinate frames in SDFormat 1.7.
