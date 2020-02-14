@@ -145,7 +145,7 @@
 
     <category title="Get Started" skill="beginner" ref="get_started">
       <description>
-        This section is no longer relevant. Please see the
+        This section will soon be removed. Please see the
         [Specification](/tutorials?cat=specification) or
         [Developer](/tutorials?cat=developers) sections intead.
       </description>
@@ -177,23 +177,23 @@
       </tutorials>
     </category>
 
+    <category title="SDF Proposals" skill="advanced" ref="pose_semantics_docs">
+      <description>These proposals suggest new behavior in SDF.</description>
+      <tutorials>
+        <tutorial>pose_frame_semantics_proposal</tutorial>
+        <tutorial>custom_elements_attributes_proposal</tutorial>
+      </tutorials>
+    </category>
+
     <category title="For Developers" skill="beginner" ref="developers">
       <description>
         Information for developers wishing to use libsdformat to parse the
         SDFormat specification.
       </description>
       <tutorials>
-        <tutorial>roadmap</tutorial>
         <tutorial>install</tutorial>
         <tutorial>quickstart</tutorial>
-      </tutorials>
-    </category>
-
-    <category title="SDF Proposals" skill="advanced" ref="pose_semantics_docs">
-      <description>These proposals suggest new behavior in SDF.</description>
-      <tutorials>
-        <tutorial>pose_frame_semantics_proposal</tutorial>
-        <tutorial>custom_elements_attributes_proposal</tutorial>
+        <tutorial>roadmap</tutorial>
       </tutorials>
     </category>
 
