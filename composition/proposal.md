@@ -128,15 +128,6 @@ SDFormat will stick with `::` for now.
 
 #### 1.3.2 Reference Types
 
-```
-
-a::b::c
-^a::b::c
-^^a::b::c
-..::a::b::c
-
-```
-
 As a conservative initial behavior, only **relative references** should be
 permitted. Those can either go *down* into nested models (e.g. `mid_link`,
 `mid_model::mid_link`), or can go *up*  using the `^` symbol (e.g.
@@ -239,6 +230,24 @@ For a world file:
   </world>
 </sdf>
 ~~~
+
+**Alternatives Considered for Reference Types**
+
+It was considered to not permit upwards references and only use downward o
+absolute references. This looks a bit better syntactically, but makes the
+references more dependent on the full context of a file. Relative references
+are more local.
+
+**Alternatives Considered for Reference Syntax**
+
+* Use `/` instead of `::`, and permit `../` for upwards references.
+    * This looks a bit more like a filesystem (more relevant to these semantics). However, there is inertia due to Gazebo's usage of `::`
+    for composition, in both SDFormat files and for models (and IPC channels /
+    topics in general).
+* Upwards references:
+    * `..::parent` - hard to parse, but would be better for changing the
+    separator later.
+    * `^::parent` - perhaps better?
 
 ##### 1.3.2 Scope of Interface Elements
 
@@ -401,6 +410,10 @@ If a file is relative, then it should be evaluated next to the file itself.
 models, and `model://` URIs for Gazebo models.
 
 #### 1.5 Minimal Interface Types for Non-SDFormat Models
+
+**TODO(eric.cousineau)**: Add this in a follow-up PR.
+
+#### 1.6 Proposed Parsing Stages
 
 **TODO(eric.cousineau)**: Add this in a follow-up PR.
 
