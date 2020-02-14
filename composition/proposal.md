@@ -128,22 +128,37 @@ SDFormat will stick with `::` for now.
 
 #### 1.3.2 Reference Types
 
-There are only two types of references allowed: **relative references**
-(e.g. `mid_link`, `mid_model::mid_link`) or **absolute references**
-(e.g. `::top_model::mid_model::mid_link`).
+```
 
-Relative references can have no delimiters (immediate neighbors) or it can have
-delimiters, but the it can only reference *down* into nested models; relative
-references can not be made *up* into parent models. The only way to go up is to
-use absolute references.
+a::b::c
+^a::b::c
+^^a::b::c
+..::a::b::c
 
-References contexts are defined by the files they belong in, as well as the element composition. Absolute references are anchored according to the current
-*file* and its root element. If a document is a model, then the root model is
-*not* part of the absolute scope. However, if the document is a world file,
-then any root model is part of the absolute scope.
+```
 
-This convention is chosen to be a conservative start and avoid the need for
-shadowing logic or trying to figure out relative reference syntax using `::`.
+As a conservative initial behavior, only **relative references** should be
+permitted. Those can either go *down* into nested models (e.g. `mid_link`,
+`mid_model::mid_link`), or can go *up*  using the `^` symbol (e.g.
+`^parent_frame`, `^parent_model::mid_link`).
+
+As a conservative initial behavior, shadowing will not be permitted. This
+ensures that each model is an explicit unit; any dependencies external to the
+model (but within the same file) will be visible with `^`.
+
+The parents and children of elements are defined by the XML structure of the
+document, not by physical topology. To enforce encapsulation, relative
+references are bounded according to the current *file* and its root element;
+e.g. the root element of a document (a model or world) cannot access parent
+elements.
+
+For simplicity, only **one** upwards reference can be made: `^parent` is valid,
+but `^^grandparent` is not. If such a connection is necessary, use intermediate
+frames.
+
+These conventions are chosen to be a conservative start and avoid the need for
+shadowing / recursion logic. The relative nature of referencing is chosen to
+permit easier manual editing / composition of documents.
 
 The following inline examples have repeated elements just to show different
 flavors of the same expression, or invalid versions of an given expression. For
@@ -156,28 +171,32 @@ a file whose root is a model:
 
     <link name="top_link">
       <pose relative_to="top_frame"/>  <!-- VALID -->
-      <pose relative_to="::top_frame"/>  <!-- VALID: Same as above -->
-      <pose relative_to="::top_model::top_frame"/>  <!-- ERROR: Root model not part of scope. -->
+      <pose relative_to="^some_unknown_frame"/>  <!-- ERROR: Violates encapsulation. -->
+      <pose relative_to="^top_model::top_frame"/>  <!-- ERROR: Violates encapsulation. -->
     </link>
 
     <model name="mid_model">
       <link name="mid_link">
-        <pose relative_to="::top_link"/>  <!-- VALID. -->
-        <pose relative_to="top_link"/>  <!-- ERROR: Shadowing. -->
+        <pose relative_to="^top_link"/>  <!-- VALID. -->
+        <pose relative_to="^^some_unknown_frame"/>  <!-- ERROR: Cannot go up twice. -->
+        <pose relative_to="top_link"/>  <!-- ERROR: Shadowing is invalid. -->
       </link>
 
       <model name="bottom_model">
         <link name="bottom_link">
-          <pose relative_to="::mid_model::mid_link"/>  <!-- VALID -->
+          <pose relative_to="^mid_link"/>  <!-- VALID -->
           <pose relative_to="mid_model::mid_link"/>  <!-- ERROR: Shadowing. -->
           <pose relative_to="mid_link"/>  <!-- ERROR: Shadowing. -->
         </link>
+
+        <frame name="bottom_frame" attached_to="bottom_link"/>  <!-- VALID -->
+        <frame name="bottom_frame" attached_to="^bottom_model::bottom_link"/>  <!-- VALID, but not recommended -->
       </model>
 
       <frame name="mid_to_bottom" attached_to="bottom_model::bottom_link"/>  <!-- VALID -->
-      <frame name="mid_to_bottom" attached_to="::mid_model::bottom_model::bottom_link"/>  <!-- VALID -->
+      <frame name="mid_to_bottom" attached_to="^mid_model::bottom_model::bottom_link"/>  <!-- VALID, but not recommended -->
       <frame name="mid_to_bottom" attached_to="bottom_link"/>  <!-- ERROR: Bad scope. -->
-      <frame name="mid_to_bottom" attached_to="mid_model::bottom_model::bottom_link"/>  <!-- ERROR: Shadowing. -->
+      <frame name="mid_to_bottom" attached_to="mid_model::bottom_model::bottom_link"/>  <!-- ERROR: Shadowing is invalid. -->
     </model>
   </model>
 </sdf>
@@ -191,16 +210,19 @@ For a world file:
 
     <frame name="world_frame"/>
 
+    <frame name="world_scope_frame" attached_to="world_frame"/>  <!-- VALID -->
+    <frame name="world_scope_frame" attached_to="^simple_world::world_frame"/>  <!-- ERROR: Violates encapsulation. -->
+
     <model name="top_model">
-      <frame name="top_frame" attached_to="world_frame"/> <!-- ERROR: Bad scope.-->
-      <frame name="top_frame" attached_to="::world_frame"/>  <!-- VALID -->
-      <frame name="top_frame" attached_to="::simple_world::world_frame"/>  <!-- ERROR: Root world not part of scope. -->
+      <frame name="top_frame" attached_to="^world_frame"/>  <!-- VALID -->
+      <frame name="top_frame" attached_to="world_frame"/> <!-- ERROR: Shadowing is invalid.-->
+      <frame name="top_frame" attached_to="^^simple_world::world_frame"/>  <!-- ERROR: Cannot go up twice. -->
 
       <link name="top_link">
         <pose relative_to="top_frame"/>  <!-- VALID -->
-        <pose relative_to="::top_model::top_frame"/>  <!-- VALID -->
-        <pose relative_to="::top_frame"/>  <!-- ERROR: Bad scope. -->
-        <pose relative_to="top_model::top_frame"/>  <!-- ERROR: Shadowing. -->
+        <pose relative_to="^top_model::top_frame"/>  <!-- VALID, but not recommended -->
+        <pose relative_to="^top_frame"/>  <!-- ERROR: Bad scope. -->
+        <pose relative_to="top_model::top_frame"/>  <!-- ERROR: Shadowing is invalid. -->
       </link>
     </model>
 
@@ -208,11 +230,8 @@ For a world file:
 
       <parent>world</parent>  <!-- VALID -->
       <parent>world_frame</parent>  <!-- VALID -->
-      <parent>::world_frame</parent>  <!-- VALID -->
-      <parent>::simple_world::world_frame</parent>  <!-- ERROR -->
 
       <child>top_model::top_link</child>  <!-- VALID -->
-      <child>::top_model::top_link</child>  <!-- VALID -->
       <child>top_link</child>  <!-- INVALID -->
 
     </joint>
@@ -232,7 +251,8 @@ likely be a frame. `b` will never be a link or a visual or anything else.
 ##### 1.3.3 No Implicit Name References
 
 There is no "implicit name" resolution; if a name does not exist in a
-requested scope, it is an error.
+requested scope, it is an error. Additionally, no frame should ever have an empty
+name, e.g. `{name}::` should never be a valid reference.
 
 ###### 1.3.3.1 Model Frame Cross-References
 
@@ -245,9 +265,6 @@ name like `a::b::c`, `a` and `b` are models, and `c` is the frame.
 ##### 1.3.4 Cross-Referencing Rules
 
 Cross-referencing is only allowed between elements *in or under the same file*.
-
-Scopes via composition are defined by the *instantiated* (or overriden) model
-name, not the model name specified by the included file.
 
 Only the following attributes / properties are presently permitted to cross
 boundaries, either up or down depending on the file:
@@ -279,7 +296,42 @@ Only the following elements can be added to a model via an `/include`:
 
 <!-- Permit others? -->
 
-##### 1.4.2 `//include/pose`
+###### 1.4.2 `//include/name` and Cross-References
+
+Scopes via composition are defined by the *instantiated* model name
+(`//include/name`), not the *include-file-specified* model name
+(`//model/@name`).
+
+This should not be an issue, as there should be no elements within a file that
+explicitly depend on `//model@name`.
+
+As an example:
+
+~~~xml
+<!-- mid_model.sdf -->
+<sdf version="1.8">
+  <model name="mid_model">
+    <link name="mid_link"/>
+  </model>
+</sdf>
+
+<!-- top_model.sdf -->
+<sdf version="1.8">
+  <model name="top_model">
+    
+    <include>
+      <uri>file://mid_model.sdf</uri>
+      <name>my_custom_name</name>
+    </include>
+
+    <frame name="top_to_mid" attached_to="my_custom_name::mid_link"/>  <!-- VALID -->
+    <frame name="top_to_mid" attached_to="mid_model::mid_link"/> <!-- INVALID: Name does not exist in this context. -->
+
+  </model>
+</sdf>
+~~~
+
+##### 1.4.3 `//include/pose`
 
 `//include/pose` dictates how to override the model's pose defined via
 `//model/pose`. When this is specified, *all* poses in the included model will
@@ -289,7 +341,7 @@ relative to the included `//model/@canonical_link`.
 The scope of `//include/pose` should be evaluated with respect the enclosing
 scope of the `//include` tag, *not* the scope of the included model. This does
 mean that the semantics are slightly different from what would be used in a
-nest model pose, e.g. `//model/model/pose`.
+nested model pose, e.g. `//model/model/pose`.
 
 For example:
 
@@ -301,14 +353,13 @@ For example:
     <uri>file://mug.sdf</uri>
 
     <pose relative_to="super_frame">  <!-- VALID -->
-    <pose relative_to="::super_frame">  <!-- VALID -->
-    <pose relative_to="mug::super_frame">  <!-- ERROR -->
-    <pose relative_to="::mug::super_frame">  <!-- ERROR -->
+    <pose relative_to="^super_frame">  <!-- ERROR: Violates encapsulation. -->
+    <pose relative_to="mug::super_frame">  <!-- ERROR: Bad frame. -->
   </include>
 </model>
 ~~~
 
-##### 1.4.3 Placement frame: `//include/@model_pose_frame`
+##### 1.4.4 Placement frame: `//include/@model_pose_frame`
 
 It is useful to place an object using a semantic relationship between two
 objects, e.g. place the bottom-center of a mug upright on the top-center of a
@@ -336,7 +387,7 @@ As an example:
 </model>
 ~~~
 
-##### 1.4.4 Permit files directly in `//include/uri`
+##### 1.4.5 Permit files directly in `//include/uri`
 
 Specifying a directory permits usage of `model.config` manifests, which permits
 better compatibilty for a model when being loaded by software with different
