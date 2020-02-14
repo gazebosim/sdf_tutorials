@@ -1,5 +1,15 @@
 # Pose Frame Semantics Proposal
 
+* **Authors**:
+Steven Peter `<scpeters@osrfoundation.org>`,
+Addisu Taddese  `<addisu@openrobotics.org>`,
+Eric Cousineau `<eric.cousineau@tri.global>`
+* **Status**: Final
+* **SDFormat Version**: 1.7
+* **`libsdformat` Version**: 9.0
+
+## Introudction
+
 This proposal suggests a series of changes intended to support semantics for
 more expressivity of kinematics and coordinate frames in SDFormat 1.7.
 SDFormat 1.5 added `<frame>` elements to several elements, and the frame

@@ -1,5 +1,11 @@
 # Custom elements and attributes
 
+* **Authors**:
+Addisu Taddese `<addisu@openrobotics.org>`
+* **Status**: Accepted
+* **SDFormat Version**: 1.7
+* **`libsdformat` Version**: 9.0
+
 ## Motivation
 
 SDFormat aims to be a specification for describing simulations without being

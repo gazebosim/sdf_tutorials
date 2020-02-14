@@ -1,7 +1,25 @@
 # Proposal Outline for SDFormat
 
-See [Pose Frame Semantics Proposal](/tutorials?tut=pose_frame_semantics_proposal&cat=pose_semantics_docs&) for
-an example.
+This format is intended to guide the writing of a proposal for features for the
+SDFormat specifciation, and possibly implementation in `libsdformat`.
+
+For examples of proposals, please see:
+
+* [Pose Frame Semantics Proposal](/tutorials?tut=pose_frame_semantics_proposal)
+* [Custom elements and attributes](/tutorials?tut=custom_elements_attributes_proposal)
+
+Anything below this horizontal rule is what should be incorporated into the
+proposal document. Items in braces or quotes are generally placeholders and
+should be replaced or removed.
+
+---
+
+* **Authors**:
+Jane Doe `<jane.doe@example>`,
+John Doe `<john.doe@example>`
+* **Status**: *{Draft|Accepted|Rejected|Final}*
+* **SDFormat Version**: *{targeted specification}*
+* **`libsdformat` Version**: *{targeted implementation, commit if applicable}*
 
 ## Introduction
 
