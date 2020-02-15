@@ -8,7 +8,7 @@
     <tutorial title="Install" ref='install'>
       <markdown version="6.x">install/tutorial_6-x.md</markdown>
       <markdown version="2.0">install/tutorial_2-0.md</markdown>
-      <description>Installation instruction.</description>
+      <description>Installation instructions for libsdformat.</description>
       <tags>
         <tag>install</tag>
       </tags>
@@ -17,7 +17,7 @@
 
     <tutorial title="Quickstart" ref='quickstart'>
       <markdown version="2.0">quickstart/tutorial_2-0.md</markdown>
-      <description>Quickstart guide to SDF parsing.</description>
+      <description>Quickstart guide to SDF parsing with libsdformat.</description>
       <tags>
         <tag>quickstart</tag>
       </tags>
