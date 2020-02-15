@@ -1,7 +1,7 @@
 # Pose Frame Semantics Proposal
 
 * **Authors**:
-Steven Peter `<scpeters@osrfoundation.org>`,
+Steven Peters `<scpeters@osrfoundation.org>`,
 Addisu Taddese  `<addisu@openrobotics.org>`,
 Eric Cousineau `<eric.cousineau@tri.global>`
 * **Status**: Final
