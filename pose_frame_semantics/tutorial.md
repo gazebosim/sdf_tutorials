@@ -1,4 +1,14 @@
-# Pose Frame Semantics: Legacy Behavior
+# Pose Frame Semantics
+
+## Current behavior
+
+**NOTE**: The behavior noted in the
+[Pose Frame Semantics Proposal](/tutorials?tut=pose_frame_semantics_proposal)
+has been implemented in SDFormat 1.7 (`libsdformat` 9.x). The content of this
+proposal will be migrated to this document; in the meantime, please refer to
+the proposal.
+
+## Legacy behavior
 
 In version 1.4 and earlier of the SDF spec, the `<pose>` element represents
 a relative coordinate transformation between a frame and its parent.
@@ -17,8 +27,6 @@ frames in addition to the existing link and joint frames in the model.
 
 This document is a work in progress to define the semantics of the pose frame
 attribute.
-
-## Legacy behavior
 
 ### Element naming rules in sdf 1.4
 
