@@ -38,7 +38,7 @@ two are sibiling models.
 For posturing an included model, there is no means by which the user can
 specify which included frame to posture via `//include/pose`. The target frame
 to move will be the
-[canonical link](/tutorials?tut=pose_frame_semantics_proposal#2-model-frame-and-canonical-link).
+[`__model__` frame](/tutorials?tut=pose_frame_semantics_proposal#2-model-frame-and-canonical-link).
 Therfore, if you wanted to weld a gripper to an end effector, but the canonical
 link for the gripper is not at the weld point (or it has multiple potential
 weld points), you must duplicate this information in the top-level.
@@ -48,8 +48,33 @@ including a custom model specified as a `*.yaml` or connecting to some other
 legacy format. Generally, the interface between models only really needs access
 to explicit and implicit frames (for welding joints, attaching sensors, etc.).
 The present implementation of `//include` requires that SDFormat know
-*everything* about the included model, whereas a user cound instead provide an
+*everything* about the included model, whereas a user could instead provide an
 adapter to provide the minimal information necessary for assembly.
+
+### Scope of the proposal
+
+There are existing solutions to handle composition. Generally, those
+solutions are some form of text / XML generation (e.g. `xacro`, or Python /
+Ruby scripts). These methods can provide for more advanced things, like
+paramterization, conditional branching, looping, working up towards Turing
+completeness. However, these methods may not have a firm grasp of the semantics
+of the data they are manipulating, and thus can undermine encapsulation, and
+can add a layer of complexity when errors (syntatic, semantic, or design) are
+introduced.
+
+This proposal is only for the process of incorporating existing models and
+posturing them in a physically fashion, but it is not to be used for mutating
+those models internally (adding, changing, or removing elements or attributes
+internal to the model). Those use cases may be more complex, and thus it is
+left to downstream usages to decide whether to use
+[Custom Elements](/tutorials?tut=custom_elements_attributes_proposal), or use
+text processing as mention above.
+
+As the focus of this proposal is physical composition (e.g. elements that can
+generally exist without mutual exclusion), this proposal will not tackle
+including sub-properties of `/world` elements, given that two worlds may not be
+able to coexist in the same space (e.g. they may have different global
+properties).
 
 ## Proposed changes
 
@@ -74,12 +99,16 @@ something that isn't defined in that file (like Python modules).
 
 In conjunction with the [pose frame semantics proposal](/tutorials?tut=pose_frame_semantics_proposal),
 all initially specified `//pose` elements within a file should be rigidly
-related to one another, and should not be able to have their poses mutated by
-an external site (in order to simplify pose resolution).
+related to one another, and should not be able to have their relative
+zero-configuration poses mutated after being included (in order to simplify
+pose resolution).
 
 #### 1.2 Interface Elements
 
-Assemblies require interfaces, and those interfaces should be able to conceal internal details while still providing useful abstractions, such as welding
+##### 1.2.1 Frames as primary interface elements
+
+Assemblies require interfaces, and those interfaces should be able to conceal
+internal details while still providing useful abstractions, such as welding
 points when swapping out components.
 
 As such, you should consider levels of abstraction and interface. In this case,
@@ -88,13 +117,14 @@ frames will be in the main interface point.
 This permits a user to specify a mounting point as an interface, move that
 within the model, and not have to update other downstream components.
 
-##### 1.2.2 `//joint/parent` and `//joint/child` become frames, not just links
+##### 1.2.2 `//joint/parent` and `//joint/child` refer to frames, not just links
 
-Assuming that assembly happens either posturing / attaching frames
-(`//pose/@relative_to` and `//frame/@attached_to`) or joints (`//joint`), then
-it would be ideal to have all of these items refer to frames (implicit and
-explicit). `//pose` and `//frame` already refer to frames, so making joints
-to refer to frames would also simplify things.
+Assuming that assembly happens either by posturing / attaching frames
+(`//pose/@relative_to` and `//frame/@attached_to`) or joint connections
+(`//joint/parent` and `//joint/child`), then it would be ideal to have all of
+these items refer to frames (implicit and explicit). `//pose` and `//frame`
+already refer to frames, so making joints to refer to frames would also
+simplify things.
 
 The implementation for this should generally stay the same, with the only
 change being that the frame's underlying link would be referred to, and the
@@ -106,13 +136,13 @@ This allows easier swapping out of components.
 **WARNING**: This would motivate preserving frames through saving SDFormat
 files via Gazebo / libsdformat, esp. if they become the "API".
 
-##### 1.2.3 Frame Naming Suggestion
+##### 1.2.3 Frame, Link, and Joint Naming Suggestion
 
-The frames in a model (implicit and explicit) should be considered the public
-"API" of the model.
+The frames, links, and joints in a model (implicit and explicit) should be
+considered the public "API" of the model.
 
 If an intermediate element needs to be used, but should not be public, consider
-prefixing the names wiht a single `_` to indicate they should be private, like
+prefixing the names with a single `_` to indicate they should be private, like
 in Python.
 
 #### 1.3 Name Scoping and Cross-Referencing
@@ -133,13 +163,20 @@ permitted. Those can either go *down* into nested models (e.g. `mid_link`,
 `mid_model::mid_link`), or can go *up*  using the `^` symbol (e.g.
 `^parent_frame`, `^parent_model::mid_link`).
 
-As a conservative initial behavior, shadowing will not be permitted. This
-ensures that each model is an explicit unit; any dependencies external to the
-model (but within the same file) will be visible with `^`.
+As a conservative initial behavior, shadowing will not be permitted. This means
+that frames may only be referenced within their own scope, and cannot be
+referenced implicity in nested scopes. This ensures that each model is an
+explicit unit; any dependencies external to the
+model (but within the same file) will be visible with `^`. Additionally, it avoids potential ambiguities (e.g. a parent frame with the same name as a
+sibling frame).
 
-The parents and children of elements are defined by the XML structure of the
-document, not by physical topology. To enforce encapsulation, relative
-references are bounded according to the current *file* and its root element;
+The parents and children of elements are defined by the model nesting structure
+(e.g. a model and its child models), not by physical topology (joint
+parent and child links). To be more concise, the `^` token will give you access
+to the sibling elements of the model from which `^` is used.
+
+To enforce encapsulation, relative references are
+bounded according to the current *file* and its root element;
 e.g. the root element of a document (a model or world) cannot access parent
 elements.
 
@@ -169,19 +206,33 @@ a file whose root is a model:
     <model name="mid_model">
       <link name="mid_link">
         <pose relative_to="^top_link"/>  <!-- VALID. -->
-        <pose relative_to="^^some_unknown_frame"/>  <!-- ERROR: Cannot go up twice. -->
+        <pose relative_to="^^some_unknown_frame"/>  <!-- ERROR: Cannot use ^^. -->
         <pose relative_to="top_link"/>  <!-- ERROR: Shadowing is invalid. -->
       </link>
 
       <model name="bottom_model">
         <link name="bottom_link">
           <pose relative_to="^mid_link"/>  <!-- VALID -->
+          <pose relative_to="^^top_frame"/>  <!-- ERROR: Cannot use ^^. Use `^mid_link` as intermediate instead. -->
           <pose relative_to="mid_model::mid_link"/>  <!-- ERROR: Shadowing. -->
           <pose relative_to="mid_link"/>  <!-- ERROR: Shadowing. -->
+          <pose relative
         </link>
 
         <frame name="bottom_frame" attached_to="bottom_link"/>  <!-- VALID -->
         <frame name="bottom_frame" attached_to="^bottom_model::bottom_link"/>  <!-- VALID, but not recommended -->
+      </model>
+
+      <!-- Because shadowing is disallowed, the reference to `mid_model` within
+      `bottom_model_2` is explicit and can only ever refer to one thing. -->
+      <model name="bottom_model_2">
+        <model name="mid_model">
+          <link name="mid_link"/>
+        </model>
+
+        <link name="bottom_link">
+          <pose relative_to="mid_model::mid_link"/>  <!-- VALID -->
+        </model>
       </model>
 
       <frame name="mid_to_bottom" attached_to="bottom_model::bottom_link"/>  <!-- VALID -->
@@ -233,7 +284,7 @@ For a world file:
 
 **Alternatives Considered for Reference Types**
 
-It was considered to not permit upwards references and only use downward o
+It was considered to not permit upwards references and only use downward or
 absolute references. This looks a bit better syntactically, but makes the
 references more dependent on the full context of a file. Relative references
 are more local.
@@ -248,6 +299,7 @@ are more local.
     * `..::parent` - hard to parse, but would be better for changing the
     separator later.
     * `^::parent` - perhaps better?
+    * `^:parent` - Also better, maybe?
 
 ##### 1.3.2 Scope of Interface Elements
 
@@ -479,7 +531,7 @@ Note how there are no repetitions / inversions of values like `{X_ACa}` and
 
 ##### 1.2 Negative Example
 
-You cannot achieve the above by defining the weld in the gripper itself, e.g. by modifying the gripper and compoisiton file:
+You cannot achieve the above by defining the weld in the gripper itself, e.g. by modifying the gripper and composition file:
 
 ~~~xml
 <!-- BAD_gripper_with_weld.sdf -->
@@ -487,7 +539,7 @@ You cannot achieve the above by defining the weld in the gripper itself, e.g. by
   <pose>{X_AG}</pose>
   <link name="gripper">
   <joint name="weld" type="fixed">
-    <parent>::arm::body</parent> <!-- ERROR: Does not exist in this file -->
+    <parent>^arm::body</parent> <!-- ERROR: Does not exist in this file -->
     <child>body</child>
   </joint>
 </model>
@@ -613,7 +665,7 @@ With the proposed nesting, defining `R1` as `robot_1`s model frame, and `R2`
     <include file="arm.sdf">
       <name>arm</name>
       <uri>file://arm.sdf</uri>
-      <pose relative_to="::robot_1::__model__">{X_R1R2}</pose>
+      <pose relative_to="^robot_1::__model__">{X_R1R2}</pose>
     </include>
     <include model_pose_frame="mount">
       <name>flange</name>
