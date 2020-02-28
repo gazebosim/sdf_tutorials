@@ -1,5 +1,13 @@
 # Model composition: Proposed behavior
 
+* **Authors**:
+Eric Cousineau `<eric.cousineau@tri.global>`,
+Steven Peters `<scpeters@osrfoundation.org>`,
+Addisu Taddese  `<addisu@openrobotics.org>`
+* **Status**: Draft
+* **SDFormat Version**: 1.8
+* **`libsdformat` Version**: 10.0
+
 ## Introduction
 
 This proposal suggests changes to the semantics of composition, targetting
