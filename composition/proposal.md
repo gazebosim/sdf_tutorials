@@ -264,6 +264,9 @@ a file whose root is a model:
         </model>
       </model>
 
+      <frame name="mid_to_top" attached_to="^top_frame"/>  <!-- VALID -->
+      <frame name="mid_to_top" attached_to="^top_link"/>   <!-- VALID -->
+
       <frame name="mid_to_bottom" attached_to="bottom_model::bottom_link"/>  <!-- VALID -->
       <frame name="mid_to_bottom" attached_to="^mid_model::bottom_model::bottom_link"/>  <!-- VALID, but not recommended -->
       <frame name="mid_to_bottom" attached_to="bottom_link"/>  <!-- ERROR: Bad scope. -->
