@@ -1,4 +1,14 @@
-# Pose Frame Semantics: Legacy Behavior
+# Pose Frame Semantics
+
+## Current behavior
+
+**NOTE**: The behavior noted in the
+[Pose Frame Semantics Proposal](/tutorials?tut=pose_frame_semantics_proposal)
+has been implemented in SDFormat 1.7 (`libsdformat` 9.x). The content of this
+proposal will be migrated to this document; in the meantime, please refer to
+the proposal.
+
+## Legacy behavior
 
 In version 1.4 and earlier of the SDF spec, the `<pose>` element represents
 a relative coordinate transformation between a frame and its parent.
@@ -17,8 +27,6 @@ frames in addition to the existing link and joint frames in the model.
 
 This document is a work in progress to define the semantics of the pose frame
 attribute.
-
-## Legacy behavior
 
 ### Element naming rules in sdf 1.4
 
@@ -561,7 +569,10 @@ for the potential new behavior in SDF 1.7.
 This section describes phases for parsing the kinematics of an sdf 1.4 model.
 It does not discuss proper validation of collision and visual geometries,
 link inertia, and many other parameters.
-There are three phases for validating the kinematics data in a model:
+There are three phases for validating the kinematics data in a model.
+In libsdformat, the `sdf::readFile` and `sdf::readString` API's perform parsing
+stage 1, and `sdf::Root::Load` performs parsing stages 1 and 2.
+Each API returns an error code if errors are found during parsing.
 
 1.  **XML parsing and schema validation:**
     Parse model file from XML into a tree data structure,
@@ -578,9 +589,6 @@ There are three phases for validating the kinematics data in a model:
     collisions, visuals, sensors, and lights.
     This step is distinct from validation with the schema because the schema
     only confirms the existence of name attributes, not their content.
-    Note that `libsdformat` does not currently perform this check when loading
-    an SDF using `sdf::readFile` or `sdf::readString` (see
-    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216).
 
 3.  **Joint parent/child name checking:**
     For each joint, check that the parent and child link names are different
@@ -627,13 +635,10 @@ These three phases are listed below:
 2.  **Name attribute checking:**
     Check that name attributes are not an empty string `""`, and that sibling
     elements of the same type have unique names.
-    This check can be limited to `//world/model[@name]`
+    This check can be limited to `//world/model/@name`
     since other names will be checked in the following step.
     This step is distinct from validation with the schema because the schema
     only confirms the existence of name attributes, not their content.
-    Note that `libsdformat` does not currently perform this check when loading
-    an SDF using `sdf::readFile` or `sdf::readString` (see
-    [issue sdformat#216](https://bitbucket.org/osrf/sdformat/issues/216).
 
 3.  **Model checking:**
     Check each model according to the three phases of parsing kinematics of an

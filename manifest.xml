@@ -8,7 +8,7 @@
     <tutorial title="Install" ref='install'>
       <markdown version="6.x">install/tutorial_6-x.md</markdown>
       <markdown version="2.0">install/tutorial_2-0.md</markdown>
-      <description>Installation instruction.</description>
+      <description>Installation instructions for libsdformat.</description>
       <tags>
         <tag>install</tag>
       </tags>
@@ -17,7 +17,7 @@
 
     <tutorial title="Quickstart" ref='quickstart'>
       <markdown version="2.0">quickstart/tutorial_2-0.md</markdown>
-      <description>Quickstart guide to SDF parsing.</description>
+      <description>Quickstart guide to SDFormat parsing with libsdformat.</description>
       <tags>
         <tag>quickstart</tag>
       </tags>
@@ -93,7 +93,7 @@
     <tutorial title="Pose frame semantics: proposed behavior" ref='pose_frame_semantics_proposal' type='proposal'>
       <markdown version="1.7">pose_frame_semantics/proposal.md</markdown>
       <description>
-        Proposing new behavior for SDF 1.7, including semantics for the
+        Proposing new behavior for SDFormat 1.7, including semantics for the
         pose frame attribute, the frame element, new rules
         for element naming, and corresponding examples.
       </description>
@@ -104,28 +104,80 @@
       <skill>advanced</skill>
     </tutorial>
 
-  </tutorials>
+    <tutorial title="Custom elements and attributes" ref='custom_elements_attributes_proposal' type='proposal'>
+      <markdown version="1.7">custom_elements_attributes/proposal.md</markdown>
+      <description>
+        Proposal for supporting custom elements and attributes in SDFormat and libsdformat.
+      </description>
+      <tags>
+        <tag>custom</tag>
+        <tag>extension</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
+    <tutorial title="Roadmap" ref='roadmap' type='documentation'>
+      <markdown version="1.7">developers/roadmap.md</markdown>
+      <description>
+        Proposal for supporting custom elements and attributes in SDFormat and libsdformat.
+      </description>
+      <tags>
+        <tag>roadmap</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
+    <tutorial title='Composition' ref='composition' type='documentation'>
+      <markdown version='1.5'>composition/legacy_behavior.md</markdown>
+      <description>
+          Describing existing behavior of composition in SDFormat.
+      </description>
+      <tags>
+        <tag>nesting</tag>
+        <tag>composition</tag>
+      </tags>
+      <skill>intermediate</skill>
+    </tutorial>
+
+    <tutorial title="Proposal Format" ref='proposal_format' type='documentation'>
+      <markdown version="1.7">developers/proposal_format.md</markdown>
+      <description>
+        Provides guidelines for writing proposals for SDFormat / libsdformat.
+      </description>
+      <tags>
+        <tag>proposal</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
+ </tutorials>
 
   <!-- *************************************** -->
   <categories>
 
     <category title="Get Started" skill="beginner" ref="get_started">
       <description>
-        Welcome to the SDF documentation! This is a great place for new and experienced SDF users to start.
-        Each category to the left presents a collection of relevant documentation.
-
-        Use the *Edit* button in the upper right corner of a tutorial page to go directly
-        to its source at
-        [bitbucket.org/osrf/sdf_tutorials](https://bitbucket.org/osrf/sdf_tutorials).
+        This section will soon be removed. Please see the
+        [Specification](/tutorials?cat=specification) or
+        [Developer](/tutorials?cat=developers) sections intead.
       </description>
       <tutorials>
-        <tutorial>install</tutorial>
-        <tutorial>quickstart</tutorial>
       </tutorials>
     </category>
 
-    <category title="SDF Specification" skill="beginner" ref="specification">
-      <description>Here you’ll find explanations for elements of the SDF specification.</description>
+    <category title="SDFormat Specification" skill="beginner" ref="specification">
+      <description>
+        Here you'll find explanations for elements of the SDFormat
+        specification. This is a great place for new and experienced SDFormat
+        users to start.
+
+        Each category to the left presents a collection of relevant
+        documentation.
+
+        Use the *Edit* button in the upper right corner of a tutorial page to
+        go directly to its source at
+        [bitbucket.org/osrf/sdf_tutorials](https://bitbucket.org/osrf/sdf_tutorials).
+      </description>
       <tutorials>
         <tutorial>specify_pose</tutorial>
         <tutorial>spec_model_kinematics</tutorial>
@@ -133,13 +185,28 @@
         <tutorial>spec_materials</tutorial>
         <tutorial>spec_world</tutorial>
         <tutorial>pose_frame_semantics</tutorial>
+        <tutorial>composition</tutorial>
       </tutorials>
     </category>
 
-    <category title="SDF Proposals" skill="advanced" ref="pose_semantics_docs">
-      <description>These proposals suggest new behavior in SDF.</description>
+    <category title="SDFormat Proposals" skill="advanced" ref="pose_semantics_docs">
+      <description>These proposals suggest new behavior in SDFormat.</description>
       <tutorials>
         <tutorial>pose_frame_semantics_proposal</tutorial>
+        <tutorial>custom_elements_attributes_proposal</tutorial>
+      </tutorials>
+    </category>
+
+    <category title="For Developers" skill="beginner" ref="developers">
+      <description>
+        Information for developers wishing to use libsdformat to parse the
+        SDFormat specification.
+      </description>
+      <tutorials>
+        <tutorial>install</tutorial>
+        <tutorial>quickstart</tutorial>
+        <tutorial>roadmap</tutorial>
+        <tutorial>proposal_format</tutorial>
       </tutorials>
     </category>
 
