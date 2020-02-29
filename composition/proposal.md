@@ -71,7 +71,7 @@ can add a layer of complexity when errors (syntatic, semantic, or design) are
 introduced.
 
 This proposal is only for the process of incorporating existing models and
-posturing them in a physically fashion, but it is not to be used for mutating
+posturing them in a physical fashion, but it is not to be used for mutating
 those models internally (adding, changing, or removing elements or attributes
 internal to the model). Those use cases may be more complex, and thus it is
 left to downstream usages to decide whether to use
