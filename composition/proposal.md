@@ -452,14 +452,14 @@ For example:
 </model>
 ~~~
 
-##### 1.4.4 Placement frame: `//include/@model_pose_frame`
+##### 1.4.4 Placement frame: `//include/placement_frame`
 
 It is useful to place an object using a semantic relationship between two
 objects, e.g. place the bottom-center of a mug upright on the top-center of a
 table. To do this, you can the specify the frame for which the `//include/pose`
 should change.
 
-This can be achieved by specifying `//include/@model_pose_frame`. If this
+This can be achieved by specifying `//include/placement_frame`. If this
 attribute is specfied, then `//include/pose` *must* be specified, as
 any information in the included `//model/pose` will no longer be relevant.
 
@@ -467,14 +467,16 @@ As an example:
 
 ~~~xml
 <model name="super_model">
-  <include model_pose_frame="bottom_left_leg">
+  <include>
     <name>table</name>
     <uri>file://table.sdf</uri>
+    <placement_frame>bottom_left_leg</placement_frame>
     <pose/>
   </include>
-  <include model_pose_frame="bottom_center">
+  <include>
     <name>mug</name>
     <uri>file://mug.sdf</uri>
+    <placement_frame>bottom_center</placement_frame>
     <pose relative_to="table::top_center"/>
   </include>
 </model>
@@ -542,10 +544,10 @@ The following is intended to work:
   <include file="arm.sdf">
     <uri>arm.sdf</uri>
   </include>
-  <include model_pose_frame="mount_point">
+  <include>
     <uri>gripper.sdf</uri>
     <!-- Place model to make Cm and Ca coincide on both models. -->
-    <model_pose_frame>mount_point</model_pose_frame>
+    <placement_frame>mount_point</placement_frame>
     <pose relative_to="arm::gripper_mount"/>
   </include>
 
@@ -673,17 +675,19 @@ With the proposed nesting, defining `R1` as `robot_1`s model frame, and `R2`
       <uri>file://arm.sdf</uri>
       <pose>{X_MR1}</pose>
     </include>
-    <include model_pose_frame="mount">
+    <include>
       <name>flange</name>
       <uri>file://flange_electric.sdf</uri>
+      <placement_frame>mount</placement_frame>
       <pose relative_to="arm::flange_mount"/>
     </include>
     <joint type="weld">
       <parent>arm::flange_mount</parent>
       <child>flange::mount</child>
     </joint>
-    <include model_pose_frame="mount">
+    <include>
       <uri>file://gripper.sdf</uri>
+      <placement_frame>mount</placement_frame>
       <pose relative_to="flange::gripper_mount"/>
     </include>
     <joint type="weld">
@@ -699,17 +703,19 @@ With the proposed nesting, defining `R1` as `robot_1`s model frame, and `R2`
       <uri>file://arm.sdf</uri>
       <pose relative_to="^robot_1::__model__">{X_R1R2}</pose>
     </include>
-    <include model_pose_frame="mount">
+    <include>
       <name>flange</name>
       <uri>file://flange_pneumatic.sdf</uri>
+      <placement_frame>mount</placement_frame>
       <pose relative_to="arm::flange_mount"/>
     </include>
     <joint type="weld">
       <parent>arm::flange_mount</parent>
       <child>flange::mount</child>
     </joint>
-    <include model_pose_frame="mount">
+    <include>
       <uri>file://gripper.sdf</uri>
+      <placement_frame>mount</placement_frame>
       <pose relative_to="flange::gripper_mount"/>
     </include>
     <joint type="weld">
