@@ -80,8 +80,6 @@ The present implementation of `//include` requires that SDFormat know
 *everything* about the included model, whereas a user could instead provide an
 adapter to provide the minimal information necessary for assembly.
 
-### Scope of the proposal
-
 There are existing solutions to handle composition. Generally, those
 solutions are some form of text / XML generation (e.g. `xacro`, or Python /
 Ruby scripts). These methods can provide for more advanced things, like
