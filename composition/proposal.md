@@ -1,15 +1,31 @@
 # Model composition: Proposed behavior
 
+* **Authors**:
+Eric Cousineau `<eric.cousineau@tri.global>`,
+Steven Peters `<scpeters@osrfoundation.org>`,
+Addisu Taddese  `<addisu@openrobotics.org>`
+* **Status**: Draft
+* **SDFormat Version**: 1.8
+* **`libsdformat` Version**: 10.0
+
 ## Introduction
 
 This proposal suggests changes to the semantics of composition, targetting
-SDFormat 1.8. As described in the
-[legacy behavior tutorial](/tutorials?tut=composition), SDFormat 1.6 has the
-`//include` tag which admits composition, but it does not have many explicit
-provisions for encapsulation and modularity, as well as the ability to include
-models of other formats. This changes proposed here intend to specify the
-encapsulation to admit better semantics for assembly, and a means to make the
-`//include` tag admit models specified in other formats.
+SDFormat 1.8. As discussed in the
+[legacy behavior tutorial](/tutorials?tut=composition), SDFormat models are the
+fundamental building blocks of a world in SDFormat. As of SDFormat 1.4, models
+that are defined in separate files can be added into a world multiple times
+with distinct name and pose using the `<include>` tag. As of SDFormat 1.5,
+the `<include>` tag can be used within a model to construct a composite that
+combines other models from separate files.
+
+The existing behavior enables a basic form of composition,
+but it does not have many explicit
+provisions for encapsulation and modularity or the ability to include
+models specified in a format other than SDFormat.
+The changes proposed here intend to improve encapsulation and
+semantics for assembly, and to define an interface for using the `<include>`
+tag with models specified in other formats.
 
 ## Document summary
 
@@ -18,6 +34,19 @@ The proposal includes the following sections:
 *   Motivation: background and rationale.
 *   Proposed changes: Each additon / subtraction to SDFormat and `libsdformat`.
 *   Examples: Long form code samples.
+
+## Syntax
+
+The proposal uses [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp)
+to describe elements and attributes concisely.
+For example, `<model>` tags are referred to as `//model` using XPath.
+XPath is even more concise for referring to nested tags and attributes.
+In the following example, `<link>` elements inside `<model>` tags are
+referenced as `//model/link` and  model `name` attributes as `//model/@name`:
+
+    <model name="model_name">
+      <link/>
+    </model>
 
 ## Motivation
 
@@ -63,7 +92,7 @@ can add a layer of complexity when errors (syntatic, semantic, or design) are
 introduced.
 
 This proposal is only for the process of incorporating existing models and
-posturing them in a physically fashion, but it is not to be used for mutating
+posturing them in a physical fashion, but it is not to be used for mutating
 those models internally (adding, changing, or removing elements or attributes
 internal to the model). Those use cases may be more complex, and thus it is
 left to downstream usages to decide whether to use
@@ -234,6 +263,9 @@ a file whose root is a model:
           <pose relative_to="mid_model::mid_link"/>  <!-- VALID -->
         </model>
       </model>
+
+      <frame name="mid_to_top" attached_to="^top_frame"/>  <!-- VALID -->
+      <frame name="mid_to_top" attached_to="^top_link"/>   <!-- VALID -->
 
       <frame name="mid_to_bottom" attached_to="bottom_model::bottom_link"/>  <!-- VALID -->
       <frame name="mid_to_bottom" attached_to="^mid_model::bottom_model::bottom_link"/>  <!-- VALID, but not recommended -->

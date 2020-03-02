@@ -140,7 +140,7 @@
     </tutorial>
 
     <tutorial title="Composition: Proposed behavior" ref='composition_proposal' type='proposal'>
-      <markdown version="2.0">composition/proposal.md</markdown>
+      <markdown version="1.8">composition/proposal.md</markdown>
       <description>
           Propose new behavior for model level composition.
       </description>
