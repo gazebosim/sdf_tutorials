@@ -381,6 +381,7 @@ Only the following elements can overridden in a model via an
 
 * `//include/name`
 * `//include/pose`
+* `//include/static` - This is very nuanced. Please see the section below.
 
 Only the following elements can be added to a model via an `/include`:
 
@@ -494,6 +495,31 @@ If a file is relative, then it should be evaluated next to the file itself.
 
 **WARNING**: In general, it is suggested to use `package://` URIs for ROS
 models, and `model://` URIs for Gazebo models.
+
+##### 1.4.6 `//include/static`
+
+This allows a the `//model/static` element to be overridden and will affect
+*all* models transitively included via the `//include` element.
+
+**WARNING**: Implementations should be careful that `@attached_to` is properly
+respected when overriding `//model/static`. Normally, if a model is static, its
+frames will be attached to the world. However, if a model is non-static, the
+attached-to frame should only be within the model itself (to observe proper
+encapsulation).
+
+Additionally, it may not be possible to force certain models to be non-static.
+For example, if a `//include/static` is set to false, but the included model is
+normally a static model with only frames (which is valid), an error should be
+thrown.
+
+It is also generally *not* suggested to force a static model to be non-static,
+as the static model's design may yield undesirable results.
+
+**Alternatives Considered**: It may be significantly easier to implement (and
+reason about) if `//include/static` can *only* override to true.
+`//include/static` can only be false if all included models are non-static.
+This would require  `//include/static` to be stored as a tri-state value
+(unspecified, true, false), which is viable.
 
 #### 1.5 Minimal Interface Types for Non-SDFormat Models
 
