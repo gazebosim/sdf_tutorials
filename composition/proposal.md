@@ -334,26 +334,33 @@ referencable by only *one* level of nesting. If there are two levels of nesting
 for a name (e.g. `a::b::c`), then `a` and `b` will be models, and `c` will most
 likely be a frame. `b` will never be a link or a visual or anything else.
 
-##### 1.3.3 No Implicit Name References
+##### 1.3.3 Model Frame References
 
-There is no "implicit name" resolution; if a name does not exist in a
-requested scope, it is an error. Additionally, no frame should ever have an empty
-name, e.g. `{name}::` should never be a valid reference.
+For a model named `{name}`, model frames can be referenced by their name.
+`{name}::__model__` is also valid, but `{name}` is preferred instead.
 
-###### 1.3.3.1 Model Frame Cross-References
+As shown in the
+[World parsing phases](/tutorials?tut=pose_frame_semantics_proposal#2-world)
+section, it is possible to refer to a model's frame using `//world/model/@name`
+from inside a `//world`.
+However, as indicated in the corresponding
+[Model section](/tutorials?tut=pose_frame_semantics_proposal#1-model), it is
+not currently supported to refer to a nested model's frame using
+`//model/model/@name` from inside a `//model`. To that end, the Model parsing
+phase for Step 7 should change the its implicit frames from:
 
-For a model named `{name}`, the only way to refer to the model frame is by
-specifying `{name}::__model__`. Referring to `{name}` is invalid.
+"name of a link, joint, or frame in this model's scope"
 
-This implies that for a name like `a::b`, `a` is a model, `b` is a frame. For a
-name like `a::b::c`, `a` and `b` are models, and `c` is the frame.
+to:
+
+"name of a link, joint, frame, or nested model in this model's scope"
 
 ##### 1.3.4 Cross-Referencing Rules
 
 Cross-referencing is only allowed between elements *in or under the same file*.
 
 Only the following attributes / properties are presently permitted to cross
-boundaries, either up or down depending on the file:
+boundaries (but only within the given file):
 
 * `//joint/parent` and `//joint/child`
 * `//frame/@attached_to`
@@ -379,6 +386,7 @@ Only the following elements can be added to a model via an `/include`:
 
 * `//include/joint`
 * `//include/frame`
+* `//include/plugin` - note that this is generally Gazebo-specific.
 
 <!-- Permit others? -->
 
@@ -690,7 +698,7 @@ With the proposed nesting, defining `R1` as `robot_1`s model frame, and `R2`
 
   <!-- Arm + Pneumatic Flange + Gripper -->
   <model name="robot_2">
-    <pose relative_to="robot_1::__model__">{X_R1R2}</pose>
+    <pose relative_to="robot_1">{X_R1R2}</pose>
     <include file="arm.sdf">
       <name>arm</name>
       <uri>file://arm.sdf</uri>
