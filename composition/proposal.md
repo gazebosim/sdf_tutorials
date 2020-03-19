@@ -499,27 +499,30 @@ models, and `model://` URIs for Gazebo models.
 ##### 1.4.6 `//include/static`
 
 This allows a the `//model/static` element to be overridden and will affect
-*all* models transitively included via the `//include` element.
+*all* models transitively included via the `//include` element, and can *only*
+change values from false to true; `//include/static` can only be false if all
+models included via the file are non-static.
 
-**WARNING**: Implementations should be careful that `@attached_to` is properly
-respected when overriding `//model/static`. Normally, if a model is static, its
-frames will be attached to the world. However, if a model is non-static, the
-attached-to frame should only be within the model itself (to observe proper
-encapsulation).
+This requires `//include/static` to be stored as a tri-state value
+(unspecified, true, false).
+
+**Alternatives Considered**:
+
+The value could be overridden to true or false.
+However, implementations would have to be careful that `@attached_to` is
+properly respected when overriding `//model/static`. Normally, if a model is
+static, its frames will be attached to the world. However, if a model is
+non-static, the attached-to frame should only be within the model itself (to
+observe proper encapsulation).
 
 Additionally, it may not be possible to force certain models to be non-static.
 For example, if a `//include/static` is set to false, but the included model is
 normally a static model with only frames (which is valid), an error should be
 thrown.
 
-It is also generally *not* suggested to force a static model to be non-static,
-as the static model's design may yield undesirable results.
-
-**Alternatives Considered**: It may be significantly easier to implement (and
-reason about) if `//include/static` can *only* override to true.
-`//include/static` can only be false if all included models are non-static.
-This would require  `//include/static` to be stored as a tri-state value
-(unspecified, true, false), which is viable.
+It would also generally be *not* suggested to force a static model to be
+non-static, as the static model may not be designed for non-static use, and
+waste time on debugging.
 
 #### 1.5 Minimal Interface Types for Non-SDFormat Models
 
