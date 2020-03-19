@@ -60,7 +60,7 @@ direct elements has not been explicitly specified to perform the same
 operations, part of the reason being that nesting directly is not actually implemented in the current `libsdformat` (9.1.0). Nesting of models generally
 implies that the elements can be referred via a form of scope, such as
 `{scope}::{name}`. However, `::` is not a special token and thus can be
-used to create "false" hierarchy or potential collision. Additionally, there is
+used to create "false" hierarchy or potential name collisions. Additionally, there is
 no way for elements within the same file to refer "up" to another element, e.g. with in a robot assembly, adding a weld between a gripper and an arm when the
 two are sibiling models.
 
