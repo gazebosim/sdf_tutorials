@@ -186,30 +186,22 @@ SDFormat will stick with `::` for now.
 #### 1.3.2 Reference Types
 
 As a conservative initial behavior, only **relative references** should be
-permitted. Those can either go *down* into nested models (e.g. `mid_link`,
-`mid_model::mid_link`), or can go *up*  using the `^` symbol (e.g.
-`^parent_frame`, `^parent_model::mid_link`).
+permitted. Those can only go *down* into the current or nested models (e.g.
+`mid_link`, `mid_model::mid_link`).
 
 As a conservative initial behavior, shadowing will not be permitted. This means
 that frames may only be referenced within their own scope, and cannot be
 referenced implicity in nested scopes. This ensures that each model is an
 explicit unit; any dependencies external to the
-model (but within the same file) will be visible with `^`. Additionally, it avoids potential ambiguities (e.g. a parent frame with the same name as a
+model (but within the same file) will not be visible. Additionally, it avoids potential ambiguities (e.g. a parent frame with the same name as a
 sibling frame).
 
 The parents and children of elements are defined by the model nesting structure
 (e.g. a model and its child models), not by physical topology (joint
-parent and child links). To be more concise, the `^` token will give you access
-to the sibling elements of the model from which `^` is used.
+parent and child links).
 
-To enforce encapsulation, relative references are
-bounded according to the current *file* and its root element;
-e.g. the root element of a document (a model or world) cannot access parent
-elements.
-
-For simplicity, only **one** upwards reference can be made: `^parent` is valid,
-but `^^grandparent` is not. If such a connection is necessary, use intermediate
-frames.
+As a side effect, encapsulation is enforced: relative references are
+bounded according to the current *file*.
 
 These conventions are chosen to be a conservative start and avoid the need for
 shadowing / recursion logic. The relative nature of referencing is chosen to
@@ -226,28 +218,30 @@ a file whose root is a model:
 
     <link name="top_link">
       <pose relative_to="top_frame"/>  <!-- VALID -->
-      <pose relative_to="^some_unknown_frame"/>  <!-- ERROR: Violates encapsulation. -->
-      <pose relative_to="^top_model::top_frame"/>  <!-- ERROR: Violates encapsulation. -->
+      <pose relative_to="some_unknown_frame"/>  <!-- ERROR: Violates encapsulation. -->
+      <pose relative_to="top_model::top_frame"/>  <!-- ERROR: Shadowing. -->
     </link>
 
     <model name="mid_model">
+      <pose relative_to="top_link"/>  <!-- VALID. -->
+
       <link name="mid_link">
-        <pose relative_to="^top_link"/>  <!-- VALID. -->
-        <pose relative_to="^^some_unknown_frame"/>  <!-- ERROR: Cannot use ^^. -->
-        <pose relative_to="top_link"/>  <!-- ERROR: Shadowing is invalid. -->
+        <pose/>  <!-- VALID: Same as relative_to="__model__" -->
+        <pose relative_to="top_link"/>  <!-- ERROR: Shadowing. -->
       </link>
 
       <model name="bottom_model">
+        <pose relative_to="mid_link"/>  <!-- VALID -->
+
         <link name="bottom_link">
-          <pose relative_to="^mid_link"/>  <!-- VALID -->
-          <pose relative_to="^^top_frame"/>  <!-- ERROR: Cannot use ^^. Use `^mid_link` as intermediate instead. -->
-          <pose relative_to="mid_model::mid_link"/>  <!-- ERROR: Shadowing. -->
+          <pose/>  <!-- VALID -->
           <pose relative_to="mid_link"/>  <!-- ERROR: Shadowing. -->
-          <pose relative
+          <pose relative_to="mid_model::mid_link"/>  <!-- ERROR: Shadowing. -->
+          <pose relative_to="top_frame"/>  <!-- ERROR: Shadowing. -->
         </link>
 
         <frame name="bottom_frame" attached_to="bottom_link"/>  <!-- VALID -->
-        <frame name="bottom_frame" attached_to="^bottom_model::bottom_link"/>  <!-- VALID, but not recommended -->
+        <frame name="bottom_frame" attached_to="bottom_model::bottom_link"/>  <!-- ERROR: Shadowing. -->
       </model>
 
       <!-- Because shadowing is disallowed, the reference to `mid_model` within
@@ -262,13 +256,11 @@ a file whose root is a model:
         </model>
       </model>
 
-      <frame name="mid_to_top" attached_to="^top_frame"/>  <!-- VALID -->
-      <frame name="mid_to_top" attached_to="^top_link"/>   <!-- VALID -->
+      <frame name="mid_to_top" attached_to="top_frame"/>  <!-- ERROR: Shadowing. -->
 
       <frame name="mid_to_bottom" attached_to="bottom_model::bottom_link"/>  <!-- VALID -->
-      <frame name="mid_to_bottom" attached_to="^mid_model::bottom_model::bottom_link"/>  <!-- VALID, but not recommended -->
       <frame name="mid_to_bottom" attached_to="bottom_link"/>  <!-- ERROR: Bad scope. -->
-      <frame name="mid_to_bottom" attached_to="mid_model::bottom_model::bottom_link"/>  <!-- ERROR: Shadowing is invalid. -->
+      <frame name="mid_to_bottom" attached_to="mid_model::bottom_model::bottom_link"/>  <!-- ERROR: Shadowing. -->
     </model>
   </model>
 </sdf>
@@ -283,18 +275,17 @@ For a world file:
     <frame name="world_frame"/>
 
     <frame name="world_scope_frame" attached_to="world_frame"/>  <!-- VALID -->
-    <frame name="world_scope_frame" attached_to="^simple_world::world_frame"/>  <!-- ERROR: Violates encapsulation. -->
+    <frame name="world_scope_frame" attached_to="simple_world::world_frame"/>  <!-- ERROR: Shadowing. -->
 
     <model name="top_model">
-      <frame name="top_frame" attached_to="^world_frame"/>  <!-- VALID -->
-      <frame name="top_frame" attached_to="world_frame"/> <!-- ERROR: Shadowing is invalid.-->
-      <frame name="top_frame" attached_to="^^simple_world::world_frame"/>  <!-- ERROR: Cannot go up twice. -->
+      <pose relative_to="world_frame"/>  <!-- VALID -->
+
+      <frame name="top_frame"/>  <!-- VALID: Same as relative_to="__model__" -->
+      <frame name="top_frame" attached_to="world_frame"/>  <!-- ERROR: Shadowing.-->
 
       <link name="top_link">
         <pose relative_to="top_frame"/>  <!-- VALID -->
-        <pose relative_to="^top_model::top_frame"/>  <!-- VALID, but not recommended -->
-        <pose relative_to="^top_frame"/>  <!-- ERROR: Bad scope. -->
-        <pose relative_to="top_model::top_frame"/>  <!-- ERROR: Shadowing is invalid. -->
+        <pose relative_to="top_model::top_frame"/>  <!-- ERROR: Shadowing -->
       </link>
     </model>
 
@@ -314,7 +305,10 @@ For a world file:
 
 **Alternatives Considered for Reference Types**
 
-It was considered to not permit upwards references and only use downward or
+It was considered to only allow downwards references or a single upwards reference using the `^` characeter. However, there was a lack of a sufficiently
+motivating example, so this was removed from the proposal.
+
+It was also considered to not permit upwards references and only use downward or
 absolute references. This looks a bit better syntactically, but makes the
 references more dependent on the full context of a file. Relative references
 are more local.
@@ -326,6 +320,7 @@ are more local.
     for composition, in both SDFormat files and for models (and IPC channels /
     topics in general).
 * Upwards references:
+    * `^parent` - was original used, but removed from proposal
     * `..::parent` - hard to parse, but would be better for changing the
     separator later.
     * `^::parent` - perhaps better?
@@ -444,7 +439,6 @@ For example:
     <uri>file://mug.sdf</uri>
 
     <pose relative_to="super_frame">  <!-- VALID -->
-    <pose relative_to="^super_frame">  <!-- ERROR: Violates encapsulation. -->
     <pose relative_to="mug::super_frame">  <!-- ERROR: Bad frame. -->
   </include>
 </model>
@@ -571,7 +565,7 @@ You cannot achieve the above by defining the weld in the gripper itself, e.g. by
   <pose>{X_AG}</pose>
   <link name="gripper">
   <joint name="weld" type="fixed">
-    <parent>^arm::body</parent> <!-- ERROR: Does not exist in this file -->
+    <parent>arm::body</parent> <!-- ERROR: Does not exist in this file -->
     <child>body</child>
   </joint>
 </model>
