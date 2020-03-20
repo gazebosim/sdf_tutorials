@@ -208,7 +208,7 @@ shadowing / recursion logic. The relative nature of referencing is chosen to
 permit easier manual editing / composition of documents.
 
 The following inline examples have repeated elements just to show different
-flavors of the same expression, or invalid versions of an given expression. For
+flavors of the same expression, or invalid versions of a given expression. For
 a file whose root is a model:
 
 ~~~xml
@@ -461,7 +461,7 @@ table. To do this, you can the specify the frame for which the `//include/pose`
 should change.
 
 This can be achieved by specifying `//include/placement_frame`. If this
-attribute is specfied, then `//include/pose` *must* be specified, as
+element is specfied, then `//include/pose` *must* be specified, as
 any information in the included `//model/pose` will no longer be relevant.
 
 As an example:
@@ -498,7 +498,7 @@ models, and `model://` URIs for Gazebo models.
 
 ##### 1.4.6 `//include/static`
 
-This allows a the `//model/static` element to be overridden and will affect
+This allows the `//model/static` element to be overridden and will affect
 *all* models transitively included via the `//include` element, and can *only*
 change values from false to true; `//include/static` can only be false if all
 models included via the file are non-static.
@@ -570,11 +570,11 @@ The following is intended to work:
 ~~~xml
 <!-- arm_and_gripper.sdf -->
 <model name="arm_and_gripper">
-  <include file="arm.sdf">
-    <uri>arm.sdf</uri>
+  <include>
+    <uri>file://arm.sdf</uri>
   </include>
   <include>
-    <uri>gripper.sdf</uri>
+    <uri>file://gripper.sdf</uri>
     <!-- Place model to make Cm and Ca coincide on both models. -->
     <placement_frame>mount_point</placement_frame>
     <pose relative_to="arm::gripper_mount"/>
@@ -612,15 +612,15 @@ You cannot achieve the above by defining the weld in the gripper itself, e.g. by
 <!-- BAD_arm_and_gripper.sdf -->
 <model name="arm_and_gripper">
   <include>
-    <uri>arm.sdf</uri>
+    <uri>file://arm.sdf</uri>
   </include>
   <include>
-    <uri>gripper_with_weld.sdf</uri>
+    <uri>file://gripper_with_weld.sdf</uri>
   </include>
 </model>
 ~~~
 
-This implies that for scoping, it is *extremely* important that the parser to
+This implies that for scoping, it is *extremely* important for the parser to
 know that it's working with a single model file.
 
 #### 2 Robot Arm with Gripper and Intermediate Flanges
@@ -644,7 +644,7 @@ Files:
 <model name="arm">
   <link name="link"/>
   <frame name="flange_mount">
-    <pose frame="link">{X_ADa}</pose>
+    <pose relative_to="link">{X_ADa}</pose>
   </frame>
 </model>
 ~~~
@@ -655,11 +655,11 @@ Files:
   <link name="body"/>
 
   <frame name="mount">
-    <pose frame="body">{X_FDf}</pose>
+    <pose relative_to="body">{X_FDf}</pose>
   </frame>
 
   <frame name="gripper_mount">
-    <pose frame="body">{X_FCf}</pose>
+    <pose relative_to="body">{X_FCf}</pose>
   </frame>
 </model>
 ~~~
@@ -670,11 +670,11 @@ Files:
   <link name="body"/>
 
   <frame name="mount">
-    <pose frame="body">{X_FDf}</pose>
+    <pose relative_to="body">{X_FDf}</pose>
   </frame>
 
   <frame name="gripper_mount">
-    <pose frame="body">{X_FCf}</pose>
+    <pose relative_to="body">{X_FCf}</pose>
   </frame>
 </model>
 ~~~
@@ -685,7 +685,7 @@ Files:
   <link name="gripper"/>
 
   <frame name="mount">
-      <pose>{X_GCg}</pose>
+    <pose>{X_GCg}</pose>
   </frame>
 </model>
 ~~~
@@ -710,7 +710,7 @@ With the proposed nesting, defining `R1` as `robot_1`s model frame, and `R2`
       <placement_frame>mount</placement_frame>
       <pose relative_to="arm::flange_mount"/>
     </include>
-    <joint type="weld">
+    <joint name="weld1" type="fixed">
       <parent>arm::flange_mount</parent>
       <child>flange::mount</child>
     </joint>
@@ -719,7 +719,7 @@ With the proposed nesting, defining `R1` as `robot_1`s model frame, and `R2`
       <placement_frame>mount</placement_frame>
       <pose relative_to="flange::gripper_mount"/>
     </include>
-    <joint type="weld">
+    <joint name="weld2" type="fixed">
       <parent>flange::gripper_mount</parent>
       <child>gripper::mount</child>
     </joint>
@@ -738,7 +738,7 @@ With the proposed nesting, defining `R1` as `robot_1`s model frame, and `R2`
       <placement_frame>mount</placement_frame>
       <pose relative_to="arm::flange_mount"/>
     </include>
-    <joint type="weld">
+    <joint name="weld1" type="fixed">
       <parent>arm::flange_mount</parent>
       <child>flange::mount</child>
     </joint>
@@ -747,7 +747,7 @@ With the proposed nesting, defining `R1` as `robot_1`s model frame, and `R2`
       <placement_frame>mount</placement_frame>
       <pose relative_to="flange::gripper_mount"/>
     </include>
-    <joint type="weld">
+    <joint name="weld2" type="fixed">
       <parent>flange::gripper_mount</parent>
       <child>gripper::mount</child>
     </joint>
