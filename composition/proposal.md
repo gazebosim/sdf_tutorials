@@ -55,10 +55,11 @@ when making nontrivial assemblies, and especially when handling different
 versions of worlds or robots (e.g. adding multiple instances of a robot, or
 swapping out grippers).
 
-At present (SDFormat 1.7), the nesting a model via the `//include` tag or via
-direct elements has not been explicitly specified to perform the same
-operations, part of the reason being that nesting directly is not actually implemented in the current `libsdformat` (9.1.0). Nesting of models generally
-implies that the elements can be referred via a form of scope, such as
+As of SDFormat 1.7, nesting a model with a `//model/include` tag has different
+behavior than direct nesting with `//model/model`,
+part of the reason being that nesting directly with `//model/model` is not yet
+implemented in the current `libsdformat` (9.1.0). Nesting of models generally
+implies that the elements can be referenced via a form of scope, such as
 `{scope}::{name}`. However, `::` is not a special token and thus can be
 used to create "false" hierarchy or potential name collisions. Additionally, there is
 no way for elements within the same file to refer "up" to another element, e.g. with in a robot assembly, adding a weld between a gripper and an arm when the
@@ -66,11 +67,11 @@ two are sibiling models.
 
 For posturing an included model, there is no means by which the user can
 specify which included frame to posture via `//include/pose`. The target frame
-to move will be the
+to move currently can only be the
 [`__model__` frame](/tutorials?tut=pose_frame_semantics_proposal#2-model-frame-and-canonical-link).
 Therfore, if you wanted to weld a gripper to an end effector, but the canonical
 link for the gripper is not at the weld point (or it has multiple potential
-weld points), you must duplicate this information in the top-level.
+weld points), you must duplicate this pose information in the top-level.
 
 For including models, it is nice to have access to other model types, e.g.
 including a custom model specified as a `*.yaml` or connecting to some other
@@ -154,8 +155,10 @@ already refer to frames, so making joints to refer to frames would also
 simplify things.
 
 The implementation for this should generally stay the same, with the only
-change being that the frame's underlying link would be referred to, and the
-default `//joint/pose/@relative_to` would end up incorporting the child frame's
+changes being that the joint's parent and child links are the links to which
+the parent and child frames are attached, and that the implicit joint frame
+is attached to the joint's child frame. This implies that the
+default value of `//joint/pose/@relative_to` is relative to the child frame's
 pose.
 
 This allows easier swapping out of components.
