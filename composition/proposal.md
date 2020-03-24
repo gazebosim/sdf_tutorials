@@ -581,7 +581,7 @@ The following is intended to work:
   </include>
   <include>
     <uri>file://gripper.sdf</uri>
-    <!-- Place model to make Cm and Ca coincide on both models. -->
+    <!-- Place model to make Cg and Ca coincide on both models. -->
     <placement_frame>mount_point</placement_frame>
     <pose relative_to="arm::gripper_mount"/>
   </include>
