@@ -371,8 +371,8 @@ to:
 ##### 1.3.4 Cross-Referencing Rules
 
 Cross-referencing should be the mechanism by which encapsulation is enforced.
-Given that references are only allowed between elements or down in the
-structure (e.g. *in or under the same file*), this is implicitly enforced.
+Given that references are only allowed to sibling or descendent elements
+(e.g. *in or under the same file*), this is implicitly enforced.
 
 #### 1.4 `//include` Semantics
 
