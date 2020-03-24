@@ -232,7 +232,7 @@ a file whose root is a model:
     <link name="top_link">
       <pose relative_to="top_frame"/>  <!-- VALID -->
       <pose relative_to="some_unknown_frame"/>  <!-- ERROR: Violates encapsulation. -->
-      <pose relative_to="top_model::top_frame"/>  <!-- ERROR: Shadowing. -->
+      <pose relative_to="top_model::top_frame"/>  <!-- ERROR: Shadowing. Defined in outer scope. -->
     </link>
 
     <model name="mid_model">
@@ -240,7 +240,7 @@ a file whose root is a model:
 
       <link name="mid_link">
         <pose/>  <!-- VALID: Same as relative_to="__model__" -->
-        <pose relative_to="top_link"/>  <!-- ERROR: Shadowing. -->
+        <pose relative_to="top_link"/>  <!-- ERROR: Shadowing. Defined in outer scope. -->
       </link>
 
       <model name="bottom_model">
@@ -248,13 +248,13 @@ a file whose root is a model:
 
         <link name="bottom_link">
           <pose/>  <!-- VALID -->
-          <pose relative_to="mid_link"/>  <!-- ERROR: Shadowing. -->
-          <pose relative_to="mid_model::mid_link"/>  <!-- ERROR: Shadowing. -->
-          <pose relative_to="top_frame"/>  <!-- ERROR: Shadowing. -->
+          <pose relative_to="mid_link"/>  <!-- ERROR: Shadowing. Defined in outer scope. -->
+          <pose relative_to="mid_model::mid_link"/>  <!-- ERROR: Shadowing. Defined in outer scope. -->
+          <pose relative_to="top_frame"/>  <!-- ERROR: Shadowing. Defined in outer scope. -->
         </link>
 
         <frame name="bottom_frame" attached_to="bottom_link"/>  <!-- VALID -->
-        <frame name="bottom_frame" attached_to="bottom_model::bottom_link"/>  <!-- ERROR: Shadowing. -->
+        <frame name="bottom_frame" attached_to="bottom_model::bottom_link"/>  <!-- ERROR: Shadowing. Defined in outer scope. -->
       </model>
 
       <!-- Because shadowing is disallowed, the reference to `mid_model` within
@@ -269,11 +269,11 @@ a file whose root is a model:
         </model>
       </model>
 
-      <frame name="mid_to_top" attached_to="top_frame"/>  <!-- ERROR: Shadowing. -->
+      <frame name="mid_to_top" attached_to="top_frame"/>  <!-- ERROR: Shadowing. Defined in outer scope. -->
 
       <frame name="mid_to_bottom" attached_to="bottom_model::bottom_link"/>  <!-- VALID -->
       <frame name="mid_to_bottom" attached_to="bottom_link"/>  <!-- ERROR: Bad scope. -->
-      <frame name="mid_to_bottom" attached_to="mid_model::bottom_model::bottom_link"/>  <!-- ERROR: Shadowing. -->
+      <frame name="mid_to_bottom" attached_to="mid_model::bottom_model::bottom_link"/>  <!-- ERROR: Shadowing. Defined in outer scope. -->
     </model>
   </model>
 </sdf>
@@ -288,13 +288,13 @@ For a world file:
     <frame name="world_frame"/>
 
     <frame name="world_scope_frame" attached_to="world_frame"/>  <!-- VALID -->
-    <frame name="world_scope_frame" attached_to="simple_world::world_frame"/>  <!-- ERROR: Shadowing. -->
+    <frame name="world_scope_frame" attached_to="simple_world::world_frame"/>  <!-- ERROR: Shadowing. Defined in outer scope. -->
 
     <model name="top_model">
       <pose relative_to="world_frame"/>  <!-- VALID -->
 
       <frame name="top_frame"/>  <!-- VALID: Same as relative_to="__model__" -->
-      <frame name="top_frame" attached_to="world_frame"/>  <!-- ERROR: Shadowing.-->
+      <frame name="top_frame" attached_to="world_frame"/>  <!-- ERROR: Shadowing. Defined in outer scope.-->
 
       <link name="top_link">
         <pose relative_to="top_frame"/>  <!-- VALID -->
