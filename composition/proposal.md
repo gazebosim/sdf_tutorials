@@ -175,6 +175,16 @@ If an intermediate element needs to be used, but should not be public, consider
 prefixing the names with a single `_` to indicate they should be private, like
 in Python.
 
+##### 1.2.4 Reintroduce `//world/joint`
+
+Given that assembly is achieved using joints, both inside `//model` and
+`//world` elements, `//world` elements should be able to provide a mechanism to
+make assemblies without having to make a wrapping `//model`.
+
+To this end, the next specification of SDFormat should reintroduce
+`//world/joint`, but ensure that it is explicitly supported in both
+specification and software.
+
 #### 1.3 Name Scoping and Cross-Referencing
 
 #### 1.3.1 Reserved Delimiter Token `::`
