@@ -206,6 +206,7 @@
       <tutorials>
         <tutorial>pose_frame_semantics_proposal</tutorial>
         <tutorial>custom_elements_attributes_proposal</tutorial>
+        <tutorial>composition_proposal</tutorial>
       </tutorials>
     </category>
 
