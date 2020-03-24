@@ -370,18 +370,9 @@ to:
 
 ##### 1.3.4 Cross-Referencing Rules
 
-Cross-referencing is only allowed between elements *in or under the same file*.
-
-Only the following attributes / properties are presently permitted to cross
-boundaries (but only within the given file):
-
-* `//joint/parent` and `//joint/child`
-* `//frame/@attached_to`
-* `//model/@canonical_link` can *only* cross model boundaries down (referring
-to children), not up (referring to parents).
-
-As a note, the default `//pose/@relative_to` will always refer to the
-immediate parent `//model`.
+Cross-referencing should be the mechanism by which encapsulation is enforced.
+Given that references are only allowed between elements or down in the
+structure (e.g. *in or under the same file*), this is implicitly enforced.
 
 #### 1.4 `//include` Semantics
 
