@@ -437,7 +437,7 @@ As an example:
 be rigidly transformed by the given pose (regardless of joint fixtures),
 relative to the included `//model/@canonical_link`.
 
-The scope of `//include/pose` should be evaluated with respect the enclosing
+The scope of `//include/pose` should be evaluated with respect to the enclosing
 scope of the `//include` tag, *not* the scope of the included model. This means
 that the semantics are the same as they would be for a nested model pose
 (i.e. `//model/model/pose`).
