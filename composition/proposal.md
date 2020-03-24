@@ -696,19 +696,19 @@ Files:
 </model>
 ~~~
 
-With the proposed nesting, defining `R1` as `robot_1`s model frame, and `R2`
-`robot_2`s model frame:
+With the proposed nesting, defining `M` as the overall model's frame, `R1` as
+`robot_1`s model frame, and `R2` as `robot_2`s model frame:
 
 ```xml
 <model name="super_armio_bros">
-<!-- N.B. This could also be defined as a //world element. -->
+  <!-- N.B. This could also be defined as a //world element. -->
 
   <!-- Arm + Electric Flange + Gripper -->
   <model name="robot_1">
+    <pose>{X_MR1}</pose>
     <include file="arm.sdf">
       <name>arm</name>
       <uri>file://arm.sdf</uri>
-      <pose>{X_MR1}</pose>
     </include>
     <include>
       <name>flange</name>
