@@ -360,7 +360,7 @@ However, as indicated in the corresponding
 [Model section](/tutorials?tut=pose_frame_semantics_proposal#1-model), it is
 not currently supported to refer to a nested model's frame using
 `//model/model/@name` from inside a `//model`. To that end, the Model parsing
-phase for Step 7 should change the its implicit frames from:
+phase for Step 7 should change the description of implicit frames from:
 
 "name of a link, joint, or frame in this model's scope"
 
@@ -395,7 +395,7 @@ Only the following elements can be added to a model via an `/include`:
 
 <!-- Permit others? -->
 
-###### 1.4.2 `//include/name` and Cross-References
+##### 1.4.2 `//include/name` and Cross-References
 
 Scopes via composition are defined by the *instantiated* model name
 (`//include/name`), not the *include-file-specified* model name
