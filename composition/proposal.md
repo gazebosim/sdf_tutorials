@@ -556,7 +556,7 @@ The following is intended to work:
 <model name="arm">
     <link name="body"/>
 
-    <frame name="gripper_mount" attached_to="body">
+    <frame name="gripper_mount">
       <pose>{X_ACa}</pose>
     </frame>
 </model>
@@ -567,7 +567,7 @@ The following is intended to work:
 <model name="gripper">
   <link name="body"/>
 
-  <frame name="mount_point" attached_to="body">
+  <frame name="mount_point">
     <pose>{X_GCg}</pose>
   </frame>
 </model>
