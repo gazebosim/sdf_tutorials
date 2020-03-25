@@ -139,6 +139,18 @@
       <skill>intermediate</skill>
     </tutorial>
 
+    <tutorial title="Composition: Proposed behavior" ref='composition_proposal' type='proposal'>
+      <markdown version="1.8">composition/proposal.md</markdown>
+      <description>
+          Propose new behavior for model level composition.
+      </description>
+      <tags>
+        <tag>nesting</tag>
+        <tag>composition</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
     <tutorial title="Proposal Format" ref='proposal_format' type='documentation'>
       <markdown version="1.7">developers/proposal_format.md</markdown>
       <description>
@@ -194,6 +206,7 @@
       <tutorials>
         <tutorial>pose_frame_semantics_proposal</tutorial>
         <tutorial>custom_elements_attributes_proposal</tutorial>
+        <tutorial>composition_proposal</tutorial>
       </tutorials>
     </category>
 
