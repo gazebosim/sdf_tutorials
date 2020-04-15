@@ -530,9 +530,58 @@ It would also generally be *not* suggested to force a static model to be
 non-static, as the static model may not be designed for non-static use, and
 waste time on debugging.
 
-#### 1.5 Minimal Interface Types for Non-SDFormat Models
+#### 1.5 Minimal `libsdformat` Interface Types for Non-SDFormat Models
 
-**TODO(eric.cousineau)**: Add this in a follow-up PR.
+As mentioned above, the encapsulation goal of this proposal should allow for
+downstream libraries to permit specifying non-SDFormat model via `//include`
+tags *without* `libsdformat` having to try and convert the model to SDFormat.
+
+In order to do so, it is proposed that the following API hook be permitted to
+be registered in `libsdformat`:
+
+~~~c++
+/// \param[out] errors Errors encountered during custom parsing.
+/// \returns An optional ModelInterface. If this returns a nullopt, then it
+/// means libsdformat should continue testing out other custom parsers
+/// registered under the same extension. (e.g. a parser for `.yaml`, which may
+/// cover many different schemas.)
+/// Otherwise, the returned model interface is incorprated into the existing
+/// model, and the frames and links will be accessible.
+using CustomModelParser =
+    std::function<std::optional<ModelInterface> (Errors& errors)>;
+
+// \param[in] extension Extension to parse, including dot. e.g. `.yaml`.
+// \param[in] model_parser Callback as described by CustomModelParser.
+void registerCustomModelParser(
+    std::string extension,
+    CustomModelParser model_parser);
+
+class InterfaceModel {
+  public: void AddNestedModel(InterfaceModel);
+  public: void AddFrame(InterfaceFrame);
+  public: void AddLink(InterfaceLink);  // So that frames can be anchored.
+};
+
+class InterfaceFrame {
+
+};
+
+class InterfaceLink {
+};
+~~~
+
+In addition to this, the following update to hierarchies are suggested to be
+made:
+
+~~~c++
+class Model : private InterfaceModel {  // ... ???
+  // Use private inheritance to hide mutation methods.
+};
+
+class Link : private InterfaceLink { ... };
+
+class Frame : private InterfaceFrame { ... };
+~~~
 
 #### 1.6 Proposed Parsing Stages
 
