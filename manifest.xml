@@ -6,8 +6,8 @@
     <!-- Beginner tutorials -->
 
     <tutorial title="Install" ref='install'>
-      <markdown version="6.x">install/tutorial_6-x.md</markdown>
       <markdown version="2.0">install/tutorial_2-0.md</markdown>
+      <markdown version="6.x">install/tutorial_6-x.md</markdown>
       <description>Installation instructions for libsdformat.</description>
       <tags>
         <tag>install</tag>
