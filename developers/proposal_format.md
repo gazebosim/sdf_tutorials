@@ -1,10 +1,15 @@
 # Proposal Procedure and Format
 
-To make a proposal, you should first see if you can get general buy-in on the
+To make a proposal, you may want to see if you can get general buy-in on the
 concept (e.g. through direct conversations, GitHub issues,
 [ROS Discourse](https://discourse.ros.org/),
-[Gazebo Community](https://community.gazebosim.org/), etc.). Afterwards, you
-should fork this repository and make a pull request with your intended proposal.
+[Gazebo Community](https://community.gazebosim.org/), etc.).
+
+Afterwards, you should fork the
+[`sdf_tutorials`]( https://github.com/osrf/sdf_tutorials)
+repository and make a
+[pull request](https://github.com/osrf/sdf_tutorials/compare?expand=1) with
+your intended proposal.
 
 The format below is intended to guide the writing of a proposal for features
 for the SDFormat specifciation, and possibly implementation in `libsdformat`.
