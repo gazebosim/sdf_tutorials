@@ -10,7 +10,7 @@ Addisu Taddese `<addisu@openrobotics.org>`
 
 SDFormat aims to be a specification for describing simulations without being
 closely coupled with specific simulators such as Gazebo. It is also a goal of
-this project to provide [libsdformat](https://bitbucket/osrf/sdformat) as the
+this project to provide [libsdformat](https://github.com/osrf/sdformat) as the
 canonical library for parsing SDFormat files. As SDFormat gets more widely used
 by other applications, it is natural for developers of those applications to
 want to extend SDFormat beyond the latest standard to specify parameters for

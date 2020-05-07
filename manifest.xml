@@ -189,7 +189,7 @@
 
         Use the *Edit* button in the upper right corner of a tutorial page to
         go directly to its source at
-        [bitbucket.org/osrf/sdf_tutorials](https://bitbucket.org/osrf/sdf_tutorials).
+        [github.com/osrf/sdf_tutorials](https://github.com/osrf/sdf_tutorials).
       </description>
       <tutorials>
         <tutorial>specify_pose</tutorial>

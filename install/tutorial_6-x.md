@@ -59,12 +59,12 @@ shell scripts for setting the necessary environment variables.
 
         mkdir ~/sdf_source
         cd ~/sdf_source/
-        hg clone https://bitbucket.org/osrf/sdformat
+        git clone https://github.com/osrf/sdformat
 
 1. Change directory into the sdformat repository and switch to the sdf6 branch
 
         cd sdformat
-        hg up sdf6
+        git checkout sdf6
 
    **Note: the <tt>default</tt> branch is the development branch where you'll find the bleeding edge code, your cloned repository should be on this branch by default but we recommend you switch to the sdf6 branch if you desire more stability**
 
