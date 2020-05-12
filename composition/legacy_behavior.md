@@ -110,14 +110,14 @@ location of the model and optionally override some of its properties:
   with the included model.
 
 In `libsdformat`, the contents of the `<uri>` element are passed to the
-[sdf::findFile](https://bitbucket.org/osrf/sdformat/src/1a3f95acdc3cd86ab99713f85ddb2c54226c4de9/src/SDF.cc#lines-58:167)
+[sdf::findFile](https://github.com/osrf/sdformat/blob/sdformat9_9.0.0/src/SDF.cc#L58-L167)
 function defined in
-[sdf/SDFImpl.hh](https://bitbucket.org/osrf/sdformat/src/1a3f95acdc3cd86ab99713f85ddb2c54226c4de9/include/sdf/SDFImpl.hh#lines-55:65).
+[sdf/SDFImpl.hh](https://github.com/osrf/sdformat/blob/sdformat9_9.0.0/include/sdf/SDFImpl.hh#L55-L65).
 This function searches for the model files using the steps in the following
 order until the model is found:
 
   1. Users can define paths on their system associated with a specific URI
-     scheme using [sdf::addURIPath](https://bitbucket.org/osrf/sdformat/src/1a3f95acdc3cd86ab99713f85ddb2c54226c4de9/include/sdf/SDFImpl.hh#lines-67:72).
+     scheme using [sdf::addURIPath](https://github.com/osrf/sdformat/blob/sdformat9_9.0.0/include/sdf/SDFImpl.hh#L67-L72).
      For example, if `sdf::addURIPath("model://", path);` has been called,
      including a `<uri>model://sphere</uri>` will search the folder in `path`
      for subfolders named `sphere`.
@@ -226,7 +226,7 @@ The result of processing `ParentModel` results in the following model
 </model>
 ```
 
-> **Note** Due to a [bug in libsdformat](https://bitbucket.org/osrf/sdformat/issues/219),
+> **Note** Due to a [bug in libsdformat](https://github.com/osrf/sdformat/issues/219),
 the `xyz` vector of joint axes in
 nested models is always interpreted to be expressed in the model frame
 regardless of the value of the `<use_parent_model_frame>` element.
@@ -372,10 +372,10 @@ example.
 
 <!--# References-->
 
-<!--[] https://bitbucket.org/osrf/gazebo_design/pull-requests/18/add-support-for-nested-models-in-gazebo/-->
+<!--[] https://osrf-migration.github.io/osrf-others-gh-pages/#!/osrf/gazebo_design/pull-requests/18-->
 
 <!--[] http://gazebosim.org/tutorials?tut=nested_model&cat=build_robot-->
 
 <!--[] http://gazebosim.org/tutorials?tut=model_structure&cat=build_robot-->
 
-<!--[] https://bitbucket.org/osrf/sdformat/pull-requests/214/support-nesting-of-model-sdf-elements/diff-->
+<!--[] https://osrf-migration.github.io/sdformat-gh-pages/#!/osrf/sdformat/pull-requests/214-->

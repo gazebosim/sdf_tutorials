@@ -220,7 +220,7 @@ The SDFormat 1.4 specification does not clearly state to which link the model
 frame is attached, but Gazebo has a convention of choosing the first `//link`
 element listed as a child of a `//model` as the `@attached_to` link and
 referring to this as the model's Canonical Link
-(see [Model.cc from gazebo 10.1.0](https://bitbucket.org/osrf/gazebo/src/gazebo10_10.1.0/gazebo/physics/Model.cc#lines-130:132)).
+(see [Model.cc from gazebo 10.1.0](https://github.com/osrf/gazebo/blob/gazebo10_10.1.0/gazebo/physics/Model.cc#L130-L132)).
 
 In SDFormat 1.5, a model without links is considered valid, but its implicit
 frame is not well-defined since it is not clear where the frame is attached.
@@ -1392,7 +1392,7 @@ Each API returns an error code if errors are found during parsing.
     data complies with the [schema](http://sdformat.org/schemas/root.xsd).
     Schema `.xsd` files are generated from the `.sdf` specification files
     when building `libsdformat` with the
-    [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
+    [xmlschema.rb script](https://github.com/osrf/sdformat/blob/sdformat6_6.2.0/tools/xmlschema.rb).
 
 2.  **Name attribute checking:**
     Check that name attributes are not an empty string `""`,
@@ -1530,7 +1530,7 @@ There are *seven* phases for validating the kinematics data in a world:
     data complies with the [schema](http://sdformat.org/schemas/root.xsd).
     Schema `.xsd` files are generated from the `.sdf` specification files
     when building `libsdformat` with the
-    [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
+    [xmlschema.rb script](https://github.com/osrf/sdformat/blob/sdformat6_6.2.0/tools/xmlschema.rb).
 
 2.  **Name attribute checking:**
     Check that name attributes are not an empty string `""`,
