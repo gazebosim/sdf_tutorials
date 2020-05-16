@@ -1,36 +1,10 @@
-# Pose Frame Semantics Proposal
+# Pose Frame Semantics
 
-* **Authors**:
-Steven Peters `<scpeters@osrfoundation.org>`,
-Addisu Taddese  `<addisu@openrobotics.org>`,
-Eric Cousineau `<eric.cousineau@tri.global>`
-* **Status**: Final
-* **SDFormat Version**: 1.7
-* **`libsdformat` Version**: 9.0
+## Older behavior
 
-## Introduction
-
-This proposal suggests a series of changes intended to support semantics for
-more expressivity of kinematics and coordinate frames in SDFormat 1.7.
-SDFormat 1.5 added `<frame>` elements to several elements, and the frame
-attribute string to `<pose>` elements, as described in the
-[documentation on existing behavior for pose frame semantics](/tutorials?tut=pose_frame_semantics).
-Semantics for the frame element and attribute were not fully defined, so they
-have not yet been used.
-The changes proposed here are intended to fully define the frame element to
-improve usability.
-
-## Document summary
-
-The proposal includes the following sections:
-
-* [Motivation](#motivation): An explanation of the background and rationale behind the proposal
-* [Proposed changes](#proposed-changes): Each addition to or subtraction from the existing SDFormat
-version’s design, definitions, semantics and syntax, organized under
-subsections of related concepts
-* [Examples](#examples): Long form code samples of the proposed changes
-* [Parsing phases](#phases-of-parsing-kinematics): Updated phases of parsing kinematics necessary for
-SDFormat 1.7 models and worlds
+**NOTE**: See the [SDFormat 1.5 version of this documentation](/tutorials?ver=1.5&tut=pose_frame_semantics)
+for documentation of the definition of coordinate frames and interpretation of
+relative poses as implemented by `libsdformat8` and earlier.
 
 ## Syntax
 
@@ -45,7 +19,7 @@ referenced as `//model/link` and  model `name` attributes as `//model/@name`:
       <link/>
     </model>
 
-## Motivation
+## Introduction
 
 Coordinate frames are a fundamental aspect of model specification in SDFormat.
 For each element with a [`//pose` tag](/tutorials?tut=specify_pose)
@@ -53,20 +27,34 @@ For each element with a [`//pose` tag](/tutorials?tut=specify_pose)
 an origin and orientation of XYZ coordinate axes.
 Coordinate frames are defined by applying the pose transform relative to
 another coordinate frame.
-In SDF 1.6 and earlier, there are fixed rules for determining the frame
+In SDFormat 1.6 and earlier, there are fixed rules for determining the frame
 relative to which each subsequent frame is defined
-(see the "Parent frames" sections in the documentation for
-[Pose frame semantics: legacy behavior](/tutorials?tut=pose_frame_semantics)).
+(see the "Parent frames" sections in the
+[SDFormat 1.5 version of this documentation](/tutorials?ver=1.5&tut=pose_frame_semantics#parent-frames-in-sdf-1-4)).
 
-This proposes to improve the expressivity of model specification in SDFormat by
-adding the ability to define arbitrary coordinate frames within a model and
-choose the frame relative to which each frame is defined.
-
+In SDFormat 1.7, the expressivity of model specification was improved by
+allowing arbitrary coordinate frames to be defined using the `//frame` tag
+and allowing frame poses to be defined relative to any other frame
+using the `//pose/@relative_to` attribute.
 This allows frames to be used to compose information and minimize redundancy,
 such as specifying a link's pose relative to its parent / inboard joint.
 It could also be used to abstract other information for inverse kinematics,
 visual servoing, or sensor calibration by defining a camera pose using a frame
 instead of a base link and pose offset.
+The behavior described in this documentation is implemented in `libsdformat` 9.x
+and was originally proposed in the
+[Pose Frame Semantics Proposal](/tutorials?tut=pose_frame_semantics_proposal).
+
+## Document summary
+
+This documentation includes the following sections:
+
+* [Proposed changes](#proposed-changes): Each addition to or subtraction from the existing SDFormat
+version’s design, definitions, semantics and syntax, organized under
+subsections of related concepts
+* [Examples](#examples): Long form code samples of the proposed changes
+* [Parsing phases](#phases-of-parsing-kinematics): Updated phases of parsing kinematics necessary for
+SDFormat 1.7 models and worlds
 
 ## Proposed changes
 
