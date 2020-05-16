@@ -275,7 +275,7 @@ Normal rules apply for referencing links found in the parent model. Links in
 nested models are referenced by using a `model_name::link_name` syntax where
 `model_name` is the name of the model as defined by the `<name>` of the model
 definition or as overridden by the `<include><name>`. While this syntax is
-imposed by `libsdformat` when model's are composed using the `<include>` tag by
+imposed by `libsdformat` when models are composed using the `<include>` tag by
 virtue of it prepending link and joint names with `model_name::`, the current
 specification does not dictate how child elements are referenced. Nevertheless,
 this documentation assumes this syntax as the convention for referencing nested

@@ -318,7 +318,7 @@ For a world file:
 
 **Alternatives Considered for Reference Types**
 
-It was considered to only allow downwards references or a single upwards reference using the `^` characeter. However, there was a lack of a sufficiently
+It was considered to only allow downwards references or a single upwards reference using the `^` character. However, there was a lack of a sufficiently
 motivating example, so this was removed from the proposal.
 
 It was also considered to not permit upwards references and only use downward or
