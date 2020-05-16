@@ -78,6 +78,7 @@
 
     <tutorial title="Pose frame semantics" ref='pose_frame_semantics' type='documentation'>
       <markdown version="1.5">pose_frame_semantics/tutorial.md</markdown>
+      <markdown version="1.7">pose_frame_semantics/tutorial_1.7.md</markdown>
       <description>
         Describing existing behavior for element naming, definition of
         coordinate frames, referencing parent and child links,
@@ -93,8 +94,8 @@
     <tutorial title="Pose frame semantics: proposed behavior" ref='pose_frame_semantics_proposal' type='proposal'>
       <markdown version="1.7">pose_frame_semantics/proposal.md</markdown>
       <description>
-        Proposing new behavior for SDFormat 1.7, including semantics for the
-        pose frame attribute, the frame element, new rules
+        Accepted proposal for new behavior for SDFormat 1.7, including semantics for the
+        pose `relative_to` attribute, the `frame` element, new rules
         for element naming, and corresponding examples.
       </description>
       <tags>
