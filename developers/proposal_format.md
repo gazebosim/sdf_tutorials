@@ -25,7 +25,7 @@ should be replaced or removed.
 
 <!--
 TODO(eric): Add a link to root README to show how to preview a branch once
-#2 is fixed.
+issue 2 is fixed.
 -->
 
 ---
