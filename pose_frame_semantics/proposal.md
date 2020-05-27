@@ -1381,7 +1381,7 @@ For new phases, the ***Title:*** is italicized.
 
 ### 1 Model
 
-There are *seven* phases for validating the kinematics data in a model.
+There are *eight* phases for validating the kinematics data in a model.
 In libsdformat, the `sdf::readFile` and `sdf::readString` API's perform parsing
 stage 1, and `sdf::Root::Load` is proposed to perform all parsing stages.
 Each API returns an error code if errors are found during parsing.
@@ -1543,7 +1543,7 @@ There are *seven* phases for validating the kinematics data in a world:
     only confirms the existence of name attributes, not their content.
 
 3.  **Model checking:**
-    Check each model according to the *seven* phases of parsing kinematics of an
+    Check each model according to the *eight* phases of parsing kinematics of an
     sdf model.
 
 4.  ***Check `//world/frame/@attached_to` attribute values:***
