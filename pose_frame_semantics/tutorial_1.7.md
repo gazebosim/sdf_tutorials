@@ -8,7 +8,7 @@ relative poses as implemented by `libsdformat8` and earlier.
 
 ## Syntax
 
-The proposal uses [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp)
+This page uses [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp)
 to describe elements and attributes concisely.
 For example, `<model>` tags are referred to as `//model` using XPath.
 XPath is even more concise for referring to nested tags and attributes.
@@ -49,12 +49,132 @@ and was originally proposed in the
 
 This documentation includes the following sections:
 
+* [Element naming](#element-naming):
 * [Proposed changes](#proposed-changes): Each addition to or subtraction from the existing SDFormat
 version’s design, definitions, semantics and syntax, organized under
 subsections of related concepts
 * [Examples](#examples): Long form code samples of the proposed changes
 * [Parsing phases](#phases-of-parsing-kinematics): Updated phases of parsing kinematics necessary for
 SDFormat 1.7 models and worlds
+
+## Element naming rules in sdf 1.7
+
+### Unique names
+
+As of SDFormat 1.7, sibling elements of any type must have unique names.
+This is more restrictive than SDFormat 1.6 and earlier, which only required
+sibling elements of the same type to have unique names.
+For example, the following models are invalid in SDFormat 1.7 and earlier
+because links, joints, and collisions with the same parent do not have
+unique names.
+
+~~~
+<sdf version="1.7">
+  <model name="model">
+    <link name="link"/>
+    <link name="link"/> <!-- INVALID: Same name as sibling "link"! -->
+  </model>
+</sdf>
+~~~
+
+~~~
+<sdf version="1.7">
+  <model name="model">
+    <link name="link1"/>
+    <link name="link2"/>
+    <link name="link3"/>
+    <joint name="joint" type="fixed">
+      <parent>link1</parent>
+      <child>link2</child>
+    </joint>
+    <joint name="joint" type="fixed"> <!-- INVALID: Same name as sibling "joint"! -->
+      <parent>link2</parent>
+      <child>link3</child>
+    </joint>
+  </model>
+</sdf>
+~~~
+
+~~~
+<sdf version="1.7">
+  <model name="model">
+    <link name="link">
+      <collision name="collision">
+        ...
+      </collision>
+      <collision name="collision"> <!-- INVALID: Same name as sibling "collision"! -->
+        ...
+      </collision>
+    </link>
+  </model>
+</sdf>
+~~~
+
+Sibling elements of different types must now have unique names,
+so the following is invalid in SDFormat 1.7, though it was permitted but
+recommended against in SDFormat 1.6 and earlier.
+
+    <sdf version="1.7">
+      <model name="model">
+        <link name="base"/>
+        <link name="attachment"/>
+        <joint name="attachment" type="fixed"> <!-- INVALID: Same name as sibling link "attachment"!  -->
+          <parent>base</parent>
+          <child>attachment</child>
+        </joint>
+      </model>
+    </sdf>
+
+The following model contains collision elements with the same name, but
+the models are valid because the elements are not siblings, but rather
+children of different links.
+
+    <sdf version="1.7">
+      <model name="model">
+        <link name="link1">
+          <collision name="collision">
+            ...
+          </collision>
+        </link>
+        <link name="link2">
+          <collision name="collision"> <!-- VALID -->
+            ...
+          </collision>
+        </link>
+      </model>
+    </sdf>
+
+### Reserved names
+
+Due to the special interpretation of `world` in `//joint/parent`,
+`world` is now a reserved name in SDFormat 1.7 and must not be used to
+name entities in an SDFormat file.
+
+In SDFormat 1.5, when a joint specifies “world” as its parent or child link,
+its behavior is inconsistent and depends on the existence of a sibling link named “world”.
+If such a sibling link exists, that link will be used as the parent / child,
+but if no sibling link exists, then a static link fixed to the world frame is used instead.
+These changes reduce the inconsistency by disallowing sibling links named “world”.
+
+    <sdf version="1.7">
+      <model name="model">
+        <link name="world"/> <!-- INVALID: reserved name. -->
+        <link name="world_link"/> <!-- VALID. -->
+      </model>
+    </sdf>
+
+Additionally, names that begin and end with a double-underscore `__` are also reserved
+as of SDFormat 1.7 for use by library implementors and the specification.
+
+~~~
+<model name="__model__"/><!-- INVALID: name starts and ends with __, and is reserved. -->
+~~~
+
+~~~
+<model name="model">
+  <link name="__link__"/><!-- INVALID: name starts and ends with __. -->
+</model>
+~~~
 
 ## Proposed changes
 
@@ -453,54 +573,6 @@ Moreover, it was mentioned above that it can be very confusing when sibling
 elements of any type have identical names, which mitigates the need to
 support non-unique names for sibling elements.
 As such, the naming restriction is preferred.
-
-#### 3.3 Reserved names
-
-Entities in a simulation must not use `world` as a name. It has a special
-interpretation when specified as a parent or child link of a joint.
-
-~~~
-<model name="world"/><!-- INVALID: world is a reserved name. -->
-<model name="world_model"/><!-- VALID -->
-~~~
-
-~~~
-<model name="model">
-  <link name="world"/><!-- INVALID: world is a reserved name. -->
-  <link name="world_link"/><!-- VALID -->
-</model>
-~~~
-
-Names starting and ending with double underscores (eg. `__wheel__`) must be
-reserved for use by library implementors and the specification. For example,
-such names might be useful during parsing for setting sentinel or default names
-for elements with missing names.
-If explicitly stated, they can be referred to
-(e.g. `__model__` / `world` for implicit model / world frames, respectively).
-
-~~~
-<model name="__model__"/><!-- INVALID: name starts and ends with __, and is reserved. -->
-~~~
-
-~~~
-<model name="model">
-  <!-- VALID: Both frames are equivalent. -->
-  <frame name="frame1"/>
-  <frame name="frame2" attached_to="__model__"/>
-</model>
-~~~
-
-~~~
-<model name="model">
-  <link name="__link__"/><!-- INVALID: name starts and ends with __. -->
-</model>
-~~~
-
-In SDFormat 1.5, when a joint specifies “world” as its parent or child link,
-its behavior is inconsistent and depends on the existence of a sibling link named “world”.
-If such a sibling link exists, that link will be used as the parent / child,
-but if no sibling link exists, then a static link fixed to the world frame is used instead.
-These changes reduce the inconsistency by disallowing sibling links named “world”.
 
 ### 4 Details of `//model/frame`
 
