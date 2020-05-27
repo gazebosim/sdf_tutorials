@@ -1435,7 +1435,7 @@ its complexity.
 The following sections describe the phases for parsing the kinematics of an
 SDFormat 1.7 model and world.
 Several of the phases in each section are similar to the phases of parsing in
-SDFormat 1.4 in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
+the [SDFormat 1.5 version of this documentation](/tutorials?tut=pose_frame_semantics).
 In phases that differ from SDFormat 1.4, *italics* are used to signal the difference.
 For new phases, the ***Title:*** is italicized.
 
@@ -1443,7 +1443,7 @@ For new phases, the ***Title:*** is italicized.
 
 There are *seven* phases for validating the kinematics data in a model.
 In libsdformat, the `sdf::readFile` and `sdf::readString` API's perform parsing
-stage 1, and `sdf::Root::Load` is proposed to perform all parsing stages.
+stage 1, and `sdf::Root::Load` performs all parsing stages.
 Each API returns an error code if errors are found during parsing.
 
 1.  **XML parsing and schema validation:**
@@ -1452,7 +1452,7 @@ Each API returns an error code if errors are found during parsing.
     data complies with the [schema](http://sdformat.org/schemas/root.xsd).
     Schema `.xsd` files are generated from the `.sdf` specification files
     when building `libsdformat` with the
-    [xmlschema.rb script](https://github.com/osrf/sdformat/blob/sdformat6_6.2.0/tools/xmlschema.rb).
+    [xmlschema.rb script](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/tools/xmlschema.rb).
 
 2.  **Name attribute checking:**
     Check that name attributes are not an empty string `""`,
@@ -1462,6 +1462,11 @@ Each API returns an error code if errors are found during parsing.
     collisions, visuals, sensors, and lights.
     This step is distinct from validation with the schema because the schema
     only confirms the existence of name attributes, not their content.
+    *In `libsdformat9`, the helper function [isReservedName(const string&)](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Utils.cc#L25-L33)*
+    *is used when loading DOM objects with name attributes and a*
+    *`RESERVED_NAME` error code is generated if one is found*
+    *(see [Link::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Link.cc#L135-L141)*
+    *for an example).*
 
 3.  **Joint parent/child name checking:**
     For each joint, check that the parent and child link names are different
@@ -1469,6 +1474,17 @@ Each API returns an error code if errors are found during parsing.
     with the following exception:
     if "world" is specified as a *parent* link name,
     then the joint is attached to a fixed reference frame.
+    *In `libsdformat9`, these checks are all performed by the helper function*
+    *[checkJointParentChildLinkNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1820-L1885),*
+    *which is invoked by `ign sdf --check`.*
+    *A subset of these checks are performed by*
+    *[Joint::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Joint.cc#L199-L213)*
+    *(checking that parent and child link names are different and that*
+    *`world` is not specified as the child link name)*
+    *and [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L324)*
+    *(for non-static models calling [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L258-L266),*
+    *which checks that each child link specified by a joint exists as a sibling*
+    *of that joint).*
 
 4.  ***Check `//model/@canonical_link` attribute value:***
     If the `//model/@canonical_link` attribute exists and is not an empty
@@ -1578,7 +1594,7 @@ Each API returns an error code if errors are found during parsing.
 
 This section describes phases for parsing the kinematics of an SDFormat 1.7 world.
 Several of these phases are similar to the phases of parsing an SDFormat 1.4
-world in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
+world in the [SDFormat 1.5 version of this documentation](/tutorials?tut=pose_frame_semantics).
 In phases that differ from that document, *italics* are used to signal the difference.
 For new phases, the ***Title:*** is italicized.
 
@@ -1590,7 +1606,7 @@ There are *seven* phases for validating the kinematics data in a world:
     data complies with the [schema](http://sdformat.org/schemas/root.xsd).
     Schema `.xsd` files are generated from the `.sdf` specification files
     when building `libsdformat` with the
-    [xmlschema.rb script](https://github.com/osrf/sdformat/blob/sdformat6_6.2.0/tools/xmlschema.rb).
+    [xmlschema.rb script](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/tools/xmlschema.rb).
 
 2.  **Name attribute checking:**
     Check that name attributes are not an empty string `""`,
@@ -1601,9 +1617,14 @@ There are *seven* phases for validating the kinematics data in a world:
     since other names will be checked in the following step.
     This step is distinct from validation with the schema because the schema
     only confirms the existence of name attributes, not their content.
+    *In `libsdformat9`, the helper function [isReservedName(const string&)](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Utils.cc#L25-L33)*
+    *is used when loading DOM objects with name attributes and a*
+    *`RESERVED_NAME` error code is generated if one is found*
+    *(see [World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L214-L220)*
+    *for an example).*
 
 3.  **Model checking:**
-    Check each model according to the *seven* phases of parsing kinematics of an
+    Check each model according to the *eight* phases of parsing kinematics of an
     sdf model.
 
 4.  ***Check `//world/frame/@attached_to` attribute values:***
