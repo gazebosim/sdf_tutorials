@@ -6,8 +6,8 @@
     <!-- Beginner tutorials -->
 
     <tutorial title="Install" ref='install'>
-      <markdown version="6.x">install/tutorial_6-x.md</markdown>
       <markdown version="2.0">install/tutorial_2-0.md</markdown>
+      <markdown version="6.x">install/tutorial_6-x.md</markdown>
       <description>Installation instructions for libsdformat.</description>
       <tags>
         <tag>install</tag>
@@ -151,10 +151,11 @@
       <skill>advanced</skill>
     </tutorial>
 
-    <tutorial title="Proposal Format" ref='proposal_format' type='documentation'>
+    <tutorial title="Proposal Procedure and Format" ref='proposal_format' type='documentation'>
       <markdown version="1.7">developers/proposal_format.md</markdown>
       <description>
-        Provides guidelines for writing proposals for SDFormat / libsdformat.
+        Provides procedure and guidelines for writing proposals for
+        SDFormat (specification) / libsdformat (implementation).
       </description>
       <tags>
         <tag>proposal</tag>
@@ -188,7 +189,7 @@
 
         Use the *Edit* button in the upper right corner of a tutorial page to
         go directly to its source at
-        [bitbucket.org/osrf/sdf_tutorials](https://bitbucket.org/osrf/sdf_tutorials).
+        [github.com/osrf/sdf_tutorials](https://github.com/osrf/sdf_tutorials).
       </description>
       <tutorials>
         <tutorial>specify_pose</tutorial>

@@ -31,7 +31,7 @@ specification (as well as the caveats):
     * 7 (**released**): libsdformat4, SDFormat 1.6
     * 9 (**released**): libsdformat6, SDFormat 1.6
     * 10 (**released**): libsdformat6, SDFormat 1.6
-    * 11 (*target: Jan. 2020*): libsdformat9, SDFormat 1.7
+    * 11 (**released**): libsdformat9, SDFormat 1.7
 * [ignition Gazebo](https://ignitionrobotics.org/libs/gazebo)
     * 2.10.0 (**released**): libsdformat8, SDFormat 1.6, but supports only a subset:
         * Does not support directly nested models

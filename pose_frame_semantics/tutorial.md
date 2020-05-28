@@ -494,7 +494,7 @@ This section has discussed naming conventions for `<joint>` elements as
 children of a `<model>`.
 For completeness, it should be noted that the SDF specification allows for a
 `<joint>` to be a direct child of a `<world>`
-(see [world.sdf:58](https://bitbucket.org/osrf/sdformat/src/21d2cbe52bb/sdf/1.4/world.sdf#world.sdf-58)),
+(see [world.sdf:32](https://github.com/osrf/sdformat/blob/sdformat9_9.0.0/sdf/1.4/world.sdf#L32)),
 but the naming conventions for this case are not established, as this use case
 is not supported by Gazebo or any other known software.
 
@@ -580,7 +580,7 @@ Each API returns an error code if errors are found during parsing.
     data complies with the [schema](http://sdformat.org/schemas/root.xsd).
     Schema `.xsd` files are generated from the `.sdf` specification files
     when building `libsdformat` with the
-    [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
+    [xmlschema.rb script](https://github.com/osrf/sdformat/blob/sdformat6_6.2.0/tools/xmlschema.rb).
 
 2.  **Name attribute checking:**
     Check that name attributes are not an empty string `""`, and that sibling
@@ -630,7 +630,7 @@ These three phases are listed below:
     data complies with the [schema](http://sdformat.org/schemas/root.xsd).
     Schema `.xsd` files are generated from the `.sdf` specification files
     when building `libsdformat` with the
-    [xmlschema.rb script](https://bitbucket.org/osrf/sdformat/src/sdformat6_6.2.0/tools/xmlschema.rb).
+    [xmlschema.rb script](https://github.com/osrf/sdformat/blob/sdformat6_6.2.0/tools/xmlschema.rb).
 
 2.  **Name attribute checking:**
     Check that name attributes are not an empty string `""`, and that sibling

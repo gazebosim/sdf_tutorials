@@ -1,7 +1,18 @@
-# Proposal Outline for SDFormat
+# Proposal Procedure and Format
 
-This format is intended to guide the writing of a proposal for features for the
-SDFormat specifciation, and possibly implementation in `libsdformat`.
+To make a proposal, you may want to see if you can get general buy-in on the
+concept (e.g. through direct conversations, GitHub issues,
+[ROS Discourse](https://discourse.ros.org/),
+[Gazebo Community](https://community.gazebosim.org/), etc.).
+
+Afterwards, you should fork the
+[`sdf_tutorials`]( https://github.com/osrf/sdf_tutorials)
+repository and make a
+[pull request](https://github.com/osrf/sdf_tutorials/compare?expand=1) with
+your intended proposal.
+
+The format below is intended to guide the writing of a proposal for features
+for the SDFormat specifciation, and possibly implementation in `libsdformat`.
 
 For examples of proposals, please see:
 
@@ -11,6 +22,11 @@ For examples of proposals, please see:
 Anything below this horizontal rule is what should be incorporated into the
 proposal document. Items in braces or quotes are generally placeholders and
 should be replaced or removed.
+
+<!--
+TODO(eric): Add a link to root README to show how to preview a branch once
+issue 2 is fixed.
+-->
 
 ---
 
@@ -54,6 +70,8 @@ Make a bullet list of all major sections:
 * Elaborate on "Conclusion" statement from "Introduction".
   * "*{changes covered in proposal}* will improve *{concept being iterated on}* by *{key improvements}*".
 * Explain why *{changes}* are beneficial/chosen to solve the issues of *{concept}*.
+* If you have discussions or material that can easily be cross-referenced and
+  accessed, be sure to include them here.
 
 ## Proposed changes
 
