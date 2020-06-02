@@ -18,8 +18,12 @@ version supported by the given release of the library:
     version that will not be released.*
 * `libsdformat8`:
     * 8.5.0 (**released**): C++17, SDFormat 1.6.
-* `libsdformat9`: For use in Ignition Gazebo.
+* `libsdformat9`: For use in Ignition Citadel.
     * 9.0.0 (**released**): C++17, SDFormat 1.7.
+* `libsdformat10`: For use in Ignition Dome.
+    * 10.0.0 (**planned**): C++17, SDFormat 1.7.
+* `libsdformat11`: For use in Ignition E.
+    * 11.0.0 (**planned**): C++17, SDFormat 1.8.
 
 ## Downstream Library Support
 
@@ -37,6 +41,9 @@ specification (as well as the caveats):
         * Does not support directly nested models
     * 3.0.0 (**released**): libsdformat9, SDFormat 1.7, but only a subset:
         * Does not support directly nested models
+    * 4.0.0 (**planned**): libsdformat10, SDFormat 1.7, but only a subset:
+        * Does not support directly nested models
+    * 5.0.0 (**planned**): libsdformat11, SDFormat 1.8
 * [Drake](https://github.com/RobotLocomotion/drake/releases):
     * 0.10.0 - 0.13.0 (**released**): SDFormat 1.6, but deviates:
         * Does not support directly nested models
