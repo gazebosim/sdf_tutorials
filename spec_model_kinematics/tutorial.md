@@ -304,7 +304,7 @@ following figure.
 ### Model `two_links_orthogonal_2`
 
 In the second example, the parent and child links have the same pose relative
-to the model frame, but the xyz component of the joint pose is set to `0 -0.1 0`.
+to the model frame, but the xyz component of the joint pose is set to `-0.1 0 0`.
 This changes the position of the joint in the world frame to `0 0 0.1`.
 Note that the pose of linkB and link2 is the same in both models.
 
