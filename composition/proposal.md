@@ -540,6 +540,23 @@ In order to do so, it is proposed that the following API hook be permitted to
 be registered in `libsdformat`:
 
 ~~~c++
+struct sdf::NestedInclude {
+  // Resolved or not resolved?
+  // ERIC: My money is on unresolved.
+  std::string file_path;
+
+  // Name of the model in absolute hierarhcy.
+  // N.B. Should be unnecesssary if downstream consumer has composition. Not
+  // the case for Drake :(
+  std::string absolute_model_name;
+
+  // Name relative to immediate parent.
+  std::string local_model_name;
+
+  // Pose of how the model is postured.
+  sdf::SemanticPose pose;
+};
+
 /// \param[out] errors Errors encountered during custom parsing.
 /// \returns An optional ModelInterface. If this returns a nullopt, then it
 /// means libsdformat should continue testing out other custom parsers
@@ -552,7 +569,7 @@ using CustomModelParser =
 
 // \param[in] extension Extension to parse, including dot. e.g. `.yaml`.
 // \param[in] model_parser Callback as described by CustomModelParser.
-void registerCustomModelParser(
+void sdf::Root::registerCustomModelParser(
     std::string extension,
     CustomModelParser model_parser);
 
