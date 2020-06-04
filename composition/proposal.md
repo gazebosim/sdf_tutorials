@@ -541,50 +541,65 @@ be registered in `libsdformat`:
 
 ~~~c++
 struct sdf::NestedInclude {
-  // Resolved or not resolved?
-  // ERIC: My money is on unresolved.
+  /// Provides the *unresolved* file path as provided from the file directly
+  /// included.
   std::string file_path;
 
-  // Name of the model in absolute hierarhcy.
+  /// Name of the model in absolute hierarchy.
+  /// Example: `top_model::middle_model::my_new_model`
   // N.B. Should be unnecesssary if downstream consumer has composition. Not
   // the case for Drake :(
   std::string absolute_model_name;
 
-  // Name relative to immediate parent.
+  /// Name relative to immediate parent.
+  /// Example: `my_new_model`
   std::string local_model_name;
 
-  // Pose of how the model is postured.
+  /// Pose information from //include/pose.
   sdf::SemanticPose pose;
 };
 
+class sdf::InterfaceModel {
+  /// \param[in] name The *local* name (no nesting, e.g. "::").
+  public: InterfaceModel(std::string name);
+  /// Provided so that hierarchy can still be leveraged from SDFormat.
+  public: void AddNestedModel(sdf::InterfaceModelPtr nested_model);
+  /// Provided so that the including SDFormat model can still interface with
+  /// the declared frames.
+  public: void AddFrame(sdf::InterfaceFramePtr frame);
+};
+
+class sdf:::InterfaceFrame {
+  /// \param[in] name The *local* name.
+  /// \param[in] pose The semantic pose of the frame.
+  ///   If the parent frame is specified as "", then the frame itself is
+  ///   considered as a link, and can be used in `attached_to` to denote an
+  ///   anchoring in the frame graph.
+  public: InterfaceFrame(std::string name, sdf::SemanticPosePtr pose);
+};
+
+/// \param[in] include The //include tag information from which this model
+///   should be parsed.
 /// \param[out] errors Errors encountered during custom parsing.
-/// \returns An optional ModelInterface. If this returns a nullopt, then it
-/// means libsdformat should continue testing out other custom parsers
-/// registered under the same extension. (e.g. a parser for `.yaml`, which may
-/// cover many different schemas.)
-/// Otherwise, the returned model interface is incorprated into the existing
-/// model, and the frames and links will be accessible.
-using CustomModelParser =
-    std::function<std::optional<ModelInterface> (Errors& errors)>;
+/// \returns An optional ModelInterface.
+///   * If not nullptr, hte returned model interface is incorprated into the
+///     existing model and its frames are exposed through the frame graph.
+///   * If nullptr, then libsdformat should continue testing out other custom
+///     parsers registered under the same extension (e.g. a parser for
+///     `.yaml`, which may cover many different schemas).
+using sdf::CustomModelParser = std::function<
+    sdf::InterfaceModelPtr (sdf::NestedInclude include, Errors& errors)>;
 
-// \param[in] extension Extension to parse, including dot. e.g. `.yaml`.
-// \param[in] model_parser Callback as described by CustomModelParser.
+using sdf::StringPredicate = std::function<bool (const std::string)>;
+
+// \param[in] file_check Predicate for files. If true, it will attempt to parse.
+//   Registered custom parsers do *not* need to be mutually exclusive. Rather,
+//   they are attempted in order.
+// \param[in] model_parser Callback as described above.
 void sdf::Root::registerCustomModelParser(
-    std::string extension,
-    CustomModelParser model_parser);
+    sdf::StringPredicate file_check,
+    sdf::CustomModelParser model_parser);
 
-class InterfaceModel {
-  public: void AddNestedModel(InterfaceModel);
-  public: void AddFrame(InterfaceFrame);
-  public: void AddLink(InterfaceLink);  // So that frames can be anchored.
-};
-
-class InterfaceFrame {
-
-};
-
-class InterfaceLink {
-};
 ~~~
 
 In addition to this, the following update to hierarchies are suggested to be
