@@ -581,6 +581,7 @@ class sdf:::InterfaceFrame {
 
 class sdf::InterfaceModel {
   /// \param[in] name The *local* name (no nesting, e.g. "::").
+  ///   If this name contains "::", an error will be raised.
   /// \param[in] canonical_link_frame The "grounding frame" for the canonical
   ///   link. If nullptr, this will be set to the first registered
   ///   grounding frame. If not nullptr, this will be registered using
@@ -591,8 +592,8 @@ class sdf::InterfaceModel {
   ///   incorporating the model into the frame graph.
   public: InterfaceModel(
       std::string name,
-      sdf::InterfaceFramePtr model_frame = nullptr,
-      sdf::InterfaceFramePtr canonical_link_frame = nullptr);
+      sdf::InterfaceFramePtr canonical_link_frame = nullptr,
+      sdf::InterfaceFramePtr model_frame = nullptr);
   /// Accessors.
   public: std::string GetName() const;
   public: sdf::InterfaceFrameConstPtr GetCanonicalLinkFrame() const;
@@ -635,6 +636,9 @@ class sdf::InterfaceModel {
 ///     continue testing out other custom parsers registered under the same
 ///     extension (e.g. a parser for `.yaml`, which may cover many different
 ///     schemas).
+///
+/// If an exception is raised by this callback, libsdformat will *not* try to
+///intercept the exception.
 using sdf::CustomModelParser = std::function<
     sdf::InterfaceModelPtr (sdf::NestedInclude include, Errors& errors)>;
 
