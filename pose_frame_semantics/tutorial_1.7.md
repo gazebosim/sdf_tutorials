@@ -1441,9 +1441,10 @@ For new phases, the ***Title:*** is italicized.
 
 ### 1 Model
 
-There are *seven* phases for validating the kinematics data in a model.
+There are *eight* phases for validating the kinematics data in a model.
 In libsdformat, the `sdf::readFile` and `sdf::readString` API's perform parsing
-stage 1, and `sdf::Root::Load` performs all parsing stages.
+stage 1, `ign sdf --check` performs all parsing stages,
+and `sdf::Root::Load` performs most parsing stages.
 Each API returns an error code if errors are found during parsing.
 
 1.  **XML parsing and schema validation:**
@@ -1462,11 +1463,30 @@ Each API returns an error code if errors are found during parsing.
     collisions, visuals, sensors, and lights.
     This step is distinct from validation with the schema because the schema
     only confirms the existence of name attributes, not their content.
-    *In `libsdformat9`, the helper function [isReservedName(const string&)](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Utils.cc#L25-L33)*
-    *is used when loading DOM objects with name attributes and a*
-    *`RESERVED_NAME` error code is generated if one is found*
+    *In `libsdformat9`, names are checked for empty strings by the `sdf::readFile` and*
+    *`sdf::readString` API's (via [Param::SetFromString](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Param.cc#L452-L457)),*
+    *while the remaining checks are performed when loading DOM objects with the*
+    *aid of several helper functions.*
+    *The helper function [isReservedName(const string&)](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Utils.cc#L25-L33)*
+    *is used by any DOM objects with name attributes, returning a*
+    *`RESERVED_NAME` error code if one is found*
     *(see [Link::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Link.cc#L135-L141)*
     *for an example).*
+    *The helper function [Element::HasUniqueChildNames()](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Element.cc#L677-L688)*
+    *checks if the direct children of an `Element` have unique names and is used by*
+    *[Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L208-L212) and*
+    *[World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L258-L262)*
+    *to detect name collisions in direct children of a `//model` or `//world` element,*
+    *though it only prints a warning to the console without generating an error code.*
+    *Name uniqueness of sibling `//model/link`, `//model/joint`, and `//model/frame` elements*
+    *is also checked when constructing the*
+    *[FrameAttachedTo](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L223-L282) and*
+    *[PoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L464-L528) objects*
+    *in [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L323-L340),*
+    *and likewise for sibling `//world/model` and `//world/frame` elements in `World::Load`.*
+    *The `ign sdf --check` command recursively checks for name uniqueness among all sibling elements*
+    *using the [recursiveSiblingUniqueNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1633-L1655)*
+    *helper function, though it does not check that names are not reserved.*
 
 3.  **Joint parent/child name checking:**
     For each joint, check that the parent and child link names are different
