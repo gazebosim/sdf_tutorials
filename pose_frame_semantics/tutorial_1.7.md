@@ -1778,28 +1778,36 @@ There are *seven* phases for validating the kinematics data in a world:
 
 7.  ***Check `//pose/@relative_to` graph:***
     Construct a `relative_to` directed graph for the model with each vertex
-    representing a frame:
+    representing a frame
+    (see [buildPoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L666)
+    in `libsdformat9`):
 
     7.1 Add a vertex for the implicit world frame.
+        (see [FrameSemantics.cc:684-689](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L684-L689)).
 
-    7.2 Add vertices for each `//world/model` and `//world/frame`.
+    7.2 Add vertices for each `//world/model` and `//world/frame`
+        (see [FrameSemantics.cc:691-705](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L691-L705)
+        and [FrameSemantics.cc:714-729](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L714-L729)).
 
     7.3 For each `//world/model`:
 
     7.3.1 If `//world/model/pose/@relative_to` exists and is not empty,
           add an edge from the model vertex to the vertex named in
-          `//world/model/pose/@relative_to`.
+          `//world/model/pose/@relative_to`
+          (see [FrameSemantics.cc:746-773](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L746-L773)).
 
     7.3.2 Otherwise (ie. if `//world/model/pose` or
           `//world/model/pose/@relative_to` do not
           exist or `//world/model/pose/@relative_to` is an empty string `""`)
-          add an edge from the model vertex to the implicit world frame vertex.
+          add an edge from the model vertex to the implicit world frame vertex
+          (see [FrameSemantics.cc:707-711](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L707-L711)).
 
     7.4 For each `//world/frame`:
 
     7.4.1 If `//frame/pose/@relative_to` exists and is not empty,
           add an edge from the frame vertex to the vertex named in
-          `//frame/pose/@relative_to`.
+          `//frame/pose/@relative_to`
+          (see [FrameSemantics.cc:792-822](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L792-L822)).
 
     7.4.2 Otherwise if `//frame/@attached_to` exists and is not empty
           (ie. if `//frame/@attached_to` exists and is not an empty string `""`
@@ -1807,14 +1815,27 @@ There are *seven* phases for validating the kinematics data in a world:
           `//frame/pose/@relative_to` does not exist, or
           `//frame/pose/@relative_to` is an empty string `""`)
           add an edge from the frame vertex to the vertex named in
-          `//frame/@attached_to`.
+          `//frame/@attached_to`
+          (see [FrameSemantics.cc:798-822](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L798-L822)).
 
     7.4.3 Otherwise (ie. if neither `//frame/@attached_to` nor
           `//frame/pose/@relative_to` are specified)
-          add an edge from the frame vertex to the implicit world frame vertex.
+          add an edge from the frame vertex to the implicit world frame vertex
+          (see [FrameSemantics.cc:731-735](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L731-L735)).
 
     7.5 Verify that the graph has no cycles and that by following the directed
-        edges, every vertex is connected to the implicit world frame.
+        edges, every vertex is connected to the implicit world frame
+        (see [validatePoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1146-L1152)
+        which is called by [World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L365-L366)).
+        Other poses in the world such as `//world/light/pose`
+        do not need to be checked for cycles since they do not create
+        implicitly named frames.
+        To find the pose of a DOM object relative-to a named frame in the `PoseRelativeToGraph`,
+        use the DOM object's `SemanticPose` function
+        (such as [Frame::SemanticPose](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/include/sdf/Frame.hh#L143-L146))
+        and the [SemanticPose::Resolve](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/include/sdf/SemanticPose.hh#L65-L73)
+        function.
+
 
 ## Addendum: Model Building, Contrast "Model-Absolute" vs "Element-Relative" Coordinates
 
