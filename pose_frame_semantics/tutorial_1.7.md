@@ -1475,7 +1475,7 @@ Each API returns an error code if errors are found during parsing.
     *The helper function [Element::HasUniqueChildNames()](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Element.cc#L677-L688)*
     *checks if the direct children of an `Element` have unique names and is used by*
     *[Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L208-L212)*
-    *to detect name collisions in direct children of a `//model` or `//world` element,*
+    *to detect name collisions in direct children of a `//model` element,*
     *though it only prints a warning to the console without generating an error code.*
     *Name uniqueness of sibling `//model/link`, `//model/joint`, and `//model/frame` elements*
     *is also checked when constructing the*
