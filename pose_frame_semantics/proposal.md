@@ -1509,7 +1509,7 @@ Each API returns an error code if errors are found during parsing.
         To identify the link to which each frame is attached, start from the
         vertex for that frame, and follow the directed edges until a link
         is reached (see [Frame::ResolveAttachedToBody](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L216)
-        in `libsdformat9`).
+        and [resolveFrameAttachedToBody in FrameSemantics.cc](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1158) in `libsdformat9`).
 
 7.  ***Check `//pose/@relative_to` attribute values:***
     For each `//pose` that is not `//model/pose` (ie. `//link/pose`,
@@ -1705,7 +1705,7 @@ There are *seven* phases for validating the kinematics data in a world:
         To identify the model or fixed frame to which each frame is attached, start from the
         vertex for that frame, and follow the directed edges until a link
         is reached (see [Frame::ResolveAttachedToBody](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L216)
-        in `libsdformat9`).
+        and [resolveFrameAttachedToBody in FrameSemantics.cc](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1158) in `libsdformat9`).
 
 6.  ***Check `//pose/@relative_to` attribute values:***
     For each `//model/pose` and `//world/frame/pose`,
