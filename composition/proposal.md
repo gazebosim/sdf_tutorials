@@ -687,6 +687,30 @@ top-level model's `//pose` definitions.
       principle, this may be an impractical rearchitecture for the next
       release.
 
+##### 1.5.1 Modifications to existing `libsdformat` API
+
+To support the above interface, `sdf::SemanticPose` should be able to
+indicate `::ResolveAttachedToBody()`:
+
+This functionality should migrate from `Frame::ResolveAttachedToBody()`, and
+the `Frame::` method should be deprecated, wher
+`Frame::SemanticPose().ResolveAttachedToBody()` should be used instead.
+
+Additionally, the *scope* of the returned frame should be specified.
+
+Currently, the assumption is that any `attached_to` frame should be in or under
+the current model's scope, so it may be necessary for the `SemanticPose` class
+to either (a) know which scope it was specified in or (b) always return the
+absolute-scoped name, and rely on downstream consumers to get the relative
+path.
+
+**Alternatives Considered**:
+
+* Instead of infecting `sdf::SemanticPose`, instead this API should simply
+  dictate its own `attached_to` frame (via `sdf::InterfaceFrame`). This means
+  that downstream code must be responsible for obtaining this `attached_to`
+  frame.
+
 #### 1.6 Proposed Parsing Stages
 
 **TODO(eric.cousineau)**: Add this in a follow-up PR.
