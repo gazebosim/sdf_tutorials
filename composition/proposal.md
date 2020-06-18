@@ -548,6 +548,7 @@ class sdf::InterfacePose {
   public: InterfacePose(Pose3d pose, std::string relative_to);
 };
 
+// This can be used in both //model elements as well as /world.
 struct sdf::NestedInclude {
   /// Provides the URI as specified in `//include/uri`. This may or may not end
   /// with a file extension if it refers to a model directory.
