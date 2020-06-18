@@ -620,7 +620,7 @@ class sdf::InterfaceModel {
 /// The latest parser gains precedence.
 ///
 /// Custom model parsers are *never* checked if resolved file extension ends
-/// with `*.sdf`.
+/// with `*.sdf` or `*.world`.
 /// If libsdformat encounters a `*.urdf` file, it will first check custom
 /// parser. If no custom parser is found, it will then convert the URDF XML to
 /// SDFormat XML, and parse it as an SDFormat file.
@@ -664,16 +664,28 @@ top-level model's `//pose` definitions.
 
 **Alternatives Considered**:
 
-* Explicitly use a `sdf::FileNamePredicate` when calling
-`registerCustomModelParser`. This was not done because there is sufficient
-functionality in the API for individual parsers to do this.
-* Rather than use `sdf::FileNamePredicate`, it was considered to use something
-like `sdf::FileContentsPredicate`, to allow for a MIME type-like check to
-happen. However, since this is explicitly for models that are being included by
-`//include/uri`, it is expected that the URI supplied to SDFormat will resolve
-to a file on disk, thus we do not need to worry about contents "over the wire"
-(e.g. models passed from a Gazebo client to a Gazebo server,
-`/robot_description` in ROS, etc.).
+* For handling file predicates based on name and/or content:
+  * Explicitly use a `sdf::FileNamePredicate` when calling
+  `registerCustomModelParser`. This was not done because there is sufficient
+  functionality in the API for individual parsers to do this.
+  * Rather than use `sdf::FileNamePredicate`, it was considered to use something
+  like `sdf::FileContentsPredicate`, to allow for a MIME type-like check to
+  happen. However, since this is explicitly for models that are being included by
+  `//include/uri`, it is expected that the URI supplied to SDFormat will resolve
+  to a file on disk, thus we do not need to worry about contents "over the wire"
+  (e.g. models passed from a Gazebo client to a Gazebo server,
+  `/robot_description` in ROS, etc.).
+
+* For the composition API:
+  * It was considered to expose as much of the toplogy as possible, both links
+  and frames, and possibly joints. However, that would complicate the
+  implementation:
+    * Ths `libsdformat` API would somehow have to infect existing API to allow
+      custom-included models to popluate existing graphs explicitly.
+    * This infection would require additional encapsulation of `libsdformat`
+      details (e.g. XML pointser for elements). While not necessarily bad in
+      principle, this may be an impractical rearchitecture for the next
+      release.
 
 #### 1.6 Proposed Parsing Stages
 
