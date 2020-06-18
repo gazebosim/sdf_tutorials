@@ -542,6 +542,12 @@ be registered in `libsdformat`. This is described in the following pseudocode,
 along with a specification of the proposed contract for custom parsers:
 
 ~~~c++
+class sdf::InterfacePose {
+  /// \param[in] pose
+  /// \param[in] relative_to
+  public: InterfacePose(Pose3d pose, std::string relative_to);
+};
+
 struct sdf::NestedInclude {
   /// Provides the URI as specified in `//include/uri`. This may or may not end
   /// with a file extension if it refers to a model directory.
@@ -561,52 +567,64 @@ struct sdf::NestedInclude {
   /// Example: `my_new_model`
   std::string local_model_name;
 
-  /// Pose information from `//include/pose`.
-  sdf::SemanticPose pose;
+  /// Pose information from `//include/pose`, but resolved to be relative to
+  /// the "world" frame.
+  math::Pose3d pose_WM;
+
+  //// As defined by `//include/static`.
+  bool is_static{false};
 };
 
 class sdf:::InterfaceFrame {
   /// \param[in] name The *local* name.
-  /// \param[in] pose The semantic pose of the frame.
-  ///   If the attached_to frame is specified as "", then this will be a
-  ///   "grounding frame": it will be considered as a link in libsdformat's
-  ///   constructed frame graph.
-  public: InterfaceFrame(std::string name, sdf::SemanticPosePtr pose);
+  /// \param[in] pose The pose of the frame.
+  public: InterfaceFrame(std::string name, sdf::InterfacePose pose);
   /// Accessors.
   public: std::string GetName() const;
-  public: sdf::SemanticPosePtr GetSemanticPose() const;
-  /// Determinse if this is a grounding frame.
-  public: bool IsGroundingFrame() const;
+  public: sdf::InterfacePose GetPose() const;
+};
+
+class sdf::InterfaceLink {
+  /// \param[in] name The *local* name.
+  /// \param[in] pose The pose of the link.
+  public: InterfaceLink(std::string name, sdf::InterfacePose pose);
+  /// Accessors.
+  public: std::string GetName() const;
+  public: sdf::InterfacePose GetPose() const;
 };
 
 class sdf::InterfaceModel {
   /// \param[in] name The *local* name (no nesting, e.g. "::").
   ///   If this name contains "::", an error will be raised.
-  /// \param[in] canonical_link_frame The "grounding frame" for the canonical
-  ///   link. If nullptr, this will be set to the first registered
-  ///   grounding frame. If not nullptr, this will be registered using
-  ///   `AddFrame`.
+  /// \param[in] canonical_link The canonicallink. If nullptr, this will be set
+  ///   to the first registered link. If non-empty, this will be registered
+  ///   using `AddLink`.
   /// \param[in] model_frame The model frame. If specified, this must be named
-  ///   "__model__". If nullptr, this will resolve to the canonical_link_frame,
+  ///   "__model__". If nullptr, this will resolve to the canonical_link,
   ///   and a new frame "__model__" will be registered by libsdformat when
   ///   incorporating the model into the frame graph.
   public: InterfaceModel(
       std::string name,
-      sdf::InterfaceFramePtr canonical_link_frame = nullptr,
-      sdf::InterfaceFramePtr model_frame = nullptr);
+      sdf::InterfaceLink canonical_link = {},
+      sdf::InterfaceFrame model_frame = {});
   /// Accessors.
   public: std::string GetName() const;
-  public: sdf::InterfaceFrameConstPtr GetCanonicalLinkFrame() const;
-  public: sdf::InterfaceFrameConstPtr GetModelFrame() const;
+  public: sdf::InterfaceLink GetCanonicalLink() const;
+  public: sdf::InterfaceFrame GetModelFrame() const;
   /// Provided so that hierarchy can still be leveraged from SDFormat.
   public: void AddNestedModel(sdf::InterfaceModelPtr nested_model);
   /// Gets registered nested models.
   public: std::vector<sdf::InterfaceModelConstPtr> GetNestedModels() const;
   /// Provided so that the including SDFormat model can still interface with
   /// the declared frames.
-  public: void AddFrame(sdf::InterfaceFramePtr frame);
+  public: void AddFrame(sdf::InterfaceFrame frame);
   /// Gets registered frames.
-  public: std::vector<sdf::InterfaceFrameConstPtr> GetFrames() const;
+  public: std::vector<sdf::InterfaceFrame> GetFrames() const;
+  /// Provided so that the including SDFormat model can still interface with
+  /// the declared links.
+  public: void AddLink(sdf::InterfaceLink link);
+  /// Gets registered frames.
+  public: std::vector<sdf::InterfaceLink> GetFrames() const;
 };
 
 /// Defines a custom model parser.
@@ -689,27 +707,17 @@ top-level model's `//pose` definitions.
 
 ##### 1.5.1 Modifications to existing `libsdformat` API
 
-To support the above interface, `sdf::SemanticPose` should be able to
-indicate `::ResolveAttachedToBody()`:
-
-This functionality should migrate from `Frame::ResolveAttachedToBody()`, and
-the `Frame::` method should be deprecated, wher
-`Frame::SemanticPose().ResolveAttachedToBody()` should be used instead.
-
-Additionally, the *scope* of the returned frame should be specified.
-
-Currently, the assumption is that any `attached_to` frame should be in or under
-the current model's scope, so it may be necessary for the `SemanticPose` class
-to either (a) know which scope it was specified in or (b) always return the
-absolute-scoped name, and rely on downstream consumers to get the relative
-path.
+There should be no large changes necessary to existing public `libsdformat`
+API.
 
 **Alternatives Considered**:
 
-* Instead of infecting `sdf::SemanticPose`, instead this API should simply
-  dictate its own `attached_to` frame (via `sdf::InterfaceFrame`). This means
-  that downstream code must be responsible for obtaining this `attached_to`
-  frame.
+* There was consideration to have `sdf::SemanticPose` be able to declare
+  indicate `::ResolveAttachedToFrame()`; however, this was not chosen because
+  it requires being able to construct a `sdf::SemanticPose` in isolation and
+  ultimately has more information than is necessary for this ineterface.
+  Additionally, there is complication with what scope the semantic pose should
+  supply the frame in.
 
 #### 1.6 Proposed Parsing Stages
 
