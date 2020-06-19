@@ -1381,11 +1381,13 @@ For new phases, the ***Title:*** is italicized.
 
 ### 1 Model
 
-There are *eight* phases for validating the kinematics data in a model.
-In libsdformat, the `sdf::readFile` and `sdf::readString` API's perform parsing
-stage 1, `ign sdf --check` performs all parsing stages,
-and `sdf::Root::Load` performs most parsing stages.
-Each API returns an error code if errors are found during parsing.
+There are *eight* phases for validating the kinematics data in a model,
+and different parts of libsdformat handle differing sets of stages,
+returning an error code if errors are found during parsing:
+
+- `sdf::readFile` and `sdf::readString` APIs perform parsing Stage 1
+- `sdf::Root::Load` performs most parsing stages, but skips some of the more expensive checks
+- `ign sdf --check` performs all parsing stages, including more expensive checks
 
 1.  **XML parsing and schema validation:**
     Parse model file from XML into a tree data structure,
@@ -1404,7 +1406,7 @@ Each API returns an error code if errors are found during parsing.
     This step is distinct from validation with the schema because the schema
     only confirms the existence of name attributes, not their content.
     *In `libsdformat9`, names are checked for empty strings by the `sdf::readFile` and*
-    *`sdf::readString` API's (via [Param::SetFromString](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Param.cc#L452-L457)),*
+    *`sdf::readString` APIs (via [Param::SetFromString](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Param.cc#L452-L457)),*
     *while the remaining checks are performed when loading DOM objects with the*
     *aid of several helper functions.*
     *The helper function [isReservedName(const string&)](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Utils.cc#L25-L33)*
@@ -1497,7 +1499,7 @@ Each API returns an error code if errors are found during parsing.
           named in the `//model/frame/@attached_to` attribute
           (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
 
-    6.4.3 Otherwise (ie. if the `//model/frame/@attached_to` attribute
+    6.4.3 Otherwise (i.e. if the `//model/frame/@attached_to` attribute
           does not exist or is an empty string `""`),
           add an edge from the added vertex to the model frame vertex,
           (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
@@ -1512,7 +1514,7 @@ Each API returns an error code if errors are found during parsing.
         and [resolveFrameAttachedToBody in FrameSemantics.cc](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1158) in `libsdformat9`).
 
 7.  ***Check `//pose/@relative_to` attribute values:***
-    For each `//pose` that is not `//model/pose` (ie. `//link/pose`,
+    For each `//pose` that is not `//model/pose` (e.g. `//link/pose`,
     `//joint/pose`, `//frame/pose`, `//collision/pose`, `//light/pose`, etc.),
     if the `relative_to` attribute exists and is not an empty string `""`,
     check that the value of the `relative_to` attribute
@@ -1543,7 +1545,7 @@ Each API returns an error code if errors are found during parsing.
           `//link/pose/@relative_to`
           (see [FrameSemantics.cc:554-575](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L554-L575)).
 
-    8.3.2 Otherwise (ie. if `//link/pose` or `//link/pose/@relative_to` do not
+    8.3.2 Otherwise (i.e. if `//link/pose` or `//link/pose/@relative_to` do not
           exist or `//link/pose/@relative_to` is an empty string `""`)
           add an edge from the link vertex to the implicit model frame vertex
           (see [FrameSemantics.cc:476-480](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L476-L480)).
@@ -1555,7 +1557,7 @@ Each API returns an error code if errors are found during parsing.
           `//joint/pose/@relative_to`
           (see [FrameSemantics.cc:589-610](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L589-L610)).
 
-    8.4.2 Otherwise (ie. if `//joint/pose` or `//joint/pose/@relative_to` do not
+    8.4.2 Otherwise (i.e. if `//joint/pose` or `//joint/pose/@relative_to` do not
           exist or `//joint/pose/@relative_to` is an empty string `""`)
           add an edge from the joint vertex to
           the child link vertex named in `//joint/child`
@@ -1570,7 +1572,7 @@ Each API returns an error code if errors are found during parsing.
           and [FrameSemantics.cc:650-659](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L650-L659)).
 
     8.5.2 Otherwise if `//frame/@attached_to` exists and is not empty
-          (ie. if `//frame/@attached_to` exists and is not an empty string `""`
+          (i.e. if `//frame/@attached_to` exists and is not an empty string `""`
           and one of the following is true: `//frame/pose` does not exist,
           `//frame/pose/@relative_to` does not exist, or
           `//frame/pose/@relative_to` is an empty string `""`)
@@ -1579,7 +1581,7 @@ Each API returns an error code if errors are found during parsing.
           (see [FrameSemantics.cc:635](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L635)
           and [FrameSemantics.cc:650-659](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L650-L659)).
 
-    8.5.3 Otherwise (ie. if neither `//frame/@attached_to` nor
+    8.5.3 Otherwise (i.e. if neither `//frame/@attached_to` nor
           `//frame/pose/@relative_to` are specified)
           add an edge from the frame vertex to the implicit model frame vertex
           (see [FrameSemantics.cc:533-537](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L533-L537)).
@@ -1625,7 +1627,7 @@ There are *seven* phases for validating the kinematics data in a world:
     This step is distinct from validation with the schema because the schema
     only confirms the existence of name attributes, not their content.
     *In `libsdformat9`, names are checked for empty strings by the `sdf::readFile` and*
-    *`sdf::readString` API's (via [Param::SetFromString](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Param.cc#L452-L457)),*
+    *`sdf::readString` APIs (via [Param::SetFromString](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Param.cc#L452-L457)),*
     *while the remaining checks are performed when loading DOM objects with the*
     *aid of several helper functions.*
     *The helper function [isReservedName(const string&)](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Utils.cc#L25-L33)*
@@ -1686,7 +1688,7 @@ There are *seven* phases for validating the kinematics data in a world:
           (see [FrameSemantics.cc:393-394](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L393-L394)
           and [FrameSemantics.cc:416-428](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L416-L428)).
 
-    5.3.3 Otherwise (ie. if the `//world/frame/@attached_to` attribute
+    5.3.3 Otherwise (i.e. if the `//world/frame/@attached_to` attribute
           does not exist or is an empty string `""`),
           add an edge from the added vertex to the implicit world frame vertex
           (see [FrameSemantics.cc:395-406](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L395-L406)
@@ -1738,7 +1740,7 @@ There are *seven* phases for validating the kinematics data in a world:
           `//world/model/pose/@relative_to`
           (see [FrameSemantics.cc:746-773](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L746-L773)).
 
-    7.3.2 Otherwise (ie. if `//world/model/pose` or
+    7.3.2 Otherwise (i.e. if `//world/model/pose` or
           `//world/model/pose/@relative_to` do not
           exist or `//world/model/pose/@relative_to` is an empty string `""`)
           add an edge from the model vertex to the implicit world frame vertex
@@ -1752,7 +1754,7 @@ There are *seven* phases for validating the kinematics data in a world:
           (see [FrameSemantics.cc:792-822](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L792-L822)).
 
     7.4.2 Otherwise if `//frame/@attached_to` exists and is not empty
-          (ie. if `//frame/@attached_to` exists and is not an empty string `""`
+          (i.e. if `//frame/@attached_to` exists and is not an empty string `""`
           and one of the following is true: `//frame/pose` does not exist,
           `//frame/pose/@relative_to` does not exist, or
           `//frame/pose/@relative_to` is an empty string `""`)
@@ -1760,7 +1762,7 @@ There are *seven* phases for validating the kinematics data in a world:
           `//frame/@attached_to`
           (see [FrameSemantics.cc:798-822](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L798-L822)).
 
-    7.4.3 Otherwise (ie. if neither `//frame/@attached_to` nor
+    7.4.3 Otherwise (i.e. if neither `//frame/@attached_to` nor
           `//frame/pose/@relative_to` are specified)
           add an edge from the frame vertex to the implicit world frame vertex
           (see [FrameSemantics.cc:731-735](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L731-L735)).
