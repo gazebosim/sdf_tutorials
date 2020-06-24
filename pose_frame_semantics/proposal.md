@@ -1407,28 +1407,30 @@ returning an error code if errors are found during parsing:
     only confirms the existence of name attributes, not their content.
     *The code paths in `libsdformat9` that implement these checks are summarized below:*
 
-    - *The `sdf::readFile` and `sdf::readString` APIs check for empty names*
-      *via [Param::SetFromString](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Param.cc#L452-L457)).*
-    - *The `sdf::Root::Load` API that loads all DOM objects recursively also checks*
-      *any DOM objects with name attributes for reserved names using the helper function*
-      *[isReservedName(const string&)](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Utils.cc#L25-L33),*
-      *returning a `RESERVED_NAME` error code if one is found*
-      *(see [Frame::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L124-L130)*
-      *for an example).*
-      *[Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L208-L212)*
-      *also checks for name collisions in direct children of its `//model` element using the helper function*
-      *[Element::HasUniqueChildNames()](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Element.cc#L677-L688),*
-      *though it only prints a warning to the console without generating an error code.*
-      *Name uniqueness of sibling `//model/link`, `//model/joint`, and `//model/frame` elements*
-      *is also checked when constructing the*
-      *[FrameAttachedTo](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L223-L282) and*
-      *[PoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L464-L528) objects*
-      *in [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L323-L340),*
-      *returning a `DUPLICATE_NAME` error code if non-unique names are detected.*
-    - *The `ign sdf --check` command loads all DOM elements and also*
-      *recursively checks for name uniqueness among all sibling elements*
-      *using the [recursiveSiblingUniqueNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1633-L1655)*
-      *helper function.*
+    2.1 *The `sdf::readFile` and `sdf::readString` APIs check for empty names*
+        *via [Param::SetFromString](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Param.cc#L452-L457)).*
+
+    2.2 *The `sdf::Root::Load` API that loads all DOM objects recursively also checks*
+        *any DOM objects with name attributes for reserved names using the helper function*
+        *[isReservedName(const string&)](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Utils.cc#L25-L33),*
+        *returning a `RESERVED_NAME` error code if one is found*
+        *(see [Frame::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L124-L130)*
+        *for an example).*
+        *[Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L208-L212)*
+        *also checks for name collisions in direct children of its `//model` element using the helper function*
+        *[Element::HasUniqueChildNames()](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Element.cc#L677-L688),*
+        *though it only prints a warning to the console without generating an error code.*
+        *Name uniqueness of sibling `//model/link`, `//model/joint`, and `//model/frame` elements*
+        *is also checked when constructing the*
+        *[FrameAttachedTo](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L223-L282) and*
+        *[PoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L464-L528) objects*
+        *in [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L323-L340),*
+        *returning a `DUPLICATE_NAME` error code if non-unique names are detected.*
+
+    2.3 *The `ign sdf --check` command loads all DOM elements and also*
+        *recursively checks for name uniqueness among all sibling elements*
+        *using the [recursiveSiblingUniqueNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1633-L1655)*
+        *helper function.*
 
 3.  **Joint parent/child name checking:**
     For each joint, check that the parent and child link names are different
@@ -1628,28 +1630,30 @@ There are *seven* phases for validating the kinematics data in a world:
     only confirms the existence of name attributes, not their content.
     *The code paths in `libsdformat9` that implement these checks are summarized below:*
 
-    - *The `sdf::readFile` and `sdf::readString` APIs check for empty names*
-      *via [Param::SetFromString](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Param.cc#L452-L457)).*
-    - *The `sdf::Root::Load` API that loads all DOM objects recursively also checks*
-      *any DOM objects with name attributes for reserved names using the helper function*
-      *[isReservedName(const string&)](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Utils.cc#L25-L33),*
-      *returning a `RESERVED_NAME` error code if one is found*
-      *(see [Frame::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L124-L130)*
-      *for an example).*
-      *[World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L258-L262)*
-      *also checks for name collisions in direct children of its `//world` element using the helper function*
-      *[Element::HasUniqueChildNames()](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Element.cc#L677-L688),*
-      *though it only prints a warning to the console without generating an error code.*
-      *Name uniqueness of sibling `//world/model` and `//world/frame` elements*
-      *is also checked when constructing the*
-      *[FrameAttachedTo](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L358-L382) and*
-      *[PoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L695-L726) objects*
-      *in [World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L347-L362),*
-      *returning a `DUPLICATE_NAME` error code if non-unique names are detected.*
-    - *The `ign sdf --check` command loads all DOM elements and also*
-      *recursively checks for name uniqueness among all sibling elements*
-      *using the [recursiveSiblingUniqueNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1633-L1655)*
-      *helper function.*
+    2.1 *The `sdf::readFile` and `sdf::readString` APIs check for empty names*
+        *via [Param::SetFromString](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Param.cc#L452-L457)).*
+
+    2.2 *The `sdf::Root::Load` API that loads all DOM objects recursively also checks*
+        *any DOM objects with name attributes for reserved names using the helper function*
+        *[isReservedName(const string&)](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Utils.cc#L25-L33),*
+        *returning a `RESERVED_NAME` error code if one is found*
+        *(see [Frame::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L124-L130)*
+        *for an example).*
+        *[World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L258-L262)*
+        *also checks for name collisions in direct children of its `//world` element using the helper function*
+        *[Element::HasUniqueChildNames()](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Element.cc#L677-L688),*
+        *though it only prints a warning to the console without generating an error code.*
+        *Name uniqueness of sibling `//world/model` and `//world/frame` elements*
+        *is also checked when constructing the*
+        *[FrameAttachedTo](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L358-L382) and*
+        *[PoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L695-L726) objects*
+        *in [World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L347-L362),*
+        *returning a `DUPLICATE_NAME` error code if non-unique names are detected.*
+
+    2.3 *The `ign sdf --check` command loads all DOM elements and also*
+        *recursively checks for name uniqueness among all sibling elements*
+        *using the [recursiveSiblingUniqueNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1633-L1655)*
+        *helper function.*
 
 3.  **Model checking:**
     Check each model according to the *eight* phases of parsing kinematics of an
