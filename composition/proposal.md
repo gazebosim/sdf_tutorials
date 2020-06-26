@@ -651,7 +651,7 @@ returning an error code if errors are found during parsing:
         (see [FrameSemantics.cc:173-178](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L173-L178)
         and [FrameSemantics.cc:235-239](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L235-L239))
 
-    6.3 Add vertices for the implicit frame of each joint ~~with an edge~~
+    6.3 Add a vertex for the implicit frame of each joint ~~with an edge~~
         ~~connecting from the joint to the vertex of its child *frame*~~
         (see [FrameSemantics.cc:242-257](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L242-L257)).
 
