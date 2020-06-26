@@ -536,7 +536,417 @@ waste time on debugging.
 
 #### 1.6 Proposed Parsing Stages
 
-**TODO(eric.cousineau)**: Add this in a follow-up PR.
+The following sections describe the phases for parsing the kinematics of an
+SDFormat 1.8 model and world.
+Several of the phases in each section are similar to the phases of parsing in
+SDFormat 1.7 in the [Pose Frame Semantics Proposal](/tutorials?tut=pose_frame_semantics_proposal#phases-of-parsing-kinematics).
+In phases that differ from SDFormat 1.7, *italics* are used to signal the difference.
+For new phases, the ***Title:*** is italicized.
+
+##### 1.6.1 Model
+
+There are eight phases for validating the kinematics data in a model,
+and different parts of libsdformat handle differing sets of stages,
+returning an error code if errors are found during parsing:
+
+- `sdf::readFile` and `sdf::readString` APIs perform parsing Stage 1
+- `sdf::Root::Load` performs most parsing stages, but skips some of the more expensive checks
+- `ign sdf --check` performs all parsing stages, including more expensive checks
+
+1.  **XML parsing and schema validation:**
+    Parse model file from XML into a tree data structure,
+    ensuring that there are no XML syntax errors and that the XML
+    data complies with the [schema](http://sdformat.org/schemas/root.xsd).
+    Schema `.xsd` files are generated from the `.sdf` specification files
+    when building `libsdformat` with the
+    [xmlschema.rb script](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/tools/xmlschema.rb).
+
+2.  **Name attribute checking:**
+    Check that name attributes are not an empty string `""`,
+    that they are not reserved (`__.*__` or `world`) and that sibling
+    elements of any type have unique names.
+    This includes but is not limited to models, actors, links, joints,
+    collisions, visuals, sensors, and lights.
+    This step is distinct from validation with the schema because the schema
+    only confirms the existence of name attributes, not their content.
+    The code paths in `libsdformat9` that implement these checks are summarized below:
+
+    2.1 The `sdf::readFile` and `sdf::readString` APIs check for empty names
+        via [Param::SetFromString](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Param.cc#L452-L457)).
+
+    2.2 The `sdf::Root::Load` API that loads all DOM objects recursively also checks
+        any DOM objects with name attributes for reserved names using the helper function
+        [isReservedName(const string&)](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Utils.cc#L25-L33),
+        returning a `RESERVED_NAME` error code if one is found
+        (see [Frame::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L124-L130)
+        for an example).
+        [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L208-L212)
+        also checks for name collisions in direct children of its `//model` element using the helper function
+        [Element::HasUniqueChildNames()](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Element.cc#L677-L688),
+        though it only prints a warning to the console without generating an error code.
+        Name uniqueness of sibling `//model/link`, `//model/joint`, and `//model/frame` elements
+        is also checked when constructing the
+        [FrameAttachedTo](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L223-L282) and
+        [PoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L464-L528) objects
+        in [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L323-L340),
+        returning a `DUPLICATE_NAME` error code if non-unique names are detected.
+
+    2.3 The `ign sdf --check` command loads all DOM elements and also
+        recursively checks for name uniqueness among all sibling elements
+        using the [recursiveSiblingUniqueNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1633-L1655)
+        helper function.
+
+3.  **Joint parent/child name checking:**
+    For each joint, check that the parent and child link names are different
+    and that each match the name of a sibling link to the joint,
+    with the following exception:
+    if "world" is specified as a parent link name,
+    then the joint is attached to a fixed reference frame.
+    In `libsdformat9`, these checks are all performed by the helper function
+    [checkJointParentChildLinkNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1820-L1885),
+    which is invoked by `ign sdf --check`.
+    A subset of these checks are performed by
+    [Joint::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Joint.cc#L199-L213)
+    (checking that parent and child link names are different and that
+    `world` is not specified as the child link name)
+    and [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L316-L324)
+    (for non-static models calling [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L258-L266),
+    which checks that each child link specified by a joint exists as a sibling
+    of that joint).
+
+4.  **Check `//model/@canonical_link` attribute value:**
+    For models that are not static,
+    if the `//model/@canonical_link` attribute exists and is not an empty
+    string `""`, check that the value of the `canonical_link` attribute
+    matches the name of a link in this model.
+    In `libsdformat9`, this check is performed by
+    [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L200-L217),
+    which is called by
+    [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L316-L324)
+    for non-static models.
+
+5.  **Check `//model/frame/@attached_to` attribute values:**
+    For each `//model/frame`, if the `attached_to` attribute exists and is not
+    an empty string `""`, check that the value of the `attached_to` attribute
+    matches the name of a sibling link, joint, or frame.
+    The `//frame/@attached_to` value must not match `//frame/@name`,
+    as this would cause a graph cycle.
+    In `libsdformat9`, these checks are performed by
+    [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L293-L320),
+    which is called by
+    [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L316-L324)
+    for non-static models.
+
+6.  **Check `//model/frame/@attached_to` graph:**
+    Construct an `attached_to` directed graph for the model with each vertex
+    representing a frame (see [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L168)
+    in `libsdformat9`):
+
+    6.1 Add a vertex for the implicit frame of each link in the model
+        (see [FrameSemantics.cc:219-233](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L219-L233)).
+
+    6.2 Add a vertex for the implicit model frame. If the model is not static,
+        add an edge connecting this vertex to the
+        vertex of the model's canonical link
+        (see [FrameSemantics.cc:173-178](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L173-L178)
+        and [FrameSemantics.cc:235-239](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L235-L239))
+
+    6.3 Add vertices for the implicit frame of each joint with an edge
+        connecting from the joint to the vertex of its child link
+        (see [FrameSemantics.cc:242-269](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L242-L269).
+
+    6.4 For each `//model/frame`:
+
+    6.4.1 Add a vertex to the graph
+          (see [FrameSemantics.cc:271-286](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L271-L286)).
+
+    6.4.2 If `//model/frame/@attached_to` exists and is not empty,
+          add an edge from the added vertex to the vertex
+          named in the `//model/frame/@attached_to` attribute
+          (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
+
+    6.4.3 Otherwise (ie. if the `//model/frame/@attached_to` attribute
+          does not exist or is an empty string `""`),
+          add an edge from the added vertex to the model frame vertex,
+          (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
+
+    6.5 Verify that the graph has no cycles and that by following the directed
+        edges, every vertex is connected to a link
+        (see [validateFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L976-L982)
+        which is called by [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L327-L328)).
+        To identify the link to which each frame is attached, start from the
+        vertex for that frame, and follow the directed edges until a link
+        is reached (see [Frame::ResolveAttachedToBody](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L216)
+        and [resolveFrameAttachedToBody in FrameSemantics.cc](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1158) in `libsdformat9`).
+
+7.  **Check `//pose/@relative_to` attribute values:**
+    For each `//pose` that is not `//model/pose` (e.g. `//link/pose`,
+    `//joint/pose`, `//frame/pose`, `//collision/pose`, `//light/pose`, etc.),
+    if the `relative_to` attribute exists and is not an empty string `""`,
+    check that the value of the `relative_to` attribute
+    matches the name of a link, joint, or frame in this model's scope.
+    In `libsdformat9`, these checks are performed by
+    [buildPoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L556-L658),
+    which is called by
+    [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L337-L340).
+
+8.  **Check `//pose/@relative_to` graph:**
+    Construct a `relative_to` directed graph for the model with each vertex
+    representing a frame
+    (see [buildPoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L435)
+    in `libsdformat9`):
+
+    8.1 Add a vertex for the implicit model frame `__model__`
+        (see [FrameSemantics.cc:453-458](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L453-L458)).
+
+    8.2 Add vertices for each `//model/link`, `//model/joint`, and
+        `//model/frame` (see [FrameSemantics.cc:460-474](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L460-L474),
+        [FrameSemantics.cc:483-497](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L483-L497), and
+        [FrameSemantics.cc:516-531](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L516-L531)).
+
+    8.3 For each `//model/link`:
+
+    8.3.1 If `//link/pose/@relative_to` exists and is not empty,
+          add an edge from the link vertex to the vertex named in
+          `//link/pose/@relative_to`
+          (see [FrameSemantics.cc:554-575](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L554-L575)).
+
+    8.3.2 Otherwise (ie. if `//link/pose` or `//link/pose/@relative_to` do not
+          exist or `//link/pose/@relative_to` is an empty string `""`)
+          add an edge from the link vertex to the implicit model frame vertex
+          (see [FrameSemantics.cc:476-480](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L476-L480)).
+
+    8.4 For each `//model/joint`:
+
+    8.4.1 If `//joint/pose/@relative_to` exists and is not empty,
+          add an edge from the joint vertex to the vertex named in
+          `//joint/pose/@relative_to`
+          (see [FrameSemantics.cc:589-610](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L589-L610)).
+
+    8.4.2 Otherwise (ie. if `//joint/pose` or `//joint/pose/@relative_to` do not
+          exist or `//joint/pose/@relative_to` is an empty string `""`)
+          add an edge from the joint vertex to
+          the child link vertex named in `//joint/child`
+          (see [FrameSemantics.cc:499-513](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L499-L513)).
+
+    8.5 For each `//model/frame`:
+
+    8.5.1 If `//frame/pose/@relative_to` exists and is not empty,
+          add an edge from the frame vertex to the vertex named in
+          `//frame/pose/@relative_to`
+          (see [FrameSemantics.cc:629](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L629)
+          and [FrameSemantics.cc:650-659](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L650-L659)).
+
+    8.5.2 Otherwise if `//frame/@attached_to` exists and is not empty
+          (ie. if `//frame/@attached_to` exists and is not an empty string `""`
+          and one of the following is true: `//frame/pose` does not exist,
+          `//frame/pose/@relative_to` does not exist, or
+          `//frame/pose/@relative_to` is an empty string `""`)
+          add an edge from the frame vertex to the vertex named in
+          `//frame/@attached_to`
+          (see [FrameSemantics.cc:635](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L635)
+          and [FrameSemantics.cc:650-659](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L650-L659)).
+
+    8.5.3 Otherwise (ie. if neither `//frame/@attached_to` nor
+          `//frame/pose/@relative_to` are specified)
+          add an edge from the frame vertex to the implicit model frame vertex
+          (see [FrameSemantics.cc:533-537](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L533-L537)).
+
+    8.6 Verify that the graph has no cycles and that by following the directed
+        edges, every vertex is connected to the implicit model frame
+        (see [validatePoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1146-L1152)
+        which is called by [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L343-L344)).
+        Other poses in the model such as `//collision/pose` and `//light/pose`
+        do not need to be checked for cycles since they do not create
+        implicitly named frames.
+        To find the pose of a DOM object relative-to a named frame in the `PoseRelativeToGraph`,
+        use the DOM object's `SemanticPose` function
+        (such as [Link::SemanticPose](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/include/sdf/Link.hh#L253-L256))
+        and the [SemanticPose::Resolve](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/include/sdf/SemanticPose.hh#L65-L73)
+        function.
+
+##### 1.6.2 World
+
+This section describes phases for parsing the kinematics of an SDFormat 1.8 world.
+Several of these phases are similar to the phases of parsing an SDFormat 1.7
+world in the [Pose Frame Semantics Proposal](/tutorials?tut=pose_frame_semantics_proposal#2-world).
+In phases that differ from that document, *italics* are used to signal the difference.
+For new phases, the ***Title:*** is italicized.
+
+There are seven phases for validating the kinematics data in a world:
+
+1.  **XML parsing and schema validation:**
+    Parse world file from XML into a tree data structure,
+    ensuring that there are no XML syntax errors and that the XML
+    data complies with the [schema](http://sdformat.org/schemas/root.xsd).
+    Schema `.xsd` files are generated from the `.sdf` specification files
+    when building `libsdformat` with the
+    [xmlschema.rb script](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/tools/xmlschema.rb).
+
+2.  **Name attribute checking:**
+    Check that name attributes are not an empty string `""`,
+    that they are not reserved (`__.*__` or `world`) and that sibling
+    elements of any type have unique names.
+    This check can be limited to `//world/model/@name`
+    and `//world/frame/@name`
+    since other names will be checked in the following step.
+    This step is distinct from validation with the schema because the schema
+    only confirms the existence of name attributes, not their content.
+    The code paths in `libsdformat9` that implement these checks are summarized below:
+
+    2.1 The `sdf::readFile` and `sdf::readString` APIs check for empty names
+        via [Param::SetFromString](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Param.cc#L452-L457)).
+
+    2.2 The `sdf::Root::Load` API that loads all DOM objects recursively also checks
+        any DOM objects with name attributes for reserved names using the helper function
+        [isReservedName(const string&)](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Utils.cc#L25-L33),
+        returning a `RESERVED_NAME` error code if one is found
+        (see [Frame::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L124-L130)
+        for an example).
+        [World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L258-L262)
+        also checks for name collisions in direct children of its `//world` element using the helper function
+        [Element::HasUniqueChildNames()](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Element.cc#L677-L688),
+        though it only prints a warning to the console without generating an error code.
+        Name uniqueness of sibling `//world/model` and `//world/frame` elements
+        is also checked when constructing the
+        [FrameAttachedTo](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L358-L382) and
+        [PoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L695-L726) objects
+        in [World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L347-L362),
+        returning a `DUPLICATE_NAME` error code if non-unique names are detected.
+
+    2.3 The `ign sdf --check` command loads all DOM elements and also
+        recursively checks for name uniqueness among all sibling elements
+        using the [recursiveSiblingUniqueNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1633-L1655)
+        helper function.
+
+3.  **Model checking:**
+    Check each model according to the eight phases of parsing kinematics of an
+    sdf model.
+
+4.  **Check `//world/frame/@attached_to` attribute values:**
+    For each `//world/frame`, if the `attached_to` attribute exists and is not
+    an empty string `""`, check that the value of the `attached_to` attribute
+    matches the name of a sibling model or frame.
+    The `//frame/@attached_to` value must not match `//frame/@name`,
+    as this would cause a graph cycle.
+    In `libsdformat9`, these checks are performed by
+    [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L393-L427),
+    which is called by
+    [World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L345-L348).
+
+5.  **Check `//world/frame/@attached_to` graph:**
+    Construct an `attached_to` directed graph for the world with each vertex
+    representing a frame (see [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L328)
+    in `libsdformat9`):
+
+    5.1 Add a vertex for the implicit world frame `world`
+        (see [FrameSemantics.cc:333-338](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L333-L338)).
+
+    5.2 Add a vertex for each model in the world.
+        (see [FrameSemantics.cc:333-338](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L354-L369)).
+
+    5.3 For each `//world/frame`:
+
+    5.3.1 Add a vertex to the graph
+          (see [FrameSemantics.cc:333-338](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L371-L386)).
+
+    5.3.2 If `//world/frame/@attached_to` exists and is not empty,
+          add an edge from the added vertex to the vertex named in the
+          `//world/frame/@attached_to` attribute
+          (see [FrameSemantics.cc:393-394](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L393-L394)
+          and [FrameSemantics.cc:416-428](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L416-L428)).
+
+    5.3.3 Otherwise (ie. if the `//world/frame/@attached_to` attribute
+          does not exist or is an empty string `""`),
+          add an edge from the added vertex to the implicit world frame vertex
+          (see [FrameSemantics.cc:395-406](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L395-L406)
+          and [FrameSemantics.cc:416-428](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L416-L428)).
+
+    5.4 Verify that the graph has no cycles and that by following the directed
+        edges, every vertex is connected to a model or the implicit world frame
+        (see [validateFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L976-L982)
+        which is called by [World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L351-L352)).
+        If the directed edges lead from a vertex to the implicit world frame,
+        then the `//world/frame` corresponding to that vertex is a fixed
+        inertial frame.
+        If the directed edges lead to a model, then the `//world/frame`
+        corresponding to that vertex is attached to the implicit model frame
+        of that model.
+        To identify the model or fixed frame to which each frame is attached, start from the
+        vertex for that frame, and follow the directed edges until a link
+        is reached (see [Frame::ResolveAttachedToBody](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L216)
+        and [resolveFrameAttachedToBody in FrameSemantics.cc](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1158) in `libsdformat9`).
+
+6.  **Check `//pose/@relative_to` attribute values:**
+    For each `//model/pose` and `//world/frame/pose`,
+    if the `relative_to` attribute exists and is not an empty string `""`,
+    check that the value of the `relative_to` attribute
+    matches the name of a model or frame that is a sibling of the element
+    that contains the `//pose`.
+    In `libsdformat9`, these checks are performed by
+    [buildPoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L754-L821),
+    which is called by
+    [World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L360-L362).
+
+7.  **Check `//pose/@relative_to` graph:**
+    Construct a `relative_to` directed graph for the model with each vertex
+    representing a frame
+    (see [buildPoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L666)
+    in `libsdformat9`):
+
+    7.1 Add a vertex for the implicit world frame.
+        (see [FrameSemantics.cc:684-689](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L684-L689)).
+
+    7.2 Add vertices for each `//world/model` and `//world/frame`
+        (see [FrameSemantics.cc:691-705](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L691-L705)
+        and [FrameSemantics.cc:714-729](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L714-L729)).
+
+    7.3 For each `//world/model`:
+
+    7.3.1 If `//world/model/pose/@relative_to` exists and is not empty,
+          add an edge from the model vertex to the vertex named in
+          `//world/model/pose/@relative_to`
+          (see [FrameSemantics.cc:746-773](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L746-L773)).
+
+    7.3.2 Otherwise (ie. if `//world/model/pose` or
+          `//world/model/pose/@relative_to` do not
+          exist or `//world/model/pose/@relative_to` is an empty string `""`)
+          add an edge from the model vertex to the implicit world frame vertex
+          (see [FrameSemantics.cc:707-711](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L707-L711)).
+
+    7.4 For each `//world/frame`:
+
+    7.4.1 If `//frame/pose/@relative_to` exists and is not empty,
+          add an edge from the frame vertex to the vertex named in
+          `//frame/pose/@relative_to`
+          (see [FrameSemantics.cc:792-822](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L792-L822)).
+
+    7.4.2 Otherwise if `//frame/@attached_to` exists and is not empty
+          (ie. if `//frame/@attached_to` exists and is not an empty string `""`
+          and one of the following is true: `//frame/pose` does not exist,
+          `//frame/pose/@relative_to` does not exist, or
+          `//frame/pose/@relative_to` is an empty string `""`)
+          add an edge from the frame vertex to the vertex named in
+          `//frame/@attached_to`
+          (see [FrameSemantics.cc:798-822](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L798-L822)).
+
+    7.4.3 Otherwise (ie. if neither `//frame/@attached_to` nor
+          `//frame/pose/@relative_to` are specified)
+          add an edge from the frame vertex to the implicit world frame vertex
+          (see [FrameSemantics.cc:731-735](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L731-L735)).
+
+    7.5 Verify that the graph has no cycles and that by following the directed
+        edges, every vertex is connected to the implicit world frame
+        (see [validatePoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1146-L1152)
+        which is called by [World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L365-L366)).
+        Other poses in the world such as `//world/light/pose`
+        do not need to be checked for cycles since they do not create
+        implicitly named frames.
+        To find the pose of a DOM object relative-to a named frame in the `PoseRelativeToGraph`,
+        use the DOM object's `SemanticPose` function
+        (such as [Frame::SemanticPose](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/include/sdf/Frame.hh#L143-L146))
+        and the [SemanticPose::Resolve](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/include/sdf/SemanticPose.hh#L65-L73)
+        function.
 
 ### Examples
 
