@@ -600,7 +600,7 @@ returning an error code if errors are found during parsing:
     For each joint, check that the parent and child link names are different
     and that each match the name of a sibling link to the joint,
     with the following exception:
-    if "world" is specified as a *parent* link name,
+    if "world" is specified as a parent link name,
     then the joint is attached to a fixed reference frame.
     In `libsdformat9`, these checks are all performed by the helper function
     [checkJointParentChildLinkNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1820-L1885),
@@ -820,7 +820,7 @@ There are seven phases for validating the kinematics data in a world:
         helper function.
 
 3.  **Model checking:**
-    Check each model according to the *eight* phases of parsing kinematics of an
+    Check each model according to the eight phases of parsing kinematics of an
     sdf model.
 
 4.  **Check `//world/frame/@attached_to` attribute values:**
