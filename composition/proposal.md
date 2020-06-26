@@ -603,14 +603,14 @@ returning an error code if errors are found during parsing:
     if "world" is specified as a parent ~~link~~ name,
     then the joint is attached to a fixed reference frame.
     In `libsdformat9`, these checks are all performed by the helper function
-    [checkJointParentChildLinkNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1820-L1885),
+    [checkJointParentChildLinkNames](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/parser.cc#L1814-L1911),
     which is invoked by `ign sdf --check`.
     A subset of these checks are performed by
     [Joint::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Joint.cc#L199-L213)
     (checking that parent and child ~~link~~ names are different and that
     `world` is not specified as the child ~~link~~ name)
     and [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L316-L324)
-    (for non-static models calling [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L258-L266),
+    (for non-static models calling [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L281-L289),
     which checks that each child ~~link~~ specified by a joint exists as a sibling *frame*
     of that joint).
 
@@ -653,12 +653,13 @@ returning an error code if errors are found during parsing:
 
     6.3 Add vertices for the implicit frame of each joint ~~with an edge~~
         ~~connecting from the joint to the vertex of its child *frame*~~
-        (see [FrameSemantics.cc:242-269](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L242-L269).
+        (see [FrameSemantics.cc:242-257](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L242-L257).
 
     *6.4 Add a vertex to the graph for each `//model/frame`*
-        (see [FrameSemantics.cc:271-286](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L271-L286)).
+        (see [FrameSemantics.cc:259-274](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L259-L274)).
 
-    *6.5 For each `//model/joint`, add an edge connecting from the joint to the vertex of its child frame.*
+    *6.5 For each `//model/joint`, add an edge connecting from the joint to the vertex of its child frame*
+        *(see [FrameSemantics.cc:276-292](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L276-L292)).*
 
     6.*6* For each `//model/frame`:
 
@@ -723,13 +724,15 @@ returning an error code if errors are found during parsing:
     8.4.1 If `//joint/pose/@relative_to` exists and is not empty,
           add an edge from the joint vertex to the vertex named in
           `//joint/pose/@relative_to`
-          (see [FrameSemantics.cc:589-610](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L589-L610)).
+          (see [FrameSemantics.cc:572](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L572)
+          and [FrameSemantics.cc:591-600](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L591-L600)).
 
     8.4.2 Otherwise (ie. if `//joint/pose` or `//joint/pose/@relative_to` do not
           exist or `//joint/pose/@relative_to` is an empty string `""`)
           add an edge from the joint vertex to
           the child *frame* vertex named in `//joint/child`
-          (see [FrameSemantics.cc:499-513](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L499-L513)).
+          (see [FrameSemantics.cc:572-577](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L572-L577)
+          and [FrameSemantics.cc:591-600](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L591-L600)).
 
     8.5 For each `//model/frame`:
 
