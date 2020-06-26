@@ -653,7 +653,7 @@ returning an error code if errors are found during parsing:
 
     6.3 Add vertices for the implicit frame of each joint ~~with an edge~~
         ~~connecting from the joint to the vertex of its child *frame*~~
-        (see [FrameSemantics.cc:242-257](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L242-L257).
+        (see [FrameSemantics.cc:242-257](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L242-L257)).
 
     *6.4 Add a vertex to the graph for each `//model/frame`*
         (see [FrameSemantics.cc:259-274](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L259-L274)).
