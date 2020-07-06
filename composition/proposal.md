@@ -598,6 +598,9 @@ returning an error code if errors are found during parsing:
 
 3.  ***Nested model parsing:***
     Parse each nested model according to these nine SDFormat model parsing stages.
+    In `libsdformat11`, [Model::Load](https://github.com/osrf/sdformat/blob/b3ead2d87f962673f8802adeb4caf3fc73e331c2/src/Model.cc#L221-L223)
+    uses the [loadUniqueRepeated helper function in Utils.hh](https://github.com/osrf/sdformat/blob/b3ead2d87f962673f8802adeb4caf3fc73e331c2/src/Utils.hh#L58-L121)
+    to recursively load nested models.
 
 4.  **Joint parent/child name checking:**
     For each joint, check that the parent and child ~~link~~ names are different
@@ -605,7 +608,7 @@ returning an error code if errors are found during parsing:
     with the following exception:
     if "world" is specified as a parent ~~link~~ name,
     then the joint is attached to a fixed reference frame.
-    In `libsdformat9`, these checks are all performed by the helper function
+    In `libsdformat11`, these checks are all performed by the helper function
     [checkJointParentChildLinkNames](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/parser.cc#L1814-L1911),
     which is invoked by `ign sdf --check`.
     A subset of these checks are performed by
@@ -631,7 +634,7 @@ returning an error code if errors are found during parsing:
 6.  **Check `//model/frame/@attached_to` attribute values:**
     For each `//model/frame`, if the `attached_to` attribute exists and is not
     an empty string `""`, check that the value of the `attached_to` attribute
-    matches the name of a sibling link, joint, or frame.
+    matches the name of a sibling link, *nested model*, joint, or frame.
     The `//frame/@attached_to` value must not match `//frame/@name`,
     as this would cause a graph cycle.
     In `libsdformat9`, these checks are performed by
@@ -642,8 +645,8 @@ returning an error code if errors are found during parsing:
 
 7.  **Check `//model/frame/@attached_to` graph:**
     Construct an `attached_to` directed graph for the model with each vertex
-    representing a frame (see [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L168)
-    in `libsdformat9`):
+    representing a frame (see [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/b3ead2d87f962673f8802adeb4caf3fc73e331c2/src/FrameSemantics.cc#L168)
+    in `libsdformat11`):
 
     *7*.1 Add a vertex for the implicit frame of each link in the model
         (see [FrameSemantics.cc:219-233](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L219-L233)).
@@ -661,31 +664,35 @@ returning an error code if errors are found during parsing:
     *7.4 Add a vertex to the graph for each `//model/frame`*
         (see [FrameSemantics.cc:259-274](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L259-L274)).
 
-    *7.5 For each `//model/joint`, add an edge connecting from the joint to the vertex of its child frame*
+    *7.5 Add a vertex to the graph for each nested `//model/model`*
+        (see [FrameSemantics.cc:276-291](https://github.com/osrf/sdformat/blob/b3ead2d87f962673f8802adeb4caf3fc73e331c2/src/FrameSemantics.cc#L276-L291)).
+
+    *7.6 For each `//model/joint`, add an edge connecting from the joint to the vertex of its child frame*
         *(see [FrameSemantics.cc:276-292](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L276-L292)).*
 
-    *7.6* For each `//model/frame`:
+    *7.7* For each `//model/frame`:
 
-    *7.6.1* If `//model/frame/@attached_to` exists and is not empty,
+    *7.7.1* If `//model/frame/@attached_to` exists and is not empty,
           add an edge from the added vertex to the vertex
           named in the `//model/frame/@attached_to` attribute
           (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
 
-    *7.6.2* Otherwise (ie. if the `//model/frame/@attached_to` attribute
+    *7.7.2* Otherwise (ie. if the `//model/frame/@attached_to` attribute
           does not exist or is an empty string `""`),
           add an edge from the added vertex to the model frame vertex,
           (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
 
-    *7.7* Verify that the graph has no cycles and that by following the directed
-        edges, every vertex is connected to a link
-        (see [validateFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L976-L982)
-        which is called by [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L327-L328)).
-        To identify the link to which each frame is attached, start from the
-        vertex for that frame, and follow the directed edges until a link
+    *7.8* Verify that the graph has no cycles and that by following the directed
+        edges, every vertex is connected to a link *or nested model*
+        (see [validateFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/b3ead2d87f962673f8802adeb4caf3fc73e331c2/src/FrameSemantics.cc#L974-L1000)
+        and [resolveFrameAttachedToBody](https://github.com/osrf/sdformat/blob/b3ead2d87f962673f8802adeb4caf3fc73e331c2/src/FrameSemantics.cc#L1306-L1314)
+        which are called by [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L327-L328)).
+        To identify the link *or nested model* to which each frame is attached, start from the
+        vertex for that frame, and follow the directed edges until a link or model not named `__model__`
         is reached (see [Frame::ResolveAttachedToBody](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L216)*,*
         *[Joint::ResolveChildLink](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/Joint.cc#L410-L429),*
         *[Joint::ResolveParentLink](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/Joint.cc#L432-L451),*
-        and [resolveFrameAttachedToBody in FrameSemantics.cc](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1158) in `libsdformat9`).
+        and [resolveFrameAttachedToBody in FrameSemantics.cc](https://github.com/osrf/sdformat/blob/b3ead2d87f962673f8802adeb4caf3fc73e331c2/src/FrameSemantics.cc#L1244) in `libsdformat9`).
 
 8.  **Check `//pose/@relative_to` attribute values:**
     For each `//pose` that is not `//model/pose` (e.g. `//link/pose`,
