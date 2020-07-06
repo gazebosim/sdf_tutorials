@@ -599,7 +599,7 @@ returning an error code if errors are found during parsing:
 3.  ***Nested model parsing:***
     Parse each nested model according to these nine SDFormat model parsing stages.
 
-*4*.  **Joint parent/child name checking:**
+4.  **Joint parent/child name checking:**
     For each joint, check that the parent and child ~~link~~ names are different
     and that each match the name of a sibling *frame* to the joint,
     with the following exception:
@@ -617,7 +617,7 @@ returning an error code if errors are found during parsing:
     which checks that each child ~~link~~ specified by a joint exists as a sibling *frame*
     of that joint).
 
-*5*.  **Check `//model/@canonical_link` attribute value:**
+5.  **Check `//model/@canonical_link` attribute value:**
     For models that are not static,
     if the `//model/@canonical_link` attribute exists and is not an empty
     string `""`, check that the value of the `canonical_link` attribute
@@ -628,7 +628,7 @@ returning an error code if errors are found during parsing:
     [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L316-L324)
     for non-static models.
 
-*6*.  **Check `//model/frame/@attached_to` attribute values:**
+6.  **Check `//model/frame/@attached_to` attribute values:**
     For each `//model/frame`, if the `attached_to` attribute exists and is not
     an empty string `""`, check that the value of the `attached_to` attribute
     matches the name of a sibling link, joint, or frame.
@@ -640,7 +640,7 @@ returning an error code if errors are found during parsing:
     [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L316-L324)
     for non-static models.
 
-*7*.  **Check `//model/frame/@attached_to` graph:**
+7.  **Check `//model/frame/@attached_to` graph:**
     Construct an `attached_to` directed graph for the model with each vertex
     representing a frame (see [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L168)
     in `libsdformat9`):
@@ -687,7 +687,7 @@ returning an error code if errors are found during parsing:
         *[Joint::ResolveParentLink](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/Joint.cc#L432-L451),*
         and [resolveFrameAttachedToBody in FrameSemantics.cc](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1158) in `libsdformat9`).
 
-*8*.  **Check `//pose/@relative_to` attribute values:**
+8.  **Check `//pose/@relative_to` attribute values:**
     For each `//pose` that is not `//model/pose` (e.g. `//link/pose`,
     `//joint/pose`, `//frame/pose`, `//collision/pose`, `//light/pose`, etc.),
     if the `relative_to` attribute exists and is not an empty string `""`,
@@ -698,7 +698,7 @@ returning an error code if errors are found during parsing:
     which is called by
     [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L337-L340).
 
-*9*.  **Check `//pose/@relative_to` graph:**
+9.  **Check `//pose/@relative_to` graph:**
     Construct a `relative_to` directed graph for the model with each vertex
     representing a frame
     (see [buildPoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L435)
