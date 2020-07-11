@@ -684,6 +684,13 @@ returning an error code if errors are found during parsing:
         *[Joint::ResolveParentLink](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/Joint.cc#L432-L451),*
         and [resolveFrameAttachedToBody in FrameSemantics.cc](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1158) in `libsdformat9`).
 
+    *6.8 Verify that the parent and child frames of each joint resolve to*
+        *different values. This check can be skipped in the special case that*
+        *"world" is the joint's parent frame since that frame is not in a*
+        *model's `FrameAttachedToGraph" (checked in `libsdformat11` by `ign sdf --check`, see*
+        *[Joint::ResolveParentLink](https://github.com/osrf/sdformat/blob/44cab95014e61849f508ec92a613100301512aaf/src/Joint.cc#L407-L418)*
+        *and [parser.cc:1895-1930](https://github.com/osrf/sdformat/blob/44cab95014e61849f508ec92a613100301512aaf/src/parser.cc#L1895-L1930)).*
+
 7.  **Check `//pose/@relative_to` attribute values:**
     For each `//pose` that is not `//model/pose` (e.g. `//link/pose`,
     `//joint/pose`, `//frame/pose`, `//collision/pose`, `//light/pose`, etc.),
