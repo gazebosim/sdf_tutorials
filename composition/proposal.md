@@ -687,7 +687,7 @@ returning an error code if errors are found during parsing:
     *6.8 Verify that the parent and child frames of each joint resolve to*
         *different values. This check can be skipped in the special case that*
         *"world" is the joint's parent frame since that frame is not in a*
-        *model's `FrameAttachedToGraph" (checked in `libsdformat11` by `ign sdf --check`, see*
+        *model's `FrameAttachedToGraph` (checked in `libsdformat11` by `ign sdf --check`, see*
         *[Joint::ResolveParentLink](https://github.com/osrf/sdformat/blob/44cab95014e61849f508ec92a613100301512aaf/src/Joint.cc#L407-L418)*
         *and [parser.cc:1895-1930](https://github.com/osrf/sdformat/blob/44cab95014e61849f508ec92a613100301512aaf/src/parser.cc#L1895-L1930)).*
 
