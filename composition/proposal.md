@@ -611,23 +611,19 @@ class sdf::InterfaceModel {
   ///   If this name contains "::", an error will be raised.
   /// \param[in] reposture_function Called after pose graphs are constructed to
   ///   reposture objects.
-  /// \param[in] canonical_link The canonical link. If nullptr, this will be set
-  ///   to the first registered link. If non-empty, this will be registered
-  ///   using `AddLink`.
-  /// \param[in] model_frame The model frame. If specified, this must be named
-  ///   "__model__". If nullptr, this will resolve to the canonical_link,
-  ///   and a new frame "__model__" will be registered by libsdformat when
-  ///   incorporating the model into the frame graph.
+  /// \param[in] canonical_link_name The canonical link's name. (It must be
+  ///   registered).
+  /// \param[in] X_LcM Model frame pose relative to canonical link's frame.
   public: InterfaceModel(
       std::string name,
-      RepostureFunction reposture_function,
-      sdf::InterfaceLink canonical_link = {},
-      sdf::InterfaceFrame model_frame = {});
+      sdf::RepostureFunction reposture_function,
+      std::string canonical_link_name,
+      math::Pose3d X_LcM);
   /// Accessors.
   public: std::string GetName() const;
   public: sdf::RepostureFunction GetRepostureFunction() const;
-  public: sdf::InterfaceLink GetCanonicalLink() const;
-  public: sdf::InterfaceFrame GetModelFrame() const;
+  public: std::string GetCanonicalLinkName() const;
+  public: math::Pose3d GetModelFramePoseInCanonicalLinkFrame() const;
   /// Provided so that hierarchy can still be leveraged from SDFormat.
   public: void AddNestedModel(sdf::InterfaceModelPtr nested_model);
   /// Gets registered nested models.
