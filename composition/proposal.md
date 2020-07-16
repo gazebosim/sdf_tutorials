@@ -542,12 +542,6 @@ be registered in `libsdformat`. This is described in the following pseudocode,
 along with a specification of the proposed contract for custom parsers:
 
 ~~~c++
-class sdf::InterfacePose {
-  /// \param[in] pose
-  /// \param[in] relative_to
-  public: InterfacePose(Pose3d pose, std::string relative_to);
-};
-
 // This can be used in both //model elements as well as /world.
 struct sdf::NestedInclude {
   /// Provides the URI as specified in `//include/uri`. This may or may not end
@@ -578,29 +572,33 @@ struct sdf::NestedInclude {
 
 class sdf:::InterfaceFrame {
   /// \param[in] name The *local* name.
-  /// \param[in] pose The pose of the frame.
-  public: InterfaceFrame(std::string name, sdf::InterfacePose pose);
+  /// \param[in] attached_to Name of attached-to frame. Must be "__model__" if
+  ///   attached to model.
+  /// \param[in] X_AF The pose of the frame relative to attached frame.
+  public: InterfaceFrame(
+      std::string name, std::string attached_to, math::Pose3d X_AF);
   /// Accessors.
   public: std::string GetName() const;
-  public: sdf::InterfacePose GetPose() const;
+  public: std::string GetAttachedTo() const;
+  public: math::Pose3d GetPoseInAttachedToFrame() const;
 };
 
 class sdf::InterfaceLink {
   /// \param[in] name The *local* name.
-  /// \param[in] pose The pose of the link.
-  public: InterfaceLink(std::string name, sdf::InterfacePose pose);
+  /// \param[in] pose The pose of the link relative to model frame.
+  public: InterfaceLink(std::string name, math::Pose3d X_ML);
   /// Accessors.
   public: std::string GetName() const;
-  public: sdf::InterfacePose GetPose() const;
+  public: math::Pose3d GetPoseInModelFrame() const;
 };
 
 class sdf::NestedModelFramePoseGraph {
   /// \param[in] Minimum API to posture the model frame.
   public: math::Pose3d ResolveNestedModelFramePoseInWorldFrame() const;
   /// \param[in] relative_to Can be "world", or any frame within the nested
-  ///   model's frame graph. (It cannot reach out).
+  ///   model's frame graph. (It cannot reach outside of this model).
   public: math::Pose3d ResolveNestedFramePose(
-      std::string frame_name, std::string relative_to);
+      std::string frame_name, std::string relative_to = "world");
 };
 
 // Repostures custom models for the given nested custom model.
