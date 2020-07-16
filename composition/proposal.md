@@ -637,7 +637,7 @@ class sdf::InterfaceModel {
   /// the declared links.
   public: void AddLink(sdf::InterfaceLink link);
   /// Gets registered frames.
-  public: std::vector<sdf::InterfaceLink> GetFrames() const;
+  public: std::vector<sdf::InterfaceLink> GetLinks() const;
 };
 
 /// Defines a custom model parser.
@@ -728,7 +728,7 @@ API.
 * There was consideration to have `sdf::SemanticPose` be able to declare
   indicate `::ResolveAttachedToFrame()`; however, this was not chosen because
   it requires being able to construct a `sdf::SemanticPose` in isolation and
-  ultimately has more information than is necessary for this ineterface.
+  ultimately has more information than is necessary for this interface.
   Additionally, there is complication with what scope the semantic pose should
   supply the frame in.
 
