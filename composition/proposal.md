@@ -536,6 +536,10 @@ waste time on debugging.
 
 #### 1.6 Proposed Parsing Stages
 
+**WARNING**: This parsing stages have not yet incorporated all of the proposals above.
+These changes will be added in incrementally. Once they are all added, this text will
+be removed.
+
 The following sections describe the phases for parsing the kinematics of an
 SDFormat 1.8 model and world.
 Several of the phases in each section are similar to the phases of parsing in
