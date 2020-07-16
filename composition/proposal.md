@@ -597,21 +597,21 @@ returning an error code if errors are found during parsing:
         helper function.
 
 3.  **Joint parent/child name checking:**
-    For each joint, check that the parent and child link names are different
-    and that each match the name of a sibling link to the joint,
+    For each joint, check that the parent and child ~~link~~ names are different
+    and that each match the name of a sibling *frame* to the joint,
     with the following exception:
-    if "world" is specified as a parent link name,
+    if "world" is specified as a parent ~~link~~ name,
     then the joint is attached to a fixed reference frame.
     In `libsdformat9`, these checks are all performed by the helper function
-    [checkJointParentChildLinkNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1820-L1885),
+    [checkJointParentChildLinkNames](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/parser.cc#L1814-L1911),
     which is invoked by `ign sdf --check`.
     A subset of these checks are performed by
     [Joint::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Joint.cc#L199-L213)
-    (checking that parent and child link names are different and that
-    `world` is not specified as the child link name)
+    (checking that parent and child ~~link~~ names are different and that
+    `world` is not specified as the child ~~link~~ name)
     and [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L316-L324)
-    (for non-static models calling [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L258-L266),
-    which checks that each child link specified by a joint exists as a sibling
+    (for non-static models calling [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L281-L289),
+    which checks that each child ~~link~~ specified by a joint exists as a sibling *frame*
     of that joint).
 
 4.  **Check `//model/@canonical_link` attribute value:**
@@ -651,33 +651,45 @@ returning an error code if errors are found during parsing:
         (see [FrameSemantics.cc:173-178](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L173-L178)
         and [FrameSemantics.cc:235-239](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L235-L239))
 
-    6.3 Add vertices for the implicit frame of each joint with an edge
-        connecting from the joint to the vertex of its child link
-        (see [FrameSemantics.cc:242-269](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L242-L269).
+    6.3 Add a vertex for the implicit frame of each joint ~~with an edge~~
+        ~~connecting from the joint to the vertex of its child *frame*~~
+        (see [FrameSemantics.cc:242-257](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L242-L257)).
 
-    6.4 For each `//model/frame`:
+    *6.4 Add a vertex to the graph for each `//model/frame`*
+        (see [FrameSemantics.cc:259-274](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L259-L274)).
 
-    6.4.1 Add a vertex to the graph
-          (see [FrameSemantics.cc:271-286](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L271-L286)).
+    *6.5 For each `//model/joint`, add an edge connecting from the joint to the vertex of its child frame*
+        *(see [FrameSemantics.cc:276-292](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L276-L292)).*
 
-    6.4.2 If `//model/frame/@attached_to` exists and is not empty,
+    6.*6* For each `//model/frame`:
+
+    6.*6.1* If `//model/frame/@attached_to` exists and is not empty,
           add an edge from the added vertex to the vertex
           named in the `//model/frame/@attached_to` attribute
           (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
 
-    6.4.3 Otherwise (ie. if the `//model/frame/@attached_to` attribute
+    6.*6.2* Otherwise (ie. if the `//model/frame/@attached_to` attribute
           does not exist or is an empty string `""`),
           add an edge from the added vertex to the model frame vertex,
           (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
 
-    6.5 Verify that the graph has no cycles and that by following the directed
+    6.*7* Verify that the graph has no cycles and that by following the directed
         edges, every vertex is connected to a link
         (see [validateFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L976-L982)
         which is called by [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L327-L328)).
         To identify the link to which each frame is attached, start from the
         vertex for that frame, and follow the directed edges until a link
-        is reached (see [Frame::ResolveAttachedToBody](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L216)
+        is reached (see [Frame::ResolveAttachedToBody](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L216)*,*
+        *[Joint::ResolveChildLink](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/Joint.cc#L410-L429),*
+        *[Joint::ResolveParentLink](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/Joint.cc#L432-L451),*
         and [resolveFrameAttachedToBody in FrameSemantics.cc](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1158) in `libsdformat9`).
+
+    *6.8 Verify that the parent and child frames of each joint resolve to*
+        *different values. This check can be skipped in the special case that*
+        *"world" is the joint's parent frame since that frame is not in a*
+        *model's `FrameAttachedToGraph` (checked in `libsdformat11` by `ign sdf --check`, see*
+        *[Joint::ResolveParentLink](https://github.com/osrf/sdformat/blob/44cab95014e61849f508ec92a613100301512aaf/src/Joint.cc#L407-L418)*
+        *and [parser.cc:1895-1930](https://github.com/osrf/sdformat/blob/44cab95014e61849f508ec92a613100301512aaf/src/parser.cc#L1895-L1930)).*
 
 7.  **Check `//pose/@relative_to` attribute values:**
     For each `//pose` that is not `//model/pose` (e.g. `//link/pose`,
@@ -721,13 +733,15 @@ returning an error code if errors are found during parsing:
     8.4.1 If `//joint/pose/@relative_to` exists and is not empty,
           add an edge from the joint vertex to the vertex named in
           `//joint/pose/@relative_to`
-          (see [FrameSemantics.cc:589-610](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L589-L610)).
+          (see [FrameSemantics.cc:572](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L572)
+          and [FrameSemantics.cc:591-600](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L591-L600)).
 
     8.4.2 Otherwise (ie. if `//joint/pose` or `//joint/pose/@relative_to` do not
           exist or `//joint/pose/@relative_to` is an empty string `""`)
           add an edge from the joint vertex to
-          the child link vertex named in `//joint/child`
-          (see [FrameSemantics.cc:499-513](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L499-L513)).
+          the child *frame* vertex named in `//joint/child`
+          (see [FrameSemantics.cc:572-577](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L572-L577)
+          and [FrameSemantics.cc:591-600](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/FrameSemantics.cc#L591-L600)).
 
     8.5 For each `//model/frame`:
 
