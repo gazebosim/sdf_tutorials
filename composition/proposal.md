@@ -572,8 +572,12 @@ struct sdf::NestedInclude {
   /// the "world" frame.
   math::Pose3d pose_WM;
 
-  //// As defined by `//include/static`.
+  /// As defined by `//include/static`.
   bool is_static{false};
+
+  /// This is a "virtual" XML element that will contain all custom (*unparsed*)
+  /// elements and attributes within `//include`.
+  sdf::ElementPtr virtual_custom_elements;
 };
 
 class sdf:::InterfaceFrame {
