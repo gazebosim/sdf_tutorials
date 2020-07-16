@@ -568,10 +568,6 @@ struct sdf::NestedInclude {
   /// Example: `my_new_model`
   std::string local_model_name;
 
-  /// Pose information from `//include/pose`, but resolved to be relative to
-  /// the "world" frame.
-  math::Pose3d pose_WM;
-
   /// As defined by `//include/static`.
   bool is_static{false};
 
@@ -598,10 +594,26 @@ class sdf::InterfaceLink {
   public: sdf::InterfacePose GetPose() const;
 };
 
+class sdf::NestedModelFramePoseGraph {
+  /// \param[in] Minimum API to posture the model frame.
+  public: math::Pose3d ResolveNestedModelFramePoseInWorldFrame() const;
+  /// \param[in] relative_to Can be "world", or any frame within the nested
+  ///   model's frame graph. (It cannot reach out).
+  public: math::Pose3d ResolveNestedFramePose(
+      std::string frame_name, std::string relative_to);
+};
+
+// Repostures custom models for the given nested custom model.
+// Simplest query is `GetModelPoseInWorldFrame()`.
+using RepostureFunction =
+    std::function<void(sdf::NestedModelFramePoseGraph graph)>;
+
 class sdf::InterfaceModel {
   /// \param[in] name The *local* name (no nesting, e.g. "::").
   ///   If this name contains "::", an error will be raised.
-  /// \param[in] canonical_link The canonicallink. If nullptr, this will be set
+  /// \param[in] reposture_function Called after pose graphs are constructed to
+  ///   reposture objects.
+  /// \param[in] canonical_link The canonical link. If nullptr, this will be set
   ///   to the first registered link. If non-empty, this will be registered
   ///   using `AddLink`.
   /// \param[in] model_frame The model frame. If specified, this must be named
@@ -610,10 +622,12 @@ class sdf::InterfaceModel {
   ///   incorporating the model into the frame graph.
   public: InterfaceModel(
       std::string name,
+      RepostureFunction reposture_function,
       sdf::InterfaceLink canonical_link = {},
       sdf::InterfaceFrame model_frame = {});
   /// Accessors.
   public: std::string GetName() const;
+  public: sdf::RepostureFunction GetRepostureFunction() const;
   public: sdf::InterfaceLink GetCanonicalLink() const;
   public: sdf::InterfaceFrame GetModelFrame() const;
   /// Provided so that hierarchy can still be leveraged from SDFormat.
@@ -727,6 +741,16 @@ API.
 #### 1.6 Proposed Parsing Stages
 
 **TODO(eric.cousineau)**: Add this in a follow-up PR.
+
+Short form:
+
+* Load the SDFormat model DOM.
+* For each include:
+  * If non-SDFormat, directly load, record the `sdf::InterfaceModel`.
+  * If SDFormat-compatible, recursively load the DOM into nested models.
+    * For each nested model, directly load any nested non-SDFormat models.
+* Resolve frame graph.
+  * Reposture non-SDFormat models.
 
 ### Examples
 
