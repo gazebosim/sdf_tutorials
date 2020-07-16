@@ -1160,7 +1160,9 @@ There are seven phases for validating the kinematics data in a world:
         and the [SemanticPose::Resolve](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/include/sdf/SemanticPose.hh#L65-L73)
         function.
 
-Short form:
+#### Short-form modifications for Interface API
+
+*TODO(eric.cousineau): Factor into above steps.*
 
 * Load the SDFormat model DOM.
 * For each include:
