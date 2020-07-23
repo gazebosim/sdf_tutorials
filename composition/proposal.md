@@ -616,17 +616,23 @@ class sdf::InterfaceModel {
   ///   reposture objects.
   /// \param[in] canonical_link_name The canonical link's name. (It must be
   ///   registered).
-  /// \param[in] X_LcM Model frame pose relative to canonical link's frame.
+  /// \param[in] model_frame_pose_in_canonical_link_frame Model frame pose
+  ///   relative to canonical link's frame. Defaults to identity.
+  /// \param[in] model_frame_pose_in_parent_model_frame Model frame pose
+  ///   relative to the including model's frame. Defaults to identity.
+  ///   \note This will not be used if //include/pose is specified.
   public: InterfaceModel(
       std::string name,
       sdf::RepostureFunction reposture_function,
       std::string canonical_link_name,
-      math::Pose3d X_LcM);
+      math::Pose3d model_frame_pose_in_canonical_link_frame = {},
+      math::Pose3d model_frame_pose_in_parent_model_frame = {});
   /// Accessors.
   public: std::string GetName() const;
   public: sdf::RepostureFunction GetRepostureFunction() const;
   public: std::string GetCanonicalLinkName() const;
   public: math::Pose3d GetModelFramePoseInCanonicalLinkFrame() const;
+  public: math::Pose3d GetModelFramePoseInParentModelFrame() const;
   /// Provided so that hierarchy can still be leveraged from SDFormat.
   public: void AddNestedModel(sdf::InterfaceModelPtr nested_model);
   /// Gets registered nested models.
