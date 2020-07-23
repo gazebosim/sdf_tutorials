@@ -645,7 +645,7 @@ class sdf::InterfaceModel {
   /// Provided so that the including SDFormat model can still interface with
   /// the declared links.
   public: void AddLink(sdf::InterfaceLink link);
-  /// Gets registered frames.
+  /// Gets registered links.
   public: std::vector<sdf::InterfaceLink> GetLinks() const;
 };
 
