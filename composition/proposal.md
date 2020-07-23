@@ -6,7 +6,7 @@ Steven Peters `<scpeters@osrfoundation.org>`,
 Addisu Taddese  `<addisu@openrobotics.org>`
 * **Status**: Draft
 * **SDFormat Version**: 1.8
-* **`libsdformat` Version**: 10.0
+* **`libsdformat` Version**: 11.0
 
 ## Introduction
 
