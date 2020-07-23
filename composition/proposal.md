@@ -503,7 +503,7 @@ models, and `model://` URIs for Gazebo models.
 
 ##### 1.4.6 `//include/static`
 
-**TODO(eric)**: Reconsider this in future iterations of the proposal.
+**TODO(eric.cousineau)**: Reconsider this in future iterations of the proposal.
 
 This allows the `//model/static` element to be overridden and will affect
 *all* models transitively included via the `//include` element, and can *only*
