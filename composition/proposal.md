@@ -545,11 +545,14 @@ along with a specification of the proposed contract for custom parsers:
 // This can be used in both //model elements as well as /world.
 struct sdf::NestedInclude {
   /// Provides the URI as specified in `//include/uri`. This may or may not end
-  /// with a file extension if it refers to a model directory.
+  /// with a file extension (it will not end an extension if it refers to a
+  /// model package).
   std::string uri;
 
-  /// Provides the *resolved* file name from the uri. This should generally be
-  /// used for predicates on filenames.
+  /// Provides the *resolved* absolute file path from the URI.
+  /// It is recommended to use this in `CustomModelParser` when check
+  /// predicates on filenames -- however, the predicates should generally only
+  /// check the file extension.
   std::string resolved_file_name;
 
   // N.B. Should be unnecesssary if downstream consumer has composition. Not
