@@ -502,33 +502,60 @@ models, and `model://` URIs for Gazebo models.
 
 ##### 1.4.6 `//include/static`
 
-**TODO(eric)**: Reconsider this in future iterations of the proposal.
-
-This allows the `//model/static` element to be overridden and will affect
-*all* models transitively included via the `//include` element, and can *only*
-change values from false to true; `//include/static` can only be false if all
-models included via the file are non-static.
-
-This requires `//include/static` to be stored as a tri-state value
-(unspecified, true, false).
+If `//include/static` is specific, the nested models within the *included*
+model will *only* be override if `//include/static` is `true`. Otherwise, if
+`//include/static` is `false`, then all nested models with the *included* model
+will remain as specified.
 
 **Alternatives Considered**:
 
-The value could be overridden to true or false.
-However, implementations would have to be careful that `@attached_to` is
-properly respected when overriding `//model/static`. Normally, if a model is
-static, its frames will be attached to the world. However, if a model is
-non-static, the attached-to frame should only be within the model itself (to
-observe proper encapsulation).
+1. The value could be overridden to `true` or `false`, always.
 
-Additionally, it may not be possible to force certain models to be non-static.
-For example, if a `//include/static` is set to false, but the included model is
-normally a static model with only frames (which is valid), an error should be
-thrown.
+    However, implementations would have to be careful that `@attached_to` is
+    properly respected when overriding `//model/static`. Normally, if a model is
+    static, its frames will be attached to the world. However, if a model is
+    non-static, the attached-to frame should only be within the model itself (to
+    observe proper encapsulation).
 
-It would also generally be *not* suggested to force a static model to be
-non-static, as the static model may not be designed for non-static use, and
-waste time on debugging.
+    Additionally, it may not be possible to force certain models to be non-static.
+    For example, if a `//include/static` is set to false, but the included model is
+    normally a static model with only frames (which is valid), an error should be
+    thrown.
+
+    It would also generally be *not* suggested to force a static model to be
+    non-static, as the static model may not be designed for non-static use, and
+    waste time on debugging.
+
+    This was abandoned because it's overly complex and has sharp, jagged edges.
+
+2. Require `//include/static` to be stored as a tri-state value (unspecified,
+    true, false).
+
+    This allows the `//model/static` element to be overridden and will affect
+    *all* models transitively included via the `//include` element, and can
+    *only* change values from false to true; `//include/static` can only be
+    false if all models included via the file are non-static.
+
+    This alternative was abanoded because this is not very simple, and has
+    relatively complicated rules. See
+    [sdf_tutorials#33](https://github.com/osrf/sdf_tutorials/issues/33) for a
+    brief mention.
+
+###### 1.4.6.1 Interaction with `//joint/parent` and `//joint/child` now being frames
+
+In section 1.2.2, it is proposed to admit frames in `//joint/parent` and
+`//joint/child` to simplify the encapsulated interface of a model.
+
+This means that a model can include a static version of a nested model, and
+possibly use the nested model's frames (which are now effectively attached to
+the world) as parent or child frames in a joint.
+
+This is fine, and consistent with existing SDFormat behavior of allowing
+kinematic loops (e.g. adding a rope, and attaching both ends to the world).
+
+**Note**: `//joint/child == "world"` is forbidden solely due to encapsulation
+issues with poses, as described in the
+[Pose Frame Semantics proposal](/tutorials?tut=pose_frame_semantics_proposal#1-2-explicit-vs-implicit-frames).
 
 #### 1.5 Minimal Interface Types for Non-SDFormat Models
 
