@@ -185,6 +185,43 @@ To this end, the next specification of SDFormat should reintroduce
 `//world/joint`, but ensure that it is explicitly supported in both
 specification and software.
 
+##### 1.2.5 Nested Canonical Links
+
+Given that nested models (either directly or included) will have links, it
+should be possible to use a nested model's link as the top-level model's
+canonical link.
+
+This should also enable nested models inside of a parent model without any of
+its own links. As an example:
+
+```xml
+<model name="top">
+  <model name="nested">
+     <link name="link"/>
+  </model>
+</model>
+```
+
+If the canonical link were to be specified explicitly, the following model
+would be equivalent to the above model:
+
+```xml
+<model name="top" canonical_link="nested::link">
+  <model name="nested">
+     <link name="link"/>
+  </model>
+</model>
+```
+
+This should hold true for any level of nesting.
+
+*Alternatives Considered*:
+
+`//model/@canonical_link` could permit referencing
+frames to keep "interface abstraction" -- e.g. changing a link's name, but adding in a frame for backwards compatibility. However, that would
+invalidate the meaning of `canonical_link` and would complicate
+implementation.
+
 #### 1.3 Name Scoping and Cross-Referencing
 
 #### 1.3.1 Reserved Delimiter Token `::`
