@@ -732,6 +732,15 @@ API.
   Additionally, there is complication with what scope the semantic pose should
   supply the frame in.
 
+##### 1.5.2 Motivating Example
+
+In order to inform this API, a (non-working) prototype usage of the (phantom)
+API was hashed out in
+[drake#13128](https://github.com/robotlocomotion/drake/pull/13128).
+
+**TODO(eric.cousineau)**: Update this once the initial API is fleshed out and
+Drake has a working prototype usage.
+
 #### 1.6 Proposed Parsing Stages
 
 The following sections describe the phases for parsing the kinematics of an
