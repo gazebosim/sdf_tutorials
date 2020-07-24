@@ -329,7 +329,8 @@ are more local.
 **Alternatives Considered for Reference Syntax**
 
 * Use `/` instead of `::`, and permit `../` for upwards references.
-    * This looks a bit more like a filesystem (more relevant to these semantics). However, there is inertia due to Gazebo's usage of `::`
+    * This looks a bit more like a filesystem (more relevant to these
+    semantics). However, there is inertia due to Gazebo's usage of `::`
     for composition, in both SDFormat files and for models (and IPC channels /
     topics in general).
 * Upwards references:
@@ -502,7 +503,7 @@ models, and `model://` URIs for Gazebo models.
 
 ##### 1.4.6 `//include/static`
 
-**TODO(eric)**: Reconsider this in future iterations of the proposal.
+**TODO(eric.cousineau)**: Reconsider this in future iterations of the proposal.
 
 This allows the `//model/static` element to be overridden and will affect
 *all* models transitively included via the `//include` element, and can *only*
@@ -530,9 +531,224 @@ It would also generally be *not* suggested to force a static model to be
 non-static, as the static model may not be designed for non-static use, and
 waste time on debugging.
 
-#### 1.5 Minimal Interface Types for Non-SDFormat Models
+#### 1.5 Minimal `libsdformat` Interface Types for Non-SDFormat Models
 
-**TODO(eric.cousineau)**: Add this in a follow-up PR.
+As mentioned above, the encapsulation goal of this proposal should allow for
+downstream libraries to permit specifying non-SDFormat model via `//include`
+tags *without* `libsdformat` having to try and convert the model to SDFormat.
+
+In order to do so, it is proposed that the following API hook be permitted to
+be registered in `libsdformat`. This is described in the following pseudocode,
+along with a specification of the proposed contract for custom parsers:
+
+~~~c++
+// This can be used in both //model elements as well as /world.
+struct sdf::NestedInclude {
+  /// Provides the URI as specified in `//include/uri`. This may or may not end
+  /// with a file extension (it will not end an extension if it refers to a
+  /// model package).
+  std::string uri;
+
+  /// Provides the *resolved* absolute file path from the URI.
+  /// It is recommended to use this in `CustomModelParser` when check
+  /// predicates on filenames -- however, the predicates should generally only
+  /// check the file extension.
+  std::string resolved_file_name;
+
+  // N.B. Should be unnecesssary if downstream consumer has composition. Not
+  // the case for Drake :(
+  /// Name of the model in absolute hierarchy.
+  /// Example: `top_model::middle_model::my_new_model`
+  std::string absolute_model_name;
+
+  /// Name relative to immediate parent as specified in `//include/@name`.
+  /// Example: `my_new_model`
+  std::string local_model_name;
+
+  /// As defined by `//include/static`.
+  bool is_static{false};
+
+  /// This is a "virtual" XML element that will contain all custom (*unparsed*)
+  /// elements and attributes within `//include`.
+  sdf::ElementPtr virtual_custom_elements;
+};
+
+class sdf:::InterfaceFrame {
+  /// \param[in] name The *local* name.
+  /// \param[in] attached_to Name of attached-to frame. Must be "__model__" if
+  ///   attached to model.
+  /// \param[in] X_AF The pose of the frame relative to attached frame.
+  public: InterfaceFrame(
+      std::string name, std::string attached_to, math::Pose3d X_AF);
+  /// Accessors.
+  public: std::string GetName() const;
+  public: std::string GetAttachedTo() const;
+  public: math::Pose3d GetPoseInAttachedToFrame() const;
+};
+
+class sdf::InterfaceLink {
+  /// \param[in] name The *local* name.
+  /// \param[in] pose The pose of the link relative to model frame.
+  public: InterfaceLink(std::string name, math::Pose3d X_ML);
+  /// Accessors.
+  public: std::string GetName() const;
+  public: math::Pose3d GetPoseInModelFrame() const;
+};
+
+class sdf::NestedModelFramePoseGraph {
+  /// \param[in] Minimum API to posture the model frame.
+  public: math::Pose3d ResolveNestedModelFramePoseInWorldFrame() const;
+  /// \param[in] relative_to Can be "world", or any frame within the nested
+  ///   model's frame graph. (It cannot reach outside of this model).
+  public: math::Pose3d ResolveNestedFramePose(
+      std::string frame_name, std::string relative_to = "world");
+};
+
+// Repostures custom models for the given nested custom model.
+// Simplest query is `GetModelPoseInWorldFrame()`.
+using RepostureFunction =
+    std::function<void(sdf::NestedModelFramePoseGraph graph)>;
+
+class sdf::InterfaceModel {
+  /// \param[in] name The *local* name (no nesting, e.g. "::").
+  ///   If this name contains "::", an error will be raised.
+  /// \param[in] reposture_function Called after pose graphs are constructed to
+  ///   reposture objects.
+  /// \param[in] canonical_link_name The canonical link's name. (It must be
+  ///   registered).
+  /// \param[in] model_frame_pose_in_canonical_link_frame Model frame pose
+  ///   relative to canonical link's frame. Defaults to identity.
+  /// \param[in] model_frame_pose_in_parent_model_frame Model frame pose
+  ///   relative to the including model's frame. Defaults to identity.
+  ///   \note This will not be used if //include/pose is specified.
+  public: InterfaceModel(
+      std::string name,
+      sdf::RepostureFunction reposture_function,
+      std::string canonical_link_name,
+      math::Pose3d model_frame_pose_in_canonical_link_frame = {},
+      math::Pose3d model_frame_pose_in_parent_model_frame = {});
+  /// Accessors.
+  public: std::string GetName() const;
+  public: sdf::RepostureFunction GetRepostureFunction() const;
+  public: std::string GetCanonicalLinkName() const;
+  public: math::Pose3d GetModelFramePoseInCanonicalLinkFrame() const;
+  public: math::Pose3d GetModelFramePoseInParentModelFrame() const;
+  /// Provided so that hierarchy can still be leveraged from SDFormat.
+  public: void AddNestedModel(sdf::InterfaceModelPtr nested_model);
+  /// Gets registered nested models.
+  public: std::vector<sdf::InterfaceModelConstPtr> GetNestedModels() const;
+  /// Provided so that the including SDFormat model can still interface with
+  /// the declared frames.
+  public: void AddFrame(sdf::InterfaceFrame frame);
+  /// Gets registered frames.
+  public: std::vector<sdf::InterfaceFrame> GetFrames() const;
+  /// Provided so that the including SDFormat model can still interface with
+  /// the declared links.
+  public: void AddLink(sdf::InterfaceLink link);
+  /// Gets registered links.
+  public: std::vector<sdf::InterfaceLink> GetLinks() const;
+};
+
+/// Defines a custom model parser.
+///
+/// Every custom model parser should define it's own way of (quickly) 
+/// determining if it should parse a model. This should generally be done by
+/// looking at the file extension of `include.resolved_file_name`, and
+/// returning nullptr if it doesn't match a given criteria.
+///
+/// Custom model parsers are visited in the *reverse* of how they are defined.
+/// The latest parser gains precedence.
+///
+/// Custom model parsers are *never* checked if resolved file extension ends
+/// with `*.sdf` or `*.world`.
+/// If libsdformat encounters a `*.urdf` file, it will first check custom
+/// parser. If no custom parser is found, it will then convert the URDF XML to
+/// SDFormat XML, and parse it as an SDFormat file.
+///
+/// \param[in] include The parsed //include information from which this model
+///   should be parsed.
+/// \param[out] errors Errors encountered during custom parsing.
+///   If any errors are reported, this must return nullptr.
+/// \returns An optional ModelInterface.
+///   * If not nullptr, the returned model interface is incorporated into the
+///     existing model and its frames are exposed through the frame graph.
+///   * If nullptr and no errors are reported, then libsdformat should
+///     continue testing out other custom parsers registered under the same
+///     extension (e.g. a parser for `.yaml`, which may cover many different
+///     schemas).
+///
+/// If an exception is raised by this callback, libsdformat will *not* try to
+///intercept the exception.
+using sdf::CustomModelParser = std::function<
+    sdf::InterfaceModelPtr (sdf::NestedInclude include, Errors& errors)>;
+
+/// Registers a custom model parser.
+/// \param[in] model_parser Callback as described above.
+void sdf::Root::registerCustomModelParser(
+    sdf::CustomModelParser model_parser);
+~~~
+
+When `libsdformat` calls a custom model parser and that model parser succeeds,
+then the parsing code will:
+
+1. First ensure no `errors` were specified.
+2. Incorporate the resulting `sdf::InterfaceModelPtr interface`:
+  a. Assert that it is not `nullptr`
+  b. For each `interface.GetNestedModels()`:
+    i. Recursively incorporate the nested models.
+  c. Register model frame and canonical link in frame graph.
+  d. Register each individual frame in frame graph.
+
+That should then allow the included models to have their frames used in the
+top-level model's `//pose` definitions.
+
+**Alternatives Considered**:
+
+* For handling file predicates based on name and/or content:
+  * Explicitly use a `sdf::FileNamePredicate` when calling
+  `registerCustomModelParser`. This was not done because there is sufficient
+  functionality in the API for individual parsers to do this.
+  * Rather than use `sdf::FileNamePredicate`, it was considered to use something
+  like `sdf::FileContentsPredicate`, to allow for a MIME type-like check to
+  happen. However, since this is explicitly for models that are being included by
+  `//include/uri`, it is expected that the URI supplied to SDFormat will resolve
+  to a file on disk, thus we do not need to worry about contents "over the wire"
+  (e.g. models passed from a Gazebo client to a Gazebo server,
+  `/robot_description` in ROS, etc.).
+
+* For the composition API:
+  * It was considered to expose as much of the toplogy as possible, both links
+  and frames, and possibly joints. However, that would complicate the
+  implementation:
+    * Ths `libsdformat` API would somehow have to infect existing API to allow
+      custom-included models to popluate existing graphs explicitly.
+    * This infection would require additional encapsulation of `libsdformat`
+      details (e.g. XML pointser for elements). While not necessarily bad in
+      principle, this may be an impractical rearchitecture for the next
+      release.
+
+##### 1.5.1 Modifications to existing `libsdformat` API
+
+There should be no large changes necessary to existing public `libsdformat`
+API.
+
+**Alternatives Considered**:
+
+* There was consideration to have `sdf::SemanticPose` be able to declare
+  indicate `::ResolveAttachedToFrame()`; however, this was not chosen because
+  it requires being able to construct a `sdf::SemanticPose` in isolation and
+  ultimately has more information than is necessary for this interface.
+  Additionally, there is complication with what scope the semantic pose should
+  supply the frame in.
+
+##### 1.5.2 Motivating Example
+
+In order to inform this API, a (non-working) prototype usage of the (phantom)
+API was hashed out in
+[drake#13128](https://github.com/robotlocomotion/drake/pull/13128).
+
+**TODO(eric.cousineau)**: Update this once the initial API is fleshed out and
+Drake has a working prototype usage.
 
 #### 1.6 Proposed Parsing Stages
 
@@ -965,6 +1181,18 @@ There are seven phases for validating the kinematics data in a world:
         (such as [Frame::SemanticPose](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/include/sdf/Frame.hh#L143-L146))
         and the [SemanticPose::Resolve](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/include/sdf/SemanticPose.hh#L65-L73)
         function.
+
+#### Short-form modifications for Interface API
+
+*TODO(eric.cousineau): Factor into above steps.*
+
+* Load the SDFormat model DOM.
+* For each include:
+  * If non-SDFormat, directly load, record the `sdf::InterfaceModel`.
+  * If SDFormat-compatible, recursively load the DOM into nested models.
+    * For each nested model, directly load any nested non-SDFormat models.
+* Resolve frame graph.
+  * Reposture non-SDFormat models.
 
 ### Examples
 
