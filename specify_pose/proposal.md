@@ -244,6 +244,25 @@ directly in the specification.
 The author feels that too many representations and permutations may make it
 really hard (and annoying) to support an already complex specification.
 
+#### 1.1.1 Re-describe API Implications, potential sources of numerical error
+
+The `ignition::math::Pose3d` stores its rotation as
+`ignition::math::Quaternion`.
+
+Therefore, when storing quaternions, users should be aware of what numeric
+changes happen to their data (e.g. normalization), so they should generally
+know where changes in precision may happen.
+
+When converting to roll-pitch-yaw coordiantes, we should try to specify the
+*exact* math being done. (e.g. a cross-reference to `Quatnerion::Euler()`
+accessor and mutator, but with the algorithm actually described in
+documentation).
+
+When converting between radians and degrees, we should try to specify *exactly*
+what math is done, and how much precision should be expected to be lost by
+`libsdformat` during the conversion (e.g. the exact representation of `pi` used
+in code, the order of operations, etc.).
+
 #### 1.2 Deprecate old `//pose` representation
 
 The existing usage of `//pose` will remain for SDFormat 1.8, but will be
