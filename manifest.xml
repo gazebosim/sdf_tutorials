@@ -33,6 +33,15 @@
       <skill>beginner</skill>
     </tutorial>
 
+    <tutorial title="Proposal for a better pose" ref='better_pose_proposal' type='proposal'>
+      <markdown version="1.7">specify_pose/proposal.md</markdown>
+      <description>Specifying pose in SDFormat using different rotation representations.</description>
+      <tags>
+        <tag>pose</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
     <tutorial title="Model kinematics" ref='spec_model_kinematics' type='documentation'>
       <markdown version="1.4">spec_model_kinematics/tutorial.md</markdown>
       <description>Specifying model kinematics with links and joints in SDFormat.</description>
@@ -208,6 +217,7 @@
         <tutorial>pose_frame_semantics_proposal</tutorial>
         <tutorial>custom_elements_attributes_proposal</tutorial>
         <tutorial>composition_proposal</tutorial>
+        <tutorial>better_pose_proposal</tutorial>
       </tutorials>
     </category>
 
