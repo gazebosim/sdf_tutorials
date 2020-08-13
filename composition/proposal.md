@@ -505,8 +505,8 @@ models, and `model://` URIs for Gazebo models.
 
 If `//model/static` or `//include/static` is specified, the nested models
 within that model will *only* be overridden if `//static` is `true`. Otherwise,
-if `//static` is `false`, then all of the nested models (with that model) will
-remain as specified.
+if `//static` is `false`, then all of the nested models (within that model)
+will remain as specified.
 
 **Alternatives Considered**:
 
