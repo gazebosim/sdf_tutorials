@@ -47,7 +47,7 @@ a nested model `sphere` defined inside a parent model `Pm`.
 
 #### WARNING
 
-The current version of libsdformat's DOM API (`libsdformat` <= 9.2.x) does not
+Early versions of libsdformat's DOM API (`libsdformat` <= 9.2.x) do not
 support models defined directly inside parent models. As a workaround, such
 models can be accessed using the `Element` API.
 
