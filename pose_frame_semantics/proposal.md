@@ -1461,7 +1461,7 @@ In phases that differ from SDFormat 1.4, *italics* are used to signal the differ
 
 For new phases, the ***Title:*** is italicized.
 
-**Amendment**: This section has been updated as part of Amendment 1.
+**Amendment**: This section has been updated as part of Amendment 2.
 
 ### 1 Model
 
