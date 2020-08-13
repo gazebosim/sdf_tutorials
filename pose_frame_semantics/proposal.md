@@ -14,17 +14,17 @@ modified.
 These are added as amendments given that the current proposal has not yet been
 migrated to the specification documentation.
 
-### Amendment 1: Composition Update
-
-* **Status**: Draft
-* **SDFormat Version**: 1.8
-* **`libsdformat` Version**: 11
-
-### Amendment 2: Directly Nested Models
+### Amendment 1: Directly Nested Models
 
 * **Status**: Draft
 * **SDFormat Version**: 1.7
 * **`libsdformat` Version**: 9.3
+
+### Amendment 2: Composition Update
+
+* **Status**: Draft
+* **SDFormat Version**: 1.8
+* **`libsdformat` Version**: 11
 
 For more background, please see:
 
@@ -977,7 +977,7 @@ this change would require more involved changes.
 
 ### 8 Directly Nested Models
 
-**Amendment**: This section has been added as part of Amendment 2.
+**Amendment**: This section has been added as part of Amendment 1.
 
 Nested models become more important in the
 [Composition Proposal](/?tut=composition_proposal) because now scoped names
@@ -1461,7 +1461,9 @@ In phases that differ from SDFormat 1.4, *italics* are used to signal the differ
 
 For new phases, the ***Title:*** is italicized.
 
-**Amendment**: This section has been updated as part of Amendment 2.
+**Amendment**: This section has been updated as part of Amendment 1. Updates
+relevant to Amendment 2 (SDFormat 1.8, composition) are in the
+[Composition Proposal](/?tut=composition_proposal).
 
 ### 1 Model
 
