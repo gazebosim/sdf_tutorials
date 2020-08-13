@@ -8,7 +8,7 @@ Eric Cousineau `<eric.cousineau@tri.global>`
 * **SDFormat Version**: 1.7
 * **`libsdformat` Version**: 9.0 (initial support), 9.3 (nested models)
 
-All sections affected by ammendments are explicitly denoted as being added or
+All sections affected by amendments are explicitly denoted as being added or
 modified.
 
 These are added as amendments given that the current proposal has not yet been
@@ -392,14 +392,18 @@ that disallows name conflicts like this.
 In SDFormat 1.4, the only objects referenced by name are the links
 named in `//joint/parent` and `//joint/child`, and the names are always
 scoped to the current model.
+
 In SDFormat 1.5, the `::` delimiter is used to indicate that the target
 link is within a nested model, but the scope is still limited to
 objects contained in the current model.
-The `::` syntax for referencing across model boundaries is not supported
-by SDFormat 1.7.
+
+In SDFormat 1.7, the `::` syntax for referencing across model boundaries is not supported.
 With the addition of `//world/frame` and `//world/model/pose/@relative_to`,
 it is necessary to consider the world scope separately from each
 model's scope to avoid name conflicts and ensure encapsulation.
+
+In SDFormat 1.8, the `::` syntax for referencing across model boundaries will be
+formalized and supported.
 
 ##### 3.1.1 Alternatives considered
 
@@ -623,7 +627,6 @@ and thus indirectly attached to the canonical link.
   <frame name="F0" attached_to=""/>    <!-- VALID: Indirectly attached_to canonical link L via the model frame. -->
   <frame name="F1" attached_to="M"/>   <!-- VALID: Indirectly attached_to nested model M. -->
   <frame name="F2" attached_to="F1"/>  <!-- VALID: Indirectly attached_to nested model M via frame F1. -->
-  <frame name="F3" attached_to="A"/>   <!-- INVALID: no sibling frame named A. -->
 </model>
 ~~~
 
@@ -771,6 +774,7 @@ the implicit world frame.
 
 ~~~
 <model name="nested_model_pose_relative_to">
+  <frame name="M"/>                         <!-- Explicit frame M identical to implicit model frame __model__. -->
   <link name="L"/>
   <model name="M1">
     <pose>{X_MM1}</pose>                    <!-- Pose relative_to implicit model frame (M) by default. -->
