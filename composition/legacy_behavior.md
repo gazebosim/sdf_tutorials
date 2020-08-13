@@ -5,7 +5,7 @@ a model can be constructed from other models nested within itself.
 
 **Note**: This describes older legacy behavior. Newer features, intended for
 SDFormat 1.8 / `libsdformat` 11, are described in the
-[Composition Proposal](/?tut=composition_proposal).
+[Composition Proposal](/tutorials?tut=composition_proposal).
 
 ## Introduction
 
