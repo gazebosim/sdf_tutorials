@@ -903,9 +903,9 @@ the implicit world frame.
 
     <model name="N">
       <pose relative_to="F">{X_FN}</pose>     <!-- Pose relative relative to explicit frame F (F -> M) in model M1's scope. -->
-      <link name="L"/>
+      <link name="NL"/>
     </model>
-    <frame name="F0">                         <!-- Frame indirectly attached_to canonical link link L via model frame. -->
+    <frame name="F0">                         <!-- Frame indirectly attached_to canonical link L via model frame. -->
       <pose relative_to="N">{X_NF0}</pose>    <!-- Pose relative_to the nested model frame N (N -> F -> M). -->
     </frame>
 
@@ -1635,7 +1635,7 @@ returning an error code if errors are found during parsing:
     representing a frame (see [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L168)
     in `libsdformat9`):
 
-    7.1 Add a vertex for the implicit frame of each `//link`,
+    7.1 Add a vertex for the frame of each `//link`,
         `//joint`, `//frame`, and nested `//model` in the model
         (see [FrameSemantics.cc:219-233](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L219-L233),
         [FrameSemantics.cc:271-286](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L271-L286),
@@ -1654,13 +1654,13 @@ returning an error code if errors are found during parsing:
     7.4 For each `//model/frame`:
 
     7.4.1 If `//model/frame/@attached_to` exists and is not empty,
-          add an edge from the added vertex to the vertex
+          add an edge from this frame's vertex to the vertex
           named in the `//model/frame/@attached_to` attribute
           (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
 
     7.4.2 Otherwise (i.e. if the `//model/frame/@attached_to` attribute
           does not exist or is an empty string `""`),
-          add an edge from the added vertex to the model frame vertex,
+          add an edge from this frame's vertex to the model frame vertex,
           (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
 
     7.5 Verify that the graph has no cycles and that by following the directed
