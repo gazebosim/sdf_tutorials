@@ -501,12 +501,12 @@ If a file is relative, then it should be evaluated next to the file itself.
 **WARNING**: In general, it is suggested to use `package://` URIs for ROS
 models, and `model://` URIs for Gazebo models.
 
-##### 1.4.6 `//include/static`
+##### 1.4.6 `//static` for for included and directly nested models
 
-If `//include/static` is specific, the nested models within the *included*
-model will *only* be override if `//include/static` is `true`. Otherwise, if
-`//include/static` is `false`, then all nested models with the *included* model
-will remain as specified.
+If `//model/static` or `//include/static` is specified, the nested models
+within that model will *only* be overridden if `//static` is `true`. Otherwise,
+if `//static` is `false`, then all of the nested models (with that model) will
+remain as specified.
 
 **Alternatives Considered**:
 
@@ -518,10 +518,11 @@ will remain as specified.
     non-static, the attached-to frame should only be within the model itself (to
     observe proper encapsulation).
 
-    Additionally, it may not be possible to force certain models to be non-static.
-    For example, if a `//include/static` is set to false, but the included model is
-    normally a static model with only frames (which is valid), an error should be
-    thrown.
+    Additionally, it may not be possible to force certain models to be
+    non-static.
+    For example, if a `//static` is set to false, but the model is
+    normally a static model with only frames (which is valid), an error should
+    be thrown.
 
     It would also generally be *not* suggested to force a static model to be
     non-static, as the static model may not be designed for non-static use, and
@@ -529,13 +530,13 @@ will remain as specified.
 
     This was abandoned because it's overly complex and has sharp, jagged edges.
 
-2. Require `//include/static` to be stored as a tri-state value (unspecified,
-    true, false).
+2. Require `//static` to be stored as a tri-state value (unspecified, true,
+false).
 
-    This allows the `//model/static` element to be overridden and will affect
-    *all* models transitively included via the `//include` element, and can
-    *only* change values from false to true; `//include/static` can only be
-    false if all models included via the file are non-static.
+    This allows the `//static` elements to be overridden and will affect
+    *all* nested models, and can *only* change values from false to true;
+    `//static` can only be false if all models included via the file are
+    non-static.
 
     This alternative was abanoded because this is not very simple, and has
     relatively complicated rules. See
