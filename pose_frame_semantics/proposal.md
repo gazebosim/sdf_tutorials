@@ -8,6 +8,30 @@ Eric Cousineau `<eric.cousineau@tri.global>`
 * **SDFormat Version**: 1.7
 * **`libsdformat` Version**: 9.0
 
+All sections affected by ammendments are explicitly denoted as being added or
+modified.
+
+These are added as amendments given that the current proposal has not yet been
+migrated to the specification documentation.
+
+### Amendment 1: Directly Nested Models
+
+* **Status**: Draft
+* **SDFormat Version**: 1.7
+* **`libsdformat` Version**: 9.3
+
+### Amendment 2: Composition Update
+
+* **Status**: Draft
+* **SDFormat Version**: 1.8
+* **`libsdformat` Version**: 11
+
+For more background, please see:
+
+* PR overview for [sdformat#316](https://github.com/osrf/sdformat/pull/316).
+* Ian Chen's comment:
+[sdformat#316 (comment)](https://github.com/osrf/sdformat/pull/316#pullrequestreview-454551049)
+
 ## Introduction
 
 This proposal suggests a series of changes intended to support semantics for
@@ -951,6 +975,63 @@ Migration for `//jonit/axis/xyz` is absolutely necessary if
 `src/Converter.cc`) is only for changing the basic structure of a document, and
 this change would require more involved changes.
 
+### 8 Directly Nested Models
+
+**Amendment**: This section has been added as part of Amendment 1.
+
+Nested models become more important in the
+[Composition Proposal](/?tut=composition_proposal) because now scoped names
+have more meaning.
+
+In order to simplify implementation details, both directly nested models and
+included nested models should generally yield the same behavior. To support
+this, we must support directly nested models in the DOM API.
+
+#### 8.1 `libsdformat` Support
+
+As mentioned in the
+[Composition - Defining models directly inside parent models](/tutorials?tut=composition&ver=1.5#defining-models-directly-inside-parent-models)
+section, `libsdformat <= 9.2.x` does not support directly nested models.
+
+This proposes support for directly nested models.
+
+##### 8.2 Nested Canonical Links
+
+Given that nested models (either directly or included) will have links, it
+should be possible to use a nested model's link as the top-level model's
+canonical link.
+
+This should also enable nested models inside of a parent model without any of
+its own links. As an example:
+
+```xml
+<model name="top">
+  <model name="nested">
+     <link name="link"/>
+  </model>
+</model>
+```
+
+If the canonical link were to be specified explicitly, the following model
+would be equivalent to the above model:
+
+```xml
+<model name="top" canonical_link="nested::link">
+  <model name="nested">
+     <link name="link"/>
+  </model>
+</model>
+```
+
+This should hold true for any level of nesting.
+
+*Alternatives Considered*:
+
+`//model/@canonical_link` could permit referencing
+frames to keep "interface abstraction" -- e.g. changing a link's name, but adding in a frame for backwards compatibility. However, that would
+invalidate the meaning of `canonical_link` and would complicate
+implementation.
+
 ## Examples
 
 The following sections provide more in-depth examples of the major concepts
@@ -1377,7 +1458,12 @@ SDFormat 1.7 model and world.
 Several of the phases in each section are similar to the phases of parsing in
 SDFormat 1.4 in the [Legacy behavior documentation](/tutorials?tut=pose_frame_semantics).
 In phases that differ from SDFormat 1.4, *italics* are used to signal the difference.
+
 For new phases, the ***Title:*** is italicized.
+
+**Amendment**: This section has been updated as part of Amendment 1. Updates
+relevant to Amendment 2 (SDFormat 1.8, composition) are in the
+[Composition Proposal](/?tut=composition_proposal).
 
 ### 1 Model
 
@@ -1785,7 +1871,9 @@ There are *seven* phases for validating the kinematics data in a world:
         function.
 
 
-## Addendum: Model Building, Contrast "Model-Absolute" vs "Element-Relative" Coordinates
+## Addendums
+
+### Model Building, Contrast "Model-Absolute" vs "Element-Relative" Coordinates
 
 `X(0)` implies zero configuration, while `X(q)` implies a value at a given
 configuration.
