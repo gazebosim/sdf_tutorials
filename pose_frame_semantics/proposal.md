@@ -760,11 +760,11 @@ the implicit world frame.
     <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
   </link>
 
-  <link name="cycle1">
-    <pose relative_to="cycle2">{X_C1C2}</pose>
+  <link name="C1">
+    <pose relative_to="C2">{X_C1C2}</pose>
   </link>
-  <link name="cycle2">
-    <pose relative_to="cycle1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
+  <link name="C2">
+    <pose relative_to="C1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
   </link>
 </model>
 ~~~
@@ -794,12 +794,12 @@ the implicit world frame.
     <link name="L"/>
   </model>
 
-  <model name="cycle1">
-    <pose relative_to="cycle2">{X_C1C2}</pose>
+  <model name="C1">
+    <pose relative_to="C2">{X_C1C2}</pose>
     <link name="L"/>
   </model>
-  <model name="cycle2">
-    <pose relative_to="cycle1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
+  <model name="C2">
+    <pose relative_to="C1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
     <link name="L"/>
   </model>
 </model>
@@ -864,11 +864,11 @@ the implicit world frame.
     <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
   </frame>
 
-  <frame name="cycle1">
-    <pose relative_to="cycle2">{X_C1C2}</pose>
+  <frame name="C1">
+    <pose relative_to="C2">{X_C1C2}</pose>
   </frame>
-  <frame name="cycle2">
-    <pose relative_to="cycle1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
+  <frame name="C2">
+    <pose relative_to="C1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
   </frame>
 </model>
 ~~~
@@ -949,11 +949,11 @@ the implicit world frame.
     <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
   </frame>
 
-  <frame name="cycle1">
-    <pose relative_to="cycle2">{X_C1C2}</pose>
+  <frame name="C1">
+    <pose relative_to="C2">{X_C1C2}</pose>
   </frame>
-  <frame name="cycle2">
-    <pose relative_to="cycle1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
+  <frame name="C2">
+    <pose relative_to="C1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
   </frame>
 </model>
 ~~~
