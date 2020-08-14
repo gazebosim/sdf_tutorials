@@ -8,7 +8,7 @@ Eric Cousineau `<eric.cousineau@tri.global>`
 * **SDFormat Version**: 1.7
 * **`libsdformat` Version**: 9.0
 
-All sections affected by ammendments are explicitly denoted as being added or
+All sections affected by amendments are explicitly denoted as being added or
 modified.
 
 These are added as amendments given that the current proposal has not yet been
@@ -43,6 +43,9 @@ Semantics for the frame element and attribute were not fully defined, so they
 have not yet been used.
 The changes proposed here are intended to fully define the frame element to
 improve usability.
+An initial version of this proposal without support for nested models was
+implemented in `libsdformat` 9.0, while implementation of Amendment 1 is targeted
+for `libsdformat` 9.3.
 
 ## Document summary
 
@@ -125,7 +128,7 @@ defined by its **attached to** frame.
     building; see the [Addendum on Model Building](#addendum-model-building-contrast-model-absolute-vs-element-relative-coordinates) for further discussion.
 
 Defining these semantics, which were missing from SDFormat 1.5,
-minimizes redundancy in poses and offsets and makeslo relationships between physical elements easier to interpret
+minimizes redundancy in poses and offsets and makes relationships between physical elements easier to interpret.
 
 #### 1.2 Explicit vs. implicit frames
 
@@ -277,8 +280,9 @@ be referenced using the reserved name `__model__`.
 From outside of a given model, the "external implicit model frame" can be
 referenced using the model's specified name.
 
-Nested models will have their own individual model frames. (See pending Nesting
-proposal for nuances.)
+Per Amendment 1, in`libsdformat 9.3` nested models have an "external implicit model frame"
+that can be referenced by sibling frames, but the contents of a nested model
+can only be referenced from within the nested model.
 
 Previous versions of SDFormat did not have the `@attached_to` and `@relative_to`
 attributes, so there was no way to refer to frames by name.
@@ -329,7 +333,7 @@ support both `world` and `__world__` up to a point, and then switch over to
 
 As frames are referenced in several attributes by name, it is necessary to
 avoid naming conflicts between frames defined in `//world/frame`,
-`//world/model`, `//model/frame`, `//model/link`, and `//model/joint`.
+`//world/model`, `//model/frame`, `//model/model`, `//model/link`, and `//model/joint`.
 This motivates the scoping and naming rules proposed in the following sections.
 
 #### 3.1 Scoping rules for referencing frames by name
@@ -338,12 +342,12 @@ To ensure that multiple copies of the same model can co-exist as siblings
 in a world, separate scopes must be defined for referencing frames by name:
 
 * Model scope: each model has its own scope in which explicit `//model/frame`
-  and implicit `//model/link` and `//model/joint` frames can be referenced.
+  and implicit `//model/model`, `//model/link` and `//model/joint` frames can be referenced.
 * World scope: the world has a separate scope in which explicit `//world/frame`
   and implicit `//world/model` frames can be referenced.
 
-For example, the following world has three scopes, one each for the world,
-`model_1`, and `model_2`.
+For example, the following world has four scopes, one each for the world,
+`model_1`,`model_2`, and `model_3`.
 The world scope contains the explicit `//world/frame` named `explicit_frame`
 and the implicit model frames `model_1` and `model_2`.
 The `model_1` and `model_2` scopes each contain frames named `explicit_frame`
@@ -359,6 +363,10 @@ and `link`, but there is no name conflict because they are in separate scopes.
   <model name="model_2">
     <frame name="explicit_frame"/>  <!-- VALID: name is unique in this model. -->
     <link name="link"/>             <!-- VALID: name is unique in this model. -->
+    <model name="model_3">
+      <frame name="explicit_frame"/>  <!-- VALID: name is unique in this model. -->
+      <link name="link"/>             <!-- VALID: name is unique in this model. -->
+    </model>
   </model>
 </world>
 ~~~
@@ -384,12 +392,18 @@ that disallows name conflicts like this.
 In SDFormat 1.4, the only objects referenced by name are the links
 named in `//joint/parent` and `//joint/child`, and the names are always
 scoped to the current model.
+
 In SDFormat 1.5, the `::` delimiter is used to indicate that the target
 link is within a nested model, but the scope is still limited to
 objects contained in the current model.
+
+In SDFormat 1.7, the `::` syntax for referencing across model boundaries is not supported.
 With the addition of `//world/frame` and `//world/model/pose/@relative_to`,
 it is necessary to consider the world scope separately from each
 model's scope to avoid name conflicts and ensure encapsulation.
+
+In SDFormat 1.8, the `::` syntax for referencing across model boundaries will be
+formalized and supported.
 
 ##### 3.1.1 Alternatives considered
 
@@ -423,7 +437,7 @@ practice of including the element type in model names.
 For example, numbering models as `link1` / `link2` or using element types as a
 suffix, like `front_right_wheel_joint` / `front_right_steering_joint`.
 Furthermore, the frame semantics proposed in this document use the names of
-sibling elements `//model/frame`, `//model/link` and `//model/joint` to refer
+sibling elements `//model/frame`, `//model/model`, `//model/link` and `//model/joint` to refer
 to frames.
 
 ~~~
@@ -462,7 +476,7 @@ SDFormat 1.5 is more permissive and does not explicitly disallow identical
 sibling names.
 This change is necessary because frames are referenced in several attributes by name.
 It is necessary to avoid naming conflicts between frames defined in
-`//model/frame`, `//model/link` and `//model/joint`.
+`//model/frame`, `//model/model`, `//model/link` and `//model/joint`.
 
 ##### 3.2.1 Alternatives considered
 
@@ -581,25 +595,38 @@ avoid ambiguity when referring to frames by name.
 
 #### 4.2 The `//model/frame/@attached_to` attribute
 
-The `//model/frame/@attached_to` attribute must specify the link to which the
+The `//model/frame/@attached_to` attribute must specify the link or nested model to which the
 `//frame` is attached.
 It is an optional attribute.
 If it is specified, it must contain the name of an explicit or implicit frame
 in the current scope.
-Cycles in the `@attached_to` graph are not allowed.
 If a `//frame` is specified, recursively following the `@attached_to` attributes
 of the specified frames must lead to the name of a link.
+Cycles in the `@attached_to` graph are not allowed.
 If the attribute is not specified, the frame is attached to the model frame
 and thus indirectly attached to the canonical link.
 
 ~~~
 <model name="frame_attaching">
   <link name="L"/>
-  <frame name="F00"/>                 <!-- VALID: Indirectly attached_to canonical link L via the model frame. -->
+  <frame name="F00"/>                  <!-- VALID: Indirectly attached_to canonical link L via the model frame. -->
   <frame name="F0" attached_to=""/>    <!-- VALID: Indirectly attached_to canonical link L via the model frame. -->
   <frame name="F1" attached_to="L"/>   <!-- VALID: Directly attached_to link L. -->
   <frame name="F2" attached_to="F1"/>  <!-- VALID: Indirectly attached_to link L via frame F1. -->
   <frame name="F3" attached_to="A"/>   <!-- INVALID: no sibling frame named A. -->
+</model>
+~~~
+
+~~~
+<model name="nested_model_attaching">
+  <link name="L"/>
+  <model name="M">
+    <link name="L"/>
+  </model>
+  <frame name="F00"/>                  <!-- VALID: Indirectly attached_to canonical link L via the model frame. -->
+  <frame name="F0" attached_to=""/>    <!-- VALID: Indirectly attached_to canonical link L via the model frame. -->
+  <frame name="F1" attached_to="M"/>   <!-- VALID: Indirectly attached_to nested model M. -->
+  <frame name="F2" attached_to="F1"/>  <!-- VALID: Indirectly attached_to nested model M via frame F1. -->
 </model>
 ~~~
 
@@ -658,7 +685,7 @@ specified or is left empty, the frame will be attached to the world frame. If
 the attribute is specified, it must refer to a sibling `//world/frame` or
 `//world/model`.
 
-When a a `//world/frame` is attached to a `//world/model`, it is indirectly
+When a `//world/frame` is attached to a `//world/model`, it is indirectly
 attached to the canonical link of the model.
 
 Similar to `//model/frame`, cycles in the `@attached_to` graph are not allowed.
@@ -705,7 +732,7 @@ the default behavior for all elements other than `//frame/pose` is the
 behavior from SDFormat 1.4
 (see the "Parent frames in sdf 1.4" section of the
 [pose frame semantics documentation](/tutorials?tut=pose_frame_semantics)).
-  * This corresponds to `//link/pose` relative to the model frame by default
+  * This corresponds to `//model/model/pose` and `//link/pose` relative to the parent model frame by default
 and `//joint/pose` relative to the child link's implicit frame by default.
 * If the `//frame/pose/@relative_to` attribute does not exist or is empty,
 it defaults to the value of the `//frame/@attached_to` attribute.
@@ -736,12 +763,49 @@ the implicit world frame.
     <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
   </link>
 
-  <link name="cycle1">
-    <pose relative_to="cycle2">{X_C1C2}</pose>
+  <link name="C1">
+    <pose relative_to="C2">{X_C1C2}</pose>
   </link>
-  <link name="cycle2">
-    <pose relative_to="cycle1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
+  <link name="C2">
+    <pose relative_to="C1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
   </link>
+</model>
+~~~
+
+~~~
+<model name="nested_model_pose_relative_to">
+  <frame name="M"/>                         <!-- Explicit frame M coincident with implicit model frame __model__. -->
+  <link name="L"/>
+  <model name="M1">
+    <pose>{X_MM1}</pose>                    <!-- Pose relative_to implicit model frame (M) by default. -->
+    <link name="L"/>
+  </model>
+  <model name="M2">
+    <pose relative_to="">{X_MM2}</pose>     <!-- Pose relative_to implicit model frame (M) by default. -->
+    <link name="L"/>
+  </model>
+  <model name="M3">
+    <pose relative_to="M1">{X_M1M3}</pose>  <!-- Pose relative_to nested model frame (M1 -> M). -->
+    <link name="L"/>
+  </model>
+  <model name="M4">
+    <pose relative_to="A">{X_AM4}</pose>    <!-- INVALID: no frame in model scope named A. -->
+    <link name="L"/>
+  </model>
+
+  <model name="cycle0">
+    <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
+    <link name="L"/>
+  </model>
+
+  <model name="C1">
+    <pose relative_to="C2">{X_C1C2}</pose>
+    <link name="L"/>
+  </model>
+  <model name="C2">
+    <pose relative_to="C1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
+    <link name="L"/>
+  </model>
 </model>
 ~~~
 
@@ -804,11 +868,11 @@ the implicit world frame.
     <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
   </frame>
 
-  <frame name="cycle1">
-    <pose relative_to="cycle2">{X_C1C2}</pose>
+  <frame name="C1">
+    <pose relative_to="C2">{X_C1C2}</pose>
   </frame>
-  <frame name="cycle2">
-    <pose relative_to="cycle1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
+  <frame name="C2">
+    <pose relative_to="C1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to model frame. -->
   </frame>
 </model>
 ~~~
@@ -840,6 +904,14 @@ the implicit world frame.
         <pose relative_to="F">{X_FL}</pose>   <!-- Pose relative to explicit frame F (F -> M) in this model's scope. -->
       </light>
     </link>
+
+    <model name="N">
+      <pose relative_to="F">{X_FN}</pose>     <!-- Pose relative relative to explicit frame F (F -> M) in model M1's scope. -->
+      <link name="NL"/>
+    </model>
+    <frame name="F0">                         <!-- Frame indirectly attached_to canonical link L via model frame. -->
+      <pose relative_to="N">{X_NF0}</pose>    <!-- Pose relative_to the nested model frame N (N -> F -> M). -->
+    </frame>
 
     <frame name="F1" attached_to="L">         <!-- Frame directly attached_to link L. -->
       <pose relative_to="C">{X_CL}</pose>     <!-- INVALID: no frame named C in this scope (collisions don't have implicit frames). -->
@@ -881,11 +953,11 @@ the implicit world frame.
     <pose relative_to="cycle0">{X_C0C0}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
   </frame>
 
-  <frame name="cycle1">
-    <pose relative_to="cycle2">{X_C1C2}</pose>
+  <frame name="C1">
+    <pose relative_to="C2">{X_C1C2}</pose>
   </frame>
-  <frame name="cycle2">
-    <pose relative_to="cycle1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
+  <frame name="C2">
+    <pose relative_to="C1">{X_C2C1}</pose>  <!-- INVALID: cycle in relative_to graph does not lead to world frame. -->
   </frame>
 </model>
 ~~~
@@ -1467,7 +1539,7 @@ relevant to Amendment 2 (SDFormat 1.8, composition) are in the
 
 ### 1 Model
 
-There are *eight* phases for validating the kinematics data in a model,
+There are *nine* phases for validating the kinematics data in a model,
 and different parts of libsdformat handle differing sets of stages,
 returning an error code if errors are found during parsing:
 
@@ -1518,7 +1590,10 @@ returning an error code if errors are found during parsing:
         *using the [recursiveSiblingUniqueNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1633-L1655)*
         *helper function.*
 
-3.  **Joint parent/child name checking:**
+3.  ***Nested model parsing:***
+    Parse each nested model according to these nine SDFormat model parsing stages.
+
+4.  **Joint parent/child name checking:**
     For each joint, check that the parent and child link names are different
     and that each match the name of a sibling link to the joint,
     with the following exception:
@@ -1536,7 +1611,7 @@ returning an error code if errors are found during parsing:
     *which checks that each child link specified by a joint exists as a sibling*
     *of that joint).*
 
-4.  ***Check `//model/@canonical_link` attribute value:***
+5.  ***Check `//model/@canonical_link` attribute value:***
     For models that are not static,
     if the `//model/@canonical_link` attribute exists and is not an empty
     string `""`, check that the value of the `canonical_link` attribute
@@ -1547,10 +1622,10 @@ returning an error code if errors are found during parsing:
     [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L316-L324)
     for non-static models.
 
-5.  ***Check `//model/frame/@attached_to` attribute values:***
+6.  ***Check `//model/frame/@attached_to` attribute values:***
     For each `//model/frame`, if the `attached_to` attribute exists and is not
     an empty string `""`, check that the value of the `attached_to` attribute
-    matches the name of a sibling link, joint, or frame.
+    matches the name of a sibling link, nested model, joint, or frame.
     The `//frame/@attached_to` value must not match `//frame/@name`,
     as this would cause a graph cycle.
     In `libsdformat9`, these checks are performed by
@@ -1559,107 +1634,108 @@ returning an error code if errors are found during parsing:
     [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L316-L324)
     for non-static models.
 
-6.  ***Check `//model/frame/@attached_to` graph:***
+7.  ***Check `//model/frame/@attached_to` graph:***
     Construct an `attached_to` directed graph for the model with each vertex
     representing a frame (see [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L168)
     in `libsdformat9`):
 
-    6.1 Add a vertex for the implicit frame of each link in the model
-        (see [FrameSemantics.cc:219-233](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L219-L233)).
+    7.1 Add a vertex for the frame of each `//link`,
+        `//joint`, `//frame`, and nested `//model` in the model
+        (see [FrameSemantics.cc:219-233](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L219-L233),
+        [FrameSemantics.cc:271-286](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L271-L286),
+        and ...).
 
-    6.2 Add a vertex for the implicit model frame. If the model is not static,
+    7.2 Add a vertex for the implicit `__model__` frame. If the model is not static,
         add an edge connecting this vertex to the
         vertex of the model's canonical link
         (see [FrameSemantics.cc:173-178](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L173-L178)
         and [FrameSemantics.cc:235-239](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L235-L239))
 
-    6.3 Add vertices for the implicit frame of each joint with an edge
+    7.3 For each `//model/joint`, add an edge
         connecting from the joint to the vertex of its child link
         (see [FrameSemantics.cc:242-269](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L242-L269).
 
-    6.4 For each `//model/frame`:
+    7.4 For each `//model/frame`:
 
-    6.4.1 Add a vertex to the graph
-          (see [FrameSemantics.cc:271-286](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L271-L286)).
-
-    6.4.2 If `//model/frame/@attached_to` exists and is not empty,
-          add an edge from the added vertex to the vertex
+    7.4.1 If `//model/frame/@attached_to` exists and is not empty,
+          add an edge from this frame's vertex to the vertex
           named in the `//model/frame/@attached_to` attribute
           (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
 
-    6.4.3 Otherwise (i.e. if the `//model/frame/@attached_to` attribute
+    7.4.2 Otherwise (i.e. if the `//model/frame/@attached_to` attribute
           does not exist or is an empty string `""`),
-          add an edge from the added vertex to the model frame vertex,
+          add an edge from this frame's vertex to the model frame vertex,
           (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
 
-    6.5 Verify that the graph has no cycles and that by following the directed
-        edges, every vertex is connected to a link
-        (see [validateFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L976-L982)
-        which is called by [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L327-L328)).
-        To identify the link to which each frame is attached, start from the
-        vertex for that frame, and follow the directed edges until a link
+    7.5 Verify that the graph has no cycles and that by following the directed
+        edges, every vertex is connected to a link or nested model
+        (see [validateFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/b3ead2d87f962673f8802adeb4caf3fc73e331c2/src/FrameSemantics.cc#L974-L1000)
+        and [resolveFrameAttachedToBody](https://github.com/osrf/sdformat/blob/b3ead2d87f962673f8802adeb4caf3fc73e331c2/src/FrameSemantics.cc#L1306-L1314)
+        which are called by [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L327-L328)).
+        To identify the link or nested model to which each frame is attached, start from the
+        vertex for that frame, and follow the directed edges until a link or model not named `__model__`
         is reached (see [Frame::ResolveAttachedToBody](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Frame.cc#L216)
         and [resolveFrameAttachedToBody in FrameSemantics.cc](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1158) in `libsdformat9`).
 
-7.  ***Check `//pose/@relative_to` attribute values:***
-    For each `//pose` that is not `//model/pose` (e.g. `//link/pose`,
+8.  ***Check `//pose/@relative_to` attribute values:***
+    For each `//pose` that does not correspond to the `__model__` frame (e.g. nested `//model/model/pose`, `//link/pose`,
     `//joint/pose`, `//frame/pose`, `//collision/pose`, `//light/pose`, etc.),
     if the `relative_to` attribute exists and is not an empty string `""`,
     check that the value of the `relative_to` attribute
-    matches the name of a link, joint, or frame in this model's scope.
+    matches the name of a link, nested model, joint, or frame in this model's scope.
     In `libsdformat9`, these checks are performed by
     [buildPoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L556-L658),
     which is called by
     [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L337-L340).
 
-8.  ***Check `//pose/@relative_to` graph:***
+9.  ***Check `//pose/@relative_to` graph:***
     Construct a `relative_to` directed graph for the model with each vertex
     representing a frame
     (see [buildPoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L435)
     in `libsdformat9`):
 
-    8.1 Add a vertex for the implicit model frame `__model__`
+    9.1 Add a vertex for the implicit model frame `__model__`
         (see [FrameSemantics.cc:453-458](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L453-L458)).
 
-    8.2 Add vertices for each `//model/link`, `//model/joint`, and
+    9.2 Add vertices for each `//model/link`, nested `//model/model`, `//model/joint`, and
         `//model/frame` (see [FrameSemantics.cc:460-474](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L460-L474),
         [FrameSemantics.cc:483-497](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L483-L497), and
         [FrameSemantics.cc:516-531](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L516-L531)).
 
-    8.3 For each `//model/link`:
+    9.3 For each `//model/link` and nested `//model/model`:
 
-    8.3.1 If `//link/pose/@relative_to` exists and is not empty,
-          add an edge from the link vertex to the vertex named in
-          `//link/pose/@relative_to`
+    9.3.1 If `//pose/@relative_to` exists and is not empty,
+          add an edge from the link / nested model vertex to the vertex named in
+          `//pose/@relative_to`
           (see [FrameSemantics.cc:554-575](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L554-L575)).
 
-    8.3.2 Otherwise (i.e. if `//link/pose` or `//link/pose/@relative_to` do not
-          exist or `//link/pose/@relative_to` is an empty string `""`)
-          add an edge from the link vertex to the implicit model frame vertex
+    9.3.2 Otherwise (i.e. if `//pose` or `//pose/@relative_to` do not
+          exist or `//pose/@relative_to` is an empty string `""`)
+          add an edge from the link / nested model vertex to the implicit model frame vertex
           (see [FrameSemantics.cc:476-480](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L476-L480)).
 
-    8.4 For each `//model/joint`:
+    9.4 For each `//model/joint`:
 
-    8.4.1 If `//joint/pose/@relative_to` exists and is not empty,
+    9.4.1 If `//joint/pose/@relative_to` exists and is not empty,
           add an edge from the joint vertex to the vertex named in
           `//joint/pose/@relative_to`
           (see [FrameSemantics.cc:589-610](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L589-L610)).
 
-    8.4.2 Otherwise (i.e. if `//joint/pose` or `//joint/pose/@relative_to` do not
+    9.4.2 Otherwise (i.e. if `//joint/pose` or `//joint/pose/@relative_to` do not
           exist or `//joint/pose/@relative_to` is an empty string `""`)
           add an edge from the joint vertex to
           the child link vertex named in `//joint/child`
           (see [FrameSemantics.cc:499-513](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L499-L513)).
 
-    8.5 For each `//model/frame`:
+    9.5 For each `//model/frame`:
 
-    8.5.1 If `//frame/pose/@relative_to` exists and is not empty,
+    9.5.1 If `//frame/pose/@relative_to` exists and is not empty,
           add an edge from the frame vertex to the vertex named in
           `//frame/pose/@relative_to`
           (see [FrameSemantics.cc:629](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L629)
           and [FrameSemantics.cc:650-659](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L650-L659)).
 
-    8.5.2 Otherwise if `//frame/@attached_to` exists and is not empty
+    9.5.2 Otherwise if `//frame/@attached_to` exists and is not empty
           (i.e. if `//frame/@attached_to` exists and is not an empty string `""`
           and one of the following is true: `//frame/pose` does not exist,
           `//frame/pose/@relative_to` does not exist, or
@@ -1669,12 +1745,12 @@ returning an error code if errors are found during parsing:
           (see [FrameSemantics.cc:635](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L635)
           and [FrameSemantics.cc:650-659](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L650-L659)).
 
-    8.5.3 Otherwise (i.e. if neither `//frame/@attached_to` nor
+    9.5.3 Otherwise (i.e. if neither `//frame/@attached_to` nor
           `//frame/pose/@relative_to` are specified)
           add an edge from the frame vertex to the implicit model frame vertex
           (see [FrameSemantics.cc:533-537](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L533-L537)).
 
-    8.6 Verify that the graph has no cycles and that by following the directed
+    9.6 Verify that the graph has no cycles and that by following the directed
         edges, every vertex is connected to the implicit model frame
         (see [validatePoseRelativeToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L1146-L1152)
         which is called by [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L343-L344)).
