@@ -774,7 +774,7 @@ the implicit world frame.
 
 ~~~
 <model name="nested_model_pose_relative_to">
-  <frame name="M"/>                         <!-- Explicit frame M coincident to implicit model frame __model__. -->
+  <frame name="M"/>                         <!-- Explicit frame M coincident with implicit model frame __model__. -->
   <link name="L"/>
   <model name="M1">
     <pose>{X_MM1}</pose>                    <!-- Pose relative_to implicit model frame (M) by default. -->
