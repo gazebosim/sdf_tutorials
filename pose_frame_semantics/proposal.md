@@ -6,7 +6,7 @@ Addisu Taddese  `<addisu@openrobotics.org>`,
 Eric Cousineau `<eric.cousineau@tri.global>`
 * **Status**: Final
 * **SDFormat Version**: 1.7
-* **`libsdformat` Version**: 9.0 (initial support), 9.3 (nested models)
+* **`libsdformat` Version**: 9.0
 
 All sections affected by amendments are explicitly denoted as being added or
 modified.
@@ -44,7 +44,7 @@ have not yet been used.
 The changes proposed here are intended to fully define the frame element to
 improve usability.
 An initial version of this proposal without support for nested models was
-implemented in `libsdformat` 9.0, while support for nested models is targeted
+implemented in `libsdformat` 9.0, while implementation of Amendment 1 is targeted
 for `libsdformat` 9.3.
 
 ## Document summary
@@ -280,7 +280,7 @@ be referenced using the reserved name `__model__`.
 From outside of a given model, the "external implicit model frame" can be
 referenced using the model's specified name.
 
-As of `libsdformat 9.3`, nested models have an "external implicit model frame"
+Per Amendment 1, in`libsdformat 9.3` nested models have an "external implicit model frame"
 that can be referenced by sibling frames, but the contents of a nested model
 can only be referenced from within the nested model.
 
@@ -774,7 +774,7 @@ the implicit world frame.
 
 ~~~
 <model name="nested_model_pose_relative_to">
-  <frame name="M"/>                         <!-- Explicit frame M identical to implicit model frame __model__. -->
+  <frame name="M"/>                         <!-- Explicit frame M coincident to implicit model frame __model__. -->
   <link name="L"/>
   <model name="M1">
     <pose>{X_MM1}</pose>                    <!-- Pose relative_to implicit model frame (M) by default. -->
