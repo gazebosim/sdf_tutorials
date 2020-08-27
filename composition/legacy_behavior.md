@@ -3,6 +3,10 @@
 This document describes SDFormat's support for model level composition in which
 a model can be constructed from other models nested within itself.
 
+**Note**: This describes older legacy behavior. Newer features, intended for
+SDFormat 1.8 / `libsdformat` 11, are described in the
+[Composition Proposal](/tutorials?tut=composition_proposal).
+
 ## Introduction
 
 Models are the fundamental building blocks of a world in SDFormat. As described
@@ -40,9 +44,17 @@ a nested model `sphere` defined inside a parent model `Pm`.
 </model>
 
 ``` 
-> **Note** The current version of libsdformat's DOM API does not support models
-> defined directly inside parent models. As a workaround, such models can be
-> accessed using the `Element` API.
+
+#### WARNING
+
+Early versions of libsdformat's DOM API (`libsdformat` <= 9.2.x) do not
+support models defined directly inside parent models. As a workaround, such
+models can be accessed using the `Element` API.
+
+This will change in SDFormat 1.7 as implemented by `libsdformat` 9.3.0.
+Please see the
+[Pose Frame Semantics - Directly Nested Models]
+(/tutorials?tut=pose_frame_semantics_proposal#directly-nested-models) section for more information.
 
 ### Defining models in separate files
 

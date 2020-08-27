@@ -6,7 +6,7 @@ Steven Peters `<scpeters@osrfoundation.org>`,
 Addisu Taddese  `<addisu@openrobotics.org>`
 * **Status**: Draft
 * **SDFormat Version**: 1.8
-* **`libsdformat` Version**: 10.0
+* **`libsdformat` Version**: 11.0
 
 ## Introduction
 
@@ -501,35 +501,63 @@ If a file is relative, then it should be evaluated next to the file itself.
 **WARNING**: In general, it is suggested to use `package://` URIs for ROS
 models, and `model://` URIs for Gazebo models.
 
-##### 1.4.6 `//include/static`
+##### 1.4.6 `//static` for for included and directly nested models
 
-**TODO(eric.cousineau)**: Reconsider this in future iterations of the proposal.
-
-This allows the `//model/static` element to be overridden and will affect
-*all* models transitively included via the `//include` element, and can *only*
-change values from false to true; `//include/static` can only be false if all
-models included via the file are non-static.
-
-This requires `//include/static` to be stored as a tri-state value
-(unspecified, true, false).
+If `//model/static` or `//include/static` is specified, the nested models
+within that model will *only* be overridden if `//static` is `true`. Otherwise,
+if `//static` is `false`, then all of the nested models (within that model)
+will remain as specified.
 
 **Alternatives Considered**:
 
-The value could be overridden to true or false.
-However, implementations would have to be careful that `@attached_to` is
-properly respected when overriding `//model/static`. Normally, if a model is
-static, its frames will be attached to the world. However, if a model is
-non-static, the attached-to frame should only be within the model itself (to
-observe proper encapsulation).
+1. The value could be overridden to `true` or `false`, always.
 
-Additionally, it may not be possible to force certain models to be non-static.
-For example, if a `//include/static` is set to false, but the included model is
-normally a static model with only frames (which is valid), an error should be
-thrown.
+    However, implementations would have to be careful that `@attached_to` is
+    properly respected when overriding `//model/static`. Normally, if a model is
+    static, its frames will be attached to the world. However, if a model is
+    non-static, the attached-to frame should only be within the model itself (to
+    observe proper encapsulation).
 
-It would also generally be *not* suggested to force a static model to be
-non-static, as the static model may not be designed for non-static use, and
-waste time on debugging.
+    Additionally, it may not be possible to force certain models to be
+    non-static.
+    For example, if a `//static` is set to false, but the model is
+    normally a static model with only frames (which is valid), an error should
+    be thrown.
+
+    It would also generally be *not* suggested to force a static model to be
+    non-static, as the static model may not be designed for non-static use, and
+    waste time on debugging.
+
+    This was abandoned because it's overly complex and has sharp, jagged edges.
+
+2. Require `//static` to be stored as a tri-state value (unspecified, true,
+false).
+
+    This allows the `//static` elements to be overridden and will affect
+    *all* nested models, and can *only* change values from false to true;
+    `//static` can only be false if all models included via the file are
+    non-static.
+
+    This alternative was abanoded because this is not very simple, and has
+    relatively complicated rules. See
+    [sdf_tutorials#33](https://github.com/osrf/sdf_tutorials/issues/33) for a
+    brief mention.
+
+###### 1.4.6.1 Interaction with `//joint/parent` and `//joint/child` now being frames
+
+In section 1.2.2, it is proposed to admit frames in `//joint/parent` and
+`//joint/child` to simplify the encapsulated interface of a model.
+
+This means that a model can include a static version of a nested model, and
+possibly use the nested model's frames (which are now effectively attached to
+the world) as parent or child frames in a joint.
+
+This is fine, and consistent with existing SDFormat behavior of allowing
+kinematic loops (e.g. adding a rope, and attaching both ends to the world).
+
+**Note**: `//joint/child == "world"` is forbidden solely due to encapsulation
+issues with poses, as described in the
+[Pose Frame Semantics proposal](/tutorials?tut=pose_frame_semantics_proposal#1-2-explicit-vs-implicit-frames).
 
 #### 1.5 Minimal `libsdformat` Interface Types for Non-SDFormat Models
 
