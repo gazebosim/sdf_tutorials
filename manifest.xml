@@ -34,7 +34,7 @@
     </tutorial>
 
     <tutorial title="Proposal for a better pose" ref='better_pose_proposal' type='proposal'>
-      <markdown version="1.7">specify_pose/proposal.md</markdown>
+      <markdown version="1.8">specify_pose/proposal.md</markdown>
       <description>Specifying pose in SDFormat using different rotation representations.</description>
       <tags>
         <tag>pose</tag>
