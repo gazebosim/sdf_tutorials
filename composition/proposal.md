@@ -679,10 +679,12 @@ even with up-coversion:
 
 ~~~xml
 <sdf version="1.7">
-  <link name="M1::B"/>
-  <link name="M2::B">
-    <pose relative_to="M1::B"/>  <!-- INVALID: This attribute does not start with `M2::`. -->
-  </link>
+  <model name="anything">
+    <link name="M1::B"/>
+    <link name="M2::B">
+      <pose relative_to="M1::B"/>  <!-- INVALID: This attribute does not start with `M2::`. -->
+    </link>
+  </model>
 </sdf>
 ~~~
 
