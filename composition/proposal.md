@@ -581,6 +581,7 @@ when a new model should be created and when the nested names (e.g.
 `M1::my_link`) should be "unnested" (e.g. `my_link` in model `M1`).
 
 To illustrate, the following model from the Legacy Behavior documentation:
+
 ~~~xml
 <sdf version="1.5">
   <model name="ParentModel">
@@ -602,7 +603,9 @@ To illustrate, the following model from the Legacy Behavior documentation:
   </model>
 </sdf>
 ~~~
+
 should be (naively) up-converted to:
+
 ~~~xml
 <sdf version="1.5*">
   <model name="ParentModel">
@@ -673,6 +676,7 @@ the newly created `//model/pose`.
 
 This could have been valid in SDFormat 1.7, but is not valid in SDFormat 1.8,
 even with up-coversion:
+
 ~~~xml
 <sdf version="1.7">
   <link name="M1::B"/>
