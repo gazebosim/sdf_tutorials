@@ -458,18 +458,39 @@ For example:
 </model>
 ~~~
 
-##### 1.4.4 Placement frame: `//include/placement_frame`
+##### 1.4.4 Placement frame: `//model/@placement_frame` and `//include/placement_frame`
 
 It is useful to place an object using a semantic relationship between two
-objects, e.g. place the bottom-center of a mug upright on the top-center of a
-table. To do this, you can the specify the frame for which the `//include/pose`
-should change.
+objects, e.g. place the bottom-center of a mug upright on the top-center of
+a table. To do this, you can the specify the frame for which the `//model/pose`
+or `//include/pose` should change.
 
-This can be achieved by specifying `//include/placement_frame`. If this
-element is specfied, then `//include/pose` *must* be specified, as
-any information in the included `//model/pose` will no longer be relevant.
+This can be achieved by specifying `//model/@placement_frame` for directly
+nested models or `//include/placement_frame` for included models. If the
+placement frame element is specfied for an included model, then
+`//include/pose` *must* be specified, as any information in the included
+`//model/pose` will no longer be relevant.
 
-As an example:
+As an example, using directly nested models:
+
+~~~xml
+<model name="super_model">
+  <model name="table" placement_frame="bottom_left_leg">
+    <pose/>
+    <link name="bottom_center"/>
+    <frame name="top_center">
+      <pose relative_to="bottom_center">0 0 2 0 0 0</pose>
+    </frame>
+    <link name="bottom_left_leg"/>
+  </model>
+  <model name="mug" placement_frame="bottom_center">
+    <pose relative_to="table::top_center"/>
+    <link name="bottom_center"/>
+  </model>
+</model>
+~~~
+
+or using included models:
 
 ~~~xml
 <model name="super_model">
