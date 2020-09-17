@@ -161,19 +161,20 @@ The values of `@type` that are permitted:
 * `rpy_degrees` - A 3-tuple representing Roll-Pitch-Yaw in degrees, which maps
 to a rotation as specified here.
     * This should be used when the rotation should generally be human-readable.
+* `rpy_radians` - Same as `rpy_degrees`, but with radians as the units for each
+angel. This is provided for legacy purposes and ease of conversion.
+    * It is not suggested to use this for a text-storage format.
+    * Same precision as suggested below for quaternions: Use 17 digits of
+    precision, and consider separating each value on a new line.
 * `q_wxyz` - Quaternion as a 4-tuple, represented as  `(w, x, y, z)`, where `w`
 is the real component. This should generally be used when the rotation should be
 machine-generated (e.g. calibration artifacts).
-    * It is encouraged to use 16 digits of precision when possible.
-        * In Python, this can be done with f-strings using `{value:.16g}`.
+    * It is encouraged to use 17 digits of precision when possible (C++'s
+    default from `std::numeric_limits<double>::max_digits10`).
+        * In Python, this can be done with using the format specifier
+        `{value:.17g}` (for a 64-bit float stored in `value`).
     * Consider separating long values on new lines.
-    * It is encouraged to prefer upper half-sphere quaternions (`w >= 0`). \
-    **TODO(eric)**: Is this right? Should confirm.
-* `rpy_radians` - Same as `rpy_degrees`, but with radians as the units for each
-angel. This is provided merely for legacy purposes and ease of conversion.
-    * It is not suggested to use this for a text-storage format.
-    * Same as for quaternions: Use 16 digits of precision, consider separating
-    each value on a new line.
+    * It is encouraged to prefer upper half-sphere quaternions (`w >= 0`).
 
 Examples:
 
@@ -186,19 +187,19 @@ Examples:
 <pose>
     <translation>{xyz}</translation>
     <rotation type="q_wxyz">
-        0.2705980500730985
-        -0.2705980500730985
-        0.6532814824381882
-        0.6532814824381883
+        0.27059805007309851
+        -0.27059805007309845
+        0.65328148243818818
+        0.65328148243818829
     </rotation>
 </pose>
 
 <pose>
     <translation>{xyz}</translation>
     <rotation type="rpy_radians">  <!-- This is not recommended. -->
-        1.570796326794897
-        0.7853981633974483
-        3.141592653589793
+        1.5707963267948966
+        0.78539816339744828
+        3.1415926535897931
     </rotation>
 </pose>
 ```
@@ -209,7 +210,7 @@ Python code:
 $ python3 -c 'import numpy as m; print(m.__version__)'
 1.13.3
 $ cat ./share/doc/drake/VERSION.TXT
-20200729064618 2daabfac1b81f9165d8fece7891df03bb67e8e72
+20200915064519 6b419530fa5d0e25e37610c8642b4852f60e434d
 
     import numpy as np
     from pydrake.math import RollPitchYaw
@@ -218,11 +219,11 @@ $ cat ./share/doc/drake/VERSION.TXT
     rpy_degrees = [90, 45, 180]
 
     rpy_radians = np.deg2rad(rpy_degrees)
-    for x in rpy_radians: print(f"{x:.16g}")
+    for x in rpy_radians: print(f"{x:.17g}")
 
     # q_wxyz
     q_wxyz = RollPitchYaw(rpy_radians).ToQuaternion().wxyz()
-    for x in q_wxyz: print(f"{x:.16g}")
+    for x in q_wxyz: print(f"{x:.17g}")
 -->
 
 **Alternatives Considred**
@@ -298,14 +299,6 @@ The conversion command-line tool should also provide an option to use
 `rpy_degrees`, with a precision amount for round-off to degrees by values of 5
 (e.g. 0, 5, ..., 45, ..., 90 degrees).
 
-#### 1.2.2 Deprecate `@type="rpy_radians"` in SDFormat 1.9
-
-This should be deprecated in SDFormat 1.9, and removed in SDFormat 1.10.
-
-It'd be nice to constrain the rotation types to just two. Radians don't seem
-that useful if you have degrees for RPY, and quaternions for machine-generated
-data? There should be "one right way to do things"?
-
 ## Examples
 
 TBD
@@ -356,6 +349,7 @@ PDF for Collada 1.5:
 * <https://www.khronos.org/collada/>
 
 Some examples:
+
 ```xml
 <translate>{xyz}</translate>
 <rotate>{axis_xyz} {angle_deg}</rotate>
@@ -376,6 +370,7 @@ or `@translation` and `@rotation`:
 * <https://github.com/KhronosGroup/glTF/blob/0f74b714/specification/2.0/README.md#transformations>
 
 Some examples:
+
 ```json
 "rotation": [{qx}, {qy}, {qz}, {qw}],
 "translation": [{x}, {y}, {z}],
@@ -392,7 +387,8 @@ Defined using `//Transform` elements with optional `@translation` and
 * <https://www.web3d.org/documents/specifications/19776-1/V3.3/Part01/EncodingOfFields.html#SFRotation>
 
 An example:
-```
+
+```xml
 <Transform translation="{xyz}" rotation="{axis_xyz} {angle_radians}">
   ...
 </Transform>
@@ -410,4 +406,4 @@ Example:
 <transformation>{xyz} {rpy_radians}</transformation>
 ```
 
-*Note*: I (Eric) am assuming radians for Euler angles.
+*Note*: I (Eric) am assuming radians for Euler angles for the SKEL format.
