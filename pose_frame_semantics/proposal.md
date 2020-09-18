@@ -1636,7 +1636,7 @@ returning an error code if errors are found during parsing:
     for non-static models.
 
 7.  ***Check `//model/frame/@attached_to` graph:***
-    Construct an `attached_to` directed graph for the model with each vertex
+    For models that are not static, construct an `attached_to` directed graph with each vertex
     representing a frame (see [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L168)
     in `libsdformat9`):
 
@@ -1648,18 +1648,22 @@ returning an error code if errors are found during parsing:
 
     7.2 Identify the canonical link of the model:
 
-    7.2.1 Return an error for 
-    7.2.1 If `//model/@canonical_link` exists and is not empty,
+    7.2.1 Return an error if the model does not contain any
+          links or nested models.
+
+    7.2.2 If `//model/@canonical_link` exists and is not empty,
           choose the link in this model named by this attribute
           that was confirmed to exist in step 5.
-
-    7.2.2 Otherwise (i.e. if the `//model/@canonical_link` attribute
-          does not exist or is an empty string `""`), if the model
-          contains links, choose the first link.
 
     7.2.3 Otherwise (i.e. if the `//model/@canonical_link` attribute
           does not exist or is an empty string `""`), if the model
           contains links, choose the first link.
+
+    7.2.4 Otherwise (i.e. if the `//model/@canonical_link` attribute
+          does not exist or is an empty string `""` and the model
+          contains no links), get the canonical link of the first
+          nested model. This can be a recursive process if there
+          are multiple levels of nested models that contain no links.
 
     7.3 Add a vertex for the implicit `__model__` frame. If the model is not static,
         add an edge connecting this vertex to the
