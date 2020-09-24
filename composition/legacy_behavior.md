@@ -187,7 +187,7 @@ the name of the nested model followed by `::` is prepended to the names of
 these links and joints. The following example shows how this works. Consider
 the following model named `ChildModel` and its parent model `ParentModel`:
 
-```
+```xml
 <model name="ChildModel">
   <link name="L1">
     <pose>0 1 0 0 0 0</pose>
@@ -207,7 +207,7 @@ the following model named `ChildModel` and its parent model `ParentModel`:
 </model>
 ```
 
-```
+```xml
 <model name="ParentModel">
   <include>
     <uri>/path/to/ChildModel</uri>
@@ -218,7 +218,7 @@ the following model named `ChildModel` and its parent model `ParentModel`:
 
 The result of processing `ParentModel` results in the following model
 
-```
+```xml
 <model name="ParentModel">
   <link name="ChildModel::L1">
     <pose>1 1 1 0 0 0</pose> <!-- Note the modified pose -->
@@ -230,7 +230,9 @@ The result of processing `ParentModel` results in the following model
       </geometry>
     </visual>
   </link>
-  <link name="ChildModel::L2"/>
+  <link name="ChildModel::L2">
+    <pose>1 0 1 0 0 0</pose>
+  </link>
   <joint name="ChildModel::J1">
     <parent>ChildModel::L1</parent>
     <child>ChildModel::L2</child>
