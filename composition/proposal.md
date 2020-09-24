@@ -586,6 +586,9 @@ To illustrate, the following model from the
 ~~~xml
 <sdf version="1.4">
   <model name="ParentModel">
+    <frame name="ChildModel::__model__" attached_to="ChildModel::L1">
+      <pose/>
+    </frame>
     <link name="ChildModel::L1">
       <pose>1 1 1 0 0 0</pose>
       <visual name="v1">
@@ -672,10 +675,19 @@ namely adheres to SDFormat 1.5, but has directly nested models.
 worked via flattening, unflattening will occur regardless of whether or not
 there are directly nested models in the model, and the unflattening may handle
 "partially" flattened models.
-* No attempt will be made to "offset" the consituent elements' poses into
-the newly created `//model/pose`.
+* Nested models with an explicitly specified `__model__` frame (e.g.
+`ChildModel::__model__`) will have this frame removed, and this will be
+converted to the appropriate `//model/pose`
+(see [this BitBucket PR #668](https://osrf-migration.github.io/sdformat-gh-pages/#!/osrf/sdformat/pull-requests/668/page/1)
+for such an example). If `@attached_to` is specified to something other than
+this nexted model's first link, then `//model/@canonical_link` will also be
+updated.
+* If nested `__model__` frames are not present, no attempt will be made to
+implicitly "offset" the consituent elements' poses
+into the newly created `//model/pose`.
   * This offers simplicity and ensures that the effective `__model__` frame
   will coincide with the newly created nested models' `__model__` frames.
+  
 
 **Example of a failing conversions**
 

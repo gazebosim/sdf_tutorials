@@ -220,6 +220,12 @@ The result of processing `ParentModel` results in the following model
 
 ```xml
 <model name="ParentModel">
+  <frame name="ChildModel::__model__" attached_to="ChildModel::L1">
+    <!--
+    N.B. This frame is only added as of libsdformat 9.2,  BitBucket PR #668
+    -->
+    <pose/>
+  </frame>
   <link name="ChildModel::L1">
     <pose>1 1 1 0 0 0</pose> <!-- Note the modified pose -->
     <visual name="v1"> <!-- Names of child elements of link are not modified -->
