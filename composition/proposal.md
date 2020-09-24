@@ -476,12 +476,11 @@ As an example, using directly nested models:
 ~~~xml
 <model name="super_model">
   <model name="table" placement_frame="bottom_left_leg">
-    <pose/>
-    <link name="bottom_center"/>
-    <frame name="top_center">
-      <pose relative_to="bottom_center">0 0 2 0 0 0</pose>
-    </frame>
+    <pose>2 4 0 0 0 0</pose>
     <link name="bottom_left_leg"/>
+    <frame name="top_center">
+      <pose relative_to="bottom_left_leg">1 1 2 0 0 0</pose>
+    </frame>
   </model>
   <model name="mug" placement_frame="bottom_center">
     <pose relative_to="table::top_center"/>
@@ -498,7 +497,7 @@ or using included models:
     <name>table</name>
     <uri>file://table.sdf</uri>
     <placement_frame>bottom_left_leg</placement_frame>
-    <pose/>
+    <pose>2 4 0 0 0 0</pose>
   </include>
   <include>
     <name>mug</name>
@@ -508,6 +507,21 @@ or using included models:
   </include>
 </model>
 ~~~
+
+It is worth mentioning that the `//model/@placement_frame` and
+`//model/@canonical_link` attributes have different meanings and uses. Given
+a `//model/pose`, the `//model/@placement_frame` says which frame in the model
+will have that pose. This is a very practical means of setting the location of
+models. The `//model/@canonical_link` attribute on the other hand specifies to
+which link the implicit model frame is attached. This does not affect the
+model's initial pose, but constrains the implicit model frame to remain fixed
+to the canonical link once simulation has started.
+
+**Alternatives Considered**:
+
+It was considered to implement only `//include/placement_frame`, but it was
+found to be difficult to implement without making it a proper model attribute
+that gets overridden.
 
 ##### 1.4.5 Permit files directly in `//include/uri`
 
