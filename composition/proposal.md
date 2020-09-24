@@ -58,10 +58,10 @@ swapping out grippers).
 As of SDFormat 1.7, nesting a model with a `//model/include` tag has different
 behavior than direct nesting with `//model/model`,
 part of the reason being that nesting directly with `//model/model` was not
-implemented in the `libsdformat` until 9.3.0. As mentioned in the
+implemented in `libsdformat` until 9.3.0. As mentioned in the
 [Legacy Behavior](/tutorials?tut=composition&ver=1.5&#libsdformats-implementation-of-include-in-models) documentation, `//include` works by effectively flattening the model; when this happens, certain details may "leak" through.
 
-Normall, nesting of models generally implies that the elements can be
+Normally, nesting of models generally implies that the elements can be
 referenced via a form of scope, such as `{scope}::{name}`.
 However, `::` is not a special token and thus can be
 used to create "false" hierarchy or potential name collisions. Additionally, there is
@@ -580,14 +580,15 @@ To work around this, the conversion from SDFormat 1.7 to 1.8 should have an
 when a new model should be created and when the nested names (e.g.
 `M1::my_link`) should be "unnested" (e.g. `my_link` in model `M1`).
 
-To illustrate, the following model from the Legacy Behavior documentation:
+To illustrate, the following model from the
+[Legacy Behavior](/tutorials?tut=composition&ver=1.5&#libsdformats-implementation-of-include-in-models) documentation:
 
 ~~~xml
-<sdf version="1.5">
+<sdf version="1.4">
   <model name="ParentModel">
     <link name="ChildModel::L1">
       <pose>1 1 1 0 0 0</pose>
-      <visual name="v1">-->
+      <visual name="v1">
         <geometry>
           <sphere>
             <radius>0.1</radius>
@@ -595,7 +596,9 @@ To illustrate, the following model from the Legacy Behavior documentation:
         </geometry>
       </visual>
     </link>
-    <link name="ChildModel::L2"/>
+    <link name="ChildModel::L2">
+      <pose>1 0 1 0 0 0</pose>
+    </link>
     <joint name="ChildModel::J1">
       <parent>ChildModel::L1</parent>
       <child>ChildModel::L2</child>
@@ -607,12 +610,12 @@ To illustrate, the following model from the Legacy Behavior documentation:
 should be (naively) up-converted to:
 
 ~~~xml
-<sdf version="1.5*">
+<sdf version="1.4*">
   <model name="ParentModel">
     <model name="ChildModel">
       <link name="L1">
         <pose>1 1 1 0 0 0</pose>
-        <visual name="v1">-->
+        <visual name="v1">
           <geometry>
             <sphere>
               <radius>0.1</radius>
@@ -620,7 +623,9 @@ should be (naively) up-converted to:
           </geometry>
         </visual>
       </link>
-      <link name="L2"/>
+      <link name="L2">
+        <pose>1 0 1 0 0 0</pose>
+      </link>
       <joint name="J1">
         <parent>L1</parent>
         <child>L2</child>
@@ -665,7 +670,7 @@ indicated as SDFormat `1.5*`, meaning that it's an intermediate format which
 namely adheres to SDFormat 1.5, but has directly nested models.
 * Since `libsdformat9.3` supported direct nesting but `//include` still
 worked via flattening, unflattening will occur regardless of whether or not
-there are directly nested models in the model, and the unflattening my handle
+there are directly nested models in the model, and the unflattening may handle
 "partially" flattened models.
 * No attempt will be made to "offset" the consituent elements' poses into
 the newly created `//model/pose`.
