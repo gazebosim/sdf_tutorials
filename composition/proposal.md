@@ -581,16 +581,16 @@ when a new model should be created and when the nested names (e.g.
 `M1::my_link`) should be "unnested" (e.g. `my_link` in model `M1`).
 
 To illustrate, the following model from the
-[Legacy Behavior](/tutorials?tut=composition&ver=1.5&#libsdformats-implementation-of-include-in-models) documentation:
+[Legacy Behavior](/tutorials?tut=composition&ver=1.5&#libsdformats-implementation-of-include-in-models) documentation will have been up-converted to the following in SDFormat 1.7 (as of `libsdformat` 9.2):
 
 ~~~xml
-<sdf version="1.4">
+<sdf version="1.7">
   <model name="ParentModel">
     <frame name="ChildModel::__model__" attached_to="ChildModel::L1">
-      <pose/>
+      <pose relative_to="__model__">1 0 1 0 0 0</pose>
     </frame>
     <link name="ChildModel::L1">
-      <pose>1 1 1 0 0 0</pose>
+      <pose relative_to="ChildModel::__model__">0 1 0 0 0 0</pose>
       <visual name="v1">
         <geometry>
           <sphere>
@@ -600,9 +600,9 @@ To illustrate, the following model from the
       </visual>
     </link>
     <link name="ChildModel::L2">
-      <pose>1 0 1 0 0 0</pose>
+      <pose relative_to="ChildModel::__model__">0 0 0 0 0 0</pose>
     </link>
-    <joint name="ChildModel::J1">
+    <joint name="ChildModel::J1" type="revolute">
       <parent>ChildModel::L1</parent>
       <child>ChildModel::L2</child>
     </joint>
@@ -613,11 +613,12 @@ To illustrate, the following model from the
 should be (naively) up-converted to:
 
 ~~~xml
-<sdf version="1.4*">
+<sdf version="1.7">
   <model name="ParentModel">
     <model name="ChildModel">
+      <pose>1 0 1 0 0 0</pose>
       <link name="L1">
-        <pose>1 1 1 0 0 0</pose>
+        <pose>0 1 0 0 0 0</pose>
         <visual name="v1">
           <geometry>
             <sphere>
@@ -627,9 +628,9 @@ should be (naively) up-converted to:
         </visual>
       </link>
       <link name="L2">
-        <pose>1 0 1 0 0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
       </link>
-      <joint name="J1">
+      <joint name="J1" type="revolute">
         <parent>L1</parent>
         <child>L2</child>
       </joint>
@@ -668,31 +669,26 @@ the naive up-conversion process.
 * This up-conversion is *only* intended to support models that *could* have
 been emitted by `libsdformat10` by using *valid* `//include` statements. It is possible to write valid models in SDFormat 1.7 that are invalid in SDFormat
 1.8; no effort will be made to reconcile those models (see examples below).
-* Since the naively converted file is neither SDFormat 1.5 nor 1.8, it is
-indicated as SDFormat `1.5*`, meaning that it's an intermediate format which
-namely adheres to SDFormat 1.5, but has directly nested models.
-* Since `libsdformat9.3` supported direct nesting but `//include` still
-worked via flattening, unflattening will occur regardless of whether or not
-there are directly nested models in the model, and the unflattening may handle
-"partially" flattened models.
+* Since `libsdformat9.3` and above supports direct nesting but `//include`
+still worked via flattening, unflattening will occur regardless of whether or
+not there are directly nested models in the model, and the unflattening may
+handle "partially" flattened models.
 * Nested models with an explicitly specified `__model__` frame (e.g.
 `ChildModel::__model__`) will have this frame removed, and this will be
-converted to the appropriate `//model/pose`
-(see [this BitBucket PR #668](https://osrf-migration.github.io/sdformat-gh-pages/#!/osrf/sdformat/pull-requests/668/page/1)
-for such an example). If `@attached_to` is specified to something other than
-this nexted model's first link, then `//model/@canonical_link` will also be
-updated.
+converted to the appropriate `//model/pose`. If `@attached_to` is specified to
+something other than this nexted model's first link, then
+`//model/@canonical_link` will also be updated.
+  * Any poses within this model will be expected to either refer to this model
+  frame, or any frame contained by this model, s.t. no numerical computation
+  needs to take place.
 * If nested `__model__` frames are not present, no attempt will be made to
 implicitly "offset" the consituent elements' poses
 into the newly created `//model/pose`.
-  * This offers simplicity and ensures that the effective `__model__` frame
-  will coincide with the newly created nested models' `__model__` frames.
-  
 
 **Example of a failing conversions**
 
 This could have been valid in SDFormat 1.7, but is not valid in SDFormat 1.8,
-even with up-coversion:
+even with up-conversion:
 
 ~~~xml
 <sdf version="1.7">
@@ -704,6 +700,9 @@ even with up-coversion:
   </model>
 </sdf>
 ~~~
+
+This model could only have been produced by hand-crafting a flattened model
+(most likely after conversion).
 
 #### 1.5 Minimal `libsdformat` Interface Types for Non-SDFormat Models
 
