@@ -512,10 +512,10 @@ It is worth mentioning that the `//model/@placement_frame` and
 `//model/@canonical_link` attributes have different meanings and uses. Given
 a `//model/pose`, the `//model/@placement_frame` says which frame in the model
 will have that pose. This is a very practical means of setting the location of
-models. The `//model/@canonical_link` attribute on the other hand specifies to
-which link the implicit model frame is attached. This does not affect the
-model's initial pose, but constrains the implicit model frame to remain fixed
-to the canonical link once simulation has started.
+models. The `//model/@canonical_link` attribute on the other hand specifies the
+link to which the implicit model frame is attached. This does not affect
+the model's initial pose, but constrains the implicit model frame to remain
+fixed to the canonical link once simulation has started.
 
 **Alternatives Considered**:
 
