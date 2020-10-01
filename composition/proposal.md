@@ -80,9 +80,11 @@ For including models, it is nice to have access to other model types, e.g.
 including a custom model specified as a `*.yaml` or connecting to some other
 legacy format. Generally, the interface between models only really needs access
 to explicit and implicit frames (for welding joints, attaching sensors, etc.).
-The present implementation of `//include` requires that SDFormat know
-*everything* about the included model, whereas a user could instead provide an
-adapter to provide the minimal information necessary for assembly.
+The present implementation of `//include` (present
+[since `libsdformat4`](https://github.com/osrf/sdformat/blob/sdformat4_4.0.0/src/parser.cc#L738))
+requires that SDFormat know *everything* about the included model, whereas a
+user could instead provide an adapter to provide the minimal information
+necessary for assembly.
 
 There are existing solutions to handle composition. Generally, those
 solutions are some form of text / XML generation (e.g. `xacro`, or Python /
@@ -711,7 +713,7 @@ handle "partially" flattened models.
 * Nested models with an explicitly specified `__model__` frame (e.g.
 `ChildModel::__model__`) will have this frame removed, and this will be
 converted to the appropriate `//model/pose`. If `@attached_to` is specified to
-something other than this nexted model's first link, then
+something other than this nested model's first link, then
 `//model/@canonical_link` will also be updated.
   * Any poses within this model will be expected to either refer to this model
   frame, or any frame contained by this model, s.t. no numerical computation
@@ -729,9 +731,11 @@ even with up-conversion:
 <sdf version="1.7">
   <model name="anything">
     <link name="M1::B"/>
-    <link name="M2::B">
-      <pose relative_to="M1::B"/>  <!-- INVALID: This attribute does not start with `M2::`. -->
-    </link>
+    <joint name="M1::J">
+      <parent>M1::B</parent>
+      <child>M2::B</child>  <!-- INVALID: This reference does not start with `M1::`. -->
+    </joint>
+    <link name="M2::B"/>
   </model>
 </sdf>
 ~~~
