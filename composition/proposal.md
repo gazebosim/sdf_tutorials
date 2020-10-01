@@ -80,8 +80,8 @@ For including models, it is nice to have access to other model types, e.g.
 including a custom model specified as a `*.yaml` or connecting to some other
 legacy format. Generally, the interface between models only really needs access
 to explicit and implicit frames (for welding joints, attaching sensors, etc.).
-The present implementation of `//include` (present
-[since `libsdformat4`](https://github.com/osrf/sdformat/blob/sdformat4_4.0.0/src/parser.cc#L738))
+The current implementation of `//include`
+([since `libsdformat4`](https://github.com/osrf/sdformat/blob/sdformat4_4.0.0/src/parser.cc#L738))
 requires that SDFormat know *everything* about the included model, whereas a
 user could instead provide an adapter to provide the minimal information
 necessary for assembly.
@@ -618,7 +618,9 @@ when a new model should be created and when the nested names (e.g.
 `M1::my_link`) should be "unnested" (e.g. `my_link` in model `M1`).
 
 To illustrate, the following model from the
-[Legacy Behavior](/tutorials?tut=composition&ver=1.5&#libsdformats-implementation-of-include-in-models) documentation will have been up-converted to the following in SDFormat 1.7 (as of `libsdformat` 9.2):
+[Legacy Behavior](/tutorials?tut=composition&ver=1.5&#libsdformats-implementation-of-include-in-models)
+documentation will have been up-converted to the following in SDFormat 1.7 (as
+of `libsdformat` 9.2):
 
 ~~~xml
 <sdf version="1.7">
@@ -721,6 +723,13 @@ something other than this nested model's first link, then
 * If nested `__model__` frames are not present, no attempt will be made to
 implicitly "offset" the consituent elements' poses
 into the newly created `//model/pose`.
+
+**Implementation**
+
+This will be implemented by modifying the implicit conversion schema
+(as defined and consumed by [`Converter.cc`](https://github.com/osrf/sdformat/blob/113bf26308f7354f446cc4dcd4746196d493bfde/src/Converter.cc))
+for the [currently blank SDFormat 1.7 -> 1.8 file](https://github.com/osrf/sdformat/blob/113bf26308f7354f446cc4dcd4746196d493bfde/sdf/1.8/1_7.convert) to
+have an element named `//unnest`, which will signify that the above mentioned changes should take place.
 
 **Example of a failing conversions**
 
