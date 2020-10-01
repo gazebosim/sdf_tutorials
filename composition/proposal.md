@@ -10,7 +10,7 @@ Addisu Taddese  `<addisu@openrobotics.org>`
 
 ## Introduction
 
-This proposal suggests changes to the semantics of composition, targetting
+This proposal suggests changes to the semantics of composition, targeting
 SDFormat 1.8. As discussed in the
 [legacy behavior tutorial](/tutorials?tut=composition), SDFormat models are the
 fundamental building blocks of a world in SDFormat. As of SDFormat 1.4, models
@@ -32,7 +32,7 @@ tag with models specified in other formats.
 The proposal includes the following sections:
 
 *   Motivation: background and rationale.
-*   Proposed changes: Each additon / subtraction to SDFormat and `libsdformat`.
+*   Proposed changes: Each addition / subtraction to SDFormat and `libsdformat`.
 *   Examples: Long form code samples.
 
 ## Syntax
@@ -66,13 +66,13 @@ referenced via a form of scope, such as `{scope}::{name}`.
 However, `::` is not a special token and thus can be
 used to create "false" hierarchy or potential name collisions. Additionally, there is
 no way for elements within the same file to refer "up" to another element, e.g. with in a robot assembly, adding a weld between a gripper and an arm when the
-two are sibiling models.
+two are sibling models.
 
 For posturing an included model, there is no means by which the user can
 specify which included frame to posture via `//include/pose`. The target frame
 to move currently can only be the
 [`__model__` frame](/tutorials?tut=pose_frame_semantics_proposal#2-model-frame-and-canonical-link).
-Therfore, if you wanted to weld a gripper to an end effector, but the canonical
+Therefore, if you wanted to weld a gripper to an end effector, but the canonical
 link for the gripper is not at the weld point (or it has multiple potential
 weld points), you must duplicate this pose information in the top-level.
 
@@ -87,10 +87,10 @@ adapter to provide the minimal information necessary for assembly.
 There are existing solutions to handle composition. Generally, those
 solutions are some form of text / XML generation (e.g. `xacro`, or Python /
 Ruby scripts). These methods can provide for more advanced things, like
-paramterization, conditional branching, looping, working up towards Turing
+parameterization, conditional branching, looping, working up towards Turing
 completeness. However, these methods may not have a firm grasp of the semantics
 of the data they are manipulating, and thus can undermine encapsulation, and
-can add a layer of complexity when errors (syntatic, semantic, or design) are
+can add a layer of complexity when errors (syntactic, semantic, or design) are
 introduced.
 
 This proposal is only for the process of incorporating existing models and
@@ -207,7 +207,7 @@ permitted. Those can only go *down* into the current or nested models (e.g.
 
 As a conservative initial behavior, shadowing will not be permitted. This means
 that frames may only be referenced within their own scope, and cannot be
-referenced implicity in nested scopes. This ensures that each model is an
+referenced implicitly in nested scopes. This ensures that each model is an
 explicit unit; any dependencies external to the
 model (but within the same file) will not be visible. Additionally, it avoids potential ambiguities (e.g. a parent frame with the same name as a
 sibling frame).
@@ -321,7 +321,7 @@ For a world file:
 
 **Alternatives Considered for Reference Types**
 
-It was considered to only allow downwards references or a single upwards reference using the `^` characeter. However, there was a lack of a sufficiently
+It was considered to only allow downwards references or a single upwards reference using the `^` character. However, there was a lack of a sufficiently
 motivating example, so this was removed from the proposal.
 
 It was also considered to not permit upwards references and only use downward or
@@ -461,18 +461,38 @@ For example:
 </model>
 ~~~
 
-##### 1.4.4 Placement frame: `//include/placement_frame`
+##### 1.4.4 Placement frame: `//model/@placement_frame` and `//include/placement_frame`
 
 It is useful to place an object using a semantic relationship between two
-objects, e.g. place the bottom-center of a mug upright on the top-center of a
-table. To do this, you can the specify the frame for which the `//include/pose`
-should change.
+objects, e.g. place the bottom-center of a mug upright on the top-center of
+a table. To do this, you can the specify the frame for which the `//model/pose`
+or `//include/pose` should change.
 
-This can be achieved by specifying `//include/placement_frame`. If this
-element is specfied, then `//include/pose` *must* be specified, as
-any information in the included `//model/pose` will no longer be relevant.
+This can be achieved by specifying `//model/@placement_frame` for directly
+nested models or `//include/placement_frame` for included models. If the
+placement frame element is specified for an included model, then
+`//include/pose` *must* be specified, as any information in the included
+`//model/pose` will no longer be relevant.
 
-As an example:
+As an example, using directly nested models:
+
+~~~xml
+<model name="super_model">
+  <model name="table" placement_frame="bottom_left_leg">
+    <pose>2 4 0 0 0 0</pose>
+    <link name="bottom_left_leg"/>
+    <frame name="top_center">
+      <pose relative_to="bottom_left_leg">1 1 2 0 0 0</pose>
+    </frame>
+  </model>
+  <model name="mug" placement_frame="bottom_center">
+    <pose relative_to="table::top_center"/>
+    <link name="bottom_center"/>
+  </model>
+</model>
+~~~
+
+or using included models:
 
 ~~~xml
 <model name="super_model">
@@ -480,7 +500,7 @@ As an example:
     <name>table</name>
     <uri>file://table.sdf</uri>
     <placement_frame>bottom_left_leg</placement_frame>
-    <pose/>
+    <pose>2 4 0 0 0 0</pose>
   </include>
   <include>
     <name>mug</name>
@@ -491,10 +511,25 @@ As an example:
 </model>
 ~~~
 
+It is worth mentioning that the `//model/@placement_frame` and
+`//model/@canonical_link` attributes have different meanings and uses. Given
+a `//model/pose`, the `//model/@placement_frame` says which frame in the model
+will have that pose. This is a very practical means of setting the location of
+models. The `//model/@canonical_link` attribute on the other hand specifies the
+link to which the implicit model frame is attached. This does not affect
+the model's initial pose, but constrains the implicit model frame to remain
+fixed to the canonical link once simulation has started.
+
+**Alternatives Considered**:
+
+It was considered to implement only `//include/placement_frame`, but it was
+found to be difficult to implement without making it a proper model attribute
+that gets overridden.
+
 ##### 1.4.5 Permit files directly in `//include/uri`
 
 Specifying a directory permits usage of `model.config` manifests, which permits
-better compatibilty for a model when being loaded by software with different
+better compatibility for a model when being loaded by software with different
 SDFormat specification support. However, it then requires overhead that may not
 matter for some applications.
 
@@ -541,7 +576,7 @@ false).
     `//static` can only be false if all models included via the file are
     non-static.
 
-    This alternative was abanoded because this is not very simple, and has
+    This alternative was abandoned because this is not very simple, and has
     relatively complicated rules. See
     [sdf_tutorials#33](https://github.com/osrf/sdf_tutorials/issues/33) for a
     brief mention.
@@ -890,13 +925,13 @@ top-level model's `//pose` definitions.
   `/robot_description` in ROS, etc.).
 
 * For the composition API:
-  * It was considered to expose as much of the toplogy as possible, both links
+  * It was considered to expose as much of the topology as possible, both links
   and frames, and possibly joints. However, that would complicate the
   implementation:
-    * Ths `libsdformat` API would somehow have to infect existing API to allow
-      custom-included models to popluate existing graphs explicitly.
+    * This `libsdformat` API would somehow have to infect existing API to allow
+      custom-included models to populate existing graphs explicitly.
     * This infection would require additional encapsulation of `libsdformat`
-      details (e.g. XML pointser for elements). While not necessarily bad in
+      details (e.g. XML pointer for elements). While not necessarily bad in
       principle, this may be an impractical rearchitecture for the next
       release.
 

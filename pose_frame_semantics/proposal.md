@@ -1084,7 +1084,8 @@ its own links. As an example:
 </model>
 ```
 
-If the canonical link were to be specified explicitly, the following model
+If the canonical link were to be specified explicitly using `::` syntax
+that will be supported in SDFormat 1.8, the following model
 would be equivalent to the above model:
 
 ```xml
@@ -1635,7 +1636,7 @@ returning an error code if errors are found during parsing:
     for non-static models.
 
 7.  ***Check `//model/frame/@attached_to` graph:***
-    Construct an `attached_to` directed graph for the model with each vertex
+    For models that are not static, construct an `attached_to` directed graph with each vertex
     representing a frame (see [buildFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L168)
     in `libsdformat9`):
 
@@ -1645,29 +1646,48 @@ returning an error code if errors are found during parsing:
         [FrameSemantics.cc:271-286](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L271-L286),
         and ...).
 
-    7.2 Add a vertex for the implicit `__model__` frame. If the model is not static,
+    7.2 Identify the canonical link of the model:
+
+    7.2.1 Return an error if the model does not contain any
+          links or nested models.
+
+    7.2.2 If `//model/@canonical_link` exists and is not empty,
+          choose the link in this model named by this attribute
+          that was confirmed to exist in step 5.
+
+    7.2.3 Otherwise (i.e. if the `//model/@canonical_link` attribute
+          does not exist or is an empty string `""`), if the model
+          contains links, choose the first link.
+
+    7.2.4 Otherwise (i.e. if the `//model/@canonical_link` attribute
+          does not exist or is an empty string `""` and the model
+          contains no links), get the canonical link of the first
+          nested model. This can be a recursive process if there
+          are multiple levels of nested models that contain no links.
+
+    7.3 Add a vertex for the implicit `__model__` frame. If the model is not static,
         add an edge connecting this vertex to the
         vertex of the model's canonical link
         (see [FrameSemantics.cc:173-178](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L173-L178)
         and [FrameSemantics.cc:235-239](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L235-L239))
 
-    7.3 For each `//model/joint`, add an edge
+    7.4 For each `//model/joint`, add an edge
         connecting from the joint to the vertex of its child link
         (see [FrameSemantics.cc:242-269](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L242-L269).
 
-    7.4 For each `//model/frame`:
+    7.5 For each `//model/frame`:
 
-    7.4.1 If `//model/frame/@attached_to` exists and is not empty,
+    7.5.1 If `//model/frame/@attached_to` exists and is not empty,
           add an edge from this frame's vertex to the vertex
           named in the `//model/frame/@attached_to` attribute
           (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
 
-    7.4.2 Otherwise (i.e. if the `//model/frame/@attached_to` attribute
+    7.5.2 Otherwise (i.e. if the `//model/frame/@attached_to` attribute
           does not exist or is an empty string `""`),
           add an edge from this frame's vertex to the model frame vertex,
           (see [FrameSemantics.cc:288-322](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/FrameSemantics.cc#L288-L322)).
 
-    7.5 Verify that the graph has no cycles and that by following the directed
+    7.6 Verify that the graph has no cycles and that by following the directed
         edges, every vertex is connected to a link or nested model
         (see [validateFrameAttachedToGraph](https://github.com/osrf/sdformat/blob/b3ead2d87f962673f8802adeb4caf3fc73e331c2/src/FrameSemantics.cc#L974-L1000)
         and [resolveFrameAttachedToBody](https://github.com/osrf/sdformat/blob/b3ead2d87f962673f8802adeb4caf3fc73e331c2/src/FrameSemantics.cc#L1306-L1314)
