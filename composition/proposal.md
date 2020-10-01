@@ -57,10 +57,13 @@ swapping out grippers).
 
 As of SDFormat 1.7, nesting a model with a `//model/include` tag has different
 behavior than direct nesting with `//model/model`,
-part of the reason being that nesting directly with `//model/model` is not yet
-implemented in the current `libsdformat` (9.1.0). Nesting of models generally
-implies that the elements can be referenced via a form of scope, such as
-`{scope}::{name}`. However, `::` is not a special token and thus can be
+part of the reason being that nesting directly with `//model/model` was not
+implemented in `libsdformat` until 9.3.0. As mentioned in the
+[Legacy Behavior](/tutorials?tut=composition&ver=1.5&#libsdformats-implementation-of-include-in-models) documentation, `//include` works by effectively flattening the model; when this happens, certain details may "leak" through.
+
+Normally, nesting of models generally implies that the elements can be
+referenced via a form of scope, such as `{scope}::{name}`.
+However, `::` is not a special token and thus can be
 used to create "false" hierarchy or potential name collisions. Additionally, there is
 no way for elements within the same file to refer "up" to another element, e.g. with in a robot assembly, adding a weld between a gripper and an arm when the
 two are sibling models.
@@ -77,9 +80,11 @@ For including models, it is nice to have access to other model types, e.g.
 including a custom model specified as a `*.yaml` or connecting to some other
 legacy format. Generally, the interface between models only really needs access
 to explicit and implicit frames (for welding joints, attaching sensors, etc.).
-The present implementation of `//include` requires that SDFormat know
-*everything* about the included model, whereas a user could instead provide an
-adapter to provide the minimal information necessary for assembly.
+The current implementation of `//include`
+([since `libsdformat4`](https://github.com/osrf/sdformat/blob/sdformat4_4.0.0/src/parser.cc#L738))
+requires that SDFormat know *everything* about the included model, whereas a
+user could instead provide an adapter to provide the minimal information
+necessary for assembly.
 
 There are existing solutions to handle composition. Generally, those
 solutions are some form of text / XML generation (e.g. `xacro`, or Python /
@@ -593,6 +598,159 @@ kinematic loops (e.g. adding a rope, and attaching both ends to the world).
 **Note**: `//joint/child == "world"` is forbidden solely due to encapsulation
 issues with poses, as described in the
 [Pose Frame Semantics proposal](/tutorials?tut=pose_frame_semantics_proposal#1-2-explicit-vs-implicit-frames).
+
+##### 1.4.7 Up-Converting Flattened Models
+
+As mentioned in the Motivation, in SDFormat <= 1.7 (`libsdformat` <= 10)
+`//include` was implemented by "flattening" the model. This means that when
+`libsdformat` parses a model which has nested `//include` models, the resultant
+XML will be *invalid* for SDFormat 1.8 because the model would be using the
+reserved `::` delimiter in an invalid fashion (to define a link, joint, etc.).
+
+This would not be an issue if this flattened XML were a transient artifact
+(e.g. temporary serialization for communicating models from a Gazebo server to
+a client). However, users could have converted their models with `ign sdf`, and
+thus there would be "data at rest" in this format.
+
+To work around this, the conversion from SDFormat 1.7 to 1.8 should have an
+"unflattening" phase which takes the flattened XML and *naively* tries to infer
+when a new model should be created and when the nested names (e.g.
+`M1::my_link`) should be "unnested" (e.g. `my_link` in model `M1`).
+
+To illustrate, the following model from the
+[Legacy Behavior](/tutorials?tut=composition&ver=1.5&#libsdformats-implementation-of-include-in-models)
+documentation will have been up-converted to the following in SDFormat 1.7 (as
+of `libsdformat` 9.2):
+
+~~~xml
+<sdf version="1.7">
+  <model name="ParentModel">
+    <frame name="ChildModel::__model__" attached_to="ChildModel::L1">
+      <pose relative_to="__model__">1 0 1 0 0 0</pose>
+    </frame>
+    <link name="ChildModel::L1">
+      <pose relative_to="ChildModel::__model__">0 1 0 0 0 0</pose>
+      <visual name="v1">
+        <geometry>
+          <sphere>
+            <radius>0.1</radius>
+          </sphere>
+        </geometry>
+      </visual>
+    </link>
+    <link name="ChildModel::L2">
+      <pose relative_to="ChildModel::__model__">0 0 0 0 0 0</pose>
+    </link>
+    <joint name="ChildModel::J1" type="revolute">
+      <parent>ChildModel::L1</parent>
+      <child>ChildModel::L2</child>
+    </joint>
+  </model>
+</sdf>
+~~~
+
+should be (naively) up-converted to:
+
+~~~xml
+<sdf version="1.7">
+  <model name="ParentModel">
+    <model name="ChildModel">
+      <pose>1 0 1 0 0 0</pose>
+      <link name="L1">
+        <pose>0 1 0 0 0 0</pose>
+        <visual name="v1">
+          <geometry>
+            <sphere>
+              <radius>0.1</radius>
+            </sphere>
+          </geometry>
+        </visual>
+      </link>
+      <link name="L2">
+        <pose>0 0 0 0 0 0</pose>
+      </link>
+      <joint name="J1" type="revolute">
+        <parent>L1</parent>
+        <child>L2</child>
+      </joint>
+    </model>
+  </model>
+</sdf>
+~~~
+
+The following basic rules will apply:
+
+* Models will be inferred (implicitly created) by parsing the following
+attributes:
+  * `//frame/@name`
+  * `//joint/@name`
+  * `//link/@name`
+  * `//model/@name`.
+* When a new model is created, all new elements under this model will have the
+following attributes "unnested" by stripping the (required) prefix of
+`"{model_name}::"`:
+  * `//frame/@attached_to`
+  * `//frame/@attached_to`
+  * `//joint/child`
+  * `//joint/parent`
+  * `//pose/@relative_to`
+  * `//xyz/@expressed_in`
+  * Additional Rules:
+    * If an attribute is either `"world"` or `"__model__"`, it will be
+    unchanged.
+    * If an attribute does *not* start with the given prefix, the conversion
+    will *fail fast*.
+
+Some notes:
+
+* Semantic validation will be handled by the parsing process itself, *not* by
+the naive up-conversion process.
+* This up-conversion is *only* intended to support models that *could* have
+been emitted by `libsdformat10` by using *valid* `//include` statements. It is possible to write valid models in SDFormat 1.7 that are invalid in SDFormat
+1.8; no effort will be made to reconcile those models (see examples below).
+* Since `libsdformat9.3` and above supports direct nesting but `//include`
+still worked via flattening, unflattening will occur regardless of whether or
+not there are directly nested models in the model, and the unflattening may
+handle "partially" flattened models.
+* Nested models with an explicitly specified `__model__` frame (e.g.
+`ChildModel::__model__`) will have this frame removed, and this will be
+converted to the appropriate `//model/pose`. If `@attached_to` is specified to
+something other than this nested model's first link, then
+`//model/@canonical_link` will also be updated.
+  * Any poses within this model will be expected to either refer to this model
+  frame, or any frame contained by this model, s.t. no numerical computation
+  needs to take place.
+* If nested `__model__` frames are not present, no attempt will be made to
+implicitly "offset" the consituent elements' poses
+into the newly created `//model/pose`.
+
+**Implementation**
+
+This will be implemented by modifying the implicit conversion schema
+(as defined and consumed by [`Converter.cc`](https://github.com/osrf/sdformat/blob/113bf26308f7354f446cc4dcd4746196d493bfde/src/Converter.cc))
+for the [currently blank SDFormat 1.7 -> 1.8 file](https://github.com/osrf/sdformat/blob/113bf26308f7354f446cc4dcd4746196d493bfde/sdf/1.8/1_7.convert) to
+have an element named `//unnest`, which will signify that the above mentioned changes should take place.
+
+**Example of a failing conversions**
+
+This could have been valid in SDFormat 1.7, but is not valid in SDFormat 1.8,
+even with up-conversion:
+
+~~~xml
+<sdf version="1.7">
+  <model name="anything">
+    <link name="M1::B"/>
+    <joint name="M1::J">
+      <parent>M1::B</parent>
+      <child>M2::B</child>  <!-- INVALID: This reference does not start with `M1::`. -->
+    </joint>
+    <link name="M2::B"/>
+  </model>
+</sdf>
+~~~
+
+This model could only have been produced by hand-crafting a flattened model
+(most likely after conversion).
 
 #### 1.5 Minimal `libsdformat` Interface Types for Non-SDFormat Models
 
