@@ -4,7 +4,7 @@ All releases mentioned here are relatively recent.
 
 ## `libsdformat` Releases
 
-For more information, see [Changelog](https://bitbucket.org/osrf/sdformat/src/default/Changelog.md).
+For more information, see [Changelog](https://github.com/osrf/sdformat/blob/master/Changelog.md).
 
 The following list provides a high-level summary of the specification and C++
 version supported by the given release of the library:
@@ -52,4 +52,4 @@ specification (as well as the caveats):
         * Adds extra semantics to `//pose/frame` and `//frame` elements.
     * 0.14.0 (**released**): SDFormat 1.7.
 
-If you would like your project listed here, please [make a pull request](https://bitbucket.org/osrf/sdf_tutorials/pull-requests/).
+If you would like your project listed here, please [make a pull request](https://github.com/osrf/sdf_tutorials/pulls).
