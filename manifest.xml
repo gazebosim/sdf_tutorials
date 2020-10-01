@@ -128,7 +128,8 @@
     </tutorial>
 
     <tutorial title='Composition' ref='composition' type='documentation'>
-      <markdown version='1.5'>composition/legacy_behavior.md</markdown>
+      <markdown version='1.5'>composition/legacy_behavior_1-5.md</markdown>
+      <markdown version='1.7'>composition/legacy_behavior.md</markdown>
       <description>
           Describing existing behavior of composition in SDFormat.
       </description>
