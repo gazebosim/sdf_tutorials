@@ -90,12 +90,10 @@
       <skill>advanced</skill>
     </tutorial>
 
-    <tutorial title="Pose frame semantics: proposed behavior" ref='pose_frame_semantics_proposal' type='proposal'>
-      <markdown version="1.7">pose_frame_semantics/proposal.md</markdown>
+    <tutorial title="Pose frame semantics" ref='pose_frame_semantics' type='documentation'>
+      <markdown version="1.7">pose_frame_semantics/pose_frame_semantics_1-7.md</markdown>
       <description>
-        Proposing new behavior for SDFormat 1.7, including semantics for the
-        pose frame attribute, the frame element, new rules
-        for element naming, and corresponding examples.
+        Describing behavior for element pose and frames, naming, scope and nested model in SDFormat 1.7.
       </description>
       <tags>
         <tag>pose</tag>
