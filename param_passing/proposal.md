@@ -105,7 +105,7 @@ Now the user would like to use the original model `base_robot` in a world file b
       <visual name="chassis::lidar_visual" action="remove"/>
       <sensor name="chassis::lidar" action="remove"/>
 
-     <sensor name="chassis::camera">
+     <sensor name="chassis::camera" action="add">
         <plugin name="camera_depth_sensor" filename="libcamera_depth_sensor.so"/>
      </sensor>
 
@@ -188,7 +188,7 @@ In this example, the `//visual` element named "camera_visual" will be added as a
 Another example could be adding a plugin to a `//sensor` (which can not be done through model composition):
 
 ```xml
-<sensor name="chassis::camera">
+<sensor name="chassis::camera" action="add">
   <plugin name="camera_depth_sensor" filename="libcamera_depth_sensor.so"/>
 </sensor>
 ```
