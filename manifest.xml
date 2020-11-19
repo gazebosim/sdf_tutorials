@@ -91,7 +91,21 @@
     </tutorial>
 
     <tutorial title="Pose frame semantics" ref='pose_frame_semantics' type='documentation'>
-      <markdown version="1.7">pose_frame_semantics/pose_frame_semantics_1-7.md</markdown>
+      <markdown version="1.7">pose_frame_semantics/proposal.md</markdown>
+      <description>
+        Proposing new behavior for SDFormat 1.7, including semantics for the
+        pose frame attribute, the frame element, new rules
+        for element naming, and corresponding examples.
+      </description>
+      <tags>
+        <tag>pose</tag>
+        <tag>frame</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
+    <tutorial title="Pose frame semantics" ref='pose_frame_semantics' type='documentation'>
+      <markdown version="1.7.1">pose_frame_semantics/pose_frame_semantics_1-7.md</markdown>
       <description>
         Describing behavior for element pose and frames, naming, scope and nested model in SDFormat 1.7.
       </description>
@@ -191,6 +205,7 @@
         [github.com/osrf/sdf_tutorials](https://github.com/osrf/sdf_tutorials).
       </description>
       <tutorials>
+        <tutorial>conventions</tutorial>
         <tutorial>specify_pose</tutorial>
         <tutorial>spec_model_kinematics</tutorial>
         <tutorial>spec_shapes</tutorial>

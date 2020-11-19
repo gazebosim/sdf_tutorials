@@ -6,6 +6,8 @@ Addisu Taddese `<addisu@openrobotics.org>`
 * **SDFormat Version**: 1.7
 * **`libsdformat` Version**: 9.0
 
+This proposal is outdated and see latest tutorial at version 1.7.1.
+
 ## Motivation
 
 SDFormat aims to be a specification for describing simulations without being

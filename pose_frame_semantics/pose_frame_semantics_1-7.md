@@ -1,25 +1,7 @@
 # Pose-Frame Semantics Tutorial
 
-This tutorial uses [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp)
-to describe elements and attributes concisely.
-
-SDFormat example:
-
-```xml
-  <model name="model_name">
-    <pose>0 0 0.5 0 0 0</pose>
-    <link name="link">
-    </link>
-    <joint type="revolute" name="my_joint">
-    </joint>
-    <plugin filename="libMyPlugin.so" name="my_plugin"/>
-  </model>
-```
-
-SDFormat nested tags and attributes can be represented in XPath syntax. For example,
-the `<model>` tag above can be referred to as `//model`; the `name` attribute of the
-`<model>` tag are referenced as `//model/@name`; the `<link>` and `<joint>`entities
-within `<model>` can be referred to as `//model/link` and `//model/joint`.
+This documentation explains the newly implemented changes proposed by
+[Pose Frame Semantics Proposal](http://sdformat.org/tutorials?tut=pose_frame_semantics_proposal) in SDFormat 1.7.
 
 ## Pose and frame
 
@@ -47,14 +29,14 @@ Further syntax and rules regarding pose and frame are explained below.
 </model>
 ```
 
-In the example above, the model named "model_1" has initial position of 
+In the example above, the model named `model_1` has initial position of
 `[0, 0, 1]` (x, y, z), and orientiation of `[0, 0, 0]` (roll, pitch, yaw).
-This model's pose is defined in the coordinate frame named "frame_1". This
+This model's pose is defined in the coordinate frame named `frame_1`. This
 particular frame must be an explicit or implicit frame in the current scope.
 Explicit and implicit frames are explained in [Implicit and explicit frames](##-Implicit-and-explicit-frames) below.
 
 
-Empty `//pose` tag can be interpreted as equivalent to the identity pose. 
+Empty `//pose` tag can be interpreted as equivalent to the identity pose.
 In the following examples, the `//pose` elements in each pair are equivalent to each other.
 
 ```xml
@@ -82,14 +64,14 @@ relative to the frames of links that the joint connects.
 </model>
 ```
 
-Three properties of frame is defined above: the frame's name, another frame that
+Three properties of frame are defined above: the frame's name, another frame that
 it attaches to, and the initial pose of the frame.
 The `//frame//@name` is a required attribute and must be non-empty and unique.
-The `//frame/@attached_to` is optional and specifies the link or nested model to 
+The `//frame/@attached_to` is optional and specifies the link or nested model to
 which the `//frame` is attached. To differentiate from `//pose/@relative_to`,
-`//pose/@relative_to` only defines the initial pose of the frame, whereas 
+`//pose/@relative_to` only defines the initial pose of the frame, whereas
 `//frame/@attached_to` determines the new pose resulted from any movement
-of model_2. 
+of model_2.
 
 Empty `//frame` tag can be interpreted as having an identity pose relative to
 `//frame/@attached_to`. The four frame examples below are equivalent.
@@ -109,8 +91,8 @@ Empty `//frame` tag can be interpreted as having an identity pose relative to
 
 If `//frame/@attached_to` is specified, it needs to contain the name
 of an [explicit or implicit frame](##-Implicit-and-explicit-frames) in the current
-scope.  If a `//frame` is specified, recursively following the `@attached_to` 
-attributes of the specified frames must lead to the name of a link. Cycles in the 
+scope.  If a `//frame` is specified, recursively following the `@attached_to`
+attributes of the specified frames must lead to the name of a link. Cycles in the
 `@attached_to` graph are not allowed. If the attribute is not specified, the frame
 is attached to the model frame and thus indirectly attached to the canonical link.
 

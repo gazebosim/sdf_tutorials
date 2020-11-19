@@ -1,5 +1,7 @@
 # Specifying pose in SDFormat
 
+Prerequisites: [Pose frame semantics tutorial]()
+
 A fundamental tool for robot modeling is the ability to concisely and
 intuitively express the relative position and orientation of model components
 in 3-D.
