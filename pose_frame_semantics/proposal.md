@@ -1,5 +1,7 @@
 # Pose Frame Semantics Proposal
 
+The latest pose frame semantics 1.7 documentation can be found at [Pose Frame Semantics Tutorial](http://sdformat.org/tutorials?tut=pose_frame_semantics&cat=specification&)
+
 * **Authors**:
 Steven Peters `<scpeters@osrfoundation.org>`,
 Addisu Taddese  `<addisu@openrobotics.org>`,

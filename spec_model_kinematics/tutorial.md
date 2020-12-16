@@ -1,6 +1,6 @@
 # Specifying model kinematics in SDFormat
 
-Prerequisites: [Pose frame semantics tutorial]()
+Prerequisites: [Pose frame semantics tutorial](http://sdformat.org/tutorials?tut=pose_frame_semantics&cat=specification&)
 
 This documentation describes how SDFormat models the kinematics of
 articulated multibody systems with the `<model>`, `<link>`, `<joint>`,

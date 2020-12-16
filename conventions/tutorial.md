@@ -2,7 +2,7 @@
 
 ## Syntax
 
-All tutorials use [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp)
+Newer tutorials and proposals use [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp)
 to describe elements and attributes concisely.
 
 SDFormat example:

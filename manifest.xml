@@ -76,8 +76,13 @@
       <skill>intermediate</skill>
     </tutorial>
 
-    <tutorial title="Pose frame semantics" ref='pose_frame_semantics' type='documentation'>
-      <markdown version="1.5">pose_frame_semantics/tutorial.md</markdown>
+    <tutorial title="Pose frame semantics" ref='pose_frame_semantics_tutorial' type='documentation'>
+    <!--
+    Ideally, a (proposal, tutorial) pair would look like ({concept}_proposal, {concept}).
+    However,  that was not done initially, and we want to keep old links alive.
+    So we instead use ({concept}, {concept}_tutorial).
+    -->
+      <markdown version="1.5">pose_frame_semantics/tutorial_1-5.md</markdown>
       <description>
         Describing existing behavior for element naming, definition of
         coordinate frames, referencing parent and child links,
@@ -90,7 +95,19 @@
       <skill>advanced</skill>
     </tutorial>
 
-    <tutorial title="Pose frame semantics" ref='pose_frame_semantics' type='documentation'>
+    <tutorial title="Pose frame semantics" ref='pose_frame_semantics_tutorial' type='documentation'>
+      <markdown version="1.7">pose_frame_semantics/tutorial.md</markdown>
+      <description>
+        Describing behavior for element pose and frames, naming, scope and nested model in SDFormat 1.7.
+      </description>
+      <tags>
+        <tag>pose</tag>
+        <tag>frame</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
+    <tutorial title="Pose frame semantics" ref='pose_frame_semantics_proposal' type='documentation'>
       <markdown version="1.7">pose_frame_semantics/proposal.md</markdown>
       <description>
         Proposing new behavior for SDFormat 1.7, including semantics for the
@@ -104,16 +121,16 @@
       <skill>advanced</skill>
     </tutorial>
 
-    <tutorial title="Pose frame semantics" ref='pose_frame_semantics' type='documentation'>
-      <markdown version="1.7.1">pose_frame_semantics/pose_frame_semantics_1-7.md</markdown>
+    <tutorial title='Conventions' ref='convention_tutorial' type='documentation'>
+      <markdown version='1.7'>conventions/tutorial.md</markdown>
       <description>
-        Describing behavior for element pose and frames, naming, scope and nested model in SDFormat 1.7.
+          Describing syntax conventions used in newer tutorials and proposals.
       </description>
       <tags>
-        <tag>pose</tag>
-        <tag>frame</tag>
+        <tag>nesting</tag>
+        <tag>conventions</tag>
       </tags>
-      <skill>advanced</skill>
+      <skill>intermediate</skill>
     </tutorial>
 
     <tutorial title="Custom elements and attributes" ref='custom_elements_attributes_proposal' type='proposal'>

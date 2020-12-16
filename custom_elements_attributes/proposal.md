@@ -6,8 +6,6 @@ Addisu Taddese `<addisu@openrobotics.org>`
 * **SDFormat Version**: 1.7
 * **`libsdformat` Version**: 9.0
 
-This proposal is outdated and see latest tutorial at version 1.7.1.
-
 ## Motivation
 
 SDFormat aims to be a specification for describing simulations without being
@@ -278,7 +276,7 @@ a custom `<prefix:diameter>` element to replace `<radius>`. In the case of
 XML elements in an SDFormat document. For example, links are always direct
 children of models. It is conceivable that a user might want to wrap a number
 of links in a model with a custom element to give them a certain semantics as
-in the following snippet. 
+in the following snippet.
 
     ```
     <model name="M">
