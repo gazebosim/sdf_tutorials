@@ -3,6 +3,96 @@
 This documentation explains the implemented changes proposed by
 [Pose Frame Semantics Proposal](http://sdformat.org/tutorials?tut=pose_frame_semantics_proposal) in SDFormat 1.7.
 
+## What's New In SDFormat 1.7
+
+### `//pose/@relative_to`
+
+[[file:../spec_model_kinematics/joint_frames.svg|600px]]
+
+An SDFormat representation of this model is given below.
+The pose of the parent link `P` is specified relative to the implicit
+model frame, while the pose of the other
+elements is specified relative to other named frames.
+This allows poses to be defined recursively, and also allows explicitly named
+frames `Jp` and `Jc` to be attached to the parent and child, respectively.
+For reference, equivalent expressions of `Jc` are defined as `Jc1` and `Jc2`.
+
+```
+    <model name="M">
+
+      <link name="P">
+        <pose relative_to="__model__">{X_MP}</pose>
+      </link>
+
+      <link name="C">
+        <pose relative_to="P">{X_PC}</pose>   <!-- Recursive pose definition. -->
+      </link>
+
+      <joint name="J" type="fixed">
+        <pose relative_to="P">{X_PJ}</pose>
+        <parent>P</parent>
+        <child>C</child>
+      </joint>
+
+      <frame name="Jp" attached_to="P">
+        <pose relative_to="J" />
+      </frame>
+
+      <frame name="Jc" attached_to="C">
+        <pose relative_to="J" />
+      </frame>
+
+      <frame name="Jc1" attached_to="J">   <!-- Jc1 == Jc, since J is attached to C -->
+        <pose relative_to="J" />
+      </frame>
+
+      <frame name="Jc2" attached_to="J" /> <!-- Jc2 == Jc1, since //pose/@relative_to defaults to J. -->
+
+    </model>
+```
+
+<img src="http://wiki.ros.org/urdf/XML/model?action=AttachFile&do=get&target=link.png"
+     alt="urdf coordinate frames"
+     height="500"/>
+
+The same URDF model can be expressed with identical kinematics with SDFormat
+by using link and joint names in the pose `@relative_to` attribute.
+
+```xml
+    <model name="model">
+
+      <link name="link1"/>
+
+      <joint name="joint1" type="revolute">
+        <pose relative_to="link1">{xyz_L1L2} {rpy_L1L2}</pose>
+        <parent>link1</parent>
+        <child>link2</child>
+      </joint>
+      <link name="link2">
+        <pose relative_to="joint1" />
+      </link>
+
+      <joint name="joint2" type="revolute">
+        <pose relative_to="link1">{xyz_L1L3} {rpy_L1L3}</pose>
+        <parent>link1</parent>
+        <child>link3</child>
+      </joint>
+      <link name="link3">
+        <pose relative_to="joint2" />
+      </link>
+
+      <joint name="joint3" type="revolute">
+        <pose relative_to="link3">{xyz_L3L4} {rpy_L3L4}</pose>
+        <parent>link3</parent>
+        <child>link4</child>
+      </joint>
+      <link name="link4">
+        <pose relative_to="joint3" />
+      </link>
+
+    </model>
+```
+
 ## Pose and frame
 
 The pose of a model represents the location and orientation of the model in
