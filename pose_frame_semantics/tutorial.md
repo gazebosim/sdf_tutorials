@@ -3,94 +3,94 @@
 This documentation explains the implemented changes proposed by
 [Pose Frame Semantics Proposal](http://sdformat.org/tutorials?tut=pose_frame_semantics_proposal) in SDFormat 1.7.
 
-## What's New In SDFormat 1.7
+## What's New In SDFormat 1.7 With Examples
+
+<img src="pendulum.png" alt="pendulum diagram" width="400"/>
+
+<img src="pendulum_demo.gif" alt="pendulum simulation" width="465"/>
 
 ### `//pose/@relative_to`
 
-[[file:../spec_model_kinematics/joint_frames.svg|600px]]
-
-An SDFormat representation of this model is given below.
-The pose of the parent link `P` is specified relative to the implicit
-model frame, while the pose of the other
-elements is specified relative to other named frames.
-This allows poses to be defined recursively, and also allows explicitly named
-frames `Jp` and `Jc` to be attached to the parent and child, respectively.
-For reference, equivalent expressions of `Jc` are defined as `Jc1` and `Jc2`.
-
-```
-    <model name="M">
-
-      <link name="P">
-        <pose relative_to="__model__">{X_MP}</pose>
-      </link>
-
-      <link name="C">
-        <pose relative_to="P">{X_PC}</pose>   <!-- Recursive pose definition. -->
-      </link>
-
-      <joint name="J" type="fixed">
-        <pose relative_to="P">{X_PJ}</pose>
-        <parent>P</parent>
-        <child>C</child>
-      </joint>
-
-      <frame name="Jp" attached_to="P">
-        <pose relative_to="J" />
-      </frame>
-
-      <frame name="Jc" attached_to="C">
-        <pose relative_to="J" />
-      </frame>
-
-      <frame name="Jc1" attached_to="J">   <!-- Jc1 == Jc, since J is attached to C -->
-        <pose relative_to="J" />
-      </frame>
-
-      <frame name="Jc2" attached_to="J" /> <!-- Jc2 == Jc1, since //pose/@relative_to defaults to J. -->
-
-    </model>
+```xml
+<sdf version="1.7">
+  <model name="pendulum_with_base">
+    <link name="base">
+      <pose>0 0 0.3   0 0 0</pose>
+    </link>
+    <link name="pendulum">
+      <pose relative_to="joint">
+        0 0 -0.5 0 0 0
+      </pose>
+    </link>
+    <joint name="joint" type="revolute">
+      <parent>base</parent>
+      <child>pendulum</child>
+      <pose relative_to="base">
+        0 0 0.73 1.57 0 0
+      </pose>
+      <axis>
+        <xyz>1 0 0</xyz>
+      </axis>
+    </joint>
+  </model>
+</sdf>
 ```
 
-<img src="http://wiki.ros.org/urdf/XML/model?action=AttachFile&do=get&target=link.png"
-     alt="urdf coordinate frames"
-     height="500"/>
-
-The same URDF model can be expressed with identical kinematics with SDFormat
-by using link and joint names in the pose `@relative_to` attribute.
+### `//frame/@attach_to`
 
 ```xml
-    <model name="model">
+<sdf version="1.7">
+  <model name="pendulum_with_base">
+    ...
+    <frame name="tip" attached_to="pendulum">
+      <pose>0 0 -0.5 -1.57079 0 0</pose>
+    </frame>
+    <link name="pendulum">
+      <visual name="tip_visual">
+        <pose relative_to="tip"/>
+        ...
+      </visual>
+    </link>
+  </model>
+</sdf>
+```
 
-      <link name="link1"/>
+### Canonical link
 
-      <joint name="joint1" type="revolute">
-        <pose relative_to="link1">{xyz_L1L2} {rpy_L1L2}</pose>
-        <parent>link1</parent>
-        <child>link2</child>
-      </joint>
-      <link name="link2">
-        <pose relative_to="joint1" />
-      </link>
+```xml
+<sdf version="1.7">
+  <model name="pendulum_with_base" canonical_link="base">
+    <link name="base">
+    ...
+    </link>
+  </model>
+</sdf>
+```
 
-      <joint name="joint2" type="revolute">
-        <pose relative_to="link1">{xyz_L1L3} {rpy_L1L3}</pose>
-        <parent>link1</parent>
-        <child>link3</child>
-      </joint>
-      <link name="link3">
-        <pose relative_to="joint2" />
-      </link>
+### Naming requirements for links, joints and frames
 
-      <joint name="joint3" type="revolute">
-        <pose relative_to="link3">{xyz_L3L4} {rpy_L3L4}</pose>
-        <parent>link3</parent>
-        <child>link4</child>
-      </joint>
-      <link name="link4">
-        <pose relative_to="joint3" />
-      </link>
+See [Name conflicts and scope](###name-conflicts-and-scope) and
+[Unique names and reserved names](##unique-names-and-reserved-names).
 
-    </model>
+### @expressed_in instead of `use_parent_model_frame`
+
+```xml
+<sdf version="1.7">
+  <model name="pendulum_with_base">
+    <link name="base">
+      ...
+    </link>
+    <link name="pendulum">
+      ...
+    </link>
+    <joint name="joint" type="revolute">
+      ...
+      <axis>
+        <xyz expressed_in="pendulum_with_base">1 0 0</xyz>
+      </axis>
+    </joint>
+  </model>
+</sdf>
 ```
 
 ## Pose and frame
