@@ -172,6 +172,15 @@ Empty `//frame` tag can be interpreted as having an identity pose relative to
 </frame>
 ```
 
+`//frame/@attach_to` implies a default value if `//frame/pose/@relative_to` is not explicitly defined, but when it is defined,
+`//frame/pose/@relative_to` does not have to be the same as `//frame@attach_to`, and can be any frame within the scope.
+
+```xml
+<frame name="F" attached_to="A" />
+  <pose relative_to="B" />
+</frame>
+```
+
 If `//frame/@attached_to` is specified, it needs to contain the name
 of an [explicit or implicit frame](##-Implicit-and-explicit-frames) in the current
 scope.  If a `//frame` is specified, recursively following the `@attached_to`
