@@ -217,7 +217,7 @@
         <tutorial>spec_shapes</tutorial>
         <tutorial>spec_materials</tutorial>
         <tutorial>spec_world</tutorial>
-        <tutorial>pose_frame_semantics</tutorial>
+        <tutorial>pose_frame_semantics_tutorial</tutorial>
         <tutorial>composition</tutorial>
       </tutorials>
     </category>
