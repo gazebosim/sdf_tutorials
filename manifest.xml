@@ -211,7 +211,7 @@
         [github.com/osrf/sdf_tutorials](https://github.com/osrf/sdf_tutorials).
       </description>
       <tutorials>
-        <tutorial>conventions</tutorial>
+        <tutorial>convention_tutorial</tutorial>
         <tutorial>specify_pose</tutorial>
         <tutorial>spec_model_kinematics</tutorial>
         <tutorial>spec_shapes</tutorial>
