@@ -490,7 +490,7 @@ Note: `libsdformat <= 9.2.x` does not support directly nested models.
 
 ### Nested canonical links
 
-Since the [implicit frame of a model](#Model-frame-and-canonical-link
+Since the [implicit frame of a model](#model-frame-and-canonical-link
 ) is determined by its canonical link, there are a couple scenarios in a nested model
 that could affect the designation of canonical link.
 
