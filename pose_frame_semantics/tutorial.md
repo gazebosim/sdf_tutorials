@@ -5,9 +5,9 @@ This documentation explains the implemented changes proposed by
 
 ## What's New In SDFormat 1.7 With Examples
 
-<img src="pendulum.png" alt="pendulum diagram" width="400"/>
+[[file:pendulum.png|400px]]
 
-<img src="pendulum_demo.gif" alt="pendulum simulation" width="465"/>
+[[file:pendulum_demo.gif|465px]]
 
 ### `//pose/@relative_to`
 
@@ -69,8 +69,8 @@ This documentation explains the implemented changes proposed by
 
 ### Naming requirements for links, joints and frames
 
-See [Name conflicts and scope](###name-conflicts-and-scope) and
-[Unique names and reserved names](##unique-names-and-reserved-names).
+See [Name conflicts and scope](#name-conflicts-and-scope) and
+[Unique names and reserved names](#unique-names-and-reserved-names).
 
 ### @expressed_in instead of `use_parent_model_frame`
 
@@ -116,7 +116,7 @@ In the example above, the model named `model_1` has initial position of
 `[0, 0, 1]` (x, y, z), and orientiation of `[0, 0, 0]` (roll, pitch, yaw).
 This model's pose is expressed in the coordinate frame named `frame_1`. This
 particular frame must be an explicit or implicit frame in the current scope.
-Explicit and implicit frames are explained in [Implicit and explicit frames](##-Implicit-and-explicit-frames) below.
+Explicit and implicit frames are explained in [Implicit and explicit frames](#implicit-and-explicit-frames) below.
 
 
 Empty `//pose` tags can be interpreted as equivalent to the identity pose.
@@ -182,7 +182,7 @@ Empty `//frame` tag can be interpreted as having an identity pose relative to
 ```
 
 If `//frame/@attached_to` is specified, it needs to contain the name
-of an [explicit or implicit frame](##-Implicit-and-explicit-frames) in the current
+of an [explicit or implicit frame](#implicit-and-explicit-frames) in the current
 scope.  If a `//frame` is specified, recursively following the `@attached_to`
 attributes of the specified frames must lead to the name of a link.
 <!-- TODO: add rules and examples about cycles in graph -->
@@ -490,7 +490,7 @@ Note: `libsdformat <= 9.2.x` does not support directly nested models.
 
 ### Nested canonical links
 
-Since the [implicit frame of a model](###-Model-frame-and-canonical-link
+Since the [implicit frame of a model](#model-frame-and-canonical-link
 ) is determined by its canonical link, there are a couple scenarios in a nested model
 that could affect the designation of canonical link.
 

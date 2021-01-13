@@ -76,12 +76,7 @@
       <skill>intermediate</skill>
     </tutorial>
 
-    <tutorial title="Pose frame semantics" ref='pose_frame_semantics_tutorial' type='documentation'>
-    <!--
-    Ideally, a (proposal, tutorial) pair would look like ({concept}_proposal, {concept}).
-    However,  that was not done initially, and we want to keep old links alive.
-    So we instead use ({concept}, {concept}_tutorial).
-    -->
+    <tutorial title="Pose frame semantics" ref='pose_frame_semantics' type='documentation'>
       <markdown version="1.5">pose_frame_semantics/tutorial_1-5.md</markdown>
       <markdown version="1.7">pose_frame_semantics/tutorial.md</markdown>
       <description>
@@ -110,8 +105,8 @@
       <skill>advanced</skill>
     </tutorial>
 
-    <tutorial title='Conventions' ref='convention_tutorial' type='documentation'>
-      <markdown version='1.7'>conventions/tutorial.md</markdown>
+    <tutorial title='Convention' ref='convention_tutorial' type='documentation'>
+      <markdown version='1.7'>convention/tutorial.md</markdown>
       <description>
           Describing syntax conventions used in newer tutorials and proposals.
       </description>
@@ -211,7 +206,7 @@
         [github.com/osrf/sdf_tutorials](https://github.com/osrf/sdf_tutorials).
       </description>
       <tutorials>
-        <tutorial>conventions</tutorial>
+        <tutorial>convention_tutorial</tutorial>
         <tutorial>specify_pose</tutorial>
         <tutorial>spec_model_kinematics</tutorial>
         <tutorial>spec_shapes</tutorial>
