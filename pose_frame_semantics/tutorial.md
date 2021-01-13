@@ -69,8 +69,8 @@ This documentation explains the implemented changes proposed by
 
 ### Naming requirements for links, joints and frames
 
-See [Name conflicts and scope](###name-conflicts-and-scope) and
-[Unique names and reserved names](##unique-names-and-reserved-names).
+See [Name conflicts and scope](#name-conflicts-and-scope) and
+[Unique names and reserved names](#unique-names-and-reserved-names).
 
 ### @expressed_in instead of `use_parent_model_frame`
 
