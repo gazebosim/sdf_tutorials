@@ -5,9 +5,9 @@ This documentation explains the implemented changes proposed by
 
 ## What's New In SDFormat 1.7 With Examples
 
-<img src="pendulum.png" alt="pendulum diagram" width="400"/>
+[[file:pendulum.png|400px]]
 
-<img src="pendulum_demo.gif" alt="pendulum simulation" width="465"/>
+[[file:pendulum_demo.gif|465px]]
 
 ### `//pose/@relative_to`
 
