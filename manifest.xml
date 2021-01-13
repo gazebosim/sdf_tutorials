@@ -82,7 +82,7 @@
     However,  that was not done initially, and we want to keep old links alive.
     So we instead use ({concept}, {concept}_tutorial).
     -->
-      <markdown version="1.5">pose_frame_semantics/tutorial_1-5.md</markdown>
+      <!-- <markdown version="1.5">pose_frame_semantics/tutorial_1-5.md</markdown> -->
       <markdown version="1.7">pose_frame_semantics/tutorial.md</markdown>
       <description>
         Describing existing behavior for element naming, definition of
@@ -110,8 +110,8 @@
       <skill>advanced</skill>
     </tutorial>
 
-    <tutorial title='Conventions' ref='convention_tutorial' type='documentation'>
-      <markdown version='1.7'>conventions/tutorial.md</markdown>
+    <tutorial title='Convention' ref='convention_tutorial' type='documentation'>
+      <markdown version='1.7'>convention/tutorial.md</markdown>
       <description>
           Describing syntax conventions used in newer tutorials and proposals.
       </description>
