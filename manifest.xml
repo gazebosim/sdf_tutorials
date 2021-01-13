@@ -83,22 +83,11 @@
     So we instead use ({concept}, {concept}_tutorial).
     -->
       <markdown version="1.5">pose_frame_semantics/tutorial_1-5.md</markdown>
+      <markdown version="1.7">pose_frame_semantics/tutorial.md</markdown>
       <description>
         Describing existing behavior for element naming, definition of
         coordinate frames, referencing parent and child links,
         and nested model behavior.
-      </description>
-      <tags>
-        <tag>pose</tag>
-        <tag>frame</tag>
-      </tags>
-      <skill>advanced</skill>
-    </tutorial>
-
-    <tutorial title="Pose frame semantics" ref='pose_frame_semantics_tutorial' type='documentation'>
-      <markdown version="1.7">pose_frame_semantics/tutorial.md</markdown>
-      <description>
-        Describing behavior for element pose and frames, naming, scope and nested model in SDFormat 1.7.
       </description>
       <tags>
         <tag>pose</tag>
