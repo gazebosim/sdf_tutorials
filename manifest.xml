@@ -76,12 +76,7 @@
       <skill>intermediate</skill>
     </tutorial>
 
-    <tutorial title="Pose frame semantics" ref='pose_frame_semantics_tutorial' type='documentation'>
-    <!--
-    Ideally, a (proposal, tutorial) pair would look like ({concept}_proposal, {concept}).
-    However,  that was not done initially, and we want to keep old links alive.
-    So we instead use ({concept}, {concept}_tutorial).
-    -->
+    <tutorial title="Pose frame semantics" ref='pose_frame_semantics' type='documentation'>
       <markdown version="1.5">pose_frame_semantics/tutorial_1-5.md</markdown>
       <markdown version="1.7">pose_frame_semantics/tutorial.md</markdown>
       <description>
@@ -217,7 +212,7 @@
         <tutorial>spec_shapes</tutorial>
         <tutorial>spec_materials</tutorial>
         <tutorial>spec_world</tutorial>
-        <tutorial>pose_frame_semantics_tutorial</tutorial>
+        <tutorial>pose_frame_semantics</tutorial>
         <tutorial>composition</tutorial>
       </tutorials>
     </category>
