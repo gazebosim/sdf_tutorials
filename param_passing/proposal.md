@@ -11,8 +11,7 @@ Addisu Taddese `<addisu@openrobotics.org>`
 
 **Purpose statement**
 
-This proposal suggests extending the composition behavior in SDFormat 1.7
-[including a model](
+This proposal suggests extending the [composition behavior in SDFormat 1.7](
   http://sdformat.org/tutorials?tut=composition#including-a-model)
 (i.e., using the `<include>` tag) to pass additional arguments to SDFormat files
 which will allow a user to send custom data into a model file and prevent model
@@ -63,6 +62,8 @@ Discussed in this section is the proposed design for specifying parameters and
 the actions available to the user. The intent is to provide a means of
 manipulating almost all parameters in SDF models through model/world files
 without requiring modifications to already existing/created models files.
+The new attributes `element_id` and `action` (detailed below) will be reserved
+from being used in other elements in SDFormat.
 
 ### 1. Add custom element `//include/experimental:params`
 
@@ -110,8 +111,8 @@ element without requiring the user to specify the tag, enforcing the user to
 provide the tag allows less ambiguity to the user as well as provides a means of
 error checking. Then the user will need to specify a corresponding action with
 that element to dictate the alteration they would like to make using a new
-attribute `action`. The attribute takes in a string and the available actions at
-the specified element are:
+attribute `action`. The attribute takes in a string and the available actions
+are:
 
 * `modify`: indicates that the values in the original model are to be modified
 to the new listed values
@@ -119,6 +120,9 @@ to the new listed values
 new provided elements and/or values
 * `add`: adds new elements to the original model
 * `remove`: removes (or disables) the elements from the original model
+
+The `action` attribute must be provided either in the element identifier or in
+the direct children of the identifier.
 
 ##### Alternatives considered
 
@@ -283,11 +287,22 @@ will be printed and the element will be skipped. The process of skipping
 elements will also occur when the user uses the `modify`, `replace`, and/or
 `remove` actions and the element is not found in the original model.
 
-Another example could be adding a plugin to a `//sensor` (which can not be done
-through model composition):
+## Ease of parameter modification
 
-```xml
-<sensor element_id="chassis::camera" action="add">
-  <plugin name="camera_depth_sensor" filename="libcamera_depth_sensor.so"/>
-</sensor>
-```
+This section discusses how this proposed functionality provides easier parameter
+modification instead of using only model composition.
+
+First, adding a `//plugin` to already existing elements (which can not be done
+using model composition) such as a `//link/sensor` or `//link/joint` can quickly
+be done using the `add` action.
+
+Also, adding elements including a `//sensor` to an existing element can easily
+be done using the `add` action. If done through model composition, then a dummy
+link and joint would need to be created to attach the `//sensor` to the desired
+element.
+
+Lastly, this provides a way to update values such as
+`//sensor/camera/update_rate` or `//sensor/camera/topic` using the action
+`modify` or `replace`. This can not be easily done with composition, if another
+value is desired for a particular model then a duplicate model containing the
+other value must be created.
