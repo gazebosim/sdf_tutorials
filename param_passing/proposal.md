@@ -133,7 +133,9 @@ itself separated by double colons) was to provide a way for the user to modify
 the original model without requiring large amounts of updates to the original
 file.
 
-## Example
+## Examples
+
+### Example 1
 
 Let's look at an example, here is an original model `base_robot`:
 
@@ -286,6 +288,38 @@ that the element does not already exist. If it does exist, then a warning/error
 will be printed and the element will be skipped. The process of skipping
 elements will also occur when the user uses the `modify`, `replace`, and/or
 `remove` actions and the element is not found in the original model.
+
+## Example 2
+
+If the original model instead contained:
+
+```xml
+...
+<link name="top">
+  <visual name="camera_visual">
+    ...
+    <geometry>
+      <sphere>
+        <radius>0.1</radius>
+      </sphere>
+    </geometry>
+  </visual>
+</link>
+...
+```
+
+And the user would like to modify the radius of the sphere in the `//visual`
+element. Then under `//experimental:params` the user would specify:
+
+```xml
+<visual name="top::camera_visual">
+  <geometry action="modify">
+    <sphere>
+       <radius>0.05</radius>
+    </sphere>
+  </geometry>
+</visual>
+```
 
 ## Ease of parameter modification
 
