@@ -3,6 +3,10 @@
 This documentation explains the implemented changes proposed by
 [Pose Frame Semantics Proposal](http://sdformat.org/tutorials?tut=pose_frame_semantics_proposal) in SDFormat 1.7.
 
+Prerequisites:
+- [Specifying Pose in SDFormat](http://sdformat.org/tutorials?tut=specify_pose&cat=specification&#specifying-pose-in-sdformat)
+- [Specifying model kinematics in SDFormat](http://sdformat.org/tutorials?tut=spec_model_kinematics&cat=specification&#specifying-model-kinematics-in-sdformat)
+
 ## What's New In SDFormat 1.7 With Examples
 
 [[file:pendulum.png|400px]]
@@ -10,6 +14,8 @@ This documentation explains the implemented changes proposed by
 [[file:pendulum_demo.gif|465px]]
 
 ### `//pose/@relative_to`
+
+A new `/@relative_to` attribute for `//pose` tags to specify the relative relation of the current pose to another entity pose.
 
 ```xml
 <sdf version="1.7">
@@ -38,6 +44,8 @@ This documentation explains the implemented changes proposed by
 
 ### `//frame/@attach_to`
 
+A new `/@attach_to` attribute for `//frame` tags to specify the parent frame of the current frame.
+
 ```xml
 <sdf version="1.7">
   <model name="pendulum_with_base">
@@ -57,6 +65,8 @@ This documentation explains the implemented changes proposed by
 
 ### Canonical link
 
+A new `/@canonical_link` attribute for `//model` tags to specify the canonical link of the model.
+
 ```xml
 <sdf version="1.7">
   <model name="pendulum_with_base" canonical_link="base">
@@ -69,10 +79,14 @@ This documentation explains the implemented changes proposed by
 
 ### Naming requirements for links, joints and frames
 
+New naming and scoping rules for links, joints, and frames; new unique names and reserved names in SDFormat 1.7.
+
 See [Name conflicts and scope](#name-conflicts-and-scope) and
 [Unique names and reserved names](#unique-names-and-reserved-names).
 
-### @expressed_in instead of `use_parent_model_frame`
+### `@expressed_in` instead of `use_parent_model_frame`
+
+Replacing `/@use_parent_model_frame` attribute with `/@expressed_in` attribute to specify the frame in which the pose is defined in. 
 
 ```xml
 <sdf version="1.7">
@@ -96,7 +110,7 @@ See [Name conflicts and scope](#name-conflicts-and-scope) and
 ## Pose and frame
 
 The pose of a model represents the location and orientation of the model in
-a three-dimensional space. See [Specifying Pose in Sdformat](http://sdformat.org/tutorials?tut=specify_pose&cat=specification&) for more detail.
+a three-dimensional space. See [Specifying Pose in SDFormat](http://sdformat.org/tutorials?tut=specify_pose&cat=specification&) for more detail.
 The coordinate frame of which the pose relative to is specified using `//pose/@relative_to`
 attribute.
 
