@@ -4,7 +4,9 @@ This documentation explains the implemented changes proposed by
 [Pose Frame Semantics Proposal](http://sdformat.org/tutorials?tut=pose_frame_semantics_proposal) in SDFormat 1.7.
 
 Prerequisites:
+
 - [Specifying Pose in SDFormat](http://sdformat.org/tutorials?tut=specify_pose&cat=specification&#specifying-pose-in-sdformat)
+
 - [Specifying model kinematics in SDFormat](http://sdformat.org/tutorials?tut=spec_model_kinematics&cat=specification&#specifying-model-kinematics-in-sdformat)
 
 ## What's New In SDFormat 1.7 With Examples
