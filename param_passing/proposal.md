@@ -14,8 +14,8 @@ Addisu Taddese `<addisu@openrobotics.org>`
 This proposal suggests extending the [composition behavior in SDFormat 1.7](
   http://sdformat.org/tutorials?tut=composition#including-a-model)
 (i.e., using the `<include>` tag) to pass additional arguments to SDFormat files
-which will allow a user to send custom data into a model file and prevent model
-file duplication.
+which will allow a user to send custom data into a model file and reduce model
+the need for file duplication.
 
 **Background**
 
@@ -61,7 +61,7 @@ which will contain `//include` tags and
 Discussed in this section is the proposed design for specifying parameters and
 the actions available to the user. The intent is to provide a means of
 manipulating almost all parameters in SDF models through model/world files
-without requiring modifications to already existing/created models files.
+without requiring modifications to already existing/created model files.
 The new attributes `element_id` and `action` (detailed below) will be reserved
 from being used in other elements in SDFormat.
 
@@ -88,8 +88,8 @@ removed.
 **Details**
 
 To specify an element from the original file, the tag (e.g., `//link`,
-`//sensor`, `//visual`) needs to be provided as well as the element_id attribute
-where the element_id is the name of all the parent elements leading to the
+`//sensor`, `//visual`) needs to be provided as well as the `element_id` attribute
+where the `element_id` is the name of all the parent elements leading to the
 specified element separated by double colons (`::`). For example, given:
 
 ```xml
@@ -164,8 +164,8 @@ Let's look at an example, here is an original model `base_robot`:
         </box>
       </geometry>
       <material>
-        <ambient>0.0 1.0 0.0 1</ambient>
-        <diffuse>0.0 1.0 0.0 1</diffuse>
+        <ambient>0.5 0.5 0 1</ambient>
+        <diffuse>0 1 0 1</diffuse>
         <specular>0.5 0.5 0.5 1</specular>
       </material>
     </visual>
@@ -194,9 +194,9 @@ and replace the top link's camera visual geometry.
         <visual element_id="chassis::lidar_visual" action="remove"/>
         <sensor element_id="chassis::lidar" action="remove"/>
 
-       <sensor element_id="chassis::camera" action="add">
+        <sensor element_id="chassis::camera" action="add">
           <plugin name="camera_depth_sensor" filename="libcamera_depth_sensor.so"/>
-       </sensor>
+        </sensor>
 
         <visual element_id="chassis::camera_visual" action="add">
           <pose>0.5 0.02 0 0 0</pose>
@@ -219,7 +219,7 @@ and replace the top link's camera visual geometry.
             </sphere>
           </geometry>
           <material action="modify">
-            <ambient>0.0 1.0 0.0 1</ambient>
+            <ambient>0 1 0 1</ambient>
           </material>
         </visual>
 
@@ -253,7 +253,7 @@ the action for each child element individually. For instance,
     </sphere>
   </geometry>
   <material action="modify">
-    <ambient>0.0 1.0 0.0 1</ambient>
+    <ambient>0 1 0 1</ambient>
   </material>
 </visual>
 ```
@@ -288,6 +288,52 @@ that the element does not already exist. If it does exist, then a warning/error
 will be printed and the element will be skipped. The process of skipping
 elements will also occur when the user uses the `modify`, `replace`, and/or
 `remove` actions and the element is not found in the original model.
+
+**Expected output**
+
+Below shows what the example's output should be after parsing
+`//experimental:params`:
+
+```xml
+<model name="base_robot">
+  ...
+  <link name="chassis">
+    <sensor name="camera">
+      <pose>0.5 0.02 0 0 0</pose>
+      <plugin name="camera_depth_sensor" filename="libcamera_depth_sensor.so"/>
+      ...
+    </sensor>
+    <visual name="camera_visual">
+      <pose>0.5 0.02 0 0 0</pose>
+      <geometry>
+        <box>
+          <size>0.02 0.02 0.02</size>
+        </box>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="top">
+    <visual name="camera_visual">
+      ...
+      <geometry>
+        <sphere>
+          <radius>0.05</radius>
+        </sphere>
+      </geometry>
+      <material>
+        <ambient>0 1 0 1</ambient>
+        <diffuse>0 1 0 1</diffuse>
+        <specular>0.5 0.5 0.5 1</specular>
+      </material>
+    </visual>
+    <sensor name="camera">
+      <pose>0 1 0 0 0 0</pose>
+      <update_rate>60</update_rate>
+      ...
+    </sensor>
+  </link>
+```
 
 ## Example 2
 
