@@ -14,8 +14,8 @@ Addisu Taddese `<addisu@openrobotics.org>`
 This proposal suggests extending the [composition behavior in SDFormat 1.7](
   http://sdformat.org/tutorials?tut=composition#including-a-model)
 (i.e., using the `<include>` tag) to pass additional arguments to SDFormat files
-which will allow a user to send custom data into a model file and reduce model
-the need for file duplication.
+which will allow a user to send custom data into a model file and reduce the
+need for model file duplication.
 
 **Background**
 
