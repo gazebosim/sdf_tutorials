@@ -77,7 +77,8 @@
     </tutorial>
 
     <tutorial title="Pose frame semantics" ref='pose_frame_semantics' type='documentation'>
-      <markdown version="1.5">pose_frame_semantics/tutorial.md</markdown>
+      <markdown version="1.5">pose_frame_semantics/tutorial_1-5.md</markdown>
+      <markdown version="1.7">pose_frame_semantics/tutorial.md</markdown>
       <description>
         Describing existing behavior for element naming, definition of
         coordinate frames, referencing parent and child links,
@@ -90,7 +91,7 @@
       <skill>advanced</skill>
     </tutorial>
 
-    <tutorial title="Pose frame semantics: proposed behavior" ref='pose_frame_semantics_proposal' type='proposal'>
+    <tutorial title="Pose frame semantics" ref='pose_frame_semantics_proposal' type='documentation'>
       <markdown version="1.7">pose_frame_semantics/proposal.md</markdown>
       <description>
         Proposing new behavior for SDFormat 1.7, including semantics for the
@@ -102,6 +103,18 @@
         <tag>frame</tag>
       </tags>
       <skill>advanced</skill>
+    </tutorial>
+
+    <tutorial title='Convention' ref='convention_tutorial' type='documentation'>
+      <markdown version='1.7'>convention/tutorial.md</markdown>
+      <description>
+          Describing syntax conventions used in newer tutorials and proposals.
+      </description>
+      <tags>
+        <tag>nesting</tag>
+        <tag>conventions</tag>
+      </tags>
+      <skill>intermediate</skill>
     </tutorial>
 
     <tutorial title="Custom elements and attributes" ref='custom_elements_attributes_proposal' type='proposal'>
@@ -193,6 +206,7 @@
         [github.com/osrf/sdf_tutorials](https://github.com/osrf/sdf_tutorials).
       </description>
       <tutorials>
+        <tutorial>convention_tutorial</tutorial>
         <tutorial>specify_pose</tutorial>
         <tutorial>spec_model_kinematics</tutorial>
         <tutorial>spec_shapes</tutorial>
