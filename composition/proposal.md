@@ -652,9 +652,9 @@ of `libsdformat` 9.2):
 should be (naively) up-converted to:
 
 ~~~xml
-<sdf version="1.7">
+<sdf version="1.8">
   <model name="ParentModel">
-    <model name="ChildModel">
+    <model name="ChildModel" canonical_link="L1">
       <pose>1 0 1 0 0 0</pose>
       <link name="L1">
         <pose>0 1 0 0 0 0</pose>
@@ -714,9 +714,10 @@ not there are directly nested models in the model, and the unflattening may
 handle "partially" flattened models.
 * Nested models with an explicitly specified `__model__` frame (e.g.
 `ChildModel::__model__`) will have this frame removed, and this will be
-converted to the appropriate `//model/pose`. If `@attached_to` is specified to
-something other than this nested model's first link, then
-`//model/@canonical_link` will also be updated.
+converted to the appropriate `//model/pose`. `//model/@canonical_link` will
+always be specified, whether or not `@attached_to` corresponds to the default
+canonical link.
+
   * Any poses within this model will be expected to either refer to this model
   frame, or any frame contained by this model, s.t. no numerical computation
   needs to take place.
