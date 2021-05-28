@@ -196,7 +196,7 @@ and replace the top link's camera visual geometry.
         <plugin element_id="chassis::camera" action="add"
                 name="camera_depth_sensor" filename="libcamera_depth_sensor.so"/>
 
-        <visual element_id="chassis::camera_visual" action="add">
+        <visual element_id="chassis" name="camera_visual" action="add">
           <pose>0.5 0.02 0 0 0</pose>
           <geometry>
               <box>
@@ -219,6 +219,7 @@ and replace the top link's camera visual geometry.
           <material action="modify">
             <ambient>0 1 0 1</ambient>
           </material>
+          <transparency action="add">0.5</transparency>
         </visual>
 
       </experimental:params>
@@ -253,6 +254,7 @@ the action for each child element individually. For instance,
   <material action="modify">
     <ambient>0 1 0 1</ambient>
   </material>
+  <transparency action="add">0.5</transparency>
 </visual>
 ```
 
@@ -270,7 +272,7 @@ When a user wants to `add` an element that does not exist in the original model,
 then the `add` action can be used similarly as follows:
 
 ```xml
-<visual element_id="chassis::camera_visual" action="add">
+<visual element_id="chassis" name="camera_visual" action="add">
   <pose>0.5 0.02 0 0 0</pose>
   <geometry>
       <box>
@@ -280,10 +282,12 @@ then the `add` action can be used similarly as follows:
 </visual>
 ```
 
-In this example, the `//visual` element named `camera_visual` will be added as a
-child of `//link[@element_id=’chassis’]`. A check will be performed to ensure
-that the element does not already exist. If it does exist, then a warning/error
-will be printed and the element will be skipped. The process of skipping
+In this example, the `//visual[@name='camera_visual']` element will be added as a
+child of `//link[@element_id='chassis']`.
+When the `action='add'` is specified where `element_id` is, then the `name` attribute is required.
+A check will be performed to ensure that the element does not already exist.
+If it does exist, then a warning/error will be printed and the element will be skipped.
+The process of skipping
 elements will also occur when the user uses the `modify`, `replace`, and/or
 `remove` actions and the element is not found in the original model.
 
@@ -324,6 +328,7 @@ Below shows what the example's output should be after parsing
         <diffuse>0 1 0 1</diffuse>
         <specular>0.5 0.5 0.5 1</specular>
       </material>
+      <transparency>0.5</transparency>
     </visual>
     <sensor name="camera">
       <pose>0 1 0 0 0 0</pose>
