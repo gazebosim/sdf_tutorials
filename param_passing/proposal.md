@@ -78,7 +78,7 @@ custom element and its contents. The goal is to implement passing additional
 arguments in `//include` through an experimental custom element in
 SDFormat 1.7 / `libsdformat` 10 then after being vetted it will be made official
 in a future SDFormat / `libsdformat` release where the custom element will be
-changed to `//include/params`.The included model (not the constructed model in
+changed to `//include/params`. The included model (not the constructed model in
 the model/world file) will be referred to as the original model/file.
 In the model/world file and under `//include`, the elements listed under
 `//include/experimental:params` will indicate elements from the original model
@@ -114,12 +114,11 @@ that element to dictate the alteration they would like to make using a new
 attribute `action`. The attribute takes in a string and the available actions
 are:
 
-* `modify`: indicates that the values in the original model are to be modified
-to the new listed values
-* `replace`: replaces the elements and/or values from the original model to the
-new provided elements and/or values
 * `add`: adds new elements to the original model
-* `remove`: removes (or disables) the elements from the original model
+* `modify`: modifies values and/or attributes of elements.
+This only updates existing elements and does not add or remove them.
+* `remove`: removes the elements from the original model
+* `replace`: replaces the elements from the original model to the new provided elements
 
 The `action` attribute must be provided either in the element identifier or in
 the direct children of the identifier.
@@ -194,9 +193,8 @@ and replace the top link's camera visual geometry.
         <visual element_id="chassis::lidar_visual" action="remove"/>
         <sensor element_id="chassis::lidar" action="remove"/>
 
-        <sensor element_id="chassis::camera" action="add">
-          <plugin name="camera_depth_sensor" filename="libcamera_depth_sensor.so"/>
-        </sensor>
+        <plugin element_id="chassis::camera" action="add"
+                name="camera_depth_sensor" filename="libcamera_depth_sensor.so"/>
 
         <visual element_id="chassis::camera_visual" action="add">
           <pose>0.5 0.02 0 0 0</pose>
@@ -282,7 +280,7 @@ then the `add` action can be used similarly as follows:
 </visual>
 ```
 
-In this example, the `//visual` element named "camera_visual" will be added as a
+In this example, the `//visual` element named `camera_visual` will be added as a
 child of `//link[@element_id=’chassis’]`. A check will be performed to ensure
 that the element does not already exist. If it does exist, then a warning/error
 will be printed and the element will be skipped. The process of skipping
@@ -342,6 +340,18 @@ If the original model instead contained:
 ```xml
 ...
 <link name="top">
+  <pose relative_to="some_frame">1 0 0 0 0 0</pose>
+  <inertial>
+    <mass>1.14395</mass>
+    <inertia>
+      <ixx>0.126164</ixx>
+      <ixy>0</ixy>
+      <ixz>0</ixz>
+      <iyy>0.416519</iyy>
+      <iyz>0</iyz>
+      <izz>0.481014</izz>
+    </inertia>
+  </inertial>
   <visual name="camera_visual">
     ...
     <geometry>
@@ -366,6 +376,68 @@ element. Then under `//experimental:params` the user would specify:
   </geometry>
 </visual>
 ```
+
+To modify the attribute of the `//pose` and values under the `//inertial`
+element the user would specify under `//experimental:params`:
+
+```xml
+<link element_id="top" action="modify">
+  <pose relative_to="new_frame">1 0 0 0 0 0</pose>
+  <inertial>
+    <mass>2.637</mass>
+    <inertia>
+      <ixx>0.02467</ixx>
+      <iyy>0.04411</iyy>
+      <izz>0.02467</izz>
+    </inertia>
+  </inertial>
+</link>
+```
+
+The expected output after parsing would be:
+
+```xml
+...
+<link name="top">
+  <pose relative_to="new_frame">1 0 0 0 0 0</pose>
+  <inertial>
+    <mass>2.637</mass>
+    <inertia>
+      <ixx>0.02467</ixx>
+      <ixy>0</ixy>
+      <ixz>0</ixz>
+      <iyy>0.04411</iyy>
+      <iyz>0</iyz>
+      <izz>0.02467</izz>
+    </inertia>
+  </inertial>
+  <visual name="camera_visual">
+    ...
+    <geometry>
+      <sphere>
+        <radius>0.05</radius>
+      </sphere>
+    </geometry>
+  </visual>
+</link>
+...
+```
+
+When the user wants to modify an attribute, the attribute must be specified as well as
+the values regardless if they are being changed or not. If there is no desire to
+modify the attribute, then not listing the attribute will keep the original value
+(similar to not listing elements).
+For example, if `//pose` was listed in `//experimental:params` as:
+
+```xml
+<link element_id="top" action="modify">
+  <pose>0 0 0 0 0 3.14</pose>
+  ...
+</link>
+```
+
+Then the expected output for `//pose` would be:
+`<pose relative_to="some_frame">0 0 0 0 0 3.14</pose>`
 
 ## Ease of parameter modification
 
