@@ -104,6 +104,138 @@ This adds the `//frame[@name="some_frame"]` to the included `//model`
 
 ---
 
+### Modify action
+
+The `modify` action provides the ability to modify values and/or attributes of elements.
+This action only updates existing elements and does not add or remove them.
+It can update or add attributes to existing elements but can not remove them.
+
+To `modify` elements and/or attributes, the full element path to that element is needed with the new value(s).
+For example, if the original model has a `//visual[@name="visual"]/geometry/sphere[radius=0.5]`
+and modifying the `//radius` is desired, then under `//experimental:params`:
+
+```xml
+<visual element_id="path::to::visual" action="modify">
+  <geometry>
+    <sphere>
+      <radius custom:attr="foo">1.0</radius>
+    </sphere>
+  </geometry>
+</visual>
+```
+
+This modifies the original `//radius` from 0.5 to be 1.0 and adds a new attribute to the element.
+If the original `//visual` has other children elements,
+these elements are left unchanged since they are not provided under `//experimental:params`.
+
+To modify an attribute, the attribute must be specified in the desired element
+and if the element has a value (not children elements) then the value must be provided as well
+even if it is desired to leave the value unchanged (see `modify` example 2).
+If the element does have child elements then only providing the attribute is needed (see example 1).
+If no attributes are provided, the original attributes will be left unchanged.
+Although, it is not possible to remove an attribute, a work around is to assign
+the attribute an empty value (e.g., `//pose[@relative_to=""]`).
+The `@name` attribute can only be modified when the `modify` action is defined in the `@element_id` element.
+
+#### Modify examples
+
+**Example 1**
+
+To `modify` a name attribute only, in this case the original model has `//visual[@name="visual"]`:
+
+```xml
+<!-- //experimental:params -->
+<visual element_id="path::to::visual" name="new_name" action="modify"/>
+```
+
+this only modifies the `@name` of the `//visual` to be `new_name`.
+There are no other listed attributes or child elements so nothing else is changed.
+
+To `modify` child elements and not the name attribute provide
+the full path to the element to be modified with the updated value:
+
+```xml
+<!-- //experimental:params -->
+<visual element_id="path::to::visual" action="modify">
+  <geometry>
+    <sphere>
+      <radius>1.0</radius>
+    </sphere>
+  </geometry>
+</visual>
+```
+
+**Example 2**
+
+Looking at an `//inertial` example, if the original model has:
+
+```xml
+<!-- included model -->
+...
+<link name="chassis">
+  <pose relative_to="some_frame">1 0 0 0 0 0</pose>
+  <inertial>
+    <mass>1.14395</mass>
+    <inertia>
+      <ixx>0.126164</ixx>
+      <ixy>0</ixy>
+      <ixz>0</ixz>
+      <iyy>0.416519</iyy>
+      <iyz>0</iyz>
+      <izz>0.481014</izz>
+    </inertia>
+  </inertial>
+  ...
+</link>
+...
+```
+
+To `modify` the `@relative_to`, `//mass`, and some `//inertia` elements:
+
+```xml
+<!-- //experimental:params -->
+<link element_id="path::to::chassis" action="modify">
+  <pose relative_to="new_frame">1 0 0 0 0 0</pose>
+  <inertial>
+    <mass>2.637</mass>
+    <inertia>
+      <ixx>0.02467</ixx>
+      <iyy>0.04411</iyy>
+      <izz>0.02467</izz>
+    </inertia>
+  </inertial>
+</link>
+```
+
+Note that `//pose` values are the same values as the original.
+Currently, there is no way to specify if element values should remain the same
+so they must be provided (this can only be done with attributes by not providing them).
+
+The expected updated model would be:
+
+```xml
+<!-- updated included model -->
+...
+<link name="chassis">
+  <pose relative_to="new_frame">1 0 0 0 0 0</pose>
+  <inertial>
+    <mass>2.637</mass>
+    <inertia>
+      <ixx>0.02467</ixx>
+      <ixy>0</ixy>
+      <ixz>0</ixz>
+      <iyy>0.04411</iyy>
+      <iyz>0</iyz>
+      <izz>0.02467</izz>
+    </inertia>
+  </inertial>
+  ...
+</link>
+...
+```
+
+---
+
 ### Remove action
 
 The `remove` action removes elements from the original model.
@@ -129,7 +261,7 @@ See below `remove` examples for more details.
 **Example 1**
 
 Given the original model has a `//link[@name="chassis"]/visual[@name="camera_visual"]`,
-to remove the `//visual[@name="camera_visual"]` element:
+to `remove` the `//visual[@name="camera_visual"]` element:
 
 ```xml
 <!-- //experimental:params -->
@@ -200,7 +332,7 @@ For example, if the original model has:
 
 ```xml
 <!-- included model -->
-<joint name='joint' type='revolute'>
+<joint name="joint" type="revolute">
   ...
   <axis>
     ...
@@ -213,4 +345,101 @@ For example, if the original model has:
 ```
 
 `//damping` can not be removed using the `remove` action, only `//dynamics` can be.
-use the `replace` action to replace `//dynamics` with the desired instead.
+Use the `replace` action to replace `//dynamics` with the desired instead
+(see `replace` action example 2).
+
+---
+
+### Replace action
+
+The `replace` action replaces elements from the original model to the new provided elements.
+
+Elements can only be replaced with the same type of elements
+(e.g., a `//link` can not be replaced by a `//visual`).
+When using the `replace` action where `@element_id` is declared,
+then the element requires a `@name` attribute (even if the old name is being used)
+since we are replacing the original element with the newly provided.
+Similar to `remove`, if `replace` is stated in the direct children of the
+`@element_id` element then the `@name` attribute is used to find the child of `@element_id`.
+If none is provided, the first matching element (with the same tag) is assumed to be replaced.
+Replacing `@name` with a new `@name` can only be done when the `replace` action
+is defined in the `@element_id` element.
+
+#### Replace examples
+
+**Example 1**
+
+Given the original model has a `//link[@name="chassis"]/visual[@name="camera_visual"]`,
+to `replace` the `//visual[@name="camera_visual"]` element:
+
+```xml
+<!-- //experimental:params -->
+<visual element_id="chassis::camera_visual" name="camera_visual" action="replace">
+  ...
+</visual>
+```
+
+This replaces the original element with the provided element above
+but notice the `@name` attribute will remain the same.
+
+The following example is equivalent but is not recommended:
+
+```xml
+<!-- //experimental:params -->
+<link element_id="chassis">
+  <visual name="camera_visual" action="replace">
+    ...
+  </visual>
+</link>
+```
+
+In this situation, stating `@name` is not required but is encouraged
+since there could exist multiple `//visual` elements in the original.
+When there are multiple, the first found `//visual` element found is assumed to be replaced.
+Also, in this case, the `@name` can not be changed.
+To `replace` the element with a new name:
+
+```xml
+<!-- //experimental:params -->
+<visual element_id="chassis::camera_visual" name="new_name" action="replace">
+  ...
+</visual>
+```
+
+**Example 2**
+
+For replacing elements that do not have the `@name` attribute
+(e.g., `//material`, `//inertial`, or `//axis`),
+specify the `@action` in the direct children of the `@element_id` element.
+
+For example, if the original model has:
+
+```xml
+<!-- included model -->
+<joint name="joint" type="revolute">
+  ...
+  <axis>
+    ...
+    <dynamics>
+      ...
+      <damping>0.2</damping>
+    </dynamics>
+  </axis>
+</joint>
+```
+
+to `replace` `//axis`:
+
+```xml
+<!-- //experimental:params -->
+<joint element_id="path::to::joint">
+  ...
+  <axis action="replace">
+    ...
+    <dynamics>
+      ...
+      <damping>0</damping>
+    </dynamics>
+  </axis>
+</joint>
+```
