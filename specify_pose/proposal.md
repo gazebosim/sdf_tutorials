@@ -331,6 +331,17 @@ The conversion command-line tool should also provide an option to use
 `rpy_degrees`, with a precision amount for round-off to degrees by values of 5
 (e.g. 0, 5, ..., 45, ..., 90 degrees).
 
+#### 1.3 Emitting SDFormat Models
+
+The following changes are necessary when emitting SDFormat files:
+
+- The user should be able to control the output rotation type. For backwards
+  compatibility, it will be `rpy_radians` by default.
+- There should be an admission for "snapping to" well known values in either
+  representation, within a given angular tolerance (degrees). This can help
+  converting exisitng models to more readable units, and possibly with better
+  intended accuracy.
+
 ## Examples
 
 TBD
@@ -339,6 +350,16 @@ TBD
 
 The following is a brief survey on how a few other formats specify poses /
 transforms.
+
+### ROS
+
+ROS provided suggestions for representing rotations / orientations: <br/>
+[REP 0103](https://www.ros.org/reps/rep-0103.html)
+
+<!--
+TODO(eric.cousineau): It's unclear how this did or didn't influence URDF and
+SDFormat development. We should rfind out and document here.
+-->
 
 ### URDF
 
