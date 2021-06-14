@@ -187,7 +187,7 @@ the name of the nested model followed by `::` is prepended to the names of
 these links and joints. The following example shows how this works. Consider
 the following model named `ChildModel` and its parent model `ParentModel`:
 
-```xml
+```
 <model name="ChildModel">
   <link name="L1">
     <pose>0 1 0 0 0 0</pose>
@@ -200,14 +200,14 @@ the following model named `ChildModel` and its parent model `ParentModel`:
     </visual>
   </link>
   <link name="L2"/>
-  <joint name="J1" type="revolute">
+  <joint name="J1">
     <parent>L1</parent>
     <child>L2</child>
   </joint>
 </model>
 ```
 
-```xml
+```
 <model name="ParentModel">
   <include>
     <uri>/path/to/ChildModel</uri>
@@ -216,17 +216,13 @@ the following model named `ChildModel` and its parent model `ParentModel`:
 </model>
 ```
 
-The result of processing `ParentModel` results in the following model (as of
-`libsdformat 9.2`):
+The result of processing `ParentModel` results in the following model
 
-```xml
+```
 <model name="ParentModel">
-  <frame name="ChildModel::__model__" attached_to="ChildModel::L1">
-    <pose relative_to="__model__">1 0 1 0 0 0</pose>
-  </frame>
   <link name="ChildModel::L1">
-    <pose relative_to="ChildModel::__model__">0 1 0 0 0 0</pose>
-    <visual name="v1">
+    <pose>1 1 1 0 0 0</pose> <!-- Note the modified pose -->
+    <visual name="v1"> <!-- Names of child elements of link are not modified -->
       <geometry>
         <sphere>
           <radius>0.1</radius>
@@ -234,10 +230,8 @@ The result of processing `ParentModel` results in the following model (as of
       </geometry>
     </visual>
   </link>
-  <link name="ChildModel::L2">
-    <pose relative_to="ChildModel::__model__">0 0 0 0 0 0</pose>
-  </link>
-  <joint name="ChildModel::J1" type="revolute">
+  <link name="ChildModel::L2"/>
+  <joint name="ChildModel::J1">
     <parent>ChildModel::L1</parent>
     <child>ChildModel::L2</child>
   </joint>
@@ -249,8 +243,6 @@ the `xyz` vector of joint axes in
 nested models is always interpreted to be expressed in the model frame
 regardless of the value of the `<use_parent_model_frame>` element.
 
-> **Note**: Before `libsdformat 9.2`, the flattened model had poses merged
-together and did not leverage the nested model's frame.
 
 ## Characteristics of nested models 
 
