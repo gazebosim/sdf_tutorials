@@ -17,15 +17,16 @@ Currently, the text within `//pose` consists of a 6-tuple representing
 `{xyz} {rpy}`, where `{xyz}` is a 3-tuple representing translation (in meters)
 and `{rpy}` is a 3-tuple representing rotation (in radians).
 
-When writing models, there are two drawbacks to this representation: (1) it is
-sometimes hard to visually separate translation from rotation and (2)
-specifying rotation in radians adds overhead when hand-crafting models because
-the author must specify common degree values (e.g. 30, 45, 60, 90 degrees) in
-radians, and authors may use different precisions in different circumstances.
+When writing models, there are two drawbacks to this representation:
+(1) specifying rotation in radians adds overhead when hand-crafting models
+because the author must specify common degree values (e.g. 30, 45, 60, 90
+degrees) in radians, and authors may use different precisions in different
+circumstances, and, at a lower priority, (2) it is
+sometimes hard to visually separate translation from rotation.
 
-This proposal intends to resolve on point (1) by structuring the pose as
-`//pose/translation` and `//pose/rotation`, and point (2) by adding
-`//pose/rotation/@type` where degrees can be specified.
+This proposal intends to resolve on point (1) by adding `//pose/rotation/@type`
+where degrees can be specified, and *could* address point by structuring the
+element differently (see below).
 
 ## Document summary
 
@@ -41,7 +42,9 @@ This proposal suggests that the following fixed pose representation:
 <pose>{xyz} {rpy_radians}</pose>
 ```
 
-should now allow the following values:
+should be *either* one of the following formats:
+
+### Option A: Child Elements
 
 ```xml
 <pose>{xyz} {rpy_radians}</pose>  <!-- Old format; deprecated. -->
@@ -60,6 +63,19 @@ should now allow the following values:
     <translation>{xyz}</translation>
     <rotation type="rpy_radians">{rpy_radians}</rotation>  <!-- This is not recommended. -->
 </pose>
+```
+
+*or*:
+
+### Option B: Rotation Type Attribute
+
+```xml
+<pose>{xyz}  {rpy_radians}</pose>
+<pose rotation_type="rpy_radians">{xyz}  {rpy_radians}</pose>
+<pose rotation_type="rpy_degrees">{xyz}  {rpy_degrees}</pose>
+
+<!-- Not yet confirmed -->
+<pose rotation_type="q_wxyz">{xyz}  {q_wxyz}</pose>
 ```
 
 ## Motivation
@@ -92,17 +108,24 @@ excluded due to how long the expression is overall.
 *solely* to convert from degrees to radians, rather than more relevant things
 like computing incremental changes in orientation.
 
-While some of these items could be changed with linting (e.g. a `//pose` should
-either be all on one line, with 2 or 3 spaces between translation and rotation)
-or comments (e.g. `<!-- This means X in degrees -->`), a specification should
-try to handle this naturally.
+For units for radians, comments *could* be used to help (e.g.
+`<!-- This means X in degrees -->`), but ideally, the specification handles
+this in an active and self-documenting way.
+
+For Option A, the specification can handle the separation between translation
+and rotation as separate elements.
+
+For Option B, `libsdformat` and SDFormat tutorials should encourage additionaly
+whitespace, e.g. to separate translation and rotation, use 3 spaces (instead of
+1) as a delimiter between values if they fit on one line, or use a newline
+(possibly with hanging indents) if they do not fit on one line.
 
 To help inform this proposal, the authors conducted a brief survey. See the
 [Survey](#survey) section below for more information.
 
 ## Proposed changes
 
-### 1. `//pose/translation` and `//pose/rotation`
+### 1.A. `//pose/translation` and `//pose/rotation`
 
 The value of `//pose` could now be specified as `//pose/translation` and
 `//pose/rotation`, and the representation for the rotation will be specified
@@ -119,19 +142,26 @@ empty), then those values will default to `0 0 0`.
 * There will be backwards compatibility for the old form of expressing
 `//pose`. See section below for more details.
 
-**Alternatives Considered**
+#### 1.B. `//pose/@rotation_type`
 
-*Use `//pose/@rotation_type` or `//pose/@orientation_type`*
+*Use `//pose/@rotation_type`*
 
 This will help descrease the verbosity; however, it will still make the visual
 separation between translation and rotation harder to distinguish.
 
 This would be a bit "more" backwards-compatible in terms of looking more
-similar, but will still not be strictly backwards-compatible.
+similar, and general "backwards-compatibility" will be much easier to implement
+(in `libsdformat` and other implementations).
 
 For separating the tuples, it may be possible to achieve this by making a
 suggested style to insert more whitespace (newlines or additional spaces), and
-reflect this style when outputting XML.
+reflect this style when outputting XML (as mentioned above).
+
+**Other Alternatives Considered**
+
+*Use `@orientation_type` instead of `@rotation_type`*
+
+More verbosity, a bit harder to type.
 
 *As Attributes*
 
@@ -154,9 +184,9 @@ It's unclear which one may be better. In ROS, `rotation` is used for a
 transform, while `orientation` is used for a pose. However, they both appear
 equivalent.
 
-#### 1.1 `//pose/rotation/@type`
+#### 1.1 (A) Values for `//pose/rotation/@type` or (B) (`@rotation_type`)
 
-The values of `@type` that are permitted:
+The values of `@type` (or `@rotation_type`) that are permitted:
 
 * `rpy_degrees` - A 3-tuple representing Roll-Pitch-Yaw in degrees, which maps
 to a rotation as specified here.
@@ -276,7 +306,7 @@ changes happen to their data (e.g. normalization), so they should generally
 know where changes in precision may happen.
 
 When converting to roll-pitch-yaw coordiantes, we should try to specify the
-*exact* math being done. (e.g. a cross-reference to `Quatnerion::Euler()`
+*exact* math being done. (e.g. a cross-reference to `Quaternion::Euler()`
 accessor and mutator, but with the algorithm actually described in
 documentation).
 
@@ -289,6 +319,8 @@ in code, the order of operations, etc.).
 
 The existing usage of `//pose` will remain for SDFormat 1.8, but will be
 deprecated and removed in SDFormat 1.9.
+
+This is only valid for Option B.
 
 #### 1.2.1 Conversion to SDFormat 1.8
 
