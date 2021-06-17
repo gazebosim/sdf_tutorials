@@ -3,8 +3,8 @@
 * **Authors**:
 Eric Cousineau `<eric.cousineau@tri.global>`,
 * **Status**: Draft
-* **SDFormat Version**: 1.8
-* **`libsdformat` Version**: 11
+* **SDFormat Version**: 1.9
+* **`libsdformat` Version**: 12
 
 ## Introduction
 
@@ -115,7 +115,7 @@ this in an active and self-documenting way.
 For Option A, the specification can handle the separation between translation
 and rotation as separate elements.
 
-For Option B, `libsdformat` and SDFormat tutorials should encourage additionaly
+For Option B, `libsdformat` and SDFormat tutorials should encourage additional
 whitespace, e.g. to separate translation and rotation, use 3 spaces (instead of
 1) as a delimiter between values if they fit on one line, or use a newline
 (possibly with hanging indents) if they do not fit on one line.
@@ -146,7 +146,7 @@ empty), then those values will default to `0 0 0`.
 
 *Use `//pose/@rotation_type`*
 
-This will help descrease the verbosity; however, it will still make the visual
+This will help decrease the verbosity; however, it will still make the visual
 separation between translation and rotation harder to distinguish.
 
 This would be a bit "more" backwards-compatible in terms of looking more
@@ -192,7 +192,7 @@ The values of `@type` (or `@rotation_type`) that are permitted:
 to a rotation as specified here.
     * This should be used when the rotation should generally be human-readable.
 * `rpy_radians` - Same as `rpy_degrees`, but with radians as the units for each
-angel. This is provided for legacy purposes and ease of conversion.
+angle. This is provided for legacy purposes and ease of conversion.
     * It is not suggested to use this for a text-storage format.
     * Same precision as suggested below for quaternions: Use 17 digits of
     precision, and consider separating each value on a new line.
@@ -256,7 +256,7 @@ $ cat ./share/doc/drake/VERSION.TXT
     for x in q_wxyz: print(f"{x:.17g}")
 -->
 
-**Alternatives Considred**
+**Alternatives Considered**
 
 *Use `@representation` instead of `@type`*
 
@@ -315,16 +315,9 @@ what math is done, and how much precision should be expected to be lost by
 `libsdformat` during the conversion (e.g. the exact representation of `pi` used
 in code, the order of operations, etc.).
 
-#### 1.2 Deprecate old `//pose` representation
+#### 1.2 Conversion to SDFormat 1.9
 
-The existing usage of `//pose` will remain for SDFormat 1.8, but will be
-deprecated and removed in SDFormat 1.9.
-
-This is only valid for Option B.
-
-#### 1.2.1 Conversion to SDFormat 1.8
-
-When SDFormat files are converted from SDFormat <=1.7 to 1.8, the `//pose` tags
+When SDFormat files are converted from SDFormat <=1.8 to 1.9, the `//pose` tags
 will be adjusted to use `//pose/translation` and `//pose/rotation[@type="rpy_radians"]`.
 
 The conversion command-line tool should also provide an option to use
@@ -339,7 +332,7 @@ The following changes are necessary when emitting SDFormat files:
   compatibility, it will be `rpy_radians` by default.
 - There should be an admission for "snapping to" well known values in either
   representation, within a given angular tolerance (degrees). This can help
-  converting exisitng models to more readable units, and possibly with better
+  convert exisiting models to more readable units, and possibly with better
   intended accuracy.
 
 ## Examples
