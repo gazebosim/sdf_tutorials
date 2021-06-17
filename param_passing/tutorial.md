@@ -1,3 +1,119 @@
+# Parameter passing tutorial
+
+This documentation explains the implementation proposed in the [Parameter passing proposal](http://sdformat.org/tutorials?tut=param_passing_proposal).
+
+**Prerequisites**:
+
+* [Including a model in SDFormat](http://sdformat.org/tutorials?tut=composition&ver=1.7#including-a-model)
+* [XPath syntax](http://sdformat.org/tutorials?tut=convention_tutorial&cat=specification&)
+
+## Introduction
+
+Parameter passing extends on using the `//include` tag to pass additional arguments
+to SDFormat files, which allows a user to send custom data into a model file and
+reduce the need for file duplication.
+
+**Limitations**
+
+Manipulating custom elements is not supported but will be addressed in the future.
+Also, since plugins do not require unique names, referencing the correct plugin
+from the original file may not be possible. Only the first plugin with the provided
+name can be referenced for modification.
+
+
+## Updating included model with `//include/experimental:params`
+
+A model can be constructed using model composition and include components of the
+model using the `//include` tag.
+To modify parameters of the included model, the experimental custom element
+`//include/experimental:params` can be used to describe the adjustments to elements.
+In the custom element `//include/experimental:params`, `experimental` is the namespace
+prefix and `params` is the custom element.
+This approach was chosen so that downstream users can choose to ignore the namespaced
+custom element and its contents.
+The goal is to implement passing additional arugments in `//include` through an
+experimental custom element in SDFormat 1.7 / `libsdformat` 10 then after being
+vetted it will be made official in a future SDFormat / `libsdformat` release
+where the custom element will be changed to `//include/params`.
+The included model (not the constructed model in the model/world file) will
+be referred to as the original model/file.
+In the model/world file and under `//include`, the elements listed under
+`//include/experimental:params` will reference elements from the original model
+and will specify new values and/or elements to be updated, added, and/or removed.
+
+## Specify element using `element_id`
+
+To refer to an element from the original file, the tag (e.g., `//link`, `//sensor`, `//visual`)
+needs to be provided as well as the `element_id` attribute where `element_id` is
+the name of all the parent elements leading to the specified element separated by
+double colons (`::`) except for the `//model` name.
+For example, given an original model:
+
+```xml
+<!-- original model -->
+<model name="robot">
+  ...
+  <link name="chassis">
+    <visual name="camera_visual">
+      ...
+    </visual>
+    <sensor name="camera_sensor">
+      <camera name="camera">
+        ...
+        <image>
+          <width>320</width>
+          <height>240</height>
+        </image>
+      </camera>
+    </sensor>
+  </link>
+  ...
+</model>
+```
+
+To specify the `//camera` element, then `element_id="chassis::camera_sensor::camera"`
+where "chassis" is the name of the `//link`, "camera_sensor" is the name of `//link/sensor`,
+and "camera" is the name of the `//link/sensor/camera`.
+This is how the correct element will be identified and will be called the element identifier.
+
+A corresponding `action` needs to be specified with the identified element to
+dictate the desired alteration using the `action` attribute.
+The `action` attribute must be provided in the element identifier or in the direct
+children of the identifier.
+Depending on the `action` used, if the `action` is specified in the element identifier
+(i.e., where `element_id` is specified) then any children elements listed will
+follow the same action. If the `action` is specified in the direct children, then
+each child will follow the stated `action`. Let's look at an example.
+
+Using the original model example above, the following snippet would live in the
+model/world file (that uses the `//include/experimental:params` tag):
+
+```xml
+...
+<include>
+  <uri>/path/to/original/model</uri>
+  ...
+  <experimental:params>
+    <!-- action stated in element identifier -->
+    <visual element_id="chassis::camera_visual" action="remove"/>
+
+    <!-- actions stated in direct children of element identifier -->
+    <sensor element_id="chassis::camera_sensor">
+      <camera name="camera" action="modify">
+        <image>
+          <width>1280</width>
+        </image>
+      </camera>
+      <plugin name="camera_plugin" filename="/path/to/plugin" action="add"/>
+    </sensor>
+  </experimental:params>
+</include>
+...
+```
+
+The next section details each available action and provides several examples.
+For a full combined example, please see [example 1 from the proposal](http://sdformat.org/tutorials?tut=param_passing_proposal#example-1).
+
 ## Summary of available actions:
 
 * `add`: adds new elements to the original model
