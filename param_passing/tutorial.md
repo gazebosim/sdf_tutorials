@@ -227,20 +227,21 @@ This action only updates existing elements and does not add or remove them.
 It can update or add attributes to existing elements but can not remove them.
 
 To `modify` elements and/or attributes, the full element path to that element is needed with the new value(s).
-For example, if the original model has a `//visual[@name="visual"]/geometry/sphere[radius=0.5]`
-and modifying the `//radius` is desired, then under `//experimental:params`:
+For example, if the original model has a `//visual[@name="visual"]/geometry/cylinder[radius=0.5]`
+and modifying only the `//radius` is desired, then under `//experimental:params`:
 
 ```xml
 <visual element_id="path::to::visual" action="modify">
   <geometry>
-    <sphere>
+    <cylinder>
       <radius custom:attr="foo">1.0</radius>
-    </sphere>
+    </cylinder>
   </geometry>
 </visual>
 ```
 
-This modifies the original `//radius` from 0.5 to be 1.0 and adds a new attribute to the element.
+This modifies the original `//radius` from 0.5 to be 1.0 (`//length` is left unchanged)
+and adds a new attribute `@custom:attr="foo"` to the element.
 If the original `//visual` has other children elements,
 these elements are left unchanged since they are not provided under `//experimental:params`.
 
@@ -267,19 +268,8 @@ To `modify` a name attribute only, in this case the original model has `//visual
 this only modifies the `@name` of the `//visual` to be `new_name`.
 There are no other listed attributes or child elements so nothing else is changed.
 
-To `modify` child elements and not the name attribute provide
-the full path to the element to be modified with the updated value:
-
-```xml
-<!-- //experimental:params -->
-<visual element_id="path::to::visual" action="modify">
-  <geometry>
-    <sphere>
-      <radius>1.0</radius>
-    </sphere>
-  </geometry>
-</visual>
-```
+To `modify` child elements and not the `@name` attribute provide
+the full path to the element to be modified with the updated value (see [above example](http://sdformat.org/tutorials?tut=param_passing_tutorial#modify-action)).
 
 **Example 2**
 
@@ -360,8 +350,11 @@ When `remove` is declared where `@element_id` is specified, the entire element i
 Any listed children elements are ignored.
 When `remove` is declared in the direct children of `@element_id` there are 2 cases to consider.
 If the direct child (where `remove` is defined):
+
 1. Has no children elements, the entire element is removed
+(see [Remove examples](http://sdformat.org/tutorials?tut=param_passing_tutorial#remove-examples) > **Example 1**)
 1. Has children, the individual children are removed but not the element where `remove` is defined
+(see [Remove examples](http://sdformat.org/tutorials?tut=param_passing_tutorial#remove-examples) > **Example 2**)
 
 When `remove` is declared in the direct children and that element has a `@name` attribute,
 the `@name` should be provided. If `@name` isn't specified
