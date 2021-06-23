@@ -571,8 +571,7 @@ to `replace` `//axis`:
 
 ## Custom elements
 
-Currently, the only way to `add` a custom element is through a known `SDFormat`
-tag. For example,
+Currently, the only way to `add` a custom element is by setting the `action` on a non-custom parent element. For example, we can use `link` as the non-custom parent element to add `foo:custom_elem`:
 
 ```xml
 <!-- //experimental:params -->
