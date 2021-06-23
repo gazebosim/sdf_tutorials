@@ -15,7 +15,9 @@ reduce the need for file duplication.
 
 **Limitations**
 
-Manipulating custom elements is not supported but will be addressed in the future.
+Manipulating custom elements has limited support but will be addressed in the future
+(see [custom elements](http://sdformat.org/tutorials?tut=param_passing_tutorial#custom-elements)
+for details).
 Also, since plugins do not require unique names, referencing the correct plugin
 from the original file may not be possible. Only the first plugin with the provided
 name can be referenced for modification.
@@ -565,4 +567,34 @@ to `replace` `//axis`:
     </dynamics>
   </axis>
 </joint>
+```
+
+## Custom elements
+
+Currently, the only way to `add` a custom element is through a known `SDFormat`
+tag. For example,
+
+```xml
+<!-- //experimental:params -->
+<link element_id="" name="link1" action="add">
+  <foo:custom_elem>foo</foo:custom_elem>
+</link>
+```
+
+The alterations that can be done are `modify` or `remove` when the `action`
+is stated in the child of `@element_id`. For instance,
+
+```xml
+<!-- //experimental:params -->
+<link element_id="link1">
+  <foo:custom_elem action="modify">bar</foo:custom_elem>
+</link>
+```
+
+The expected output of the original model will be:
+
+```xml
+<link name="link1">
+  <foo:custom_elem>bar</foo:custom_elem>
+</link>
 ```
