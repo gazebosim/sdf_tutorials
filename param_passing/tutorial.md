@@ -122,6 +122,10 @@ This only updates existing elements and does not add or remove them.
 * `remove`: removes the elements from the original model
 * `replace`: replaces the elements from the original model to the new provided elements
 
+Parameter passing works off the original model using a top-down approach so
+subsequent actions can manipulate newly added/updated elements but need to refer
+to any new changes (see [Replace examples](http://sdformat.org/tutorials?tut=param_passing_tutorial#replace-examples) > **Example 1**).
+
 ---
 
 ### Add action
@@ -512,6 +516,16 @@ To `replace` the element with a new name:
 <!-- //experimental:params -->
 <visual element_id="chassis::camera_visual" name="new_name" action="replace">
   ...
+</visual>
+```
+
+It is possible to further alter this `//visual` element but will need to refer
+to the new element `@name`:
+
+```xml
+<!-- //experimental:params -->
+<visual element_id="chassis::new_name" action="modify">
+  <!-- modifications -->
 </visual>
 ```
 
