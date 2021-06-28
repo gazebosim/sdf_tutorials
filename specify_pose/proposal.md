@@ -25,8 +25,8 @@ circumstances, and, at a lower priority, (2) it is
 sometimes hard to visually separate translation from rotation.
 
 This proposal intends to resolve on point (1) by adding `//pose/rotation/@type`
-where degrees can be specified, and *could* address point by structuring the
-element differently (see below).
+where degrees can be specified, and *could* address point (2) by structuring
+the element differently (see below).
 
 ## Document summary
 
@@ -47,7 +47,7 @@ should be *either* one of the following formats:
 ### Option A: Child Elements
 
 ```xml
-<pose>{xyz} {rpy_radians}</pose>  <!-- Old format; deprecated. -->
+<pose>{xyz} {rpy_radians}</pose>  <!-- Original format -->
 
 <pose>
     <translation>{xyz}</translation>
@@ -167,7 +167,7 @@ More verbosity, a bit harder to type.
 
 While SDFormat could use attributes for these values like URDF does, it would
 go against the convention used for other elements (e.g.
-`//joint/axis/translation`, `//inertia/ixx,...`).
+`//joint/axis/xyz`, `//inertia/ixx,...`).
 
 Additionally, allowing the rotation type to be represented implicitly by
 mutally exclusive attributes (e.g. `rpy`, `rpy_degrees`, `q_wxyz`) may
