@@ -177,10 +177,16 @@ Let's look at an example, here is an original model `base_robot`:
 ```
 
 Now the user would like to use the original model `base_robot` in a world file
-but with modifications. The modifications include removing the lidar from the
-chassis link, adding a plugin to the camera sensor in the chassis link, adding a
-camera visual to the chassis link, update camera information in the top link,
-and replace the top link's camera visual geometry.
+but with modifications. The modifications include:
+
+* Removing the lidar from the chassis link
+* Adding a plugin to the camera sensor in the chassis link
+* Adding a camera visual to the chassis link
+* Updating camera information in the top link
+* Alterations of a top link's camera visual element:
+  * Replacing the geometry
+  * Modifying the material
+  * Adding transparency
 
 ```xml
 <sdf version="1.7"
@@ -199,9 +205,9 @@ and replace the top link's camera visual geometry.
         <visual element_id="chassis" name="camera_visual" action="add">
           <pose>0.5 0.02 0 0 0</pose>
           <geometry>
-              <box>
-                  <size>0.02 0.02 0.02</size>
-              </box>
+            <box>
+              <size>0.02 0.02 0.02</size>
+            </box>
           </geometry>
         </visual>
 
