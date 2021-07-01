@@ -165,6 +165,28 @@
       <skill>advanced</skill>
     </tutorial>
 
+    <tutorial title="Proposal for parameter passing" ref='param_passing_proposal' type='proposal'>
+      <markdown version="1.7">param_passing/proposal.md</markdown>
+      <description>
+          Proposal for additional parameter passing when including models.
+      </description>
+      <tags>
+        <tag>model</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
+    <tutorial title="Tutorial for parameter passing" ref='param_passing_tutorial' type='tutorial'>
+      <markdown version="1.7">param_passing/tutorial.md</markdown>
+      <description>
+          Tutorial for parameter passing when including models.
+      </description>
+      <tags>
+        <tag>model</tag>
+      </tags>
+      <skill>intermediate</skill>
+    </tutorial>
+
     <tutorial title="Proposal Procedure and Format" ref='proposal_format' type='documentation'>
       <markdown version="1.7">developers/proposal_format.md</markdown>
       <description>
@@ -214,6 +236,7 @@
         <tutorial>spec_world</tutorial>
         <tutorial>pose_frame_semantics</tutorial>
         <tutorial>composition</tutorial>
+        <tutorial>param_passing_tutorial</tutorial>
       </tutorials>
     </category>
 
@@ -223,6 +246,7 @@
         <tutorial>pose_frame_semantics_proposal</tutorial>
         <tutorial>custom_elements_attributes_proposal</tutorial>
         <tutorial>composition_proposal</tutorial>
+        <tutorial>param_passing_proposal</tutorial>
       </tutorials>
     </category>
 
