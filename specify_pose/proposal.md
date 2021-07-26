@@ -30,9 +30,13 @@ the element differently (see below).
 
 ## Document summary
 
-Make a bullet list of all major sections:
+The proposal includes the following sections:
 
-TBD
+* Syntax: before and after
+* Motivation: background and rationale
+* Proposed changes
+* Examples: using proposed syntax
+* Survey: other specifications
 
 ## Syntax
 
@@ -337,7 +341,33 @@ The following changes are necessary when emitting SDFormat files:
 
 ## Examples
 
-TBD
+Here are some additional simple examples of different poses with equivalent
+representations (all printed up to 17 degrees of precision):
+
+```xml
+<!-- No translation, identity orientation -->
+<pose rotation_type="rpy_degrees">0 0 0  0 0 0</pose>
+<pose>0 0 0  0 0 0</pose>
+<pose rotation_type="q_wxyz">0 0 0  1 0 0 0</pose>
+
+<!-- No translation, rotate 90 degrees about the x-axis -->
+<pose rotation_type="rpy_degrees">0 0 0  90 0 0</pose>
+<pose>0 0 0  1.5707963267948966 0 0</pose>
+<pose rotation_type="rpy_radians">0 0 0  1.5707963267948966 0 0</pose>
+<pose rotation_type="q_wxyz">
+    0 0 0
+    0.7071067811865475 0.7071067811865475 0 0
+</pose>
+
+<!-- No translation, a semi-arbitrary rotation -->
+<pose rotation_type="rpy_degrees">0 0 0  10 20 30</pose>
+<pose>0 0 0  0.17453292519943295 0.3490658503988659 0.52359877559829882</pose>
+<pose rotation_type="q_wxyz">
+    0 0 0
+    0.95154852464378847 0.038134576474850149 0.18930785741200001
+        0.23929833774473031
+</pose>
+```
 
 ## Survey
 
