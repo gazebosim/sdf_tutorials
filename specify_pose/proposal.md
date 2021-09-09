@@ -24,8 +24,8 @@ degrees) in radians, and authors may use different precisions in different
 circumstances, and, at a lower priority, (2) it is
 sometimes hard to visually separate translation from rotation.
 
-This proposal intends to resolve on point (1) by adding `//pose/rotation/@type`
-where degrees can be specified, and *could* address point (2) by structuring
+This proposal intends to resolve on point (1) by adding `//pose/@degrees`
+where degrees can be selected, and *could* address point (2) by structuring
 the element differently (see below).
 
 ## Document summary
@@ -40,46 +40,26 @@ The proposal includes the following sections:
 
 ## Syntax
 
-This proposal suggests that the following fixed pose representation:
+This proposal suggests that the following modifications be made to the `//pose` element:
 
-```xml
-<pose>{xyz} {rpy_radians}</pose>
-```
-
-should be *either* one of the following formats:
-
-### Option A: Child Elements
-
-```xml
-<pose>{xyz} {rpy_radians}</pose>  <!-- Original format -->
-
-<pose>
-    <translation>{xyz}</translation>
-    <rotation type="rpy_degrees">{rpy_degrees}</rotation>
-</pose>
-
-<pose>
-    <translation>{xyz}</translation>
-    <rotation type="q_wxyz">{wxyz}</rotation>
-</pose>
-
-<pose>
-    <translation>{xyz}</translation>
-    <rotation type="rpy_radians">{rpy_radians}</rotation>  <!-- This is not recommended. -->
-</pose>
-```
-
-*or*:
-
-### Option B: Rotation Type Attribute
+### A. Add "degrees" as a Boolean Attribute
 
 ```xml
 <pose>{xyz}  {rpy_radians}</pose>
-<pose rotation_type="rpy_radians">{xyz}  {rpy_radians}</pose>
-<pose rotation_type="rpy_degrees">{xyz}  {rpy_degrees}</pose>
+<pose degrees="true">{xyz}  {rpy_degrees}</pose>
+```
+
+*and*:
+
+### B. Add "rotation_format" Attribute
+
+```xml
+<pose>{xyz}  {rpy_radians}</pose>
+<pose rotation_format="rpy_radians">{xyz}  {rpy_radians}</pose>
+<pose rotation_format="rpy_degrees">{xyz}  {rpy_degrees}</pose>
 
 <!-- Not yet confirmed -->
-<pose rotation_type="q_wxyz">{xyz}  {q_wxyz}</pose>
+<pose rotation_format="q_wxyz">{xyz}  {q_wxyz}</pose>
 ```
 
 ## Motivation
@@ -112,50 +92,35 @@ excluded due to how long the expression is overall.
 *solely* to convert from degrees to radians, rather than more relevant things
 like computing incremental changes in orientation.
 
-For units for radians, comments *could* be used to help (e.g.
+For units of radians, comments *could* be used to help (e.g.
 `<!-- This means X in degrees -->`), but ideally, the specification handles
 this in an active and self-documenting way.
 
-For Option A, the specification can handle the separation between translation
-and rotation as separate elements.
-
-For Option B, `libsdformat` and SDFormat tutorials should encourage additional
-whitespace, e.g. to separate translation and rotation, use 3 spaces (instead of
-1) as a delimiter between values if they fit on one line, or use a newline
-(possibly with hanging indents) if they do not fit on one line.
+For both options, `libsdformat` and SDFormat tutorials should
+encourage additional whitespace, e.g. to separate translation and rotation, use
+3 spaces (instead of 1) as a delimiter between values if they fit on one line,
+or use a newline (possibly with hanging indents) if they do not fit on one line.
 
 To help inform this proposal, the authors conducted a brief survey. See the
 [Survey](#survey) section below for more information.
 
 ## Proposed changes
 
-### 1.A. `//pose/translation` and `//pose/rotation`
+#### 1.A. `//pose/@degrees` 
 
-The value of `//pose` could now be specified as `//pose/translation` and
-`//pose/rotation`, and the representation for the rotation will be specified
-using `//pose/rotation/@type`.
+This boolean attribute will determine whether the specified angles are in
+degrees (when `true`) or radians (when `false`). It will not be used if the
+quaternions are used to specify the rotation.
 
-**Details**
+#### 1.B. `//pose/@rotation_format`
 
-* `//pose/translation` will remain a 3-tuple of strings representing
-floating-point values. If unspecified (either the tag is not specified or is
-empty), then those values will default to `0 0 0`.
-
-* `//pose/rotation` will have more structure. See the section below.
-
-* There will be backwards compatibility for the old form of expressing
-`//pose`. See section below for more details.
-
-#### 1.B. `//pose/@rotation_type`
-
-*Use `//pose/@rotation_type`*
-
-This will help decrease the verbosity; however, it will still make the visual
+This attribute will specify the rotation representation. It is less verbose
+than the alternatives considered; however, it will still make the visual
 separation between translation and rotation harder to distinguish.
 
 This would be a bit "more" backwards-compatible in terms of looking more
-similar, and general "backwards-compatibility" will be much easier to implement
-(in `libsdformat` and other implementations).
+similar than the alternatives cosidered, and general "backwards-compatibility"
+will be much easier to implement (in `libsdformat` and other implementations).
 
 For separating the tuples, it may be possible to achieve this by making a
 suggested style to insert more whitespace (newlines or additional spaces), and
@@ -163,7 +128,15 @@ reflect this style when outputting XML (as mentioned above).
 
 **Other Alternatives Considered**
 
-*Use `@orientation_type` instead of `@rotation_type`*
+*Use `//pose/translation` and `//pose/rotation`*
+
+The value of `//pose` could now be specified as `//pose/translation` and
+`//pose/rotation`, and the representation for the rotation will be specified
+using `//pose/rotation/@format`. While this makes it easier to distinguish
+between translation and rotation visually, it would add too much complexity to
+the parser especially if backward compatibility is desired.
+
+*Use `@orientation_format` instead of `@rotation_format`*
 
 More verbosity, a bit harder to type.
 
@@ -173,7 +146,7 @@ While SDFormat could use attributes for these values like URDF does, it would
 go against the convention used for other elements (e.g.
 `//joint/axis/xyz`, `//inertia/ixx,...`).
 
-Additionally, allowing the rotation type to be represented implicitly by
+Additionally, allowing the rotation format to be represented implicitly by
 mutally exclusive attributes (e.g. `rpy`, `rpy_degrees`, `q_wxyz`) may
 complicate parsing to an extent.
 
@@ -188,19 +161,20 @@ It's unclear which one may be better. In ROS, `rotation` is used for a
 transform, while `orientation` is used for a pose. However, they both appear
 equivalent.
 
-#### 1.1 (A) Values for `//pose/rotation/@type` or (B) (`@rotation_type`)
+#### 1.1  Values for `//pose/@rotation_format` and `//pose/@degrees` 
 
-The values of `@type` (or `@rotation_type`) that are permitted:
+The permutations of `@rotation_format` and `@degrees` that are
+permitted:
 
-* `rpy_degrees` - A 3-tuple representing Roll-Pitch-Yaw in degrees, which maps
-to a rotation as specified here.
+* `@rotation_format="rpy"`, `@degrees="true"` - A 3-tuple representing
+  Roll-Pitch-Yaw in degrees, which maps to a rotation as specified here.
     * This should be used when the rotation should generally be human-readable.
-* `rpy_radians` - Same as `rpy_degrees`, but with radians as the units for each
+* `@rotation_format="rpy"`, `@degrees="false"` - Same as above, but with radians as the units for each
 angle. This is provided for legacy purposes and ease of conversion.
     * It is not suggested to use this for a text-storage format.
     * Same precision as suggested below for quaternions: Use 17 digits of
     precision, and consider separating each value on a new line.
-* `q_wxyz` - Quaternion as a 4-tuple, represented as  `(w, x, y, z)`, where `w`
+* `@rotation_format="q_wxyz"` - Quaternion as a 4-tuple, represented as  `(w, x, y, z)`, where `w`
 is the real component. This should generally be used when the rotation should be
 machine-generated (e.g. calibration artifacts).
     * It is encouraged to use 17 digits of precision when possible (C++'s
@@ -213,29 +187,28 @@ machine-generated (e.g. calibration artifacts).
 Examples:
 
 ```xml
-<pose>
-    <translation>{xyz}</translation>
-    <rotation type="rpy_degrees">90 45 180</rotation>
+<pose degrees="true">{xyz}   90 45 180</pose>
+
+<pose rotation_format="q_wxyz">
+    {xyz}
+
+    0.27059805007309851
+    -0.27059805007309845
+    0.65328148243818818
+    0.65328148243818829
 </pose>
 
-<pose>
-    <translation>{xyz}</translation>
-    <rotation type="q_wxyz">
-        0.27059805007309851
-        -0.27059805007309845
-        0.65328148243818818
-        0.65328148243818829
-    </rotation>
+<pose rotation_format="q_wxyz">{xyz}   0.27059805007309851 -0.27059805007309845 0.65328148243818818 0.65328148243818829</pose> <!-- Same as above, but on one line -->
+
+<pose rotation_format="rpy" degrees="false"> <!-- This is not recommended. -->
+    {xyz}
+
+    1.5707963267948966
+    0.78539816339744828
+    3.1415926535897931
 </pose>
 
-<pose>
-    <translation>{xyz}</translation>
-    <rotation type="rpy_radians">  <!-- This is not recommended. -->
-        1.5707963267948966
-        0.78539816339744828
-        3.1415926535897931
-    </rotation>
-</pose>
+<pose>{xyz}   1.5707963267948966 0.78539816339744828 3.1415926535897931</pose> <!-- Same as above, but with attributes removed since they are the default.-->
 ```
 
 <!--
@@ -262,31 +235,26 @@ $ cat ./share/doc/drake/VERSION.TXT
 
 **Alternatives Considered**
 
-*Use `@representation` instead of `@type`*
+*Use `@rotation_type` instead of `@rotation_format`*
 
-While "representation" may be a better word than "type", it would be nice to be
+In higher dimentions, the term rotation type is used to distinguish between
+simple, double, and other types of rotation. Even though is only one type of
+rotation in 3 dimensions, using `format` would be less confusing without adding
+too much verbosity.
+
+*Use `@rotation_representation` instead of `@rotation_format`*
+
+While "representation" may be a better word than "format", it would be nice to be
 less verbose while still being concise (e.g. avoiding abbreviations).
 
-*Use `//pose/{rotation_type}` instead of
-`//pose/rotation/@type="rotation_type"]`*
+*Use `//pose/{rotation_format}` instead of
+`//pose/@rotation_format="rotation_format"]`*
 
-Specifying something like `//pose/rpy_radians` or `//pose/rpy_degrees` may
+Specifying something like `//pose/rpy` or `//pose/q_wxyz` may
 encounter some of the parsing complication for mutually exclusive tags, as
 mentioned above.
 
-*Let `@type` have a default value (e.g. `"rpy_radians"` or `"rpy_degrees"`)*
-
-While this would be ideal in terms of brevity, it is a bit too implicit and may
-prove for confusion, especially when mixing degrees and radians (which may then
-yield "dumb" scaling factors that have to be debugged).
-
-It is true that "rpy" itself is still a bit ambiguous (e.g. which version of
-Euler angles used), but the author feels that we shouldn't support too many
-versions, and it may be hard to converge on succinct representations at that
-(e.g. are the versions defined in the popular `transformations.py` package
-really that easy to understand?).
-
-*Use `@type="quaternion"` instead of `@type="q_wxyz"`*
+*Use `@rotation_format="quaternion"` instead of `@rotation_format="q_wxyz"`*
 
 In general, it can be confusing when interfacing different libraries that use
 different orderings for quaternions and those ordering are not readily stated
@@ -294,8 +262,8 @@ in the API (or even the documentation). Instead, the author recommends
 explicitly enumerating this order in a relatively unambiguous way that is shown
 directly in the specification.
 
-*Add `@type="q_xyzw`, `@type="euler_intrinsic_rpy"`, `@type="matrix"`,
-`@type="axis_angle"`, `@type="axang3`, etc.*
+*Add `@rotation_format="q_xyzw`, `@rotation_format="euler_intrinsic_rpy"`, `@rotation_format="matrix"`,
+`@rotation_format="axis_angle"`, `@rotation_format="axang3`, etc.*
 
 The author feels that too many representations and permutations may make it
 really hard (and annoying) to support an already complex specification.
@@ -322,10 +290,11 @@ in code, the order of operations, etc.).
 #### 1.2 Conversion to SDFormat 1.9
 
 When SDFormat files are converted from SDFormat <=1.8 to 1.9, the `//pose` tags
-will be adjusted to use `//pose/translation` and `//pose/rotation[@type="rpy_radians"]`.
+will be adjusted to use `//pose/@rotation_format="rpy"` and `//pose/@degrees="false"`.
 
 The conversion command-line tool should also provide an option to use
-`rpy_degrees`, with a precision amount for round-off to degrees by values of 5
+`rpy_degrees` (`//pose/@rotation_format="rpy"` and `//pose/@degrees="true"`),
+with a precision amount for round-off to degrees by values of 5
 (e.g. 0, 5, ..., 45, ..., 90 degrees).
 
 #### 1.3 Emitting SDFormat Models
@@ -333,7 +302,7 @@ The conversion command-line tool should also provide an option to use
 The following changes are necessary when emitting SDFormat files:
 
 - The user should be able to control the output rotation type. For backwards
-  compatibility, it will be `rpy_radians` by default.
+  compatibility, it will be `//pose/@rotation_format="rpy"` and `//pose/@degrees="false"` by default.
 - There should be an admission for "snapping to" well known values in either
   representation, within a given angular tolerance (degrees). This can help
   convert exisiting models to more readable units, and possibly with better
@@ -346,23 +315,23 @@ representations (all printed up to 17 degrees of precision):
 
 ```xml
 <!-- No translation, identity orientation -->
-<pose rotation_type="rpy_degrees">0 0 0  0 0 0</pose>
-<pose>0 0 0  0 0 0</pose>
-<pose rotation_type="q_wxyz">0 0 0  1 0 0 0</pose>
+<pose rotation_format="rpy" degrees="true">0 0 0   0 0 0</pose>
+<pose>0 0 0   0 0 0</pose>
+<pose rotation_format="q_wxyz">0 0 0   1 0 0 0</pose>
 
 <!-- No translation, rotate 90 degrees about the x-axis -->
-<pose rotation_type="rpy_degrees">0 0 0  90 0 0</pose>
-<pose>0 0 0  1.5707963267948966 0 0</pose>
-<pose rotation_type="rpy_radians">0 0 0  1.5707963267948966 0 0</pose>
-<pose rotation_type="q_wxyz">
+<pose rotation_format="rpy" degrees="true">0 0 0   90 0 0</pose>
+<pose>0 0 0   1.5707963267948966 0 0</pose>
+<pose rotation_format="rpy" degrees="false">0 0 0  1.5707963267948966 0 0</pose>
+<pose rotation_format="q_wxyz">
     0 0 0
     0.7071067811865475 0.7071067811865475 0 0
 </pose>
 
 <!-- No translation, a semi-arbitrary rotation -->
-<pose rotation_type="rpy_degrees">0 0 0  10 20 30</pose>
-<pose>0 0 0  0.17453292519943295 0.3490658503988659 0.52359877559829882</pose>
-<pose rotation_type="q_wxyz">
+<pose rotation_format="rpy" degrees="true">0 0 0   10 20 30</pose>
+<pose>0 0 0   0.17453292519943295 0.3490658503988659 0.52359877559829882</pose>
+<pose rotation_format="q_wxyz">
     0 0 0
     0.95154852464378847 0.038134576474850149 0.18930785741200001
         0.23929833774473031
@@ -417,7 +386,7 @@ Some examples for `//body`, with default `//compiler` settings
 ### Collada
 
 Transforms for `//node` can be dictated by any combination of
-`//translate`, 
+`//translate`,
 
 See the available specification for children of `//node` in the specification
 PDF for Collada 1.5:
