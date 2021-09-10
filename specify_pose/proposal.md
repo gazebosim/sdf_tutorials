@@ -55,11 +55,11 @@ This proposal suggests that the following modifications be made to the `//pose` 
 
 ```xml
 <pose>{xyz}  {rpy_radians}</pose>
-<pose rotation_format="rpy_radians">{xyz}  {rpy_radians}</pose>
-<pose rotation_format="rpy_degrees">{xyz}  {rpy_degrees}</pose>
+<pose rotation_format="euler_rpy">{xyz}  {rpy_radians}</pose>
+<pose rotation_format="euler_rpy" degrees="true">{xyz}  {rpy_degrees}</pose>
 
 <!-- Not yet confirmed -->
-<pose rotation_format="q_wxyz">{xyz}  {q_wxyz}</pose>
+<pose rotation_format="quat_wxyz">{xyz}  {quat_wxyz}</pose>
 ```
 
 ## Motivation
@@ -106,7 +106,7 @@ To help inform this proposal, the authors conducted a brief survey. See the
 
 ## Proposed changes
 
-#### 1.A. `//pose/@degrees` 
+#### 1.A. `//pose/@degrees`
 
 This boolean attribute will determine whether the specified angles are in
 degrees (when `true`) or radians (when `false`). It will not be used if the
@@ -147,7 +147,7 @@ go against the convention used for other elements (e.g.
 `//joint/axis/xyz`, `//inertia/ixx,...`).
 
 Additionally, allowing the rotation format to be represented implicitly by
-mutally exclusive attributes (e.g. `rpy`, `rpy_degrees`, `q_wxyz`) may
+mutally exclusive attributes (e.g. `euler_rpy`, `quat_wxyz`) may
 complicate parsing to an extent.
 
 *Use `//pose/rot` instead of `//pose/rotation`*
@@ -161,22 +161,21 @@ It's unclear which one may be better. In ROS, `rotation` is used for a
 transform, while `orientation` is used for a pose. However, they both appear
 equivalent.
 
-#### 1.1  Values for `//pose/@rotation_format` and `//pose/@degrees` 
+#### 1.1  Values for `//pose/@rotation_format` and `//pose/@degrees`
 
 The permutations of `@rotation_format` and `@degrees` that are
 permitted:
 
-* `@rotation_format="rpy"`, `@degrees="true"` - A 3-tuple representing
+* `@rotation_format="euler_rpy"`, `@degrees="true"` - A 3-tuple representing
   Roll-Pitch-Yaw in degrees, which maps to a rotation as specified here.
     * This should be used when the rotation should generally be human-readable.
-* `@rotation_format="rpy"`, `@degrees="false"` - Same as above, but with radians as the units for each
-angle. This is provided for legacy purposes and ease of conversion.
+* `@rotation_format="euler_rpy"`, `@degrees="false"` - Same as above, but with radians as the units for each
+angle. This is the default for legacy purposes.
     * It is not suggested to use this for a text-storage format.
     * Same precision as suggested below for quaternions: Use 17 digits of
     precision, and consider separating each value on a new line.
-* `@rotation_format="q_wxyz"` - Quaternion as a 4-tuple, represented as  `(w, x, y, z)`, where `w`
-is the real component. This should generally be used when the rotation should be
-machine-generated (e.g. calibration artifacts).
+* `@rotation_format="quat_wxyz"` - Quaternion as a 4-tuple, represented as  `(w, x, y, z)`, where `w`
+is the real component. This is the recommended format for machine-generated files (e.g. calibration artifacts).
     * It is encouraged to use 17 digits of precision when possible (C++'s
     default from `std::numeric_limits<double>::max_digits10`).
         * In Python, this can be done with using the format specifier
@@ -189,7 +188,7 @@ Examples:
 ```xml
 <pose degrees="true">{xyz}   90 45 180</pose>
 
-<pose rotation_format="q_wxyz">
+<pose rotation_format="quat_wxyz">
     {xyz}
 
     0.27059805007309851
@@ -198,9 +197,9 @@ Examples:
     0.65328148243818829
 </pose>
 
-<pose rotation_format="q_wxyz">{xyz}   0.27059805007309851 -0.27059805007309845 0.65328148243818818 0.65328148243818829</pose> <!-- Same as above, but on one line -->
+<pose rotation_format="quat_wxyz">{xyz}   0.27059805007309851 -0.27059805007309845 0.65328148243818818 0.65328148243818829</pose> <!-- Same as above, but on one line -->
 
-<pose rotation_format="rpy" degrees="false"> <!-- This is not recommended. -->
+<pose rotation_format="euler_rpy" degrees="false"> <!-- This is not recommended. -->
     {xyz}
 
     1.5707963267948966
@@ -228,9 +227,9 @@ $ cat ./share/doc/drake/VERSION.TXT
     rpy_radians = np.deg2rad(rpy_degrees)
     for x in rpy_radians: print(f"{x:.17g}")
 
-    # q_wxyz
-    q_wxyz = RollPitchYaw(rpy_radians).ToQuaternion().wxyz()
-    for x in q_wxyz: print(f"{x:.17g}")
+    # quat_wxyz
+    quat_wxyz = RollPitchYaw(rpy_radians).ToQuaternion().wxyz()
+    for x in quat_wxyz: print(f"{x:.17g}")
 -->
 
 **Alternatives Considered**
@@ -250,11 +249,11 @@ less verbose while still being concise (e.g. avoiding abbreviations).
 *Use `//pose/{rotation_format}` instead of
 `//pose/@rotation_format="rotation_format"]`*
 
-Specifying something like `//pose/rpy` or `//pose/q_wxyz` may
+Specifying something like `//pose/euler_rpy` or `//pose/quat_wxyz` may
 encounter some of the parsing complication for mutually exclusive tags, as
 mentioned above.
 
-*Use `@rotation_format="quaternion"` instead of `@rotation_format="q_wxyz"`*
+*Use `@rotation_format="quaternion"` instead of `@rotation_format="quat_wxyz"`*
 
 In general, it can be confusing when interfacing different libraries that use
 different orderings for quaternions and those ordering are not readily stated
@@ -262,7 +261,7 @@ in the API (or even the documentation). Instead, the author recommends
 explicitly enumerating this order in a relatively unambiguous way that is shown
 directly in the specification.
 
-*Add `@rotation_format="q_xyzw`, `@rotation_format="euler_intrinsic_rpy"`, `@rotation_format="matrix"`,
+*Add `@rotation_format="quat_xyzw`, `@rotation_format="euler_intrinsic_rpy"`, `@rotation_format="matrix"`,
 `@rotation_format="axis_angle"`, `@rotation_format="axang3`, etc.*
 
 The author feels that too many representations and permutations may make it
@@ -289,11 +288,8 @@ in code, the order of operations, etc.).
 
 #### 1.2 Conversion to SDFormat 1.9
 
-When SDFormat files are converted from SDFormat <=1.8 to 1.9, the `//pose` tags
-will be adjusted to use `//pose/@rotation_format="rpy"` and `//pose/@degrees="false"`.
-
 The conversion command-line tool should also provide an option to use
-`rpy_degrees` (`//pose/@rotation_format="rpy"` and `//pose/@degrees="true"`),
+`rpy_degrees` (`//pose/@rotation_format="euler_rpy"` and `//pose/@degrees="true"`),
 with a precision amount for round-off to degrees by values of 5
 (e.g. 0, 5, ..., 45, ..., 90 degrees).
 
@@ -302,7 +298,7 @@ with a precision amount for round-off to degrees by values of 5
 The following changes are necessary when emitting SDFormat files:
 
 - The user should be able to control the output rotation type. For backwards
-  compatibility, it will be `//pose/@rotation_format="rpy"` and `//pose/@degrees="false"` by default.
+  compatibility, it will be `//pose/@rotation_format="euler_rpy"` and `//pose/@degrees="false"` by default.
 - There should be an admission for "snapping to" well known values in either
   representation, within a given angular tolerance (degrees). This can help
   convert exisiting models to more readable units, and possibly with better
@@ -315,23 +311,23 @@ representations (all printed up to 17 degrees of precision):
 
 ```xml
 <!-- No translation, identity orientation -->
-<pose rotation_format="rpy" degrees="true">0 0 0   0 0 0</pose>
+<pose rotation_format="euler_rpy" degrees="true">0 0 0   0 0 0</pose>
 <pose>0 0 0   0 0 0</pose>
-<pose rotation_format="q_wxyz">0 0 0   1 0 0 0</pose>
+<pose rotation_format="quat_wxyz">0 0 0   1 0 0 0</pose>
 
 <!-- No translation, rotate 90 degrees about the x-axis -->
-<pose rotation_format="rpy" degrees="true">0 0 0   90 0 0</pose>
+<pose rotation_format="euler_rpy" degrees="true">0 0 0   90 0 0</pose>
 <pose>0 0 0   1.5707963267948966 0 0</pose>
-<pose rotation_format="rpy" degrees="false">0 0 0  1.5707963267948966 0 0</pose>
-<pose rotation_format="q_wxyz">
+<pose rotation_format="euler_rpy" degrees="false">0 0 0  1.5707963267948966 0 0</pose>
+<pose rotation_format="quat_wxyz">
     0 0 0
     0.7071067811865475 0.7071067811865475 0 0
 </pose>
 
 <!-- No translation, a semi-arbitrary rotation -->
-<pose rotation_format="rpy" degrees="true">0 0 0   10 20 30</pose>
+<pose rotation_format="euler_rpy" degrees="true">0 0 0   10 20 30</pose>
 <pose>0 0 0   0.17453292519943295 0.3490658503988659 0.52359877559829882</pose>
-<pose rotation_format="q_wxyz">
+<pose rotation_format="quat_wxyz">
     0 0 0
     0.95154852464378847 0.038134576474850149 0.18930785741200001
         0.23929833774473031
@@ -378,7 +374,7 @@ Some examples for `//body`, with default `//compiler` settings
 (`@angle="degree"`, `@eulerseq="xyz"`):
 
 ```xml
-<body pos="{xyz}" quat="{q_wxyz}" .../>
+<body pos="{xyz}" quat="{quat_wxyz}" .../>
 <!-- or -->
 <body pos="{xyz}" euler="{rpy_degrees}" .../>
 ```
