@@ -59,7 +59,7 @@ This proposal suggests that the following modifications be made to the `//pose` 
 <pose rotation_format="euler_rpy" degrees="true">{xyz}  {rpy_degrees}</pose>
 
 <!-- Not yet confirmed -->
-<pose rotation_format="quat_wxyz">{xyz}  {quat_wxyz}</pose>
+<pose rotation_format="quat_xyzw">{xyz}  {quat_xyzw}</pose>
 ```
 
 ## Motivation
@@ -147,7 +147,7 @@ go against the convention used for other elements (e.g.
 `//joint/axis/xyz`, `//inertia/ixx,...`).
 
 Additionally, allowing the rotation format to be represented implicitly by
-mutally exclusive attributes (e.g. `euler_rpy`, `quat_wxyz`) may
+mutally exclusive attributes (e.g. `euler_rpy`, `quat_xyzw`) may
 complicate parsing to an extent.
 
 *Use `//pose/rot` instead of `//pose/rotation`*
@@ -174,7 +174,7 @@ angle. This is the default for legacy purposes.
     * It is not suggested to use this for a text-storage format.
     * Same precision as suggested below for quaternions: Use 17 digits of
     precision, and consider separating each value on a new line.
-* `@rotation_format="quat_wxyz"` - Quaternion as a 4-tuple, represented as  `(w, x, y, z)`, where `w`
+* `@rotation_format="quat_xyzw"` - Quaternion as a 4-tuple, represented as  `(x, y, z, w)`, where `w`
 is the real component. This is the recommended format for machine-generated files (e.g. calibration artifacts).
     * It is encouraged to use 17 digits of precision when possible (C++'s
     default from `std::numeric_limits<double>::max_digits10`).
@@ -188,16 +188,16 @@ Examples:
 ```xml
 <pose degrees="true">{xyz}   90 45 180</pose>
 
-<pose rotation_format="quat_wxyz">
+<pose rotation_format="quat_xyzw">
     {xyz}
 
-    0.27059805007309851
     -0.27059805007309845
     0.65328148243818818
     0.65328148243818829
+    0.27059805007309851
 </pose>
 
-<pose rotation_format="quat_wxyz">{xyz}   0.27059805007309851 -0.27059805007309845 0.65328148243818818 0.65328148243818829</pose> <!-- Same as above, but on one line -->
+<pose rotation_format="quat_xyzw">{xyz}   -0.27059805007309845 0.65328148243818818 0.65328148243818829 0.27059805007309851</pose> <!-- Same as above, but on one line -->
 
 <pose rotation_format="euler_rpy" degrees="false"> <!-- This is not recommended. -->
     {xyz}
@@ -229,7 +229,8 @@ $ cat ./share/doc/drake/VERSION.TXT
 
     # quat_wxyz
     quat_wxyz = RollPitchYaw(rpy_radians).ToQuaternion().wxyz()
-    for x in quat_wxyz: print(f"{x:.17g}")
+    quat_xyzw = np.r_[quat_wxyz[1:], quat_wxyz[0]]
+    for x in quat_xyzw : print(f"{x:.17g}")
 -->
 
 **Alternatives Considered**
@@ -249,11 +250,11 @@ less verbose while still being concise (e.g. avoiding abbreviations).
 *Use `//pose/{rotation_format}` instead of
 `//pose/@rotation_format="rotation_format"]`*
 
-Specifying something like `//pose/euler_rpy` or `//pose/quat_wxyz` may
+Specifying something like `//pose/euler_rpy` or `//pose/quat_xyzw` may
 encounter some of the parsing complication for mutually exclusive tags, as
 mentioned above.
 
-*Use `@rotation_format="quaternion"` instead of `@rotation_format="quat_wxyz"`*
+*Use `@rotation_format="quaternion"` instead of `@rotation_format="quat_xyzw"`*
 
 In general, it can be confusing when interfacing different libraries that use
 different orderings for quaternions and those ordering are not readily stated
@@ -261,7 +262,7 @@ in the API (or even the documentation). Instead, the author recommends
 explicitly enumerating this order in a relatively unambiguous way that is shown
 directly in the specification.
 
-*Add `@rotation_format="quat_xyzw`, `@rotation_format="euler_intrinsic_rpy"`, `@rotation_format="matrix"`,
+*Add `@rotation_format="quat_wxyz`, `@rotation_format="euler_intrinsic_rpy"`, `@rotation_format="matrix"`,
 `@rotation_format="axis_angle"`, `@rotation_format="axang3`, etc.*
 
 The author feels that too many representations and permutations may make it
@@ -313,24 +314,24 @@ representations (all printed up to 17 degrees of precision):
 <!-- No translation, identity orientation -->
 <pose rotation_format="euler_rpy" degrees="true">0 0 0   0 0 0</pose>
 <pose>0 0 0   0 0 0</pose>
-<pose rotation_format="quat_wxyz">0 0 0   1 0 0 0</pose>
+<pose rotation_format="quat_xyzw">0 0 0   0 0 0 1</pose>
 
 <!-- No translation, rotate 90 degrees about the x-axis -->
 <pose rotation_format="euler_rpy" degrees="true">0 0 0   90 0 0</pose>
 <pose>0 0 0   1.5707963267948966 0 0</pose>
 <pose rotation_format="euler_rpy" degrees="false">0 0 0  1.5707963267948966 0 0</pose>
-<pose rotation_format="quat_wxyz">
+<pose rotation_format="quat_xyzw">
     0 0 0
-    0.7071067811865475 0.7071067811865475 0 0
+    0.7071067811865475 0 0 0.7071067811865475
 </pose>
 
 <!-- No translation, a semi-arbitrary rotation -->
 <pose rotation_format="euler_rpy" degrees="true">0 0 0   10 20 30</pose>
 <pose>0 0 0   0.17453292519943295 0.3490658503988659 0.52359877559829882</pose>
-<pose rotation_format="quat_wxyz">
+<pose rotation_format="quat_xyzw">
     0 0 0
-    0.95154852464378847 0.038134576474850149 0.18930785741200001
-        0.23929833774473031
+    0.038134576474850149 0.18930785741200001
+        0.23929833774473031 0.95154852464378847
 </pose>
 ```
 
@@ -374,7 +375,7 @@ Some examples for `//body`, with default `//compiler` settings
 (`@angle="degree"`, `@eulerseq="xyz"`):
 
 ```xml
-<body pos="{xyz}" quat="{quat_wxyz}" .../>
+<body pos="{xyz}" quat="{quat_xyzw}" .../>
 <!-- or -->
 <body pos="{xyz}" euler="{rpy_degrees}" .../>
 ```
