@@ -121,7 +121,7 @@ quaternions as part of the URDF specification (see
 [ros/urdfdom#123](https://github.com/ros/urdfdom/pull/123),
 [ros/urdfdom_headers#51](https://github.com/ros/urdfdom_headers/pull/51)).
 This is relevant to SDFormat because URDF is a similar specification that uses
-the same Euler angle axis convention to express rotation.
+the same Euler angle convention to express rotation.
 For another example, if using a camera calibration algorithm that yields
 quaternion coefficients (such as
 [doi:10.1109/TIP.2011.2164421](https://doi.org/10.1109/TIP.2011.2164421)),
