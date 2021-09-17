@@ -15,17 +15,28 @@ rotation representation.
 
 Currently, the text within `//pose` consists of a 6-tuple representing
 `{xyz} {rpy}`, where `{xyz}` is a 3-tuple representing translation (in meters)
-and `{rpy}` is a 3-tuple representing rotation (in radians).
+and `{rpy}` is a 3-tuple of Euler angles representing rotation (in radians).
 
-When writing models, there are two drawbacks to this representation:
-(1) specifying rotation in radians adds overhead when hand-crafting models
+When writing models, there are three drawbacks to this representation:
+
+1. Specifying rotation in radians adds overhead when hand-crafting models
 because the author must specify common degree values (e.g. 30, 45, 60, 90
 degrees) in radians, and authors may use different precisions in different
-circumstances, and, at a lower priority, (2) it is
-sometimes hard to visually separate translation from rotation.
+circumstances.
 
-This proposal intends to resolve on point (1) by adding `//pose/@degrees`
-where degrees can be selected, and *could* address point (2) by structuring
+2. Specifying rotation using Euler angles can be confusing when converting
+data from another format (such as a rotation matrix or a quaternion) since
+there are 12 different sequences of rotation axes that can be used when
+defining Euler angles.
+
+3. At a lower priority, it is sometimes hard to visually separate
+translation from rotation in the 6-tuple.
+
+This proposal intends to resolve point (1) by adding `//pose/@degrees`
+with which degrees can be selected, to resolve point (2) by adding
+`//pose/@rotation_format` which can select between a 3-tuple of Euler
+angles and a 4-tuple of quaternion values,
+and *could* address point (3) by structuring
 the element differently (see below).
 
 ## Document summary
@@ -57,8 +68,6 @@ This proposal suggests that the following modifications be made to the `//pose` 
 <pose>{xyz}  {rpy_radians}</pose>
 <pose rotation_format="euler_rpy">{xyz}  {rpy_radians}</pose>
 <pose rotation_format="euler_rpy" degrees="true">{xyz}  {rpy_degrees}</pose>
-
-<!-- Not yet confirmed -->
 <pose rotation_format="quat_xyzw">{xyz}  {quat_xyzw}</pose>
 ```
 
@@ -82,9 +91,11 @@ In models, one may come across values that look like this in `//pose`:
 <pose>0 ${-body_width/4 - body_space_width/4} ${body_bottom_box_height + body_space_height/2} 0 0</pose>  <!-- Note: Missing zero -->
 ```
 
-This shows both of the aforementioned issues:
+This shows several of the aforementioned issues:
 
-1. With several of the poses, it's a tad hard to see the translation vs. rotation. In fact, with one of the longer expressions, a zero was accidentally
+1. With several of the poses, it's hard to visually separate the
+translation 3-tuple from the rotation 3-tuple.
+In fact, with one of the longer expressions, a zero was accidentally
 excluded due to how long the expression is overall.
 
 2. Notice the varying degrees of precision used to repesent 90 degrees
@@ -103,6 +114,20 @@ or use a newline (possibly with hanging indents) if they do not fit on one line.
 
 To help inform this proposal, the authors conducted a brief survey. See the
 [Survey](#survey) section below for more information.
+
+Regarding other rotation formats, there have been several requests to support
+quaternions as part of the URDF specification (see
+[ros/urdfdom#13](https://github.com/ros/urdfdom/issues/13),
+[ros/urdfdom#123](https://github.com/ros/urdfdom/pull/123),
+[ros/urdfdom_headers#51](https://github.com/ros/urdfdom_headers/pull/51)).
+This is relevant to SDFormat because URDF is a similar specification that uses
+the same Euler angle convention to express rotation.
+For another example, if using a camera calibration algorithm that yields
+quaternion coefficients (such as
+[doi:10.1109/TIP.2011.2164421](https://doi.org/10.1109/TIP.2011.2164421)),
+it is most straightforward to directly specify those coefficients in the model file,
+rather than requiring a user to convert them to roll-pitch-yaw angles,
+with the risk of calculation errors and precision loss.
 
 ## Proposed changes
 
