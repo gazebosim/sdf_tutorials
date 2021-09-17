@@ -117,8 +117,8 @@ To help inform this proposal, the authors conducted a brief survey. See the
 
 Regarding other rotation formats, there have been several requests to support
 quaternions as part of the URDF specification (see
-[ros/urdfdom#13](https://github.com/ros/urdfdom/issues/13)
-[ros/urdfdom#123](https://github.com/ros/urdfdom/puul/123)
+[ros/urdfdom#13](https://github.com/ros/urdfdom/issues/13),
+[ros/urdfdom#123](https://github.com/ros/urdfdom/puul/123),
 [ros/urdfdom_headers#51](https://github.com/ros/urdfdom_headers/pull/51)).
 This is relevant to SDFormat because URDF is a similar specification that uses
 the same Euler angle axis convention to express rotation.
