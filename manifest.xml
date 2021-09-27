@@ -16,7 +16,7 @@
     </tutorial>
 
     <tutorial title="Quickstart" ref='quickstart'>
-      <markdown version="2.0">quickstart/tutorial_2-0.md</markdown>
+      <markdown version="X.0">quickstart/tutorial_2-0.md</markdown>
       <description>Quickstart guide to SDFormat parsing with libsdformat.</description>
       <tags>
         <tag>quickstart</tag>
