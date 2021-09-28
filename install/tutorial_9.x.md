@@ -1,4 +1,4 @@
-# Download and Install SDF
+# Download and Install SDFormat
 
 ## Binary Installation
 
@@ -69,7 +69,7 @@ Install prerequisites. A clean Ubuntu system will need:
 
 ##### build tools, ruby for building xml schemas, tinyxml, and boost:
 
-    sudo apt-get install ruby-dev build-essential libtinyxml-dev libboost-all-dev cmake mercurial pkg-config
+    sudo apt-get install ruby-dev build-essential libtinyxml2-dev cmake pkg-config
 
 #### Build And Install SDFormat
 
@@ -102,7 +102,7 @@ shell scripts for setting the necessary environment variables.
         cd sdformat
         git checkout sdf<#>
 
-   **Note: the <tt>default</tt> branch is the development branch where you'll find the bleeding edge code, your cloned repository should be on this branch by default but we recommend you switch to the sdf6 branch if you desire more stability**
+   **Note: the <tt>main</tt> branch is the development branch where you'll find the bleeding edge code, your cloned repository should be on this branch by default but we recommend you switch to the sdf6 branch if you desire more stability**
 
 3. Create a build directory and go there
 
