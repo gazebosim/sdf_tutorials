@@ -87,6 +87,80 @@ the `###` heading instead of under each `####` heading.
 
 ## Examples
 
-* Introduce the section before listing examples.
+There is an example `gearbox` joint in the
+[demo\_joint\_types](https://github.com/osrf/gazebo_models/blob/master/demo_joint_types/model.sdf#L156-L328)
+model, consisting of three links, two `revolute` joints, and one `gearbox` joint.
+
+~~~
+        <link name="gearbox_base">
+            <pose >-.49 0 0.35 0 0 0</pose>
+            <!-- ... -->
+        </link>
+        <link name="gearbox_input">
+            <pose >-.38 -0.075 0.55 0 0 0</pose>
+            <!-- ... -->
+            <visual name="gearbox_input_visual">
+                <geometry>
+                    <box>
+                        <size>0.1 0.25 0.1</size>
+                    </box>
+                </geometry>
+            </visual>
+        </link>
+        <link name="gearbox_output">
+            <pose >-.3 0.0 0.55 0 1.5708 0</pose>
+            <visual name="gearbox_output_visual">
+                <geometry>
+                    <cylinder>
+                        <radius>0.1</radius>
+                        <length>0.05</length>
+                    </cylinder>
+                </geometry>
+            </visual>
+        </link>
+
+        <!-- Gearbox links revolute joints, so create a couple revolute joints -->
+        <joint name="gearbox_input_joint" type="revolute">
+            <parent>gearbox_base</parent>
+            <child>gearbox_input</child>
+            <axis>
+                <xyz>1 0 0</xyz>
+            </axis>
+            <pose>0 0.075 0 0 0 0</pose>
+        </joint>
+        <joint name="gearbox_output_joint" type="revolute">
+            <parent>gearbox_base</parent>
+            <child>gearbox_output</child>
+            <axis>
+                <xyz>0 0 1</xyz>
+            </axis>
+            <pose>0 0 0 0 0 0</pose>
+        </joint>
+        <joint name="gearbox_demo" type="gearbox">
+            <parent>gearbox_input</parent>
+            <child>gearbox_output</child>
+            <gearbox_reference_body>gearbox_base</gearbox_reference_body>
+            <gearbox_ratio>5</gearbox_ratio>
+            <!-- input axis (relative to child) -->
+            <axis>
+                <xyz>0 0 1</xyz>
+            </axis>
+            <!-- output axis (relative to child) -->
+            <axis2>
+                <xyz>0 0 1</xyz>
+            </axis2>
+        </joint>
+~~~
+
+The `gearbox_demo` joint could be equivalently and more concisely expressed as
+the following `mimic_demo` joint:
+
+~~~
+        <joint name="mimic_demo" type="mimic">
+            <parent>gearbox_input_joint</parent>
+            <child>gearbox_output_joint</child>
+            <gearbox_ratio>5</gearbox_ratio>
+        </joint>
+~~~
 
 ## Appendix
