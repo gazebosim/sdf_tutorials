@@ -89,7 +89,7 @@ the `###` heading instead of under each `####` heading.
 
 There is an example `gearbox` joint in the
 [demo\_joint\_types](https://github.com/osrf/gazebo_models/blob/master/demo_joint_types/model.sdf#L156-L328)
-model, consisting of three links, two `revolute` joints, and one `gearbox` joint.
+model, consisting of three links,
 
 ~~~
         <link name="gearbox_base">
@@ -118,7 +118,11 @@ model, consisting of three links, two `revolute` joints, and one `gearbox` joint
                 </geometry>
             </visual>
         </link>
+~~~
 
+two `revolute` joints,
+
+~~~
         <!-- Gearbox links revolute joints, so create a couple revolute joints -->
         <joint name="gearbox_input_joint" type="revolute">
             <parent>gearbox_base</parent>
@@ -136,6 +140,11 @@ model, consisting of three links, two `revolute` joints, and one `gearbox` joint
             </axis>
             <pose>0 0 0 0 0 0</pose>
         </joint>
+~~~
+
+and one `gearbox` joint.
+
+~~~
         <joint name="gearbox_demo" type="gearbox">
             <parent>gearbox_input</parent>
             <child>gearbox_output</child>
@@ -152,8 +161,8 @@ model, consisting of three links, two `revolute` joints, and one `gearbox` joint
         </joint>
 ~~~
 
-The `gearbox_demo` joint could be equivalently and more concisely expressed as
-the following `mimic_demo` joint:
+The `gearbox` joint could be equivalently and more concisely expressed as
+the following `mimic` joint:
 
 ~~~
         <joint name="mimic_demo" type="mimic">
