@@ -8,7 +8,7 @@
     <tutorial title="Install" ref='install'>
       <markdown version="2.0">install/tutorial_2-0.md</markdown>
       <markdown version="6.x">install/tutorial_6-x.md</markdown>
-      <markdown version="9.x or higher">install/tutorial_9-x.md</markdown>
+      <markdown version=">= 9">install/tutorial_9_later.md</markdown>
       <description>Installation instructions for libsdformat.</description>
       <tags>
         <tag>install</tag>
