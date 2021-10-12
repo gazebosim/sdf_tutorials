@@ -171,6 +171,7 @@ Copy the code into a file and name it `check_sdf.cc`. Along with it, add a `CMak
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 find_package(SDFormat REQUIRED)
+# find_package(sdformat<version of sdformat> REQUIRED) # sdformat7 or higher
 
 include_directories(${SDFormat_INCLUDE_DIRS})
 link_directories(${SDFormat_LIBRARY_DIRS})
@@ -178,6 +179,8 @@ link_directories(${SDFormat_LIBRARY_DIRS})
 add_executable(check_sdf check_sdf.cc)
 target_link_libraries(check_sdf ${SDFormat_LIBRARIES})
 ```
+
+**Note**: If you are using a higher version than 6 you should use to find the library `find_package(sdformat<version of sdformat> REQUIRED)`
 
 Now build it:
 
