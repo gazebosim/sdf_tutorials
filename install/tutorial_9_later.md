@@ -51,7 +51,7 @@ and install a specific minor version with
 
     conda install libsdformat=9.3.0 --channel conda-forge
 
-## Source installation from source
+## Source installation
 
 ### Ubuntu
 
@@ -69,7 +69,8 @@ Install prerequisites. A clean Ubuntu system will need:
 
 ##### build tools, ruby for building xml schemas, tinyxml, and boost:
 
-    sudo apt-get install ruby-dev build-essential libtinyxml2-dev cmake pkg-config
+    sudo apt -y install \
+      $(sort -u $(find . -iname 'packages-'`lsb_release -cs`'.apt' -o -iname 'packages.apt' | grep -v '/\.git/') | tr '\n' ' ')
 
 #### Build And Install SDFormat
 
