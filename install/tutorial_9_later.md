@@ -12,7 +12,7 @@ On Ubuntu systems, `apt-get` can be used to install `sdformat`:
 
     sudo apt install libsdformat<#>-dev libsdformat<#>
 
-Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
+Be sure to replace `<#>` with a number value, such as 9 or 10, depending on
 which version you need.
 
 ### macOS
@@ -26,7 +26,7 @@ Install sdformat:
 
     brew install sdformat<#>
 
-Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
+Be sure to replace `<#>` with a number value, such as 9 or 10, depending on
 which version you need.
 
 ### Windows
@@ -98,12 +98,12 @@ shell scripts for setting the necessary environment variables.
         cd ~/sdf_source/
         git clone https://github.com/ignitionrobotics/sdformat
 
-2. Change directory into the sdformat repository and switch to the sdf12 branch
+2. Change directory into the sdformat repository and switch to the sdf<#> branch
 
         cd sdformat
         git checkout sdf<#>
 
-   **Note: the <tt>main</tt> branch is the development branch where you'll find the bleeding edge code, your cloned repository should be on this branch by default but we recommend you switch to the sdf6 branch if you desire more stability**
+   **Note: the <tt>main</tt> branch is the development branch where you'll find the bleeding edge code, your cloned repository should be on this branch by default but we recommend you switch to the default branch if you desire more stability**
 
 3. Create a build directory and go there
 
@@ -145,7 +145,7 @@ Clone the repository
 
     git clone https://github.com/ignitionrobotics/sdformat -b sdf<#>
 
-Be sure to replace `<#>` with a number value, such as 1 or 2, depending on
+Be sure to replace `<#>` with a number value, such as 9 or 10, depending on
 which version you need.
 
 Install dependencies
@@ -156,15 +156,15 @@ Install dependencies
 
 1. Configure and build
 
-    cd sdformat
-    mkdir build
-    cd build
-    cmake .. # Consider specifying -DCMAKE_INSTALL_PREFIX=...
-    make
+        cd sdformat
+        mkdir build
+        cd build
+        cmake .. # Consider specifying -DCMAKE_INSTALL_PREFIX=...
+        make
 
 2. Optionally, install and uninstall
 
-    sudo make install
+        sudo make install
 
   To uninstall the software installed with the previous steps:
 
@@ -203,11 +203,11 @@ This assumes you have created and activated a Conda environment while installing
 
 1. Configure and build
 
-    mkdir build
-    cd build
-    cmake .. -DBUILD_TESTING=OFF  # Optionally, -DCMAKE_INSTALL_PREFIX=path\to\install
-    cmake --build . --config Release
+        mkdir build
+        cd build
+        cmake .. -DBUILD_TESTING=OFF  # Optionally, -DCMAKE_INSTALL_PREFIX=path\to\install
+        cmake --build . --config Release
 
 2. Install
 
-    cmake --install . --config Release
+        cmake --install . --config Release
