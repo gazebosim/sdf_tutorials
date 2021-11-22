@@ -103,7 +103,7 @@ shell scripts for setting the necessary environment variables.
         cd sdformat
         git checkout sdf<#>
 
-   **Note: the <tt>main</tt> branch is the development branch where you'll find the bleeding edge code, your cloned repository should be on this branch by default but we recommend you switch to the default branch if you desire more stability**
+   **Note: Your cloned repository should be on the latest release branch by default, which is the recommended branch for stability. You can find the bleeding edge code in the <tt>main</tt> branch.**
 
 3. Create a build directory and go there
 
