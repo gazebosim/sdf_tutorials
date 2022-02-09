@@ -25,7 +25,9 @@ version supported by the given release of the library:
 * `libsdformat11`: For use in Ignition Edifice.
     * 11.0.0 (**released**): C++17, SDFormat 1.8.
 * `libsdformat12`: For use in Ignition Fortress.
-    * 12.0.0 (**planned**): C++17, SDFormat 1.9.
+    * 12.0.0 (**released**): C++17, SDFormat 1.9.
+* `libsdformat13`: For use in Ignition Garden.
+    * 13.0.0 (**planned**): C++17, TBD
 
 ## Downstream Library Support
 
@@ -46,7 +48,8 @@ specification (as well as the caveats):
     * Dome (**released**): libsdformat10, SDFormat 1.7, but only a subset:
         * Does not support directly nested models
     * Edifice (**released**): libsdformat11, SDFormat 1.8
-    * Fortress (**planned**): libsdformat12, SDFormat 1.9
+    * Fortress (**released**): libsdformat12, SDFormat 1.9
+    * Garden (**planned**): libsdformat13, TBD
 * [Drake](https://github.com/RobotLocomotion/drake/releases):
     * 0.10.0 - 0.13.0 (**released**): SDFormat 1.6, but deviates:
         * Does not support directly nested models
