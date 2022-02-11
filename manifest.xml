@@ -209,6 +209,18 @@
       <skill>advanced</skill>
     </tutorial>
 
+    <tutorial title="Design of DOM API" ref='dom_api' type='documentation'>
+      <markdown version="9.X - 11.X">developers/dom_api.md</markdown>
+      <description>
+        Documentation for the design of the DOM API
+      </description>
+      <tags>
+        <tag>DOM</tag>
+        <tag>API</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
  </tutorials>
 
   <!-- *************************************** -->
@@ -271,6 +283,7 @@
         <tutorial>quickstart</tutorial>
         <tutorial>roadmap</tutorial>
         <tutorial>proposal_format</tutorial>
+        <tutorial>dom_api</tutorial>
       </tutorials>
     </category>
 

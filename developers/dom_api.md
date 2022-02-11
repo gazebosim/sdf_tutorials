@@ -68,9 +68,11 @@ As seen in the example above, using the Element API requires using string
 literals when accessing elements. This is inefficient and quite error prone.
 For example, to get the `self_collide` tag, if one accidentally misspells the
 word like so:
+
 ```c++
   model->Get<bool>("self_colide"); // notice the single 'l' in colide
 ```
+
 the `Get` function looks for `self_colide` and when it can't find it, it will
 return a default initialized boolean, which is `false` while the value
 specified in the example file is `true`. This is one of the
