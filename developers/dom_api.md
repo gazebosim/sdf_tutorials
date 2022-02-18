@@ -149,5 +149,11 @@ functions after `sdf::Root` object has been destroyed.
 the API does now allow modifying existing child objects or adding or removing
 child objects.
 
-* The frame graph is only built during `sdf::Root::Load`. Subsequent updates to
-the names or poses of DOM objects is not reflected in the frame graph.
+* In libsdformat >= 11.0.0, the frame graph is only built during
+`sdf::Root::Load`. Subsequent updates to the names or poses of DOM objects is
+not reflected in the frame graph.
+
+* In libsdformat >= 9.0.0 and libsdformat < 11.0.0, the frame graph is built
+during `sdf::World::Load` and `sdf::Model::Load` where `sdf::World` and
+`sdf::Model` contain their own graphs. Subsequent updates to the
+names or poses of DOM objects is not reflected in the frame graph.
