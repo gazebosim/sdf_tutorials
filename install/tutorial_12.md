@@ -76,6 +76,8 @@ Install prerequisites. A clean Ubuntu system will need:
 
 ##### USD
 
+**Note: USD support is only available when building sdformat from source.**
+
 Clone the USD repository
 
 ```bash
