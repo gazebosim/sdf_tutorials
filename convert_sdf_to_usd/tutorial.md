@@ -40,4 +40,5 @@ sdf2usd /usr/share/ignition/ignition-gazebo6/worlds/shapes.sdf shapes.usda
 Test the result by opening it in Omniverse Create.
 
 <!--TODO: Bug in sdf2usd? Some shapes are clipping through the plane-->
-![](files/omni-create.png)
+[[file:files/omni-create.png|256px]]
+
