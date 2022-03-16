@@ -76,6 +76,10 @@ Install prerequisites. A clean Ubuntu system will need:
 
 ##### USD
 
+USD is a high-performance extensible software platform for collaboratively constructing animated 3D scenes, designed to meet the needs of large-scale film and visual effects production.
+
+With the USD component, sdformat provide tools to convert between SDF and USD files.
+
 Clone the USD repository
 
 ```bash
@@ -92,6 +96,7 @@ sudo apt install libpyside2-dev python3-opengl
 Use the build script to compile USD. In order to speed up compilation, it is recommended to disable unneeded components.
 
 ```bash
+cd USD
 python3 build_scripts/build_usd.py --build-variant release --no-tests --no-examples --no-tutorials --no-docs --no-python <install_dir>
 ```
 
