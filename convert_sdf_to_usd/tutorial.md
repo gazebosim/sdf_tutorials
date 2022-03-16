@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-* sdformat with USD support (see the [sdformat installation instructions](../install/tutorial_12.md#USD))
+* sdformat with USD support (see the [sdformat installation instructions](/tutorials?tut=install&ver=>%3D+12))
 * Omniverse Create
 
 ### Installing Omniverse Create
