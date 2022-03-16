@@ -79,6 +79,7 @@ Install prerequisites. A clean Ubuntu system will need:
 USD is a high-performance extensible software platform for collaboratively constructing animated 3D scenes, designed to meet the needs of large-scale film and visual effects production.
 
 With the USD component, sdformat provide tools to convert between SDF and USD files.
+
 **Note: USD support is only available when building sdformat from source.**
 
 Clone the USD repository
