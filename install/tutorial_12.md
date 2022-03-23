@@ -6,6 +6,7 @@
 
 On Ubuntu systems, `apt-get` can be used to install `sdformat`:
 
+    sudo apt-get install python3-pip wget lsb-release gnupg curl
     sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
     wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
     sudo apt-get update
@@ -63,16 +64,12 @@ Make sure you have removed the Ubuntu pre-compiled binaries before installing fr
 
 If you have previously installed from source, be sure you are installing to the same path location or that you have removed the previous installation from source version manually.
 
-#### Install Required Dependencies
-
-Install prerequisites. A clean Ubuntu system will need:
-
-##### build tools, ruby for building xml schemas, tinyxml, and boost:
-
-    sudo apt -y install \
-      $(sort -u $(find . -iname 'packages-'`lsb_release -cs`'.apt' -o -iname 'packages.apt' | grep -v '/\.git/') | tr '\n' ' ')
-
 #### Install Optional Dependencies
+
+    sudo apt-get install git python3-pip wget lsb-release gnupg curl
+    sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+    wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+    sudo apt-get update
 
 ##### USD
 
@@ -81,6 +78,8 @@ USD is a high-performance extensible software platform for collaboratively const
 With the USD component, sdformat provide tools to convert between SDF and USD files.
 
 **Note: USD support is only available when building sdformat from source.**
+
+**USD requires CMAKE 3.12 this package is available from Ubuntu 20.04**
 
 Clone the USD repository
 
@@ -92,7 +91,7 @@ git clone --depth 1 -b v21.11 https://github.com/PixarAnimationStudios/USD.git
 Install dependencies not managed by the build script
 
 ```bash
-sudo apt install libpyside2-dev python3-opengl
+sudo apt install libpyside2-dev python3-opengl cmake libglu1-mesa-dev freeglut3-dev mesa-common-dev
 ```
 
 Use the build script to compile USD. In order to speed up compilation, it is recommended to disable unneeded components.
@@ -149,12 +148,17 @@ shell scripts for setting the necessary environment variables.
 
    **Note: Your cloned repository should be on the latest release branch by default, which is the recommended branch for stability. You can find the bleeding edge code in the <tt>main</tt> branch.**
 
-3. Create a build directory and go there
+3. Install Required Dependencies
+
+       sudo apt -y install \
+          $(sort -u $(find . -iname 'packages-'`lsb_release -cs`'.apt' -o -iname 'packages.apt' | grep -v '/\.git/') | tr '\n' ' ')
+
+4. Create a build directory and go there
 
         mkdir build
         cd build
 
-4. Build and install
+5. Build and install
 
         cmake .. -DCMAKE_INSTALL_PREFIX=/usr
         make -j4
