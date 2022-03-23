@@ -79,7 +79,7 @@ With the USD component, sdformat provide tools to convert between SDF and USD fi
 
 **Note: USD support is only available when building sdformat from source.**
 
-**USD requires CMAKE 3.12 this packages is available from Ubuntu 20.04**
+**USD requires CMAKE 3.12 this package is available from Ubuntu 20.04**
 
 Clone the USD repository
 
