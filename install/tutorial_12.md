@@ -66,6 +66,11 @@ If you have previously installed from source, be sure you are installing to the 
 
 #### Install Optional Dependencies
 
+    sudo apt-get install git python3-pip wget lsb-release gnupg curl
+    sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+    wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+    sudo apt-get update
+
 ##### USD
 
 USD is a high-performance extensible software platform for collaboratively constructing animated 3D scenes, designed to meet the needs of large-scale film and visual effects production.
