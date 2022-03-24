@@ -128,6 +128,20 @@
       <skill>intermediate</skill>
     </tutorial>
 
+    <tutorial title='Convert SDF to USD' ref='convert_sdf_to_usd' type='documentation'>
+      <markdown version='12'>convert_sdf_to_usd/tutorial.md</markdown>
+      <description>
+          Converting SDF to USD.
+      </description>
+      <tags>
+        <tag>usd</tag>
+        <tag>nvidia</tag>
+        <tag>omniverse</tag>
+        <tag>isaac sim</tag>
+      </tags>
+      <skill>beginner</skill>
+    </tutorial>
+
     <tutorial title="Custom elements and attributes" ref='custom_elements_attributes_proposal' type='proposal'>
       <markdown version="1.7">custom_elements_attributes/proposal.md</markdown>
       <description>
@@ -270,6 +284,7 @@
       <tutorials>
         <tutorial>install</tutorial>
         <tutorial>quickstart</tutorial>
+        <tutorial>convert_sdf_to_usd</tutorial>
         <tutorial>roadmap</tutorial>
         <tutorial>proposal_format</tutorial>
       </tutorials>
