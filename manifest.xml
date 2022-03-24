@@ -253,7 +253,6 @@
       </description>
       <tutorials>
         <tutorial>convention_tutorial</tutorial>
-        <tutorial>convert_sdf_to_usd</tutorial>
         <tutorial>specify_pose</tutorial>
         <tutorial>spec_model_kinematics</tutorial>
         <tutorial>spec_shapes</tutorial>
@@ -284,6 +283,7 @@
       <tutorials>
         <tutorial>install</tutorial>
         <tutorial>quickstart</tutorial>
+        <tutorial>convert_sdf_to_usd</tutorial>
         <tutorial>roadmap</tutorial>
         <tutorial>proposal_format</tutorial>
       </tutorials>
