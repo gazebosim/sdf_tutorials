@@ -128,7 +128,7 @@
     </tutorial>
 
     <tutorial title='Convert SDF to USD' ref='convert_sdf_to_usd' type='documentation'>
-      <markdown version='1.7'>convert_sdf_to_usd/tutorial.md</markdown>
+      <markdown version='12'>convert_sdf_to_usd/tutorial.md</markdown>
       <description>
           Converting SDF to USD.
       </description>
