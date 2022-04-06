@@ -150,8 +150,7 @@ shell scripts for setting the necessary environment variables.
 
 3. Install Required Dependencies
 
-       sudo apt -y install \
-          $(sort -u $(find . -iname 'packages-'`lsb_release -cs`'.apt' -o -iname 'packages.apt' | grep -v '/\.git/') | tr '\n' ' ')
+        sudo apt -y install $(sort -u $(find . -iname 'packages-'`lsb_release -cs`'.apt' -o -iname 'packages.apt' | grep -v '/\.git/') | tr '\n' ' ')
 
 4. Create a build directory and go there
 
