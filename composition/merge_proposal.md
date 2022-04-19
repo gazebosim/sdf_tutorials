@@ -45,13 +45,19 @@ insertion of models into a world. This was the first way to compose an SDFormat
 document using content from separate SDFormat files.
 The `//model/model` tag was added in SDFormat 1.5 to allow a hierarchical
 nesting of models and was accompanied by the `//model/include` tag to allow
-nested models to be composed using content from separate SDFormat model files.
-The behavior of the `//include` tags was more fully specified in SDFormat 1.8
+nested models to be composed using content from separate SDFormat model files,
+though the behavior was not entirely consistent
+(see [documentation](/tutorials?tut=composition&ver=1.5)).
+The behavior of nested models specified using `//model/model` and
+`//model/include` was made consistent through improvements to the specification
+in SDFormat 1.8
 (see [proposal](/tutorials?tut=composition_merge_proposal)).
-The SDFormat 1.8 specification enforces strict encapsulation of models within
-a nested model hierarchy, such that an included model must not reference any
-external frames or entities. Separate name scopes are defined for each model
-to avoid name collisions.
+The SDFormat 1.8 specification allows a parent model to reference frames or
+entities in nested child models but not the reverse.
+This asymmetry enforces hierarchical encapsulation of models and ensures that
+each model is fully defined by its own contents and those of its nested models.
+Separate name scopes are defined for each model in the hierarchy to avoid name
+collisions.
 
 As mentioned in the introduction above, if a user wished to split a model into
 separate components and then combine them via composition, those changes may now
