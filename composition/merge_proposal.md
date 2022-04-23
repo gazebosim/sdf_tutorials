@@ -28,6 +28,8 @@ from the file structure used to store the underlying model components.
 This is useful both for creating new models and for decomposing existing models
 into separate components without visibile changes to downstream consumers,
 while maintaining the encapsulation provided by SDFormat 1.8.
+The cost of this feature is that users must take care to avoid name collisions
+between the entities of the models to be merged.
 
 ## Document summary
 
@@ -51,7 +53,7 @@ though the behavior was not entirely consistent
 The behavior of nested models specified using `//model/model` and
 `//model/include` was made consistent through improvements to the specification
 in SDFormat 1.8
-(see [proposal](/tutorials?tut=composition_merge_proposal)).
+(see [composition proposal](/tutorials?tut=composition_merge_proposal)).
 The SDFormat 1.8 specification allows a parent model to reference frames or
 entities in nested child models but not the reverse.
 This asymmetry enforces hierarchical encapsulation of models and ensures that
@@ -76,10 +78,64 @@ naming at the sites of usage, e.g. `composite_arm::gripper_mount` from above.
 
 ## Proposed changes
 
-TBD
+### `//model/include/@merge`
+
+This adds a new attribute, `@merge`, to `//model/include` tags that when set to
+`true` changes the include behavior to insert the contents of the included
+model directly into the parent model without introducing a new scope into the
+model hierarchy. Some model elements are not merged: `//model/static`,
+`//model/self_collide`, `//model/enable_wind`, and `//model/allow_auto_disable`.
+
+<-- TODO: explain how poses work and the proxy _merged__<model_name>__model__ frame -->
 
 ## Examples
 
-TBD
+### Small example:
+
+Given the parent model:
+
+~~~
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="world_model">
+    <model name="robot">
+      <include merge="true">
+        <uri>test_model</uri>
+        <pose>100 0 0 0 0 0</pose>
+      </include>
+    </model>
+  </world>
+</sdf>
+~~~
+
+and the included model:
+
+~~~
+<sdf version="1.9">
+  <model name="test_model">
+    <link name="L1" />
+    <frame name="F1" />
+  </model>
+</sdf>
+~~~
+
+The result would be:
+
+~~~
+<sdf version='1.9'>
+  <world name='world_model'>
+    <model name='robot'>
+      <frame name='_merged__test_model__model__' attached_to='L1'>
+        <pose relative_to='__model__'>100 0 0 0 -0 0</pose>
+      </frame>
+      <link name='L1'>
+        <pose relative_to='_merged__test_model__model__'/>
+      </link>
+      <frame name='F1' attached_to='_merged__test_model__model__'/>
+    </model>
+  </world>
+~~~
+
+### Decomposing an existing model into separate model files
 
 ## Appendix
