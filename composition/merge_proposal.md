@@ -138,4 +138,189 @@ The result would be:
 
 ### Decomposing an existing model into separate model files
 
+The following is an abridged version of a Clearpath Husky skid-steer with
+sensors mounted on a pan-tilt gimbal used in the DARPA Subterranean Challenge
+([MARBLE HUSKY SENSOR CONFIG 3](https://app.ignitionrobotics.org/OpenRobotics/fuel/models/MARBLE_HUSKY_SENSOR_CONFIG_3)):
+
+~~~
+<sdf version="1.7">
+  <model name="marble_husky_sensor_config_3">
+    <link name="base_link"/>
+
+    <link name="front_left_wheel_link">
+      <collision name="front_left_wheel_link_collision">
+        <pose>0 0 0 1.5707963267948966 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.1143</length>
+            <radius>0.1651</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="front_left_wheel_link_visual">
+        <pose frame="">0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/wheel.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name="front_left_wheel_joint" type="revolute">
+      <child>front_left_wheel_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz expressed_in='__model__'>0 1 0</xyz>
+      </axis>
+    </joint>
+
+    <link name="front_right_wheel_link"/>
+    <joint name="front_right_wheel_joint" type="revolute">
+      <child>front_right_wheel_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz expressed_in='__model__'>0 1 0</xyz>
+      </axis>
+    </joint>
+
+    <link name="rear_left_wheel_link"/>
+    <joint name="rear_left_wheel_joint" type="revolute">
+      <child>rear_left_wheel_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz expressed_in='__model__'>0 1 0</xyz>
+      </axis>
+    </joint>
+
+    <link name="rear_right_wheel_link"/>
+    <joint name="rear_right_wheel_joint" type="revolute">
+      <child>rear_right_wheel_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz expressed_in='__model__'>0 1 0</xyz>
+      </axis>
+    </joint>
+
+    <link name="pan_gimbal_link">
+      <pose>0.424 0 0.427 0 -0 0</pose>
+    </link>
+    <link name="tilt_gimbal_link">
+      <pose>0.424 0 0.460 0 -0 0</pose>
+      <!-- Based on Intel realsense D435 (intrinsics and distortion not modeled)-->
+      <sensor name="camera_pan_tilt" type="rgbd_camera">
+        <camera name="camera_pan_tilt">
+            <horizontal_fov>1.5184</horizontal_fov>
+            <lens>
+                <intrinsics>
+                    <!-- fx = fy = width / ( 2 * tan (hfov / 2 ) ) -->
+                    <fx>337.22195</fx>
+                    <fy>337.22195</fy>
+                    <!-- cx = ( width + 1 ) / 2 -->
+                    <cx>320.5</cx>
+                    <!-- cy = ( height + 1 ) / 2 -->
+                    <cy>240.5</cy>
+                    <s>0</s>
+                </intrinsics>
+            </lens>
+            <distortion>
+                <k1>0.0</k1>
+                <k2>0.0</k2>
+                <k3>0.0</k3>
+                <p1>0.0</p1>
+                <p2>0.0</p2>
+                <center>0.5 0.5</center>
+            </distortion>
+            <image>
+                <width>640</width>
+                <height>480</height>
+                <format>R8G8B8</format>
+            </image>
+            <clip>
+                <near>0.01</near>
+                <far>300</far>
+            </clip>
+            <depth_camera>
+              <clip>
+                <near>0.1</near>
+                <far>10</far>
+              </clip>
+            </depth_camera>
+            <noise>
+                <type>gaussian</type>
+                <mean>0</mean>
+                <stddev>0.007</stddev>
+            </noise>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>0</visualize>
+
+        <pose>0.0 0 0.03 0 0.0 0</pose>
+      </sensor>
+      <light name="flashlight_flashlight_light_source_lamp_light" type="spot">
+        <pose>0.0 0.0 0.065 3.141592653589793 1.5707963267948966 -0.0015926535897931</pose>
+        <attenuation>
+          <range>50</range>
+          <linear>0</linear>
+          <constant>0.1</constant>
+          <quadratic>0.0025</quadratic>
+        </attenuation>
+        <diffuse>0.8 0.8 0.5 1</diffuse>
+        <specular>0.8 0.8 0.5 1</specular>
+        <spot>
+          <!-- The lights on the MARBLE ground vehicles are very wide angle, 100W LEDs -->
+          <inner_angle>2.8</inner_angle>
+          <outer_angle>2.9</outer_angle>
+          <falloff>1</falloff>
+        </spot>
+        <direction>0 0 -1</direction>
+      </light>
+    </link>
+    <joint name="pan_gimbal_joint" type="revolute">
+      <child>pan_gimbal_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz expressed_in="__model__">0 0 1</xyz>
+      </axis>
+    </joint>
+    <joint name="tilt_gimbal_joint" type="revolute">
+      <child>tilt_gimbal_link</child>
+      <parent>pan_gimbal_link</parent>
+      <axis>
+        <xyz expressed_in="__model__">0 1 0</xyz>
+        <limit>
+          <lower>-1.5708</lower> <!-- 90 degrees both direction (mechanical interference)-->
+          <upper>1.5708</upper>
+          <effort>10</effort>
+        </limit>
+      </axis>
+    </joint>
+    <!-- Gimbal Joints Plugins -->
+    <plugin
+      filename="libignition-gazebo-joint-controller-system.so"
+      name="ignition::gazebo::systems::JointController">
+      <joint_name>pan_gimbal_joint</joint_name>
+      <use_force_commands>true</use_force_commands>
+      <p_gain>0.4</p_gain>
+      <i_gain>10</i_gain>
+    </plugin>
+    <plugin
+      filename="libignition-gazebo-joint-controller-system.so"
+      name="ignition::gazebo::systems::JointController">
+      <joint_name>tilt_gimbal_joint</joint_name>
+      <use_force_commands>true</use_force_commands>
+      <p_gain>0.4</p_gain>
+      <i_gain>10</i_gain>
+    </plugin>
+    <plugin
+      filename="libignition-gazebo-joint-state-publisher-system.so"
+      name="ignition::gazebo::systems::JointStatePublisher">
+      <joint_name>pan_gimbal_joint</joint_name>
+      <joint_name>tilt_gimbal_joint</joint_name>
+    </plugin>
+  </model>
+</sdf>
+~~~
+
 ## Appendix
