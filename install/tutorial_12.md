@@ -163,7 +163,7 @@ shell scripts for setting the necessary environment variables.
         make -j4
         # make install will work as the root user in a docker container
         # otherwise you may need to use `sudo make install`
-        make install
+        sudo make install
 
 sdformat supported cmake parameters at configuring time:
 
