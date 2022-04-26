@@ -81,12 +81,25 @@ naming at the sites of usage, e.g. `composite_arm::gripper_mount` from above.
 ### `//model/include/@merge`
 
 This adds a new attribute, `@merge`, to `//model/include` tags that when set to
-`true` changes the include behavior to insert the contents of the included
+`true` changes the include behavior to insert the contents (links, joints,
+frames, plugins, etc.) of the included
 model directly into the parent model without introducing a new scope into the
 model hierarchy. Some model elements are not merged: `//model/static`,
 `//model/self_collide`, `//model/enable_wind`, and `//model/allow_auto_disable`.
 
-<-- TODO: explain how poses work and the proxy _merged__<model_name>__model__ frame -->
+To posture the merged model contents via the `//model/include/pose` tag,
+a frame is added as a proxy for the implicit `__model__` of the merged model.
+This proxy frame is assigned the name `_merged__<model_name>__model__`,
+avoiding a double underscore at the start of the name to respect the reserved
+name rules. The proxy frame is attached to the canonical link of the model
+to be merged and assigned the pose specified in `//model/include/pose`.
+For the entities to be merged, any explicit references to the
+implicit `__model__` frame are replaced with references to the proxy frame.
+Additionally, the `//pose/@relative_to` is explicitly set to the name of the
+proxy frame for any poses that are implicitly defined relative to the implicit
+`__model__` frame, such as a `//link` with an empty `//pose/@relative_to`
+attribute or a `//frame` with empty `@attached_to` and `//pose/@relative_to`
+attributes.
 
 ## Examples
 
@@ -119,14 +132,17 @@ and the included model:
 </sdf>
 ~~~
 
-The result would be:
+The resulting merged model is shown below.
+A proxy frame named `_merged__test_model__model__` is added with the pose
+value of `100 0 0 0 0 0` from `//model/include/pose` and attached to `L1`,
+which is the canonical link of `test_model`.
 
 ~~~
 <sdf version='1.9'>
   <world name='world_model'>
     <model name='robot'>
       <frame name='_merged__test_model__model__' attached_to='L1'>
-        <pose relative_to='__model__'>100 0 0 0 -0 0</pose>
+        <pose relative_to='__model__'>100 0 0 0 0 0</pose>
       </frame>
       <link name='L1'>
         <pose relative_to='_merged__test_model__model__'/>
@@ -148,24 +164,7 @@ sensors mounted on a pan-tilt gimbal used in the DARPA Subterranean Challenge
     <link name="base_link"/>
 
     <link name="front_left_wheel_link">
-      <collision name="front_left_wheel_link_collision">
-        <pose>0 0 0 1.5707963267948966 -0 0</pose>
-        <geometry>
-          <cylinder>
-            <length>0.1143</length>
-            <radius>0.1651</radius>
-          </cylinder>
-        </geometry>
-      </collision>
-      <visual name="front_left_wheel_link_visual">
-        <pose frame="">0 0 0 0 -0 0</pose>
-        <geometry>
-          <mesh>
-            <scale>1 1 1</scale>
-            <uri>meshes/wheel.dae</uri>
-          </mesh>
-        </geometry>
-      </visual>
+      <pose>0.256 0.2854 0.03282 0 0 0</pose>
     </link>
     <joint name="front_left_wheel_joint" type="revolute">
       <child>front_left_wheel_link</child>
@@ -175,7 +174,9 @@ sensors mounted on a pan-tilt gimbal used in the DARPA Subterranean Challenge
       </axis>
     </joint>
 
-    <link name="front_right_wheel_link"/>
+    <link name="front_right_wheel_link">
+      <pose>0.256 -0.2854 0.03282 0 0 0</pose>
+    </link>
     <joint name="front_right_wheel_joint" type="revolute">
       <child>front_right_wheel_link</child>
       <parent>base_link</parent>
@@ -184,7 +185,9 @@ sensors mounted on a pan-tilt gimbal used in the DARPA Subterranean Challenge
       </axis>
     </joint>
 
-    <link name="rear_left_wheel_link"/>
+    <link name="rear_left_wheel_link">
+      <pose>-0.256 0.2854 0.03282 0 0 0</pose>
+    </link>
     <joint name="rear_left_wheel_joint" type="revolute">
       <child>rear_left_wheel_link</child>
       <parent>base_link</parent>
@@ -193,7 +196,9 @@ sensors mounted on a pan-tilt gimbal used in the DARPA Subterranean Challenge
       </axis>
     </joint>
 
-    <link name="rear_right_wheel_link"/>
+    <link name="rear_right_wheel_link">
+      <pose>-0.256 -0.2854 0.03282 0 0 0</pose>
+    </link>
     <joint name="rear_right_wheel_joint" type="revolute">
       <child>rear_right_wheel_link</child>
       <parent>base_link</parent>
@@ -203,59 +208,37 @@ sensors mounted on a pan-tilt gimbal used in the DARPA Subterranean Challenge
     </joint>
 
     <link name="pan_gimbal_link">
-      <pose>0.424 0 0.427 0 -0 0</pose>
+      <pose>0.424 0 0.427 0 0 0</pose>
     </link>
     <link name="tilt_gimbal_link">
-      <pose>0.424 0 0.460 0 -0 0</pose>
+      <pose>0.424 0 0.460 0 0 0</pose>
       <!-- Based on Intel realsense D435 (intrinsics and distortion not modeled)-->
       <sensor name="camera_pan_tilt" type="rgbd_camera">
         <camera name="camera_pan_tilt">
-            <horizontal_fov>1.5184</horizontal_fov>
-            <lens>
-                <intrinsics>
-                    <!-- fx = fy = width / ( 2 * tan (hfov / 2 ) ) -->
-                    <fx>337.22195</fx>
-                    <fy>337.22195</fy>
-                    <!-- cx = ( width + 1 ) / 2 -->
-                    <cx>320.5</cx>
-                    <!-- cy = ( height + 1 ) / 2 -->
-                    <cy>240.5</cy>
-                    <s>0</s>
-                </intrinsics>
-            </lens>
-            <distortion>
-                <k1>0.0</k1>
-                <k2>0.0</k2>
-                <k3>0.0</k3>
-                <p1>0.0</p1>
-                <p2>0.0</p2>
-                <center>0.5 0.5</center>
-            </distortion>
-            <image>
-                <width>640</width>
-                <height>480</height>
-                <format>R8G8B8</format>
-            </image>
+          <horizontal_fov>1.5184</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.01</near>
+            <far>300</far>
+          </clip>
+          <depth_camera>
             <clip>
-                <near>0.01</near>
-                <far>300</far>
+              <near>0.1</near>
+              <far>10</far>
             </clip>
-            <depth_camera>
-              <clip>
-                <near>0.1</near>
-                <far>10</far>
-              </clip>
-            </depth_camera>
-            <noise>
-                <type>gaussian</type>
-                <mean>0</mean>
-                <stddev>0.007</stddev>
-            </noise>
+          </depth_camera>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.007</stddev>
+          </noise>
         </camera>
         <always_on>1</always_on>
         <update_rate>30</update_rate>
-        <visualize>0</visualize>
-
         <pose>0.0 0 0.03 0 0.0 0</pose>
       </sensor>
       <light name="flashlight_flashlight_light_source_lamp_light" type="spot">
@@ -274,7 +257,6 @@ sensors mounted on a pan-tilt gimbal used in the DARPA Subterranean Challenge
           <outer_angle>2.9</outer_angle>
           <falloff>1</falloff>
         </spot>
-        <direction>0 0 -1</direction>
       </light>
     </link>
     <joint name="pan_gimbal_joint" type="revolute">
@@ -319,6 +301,179 @@ sensors mounted on a pan-tilt gimbal used in the DARPA Subterranean Challenge
       <joint_name>pan_gimbal_joint</joint_name>
       <joint_name>tilt_gimbal_joint</joint_name>
     </plugin>
+  </model>
+</sdf>
+~~~
+
+This model fle can be decomposed into `marble_husky_base.sdf` containing the
+chassis and wheels:
+
+~~~
+<sdf version="1.7">
+  <model name="marble_husky_base">
+    <link name="base_link"/>
+
+    <link name="front_left_wheel_link">
+      <pose>0.256 0.2854 0.03282 0 0 0</pose>
+    </link>
+    <joint name="front_left_wheel_joint" type="revolute">
+      <child>front_left_wheel_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz expressed_in='__model__'>0 1 0</xyz>
+      </axis>
+    </joint>
+
+    <link name="front_right_wheel_link">
+      <pose>0.256 -0.2854 0.03282 0 0 0</pose>
+    </link>
+    <joint name="front_right_wheel_joint" type="revolute">
+      <child>front_right_wheel_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz expressed_in='__model__'>0 1 0</xyz>
+      </axis>
+    </joint>
+
+    <link name="rear_left_wheel_link">
+      <pose>-0.256 0.2854 0.03282 0 0 0</pose>
+    </link>
+    <joint name="rear_left_wheel_joint" type="revolute">
+      <child>rear_left_wheel_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz expressed_in='__model__'>0 1 0</xyz>
+      </axis>
+    </joint>
+
+    <link name="rear_right_wheel_link">
+      <pose>-0.256 -0.2854 0.03282 0 0 0</pose>
+    </link>
+    <joint name="rear_right_wheel_joint" type="revolute">
+      <child>rear_right_wheel_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz expressed_in='__model__'>0 1 0</xyz>
+      </axis>
+    </joint>
+  </model>
+</sdf>
+~~~
+
+and `pan_tilt_sensors_3.sdf` containing the gimbal with
+sensors:
+
+~~~
+<sdf version="1.7">
+  <model name="pan_tilt_sensors_3">
+    <link name="pan_gimbal_link"/>
+    <link name="tilt_gimbal_link">
+      <!-- Based on Intel realsense D435 (intrinsics and distortion not modeled)-->
+      <sensor name="camera_pan_tilt" type="rgbd_camera">
+        <camera name="camera_pan_tilt">
+          <horizontal_fov>1.5184</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.01</near>
+            <far>300</far>
+          </clip>
+          <depth_camera>
+            <clip>
+              <near>0.1</near>
+              <far>10</far>
+            </clip>
+          </depth_camera>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <pose>0.0 0 0.03 0 0.0 0</pose>
+      </sensor>
+      <light name="flashlight_flashlight_light_source_lamp_light" type="spot">
+        <pose>0.0 0.0 0.065 3.141592653589793 1.5707963267948966 -0.0015926535897931</pose>
+        <attenuation>
+          <range>50</range>
+          <linear>0</linear>
+          <constant>0.1</constant>
+          <quadratic>0.0025</quadratic>
+        </attenuation>
+        <diffuse>0.8 0.8 0.5 1</diffuse>
+        <specular>0.8 0.8 0.5 1</specular>
+        <spot>
+          <!-- The lights on the MARBLE ground vehicles are very wide angle, 100W LEDs -->
+          <inner_angle>2.8</inner_angle>
+          <outer_angle>2.9</outer_angle>
+          <falloff>1</falloff>
+        </spot>
+      </light>
+    </link>
+    <joint name="pan_gimbal_joint" type="revolute">
+      <child>pan_gimbal_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz expressed_in="__model__">0 0 1</xyz>
+      </axis>
+    </joint>
+    <joint name="tilt_gimbal_joint" type="revolute">
+      <child>tilt_gimbal_link</child>
+      <parent>pan_gimbal_link</parent>
+      <axis>
+        <xyz expressed_in="__model__">0 1 0</xyz>
+        <limit>
+          <lower>-1.5708</lower> <!-- 90 degrees both direction (mechanical interference)-->
+          <upper>1.5708</upper>
+          <effort>10</effort>
+        </limit>
+      </axis>
+    </joint>
+    <!-- Gimbal Joints Plugins -->
+    <plugin
+      filename="libignition-gazebo-joint-controller-system.so"
+      name="ignition::gazebo::systems::JointController">
+      <joint_name>pan_gimbal_joint</joint_name>
+      <use_force_commands>true</use_force_commands>
+      <p_gain>0.4</p_gain>
+      <i_gain>10</i_gain>
+    </plugin>
+    <plugin
+      filename="libignition-gazebo-joint-controller-system.so"
+      name="ignition::gazebo::systems::JointController">
+      <joint_name>tilt_gimbal_joint</joint_name>
+      <use_force_commands>true</use_force_commands>
+      <p_gain>0.4</p_gain>
+      <i_gain>10</i_gain>
+    </plugin>
+    <plugin
+      filename="libignition-gazebo-joint-state-publisher-system.so"
+      name="ignition::gazebo::systems::JointStatePublisher">
+      <joint_name>pan_gimbal_joint</joint_name>
+      <joint_name>tilt_gimbal_joint</joint_name>
+    </plugin>
+  </model>
+</sdf>
+~~~
+
+The split files can then be recomposed as follows:
+
+~~~
+<sdf version="1.9">
+  <model name="marble_husky_sensor_config_3_recomposed">
+    <include merge="true">
+      <uri>marble_husky_base.sdf</uri>
+    </include>
+
+    <include merge="true">
+      <uri>pan_tilt_sensors_3.sdf</uri>
+      <pose>0.424 0 0.427 0 0 0</pose>
+    </include>
   </model>
 </sdf>
 ~~~
