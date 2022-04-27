@@ -82,24 +82,24 @@ naming at the sites of usage, e.g. `composite_arm::gripper_mount` from above.
 
 This adds a new attribute, `@merge`, to `//model/include` tags that when set to
 `true` changes the include behavior to insert the contents (links, joints,
-frames, plugins, etc.) of the included
-model directly into the parent model without introducing a new scope into the
+frames, plugins, etc.) of the included model file
+directly into the parent model without introducing a new scope into the
 model hierarchy. Some model elements are not merged: `//model/static`,
 `//model/self_collide`, `//model/enable_wind`, and `//model/allow_auto_disable`.
 
-To posture the merged model contents via the `//model/include/pose` tag,
-a frame is added as a proxy for the implicit `__model__` of the merged model.
-This proxy frame is assigned the name `_merged__<model_name>__model__`,
+To posture the included model contents via the `//model/include/pose` tag,
+a frame is added as a proxy for the implicit `__model__` of the included model.
+This proxy frame is assigned the name `_merged__<model_name>__model__`
+(where `<model_name>` is the name of the included model),
 avoiding a double underscore at the start of the name to respect the reserved
 name rules. The proxy frame is attached to the canonical link of the model
 to be merged and assigned the pose specified in `//model/include/pose`.
 For the entities to be merged, any explicit references to the
 implicit `__model__` frame are replaced with references to the proxy frame.
-Additionally, the `//pose/@relative_to` is explicitly set to the name of the
-proxy frame for any poses that are implicitly defined relative to the implicit
-`__model__` frame, such as a `//link` with an empty `//pose/@relative_to`
-attribute or a `//frame` with empty `@attached_to` and `//pose/@relative_to`
-attributes.
+Additionally, the name of the proxy frame is inserted anywhere the is an
+implicit reference to the included model's `__model__` frame, such as a link
+with an empty `//pose/@relative_to` attribute or a frame with an empty
+`@attached_to` attribute.
 
 ## Examples
 
@@ -360,8 +360,9 @@ chassis and wheels:
 </sdf>
 ~~~
 
-and `pan_tilt_sensors_3.sdf` containing the gimbal with
-sensors:
+and `pan_tilt_sensors_3.sdf` containing the gimbal with sensors
+(but excluding `pan_gimbal_joint` since it references `base_link` and would
+violate encapsulation to include it in either file):
 
 ~~~
 <sdf version="1.7">
@@ -461,7 +462,9 @@ sensors:
 </sdf>
 ~~~
 
-The split files can then be recomposed as follows:
+The split files can then be recomposed as follows by merge-including both
+`marble_husky_base.sdf` and `pan_tilt_sensors_3.sdf` alongside the
+`pan_gimbal_joint`:
 
 ~~~
 <sdf version="1.9">
@@ -474,6 +477,14 @@ The split files can then be recomposed as follows:
       <uri>pan_tilt_sensors_3.sdf</uri>
       <pose>0.424 0 0.427 0 0 0</pose>
     </include>
+
+    <joint name="pan_gimbal_joint" type="revolute">
+      <child>pan_gimbal_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz expressed_in="_merged__pan_tilt_sensors_3__model__">0 0 1</xyz>
+      </axis>
+    </joint>
   </model>
 </sdf>
 ~~~
