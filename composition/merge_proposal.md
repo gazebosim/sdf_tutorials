@@ -61,20 +61,25 @@ each model is fully defined by its own contents and those of its nested models.
 Separate name scopes are defined for each model in the hierarchy to avoid name
 collisions.
 
-As mentioned in the introduction above, if a user wished to split a model into
-separate components and then combine them via composition, those changes may now
-become visible to downstream consumers.
+While useful for avoiding name collisions, hierarchical namespacing causes
+entity names to change if an existing model file is refactored into components
+in separate files that are reconstituted using `//model/include` tags. Those
+name changes may break any downstream consumers of those model files that
+depend on the existing naming scheme.
 
-For example, say a user had combinatorics of arm + flange + gripper
-combinations, and wished to defer the combinatorics to SDFormat's `//include`
-composition (instead of a text processing method like `xacro`) such that each
-component could be used in composition or isolation. If the user made this
-change, it could change the name of relevant interface elements, e.g. links,
-joints, and frames. For example, what used to be `composite_arm::gripper_mount`
-may now need to become something like `composite_arm::flange::gripper_mount`.
+For example, if multiple model files use combinations of repeated arm, flange,
+and gripper components, storing the repeated components in separate files
+and incorporating them with an `//include` tag would reduce duplication of
+model content and allow the components to be used in composition or isolation.
+Refactoring an existing model in this way could change the names of relevant
+interface elements, most significantly links, joints, and frames. A frame
+previously called `composite_arm::gripper_mount` may become something like
+`composite_arm::flange::gripper_mount` if it was included in a nested model
+file named `flange`.
 
-However, with the proposed feature, the user could choose to preserve the
-naming at the sites of usage, e.g. `composite_arm::gripper_mount` from above.
+With the proposed feature, however, the user could choose to preserve the
+entity names of interface elements that may be referenced
+by downstream models, such as `composite_arm::gripper_mount` from above.
 
 ## Proposed changes
 
