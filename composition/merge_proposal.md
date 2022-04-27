@@ -421,13 +421,6 @@ violate encapsulation to include it in either file):
         </spot>
       </light>
     </link>
-    <joint name="pan_gimbal_joint" type="revolute">
-      <child>pan_gimbal_link</child>
-      <parent>base_link</parent>
-      <axis>
-        <xyz expressed_in="__model__">0 0 1</xyz>
-      </axis>
-    </joint>
     <joint name="tilt_gimbal_joint" type="revolute">
       <child>tilt_gimbal_link</child>
       <parent>pan_gimbal_link</parent>
