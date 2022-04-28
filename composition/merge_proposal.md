@@ -93,12 +93,16 @@ model hierarchy. Some model elements are not merged: `//model/static`,
 `//model/self_collide`, `//model/enable_wind`, and `//model/allow_auto_disable`.
 
 To posture the included model contents via the `//model/include/pose` tag,
-a frame is added as a proxy for the implicit `__model__` of the included model.
+a frame is added as a proxy for the implicit `__model__` frame of the included model.
 This proxy frame is assigned the name `_merged__<model_name>__model__`
 (where `<model_name>` is the name of the included model),
 avoiding a double underscore at the start of the name to respect the reserved
 name rules. The proxy frame is attached to the canonical link of the model
 to be merged and assigned the pose specified in `//model/include/pose`.
+If no `//model/@placement_frame` or `//include/placement_frame` is specified,
+the raw pose may simply be copied, but in general the model to be merged should
+be loaded into an `sdf::Root` object so that graphs are constructed and
+the model pose can be resolved (see code in [parser.cc](https://github.com/ignitionrobotics/sdformat/blob/sdformat12_12.4.0/src/parser.cc#L263-L277)).
 For the entities to be merged, any explicit references to the
 implicit `__model__` frame are replaced with references to the proxy frame.
 Additionally, the name of the proxy frame is inserted anywhere the is an
