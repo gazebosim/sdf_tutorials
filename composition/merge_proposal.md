@@ -117,7 +117,6 @@ with an empty `//pose/@relative_to` attribute or a frame with an empty
 Given the parent model:
 
 ~~~
-<?xml version="1.0" ?>
 <sdf version="1.9">
   <world name="world_model">
     <model name="robot">
@@ -223,49 +222,10 @@ sensors mounted on a pan-tilt gimbal used in the DARPA Subterranean Challenge
       <pose>0.424 0 0.460 0 0 0</pose>
       <!-- Based on Intel realsense D435 (intrinsics and distortion not modeled)-->
       <sensor name="camera_pan_tilt" type="rgbd_camera">
-        <camera name="camera_pan_tilt">
-          <horizontal_fov>1.5184</horizontal_fov>
-          <image>
-            <width>640</width>
-            <height>480</height>
-            <format>R8G8B8</format>
-          </image>
-          <clip>
-            <near>0.01</near>
-            <far>300</far>
-          </clip>
-          <depth_camera>
-            <clip>
-              <near>0.1</near>
-              <far>10</far>
-            </clip>
-          </depth_camera>
-          <noise>
-            <type>gaussian</type>
-            <mean>0</mean>
-            <stddev>0.007</stddev>
-          </noise>
-        </camera>
-        <always_on>1</always_on>
-        <update_rate>30</update_rate>
-        <pose>0.0 0 0.03 0 0.0 0</pose>
+        <!-- ... -->
       </sensor>
       <light name="flashlight_flashlight_light_source_lamp_light" type="spot">
-        <pose>0.0 0.0 0.065 3.141592653589793 1.5707963267948966 -0.0015926535897931</pose>
-        <attenuation>
-          <range>50</range>
-          <linear>0</linear>
-          <constant>0.1</constant>
-          <quadratic>0.0025</quadratic>
-        </attenuation>
-        <diffuse>0.8 0.8 0.5 1</diffuse>
-        <specular>0.8 0.8 0.5 1</specular>
-        <spot>
-          <!-- The lights on the MARBLE ground vehicles are very wide angle, 100W LEDs -->
-          <inner_angle>2.8</inner_angle>
-          <outer_angle>2.9</outer_angle>
-          <falloff>1</falloff>
-        </spot>
+        <!-- ... -->
       </light>
     </link>
     <joint name="pan_gimbal_joint" type="revolute">
@@ -380,49 +340,10 @@ violate encapsulation to include it in either file):
     <link name="tilt_gimbal_link">
       <!-- Based on Intel realsense D435 (intrinsics and distortion not modeled)-->
       <sensor name="camera_pan_tilt" type="rgbd_camera">
-        <camera name="camera_pan_tilt">
-          <horizontal_fov>1.5184</horizontal_fov>
-          <image>
-            <width>640</width>
-            <height>480</height>
-            <format>R8G8B8</format>
-          </image>
-          <clip>
-            <near>0.01</near>
-            <far>300</far>
-          </clip>
-          <depth_camera>
-            <clip>
-              <near>0.1</near>
-              <far>10</far>
-            </clip>
-          </depth_camera>
-          <noise>
-            <type>gaussian</type>
-            <mean>0</mean>
-            <stddev>0.007</stddev>
-          </noise>
-        </camera>
-        <always_on>1</always_on>
-        <update_rate>30</update_rate>
-        <pose>0.0 0 0.03 0 0.0 0</pose>
+        <!-- ... -->
       </sensor>
       <light name="flashlight_flashlight_light_source_lamp_light" type="spot">
-        <pose>0.0 0.0 0.065 3.141592653589793 1.5707963267948966 -0.0015926535897931</pose>
-        <attenuation>
-          <range>50</range>
-          <linear>0</linear>
-          <constant>0.1</constant>
-          <quadratic>0.0025</quadratic>
-        </attenuation>
-        <diffuse>0.8 0.8 0.5 1</diffuse>
-        <specular>0.8 0.8 0.5 1</specular>
-        <spot>
-          <!-- The lights on the MARBLE ground vehicles are very wide angle, 100W LEDs -->
-          <inner_angle>2.8</inner_angle>
-          <outer_angle>2.9</outer_angle>
-          <falloff>1</falloff>
-        </spot>
+        <!-- ... -->
       </light>
     </link>
     <joint name="tilt_gimbal_joint" type="revolute">
