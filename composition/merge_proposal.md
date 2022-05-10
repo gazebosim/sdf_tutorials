@@ -105,7 +105,7 @@ be loaded into an `sdf::Root` object so that graphs are constructed and
 the model pose can be resolved (see code in [parser.cc](https://github.com/ignitionrobotics/sdformat/blob/sdformat12_12.4.0/src/parser.cc#L263-L277)).
 For the entities to be merged, any explicit references to the
 implicit `__model__` frame are replaced with references to the proxy frame.
-Additionally, the name of the proxy frame is inserted anywhere the is an
+Additionally, the name of the proxy frame is inserted anywhere there is an
 implicit reference to the included model's `__model__` frame, such as a link
 with an empty `//pose/@relative_to` attribute or a frame with an empty
 `@attached_to` attribute.
