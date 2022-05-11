@@ -94,10 +94,7 @@ model hierarchy. Some model elements are not merged: `//model/static`,
 
 To posture the included model contents via the `//model/include/pose` tag,
 a frame is added as a proxy for the implicit `__model__` frame of the included model.
-This proxy frame is assigned the name `_merged__<model_name>__model__`
-(where `<model_name>` is the name of the included model),
-avoiding a double underscore at the start of the name to respect the reserved
-name rules. The proxy frame is attached to the canonical link of the model
+The proxy frame is attached to the canonical link of the model
 to be merged and assigned the pose specified in `//model/include/pose`.
 If no `//model/@placement_frame` or `//include/placement_frame` is specified,
 the raw pose may simply be copied, but in general the model to be merged should
@@ -109,6 +106,18 @@ Additionally, the name of the proxy frame is inserted anywhere there is an
 implicit reference to the included model's `__model__` frame, such as a link
 with an empty `//pose/@relative_to` attribute or a frame with an empty
 `@attached_to` attribute.
+The name of the included model's proxy frame is an implementation detail and
+is not guaranteed to be stable.
+As of [libsdformat 12.4.0](https://github.com/gazebosim/sdformat/blob/sdformat12_12.4.0/src/parser.cc#L2674),
+the name of the included model's proxy frame follows the pattern
+`_merged__<model_name>__model__` (where `<model_name>` is the name of the
+included model), avoiding a double underscore at the start of the name to
+respect the reserved name rules.
+In order to reference the model frame of a merge-included model, it is
+recommended to add an explicitly named `//frame` to the model that is attached
+to the included model's `__model__` frame or to use
+`//include/experimental:params` to inject such a frame directly (see
+[documentation](/tutorials?tut=param_passing_tutorial)).
 
 ## Examples
 
@@ -141,7 +150,7 @@ and the included model:
 ~~~
 
 The resulting merged model is shown below.
-A proxy frame named `_merged__test_model__model__` is added with the pose
+A proxy frame is added with the pose
 value of `100 0 0 0 0 0` from `//model/include/pose` and attached to `L1`,
 which is the canonical link of `test_model`.
 
@@ -329,13 +338,16 @@ chassis and wheels:
 </sdf>
 ~~~
 
-and `pan_tilt_sensors_3.sdf` containing the gimbal with sensors
+and `pan_tilt_sensors_3.sdf` containing an additional explicit frame named
+`pan_tilt_sensors_3_model` that is attached to the `__model__` frame by default
+along with the gimbal with sensors
 (but excluding `pan_gimbal_joint` since it references `base_link` and would
 violate encapsulation to include it in either file):
 
 ~~~
 <sdf version="1.7">
   <model name="pan_tilt_sensors_3">
+    <frame name="pan_tilt_sensors_3_model"/>
     <link name="pan_gimbal_link"/>
     <link name="tilt_gimbal_link">
       <!-- Based on Intel realsense D435 (intrinsics and distortion not modeled)-->
@@ -387,7 +399,8 @@ violate encapsulation to include it in either file):
 
 The split files can then be recomposed as follows by merge-including both
 `marble_husky_base.sdf` and `pan_tilt_sensors_3.sdf` alongside the
-`pan_gimbal_joint`:
+`pan_gimbal_joint`, which uses the explictly named frame
+`pan_tilt_sensors_3_model` to express the `//joint/axis/xyz` value.
 
 ~~~
 <sdf version="1.9">
@@ -405,7 +418,7 @@ The split files can then be recomposed as follows by merge-including both
       <child>pan_gimbal_link</child>
       <parent>base_link</parent>
       <axis>
-        <xyz expressed_in="_merged__pan_tilt_sensors_3__model__">0 0 1</xyz>
+        <xyz expressed_in="pan_tilt_sensors_3_model">0 0 1</xyz>
       </axis>
     </joint>
   </model>
