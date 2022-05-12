@@ -4,7 +4,7 @@
 Eric Cousineau `<eric.cousineau@tri.global>`,
 Addisu Taddese  `<addisu@openrobotics.org>`
 Steve Peters `<scpeters@openrobotics.org>`
-* **Status**: Draft
+* **Status**: Accepted
 * **SDFormat Version**: 1.9
 * **`libsdformat` Version**: 12.0
 
@@ -29,7 +29,11 @@ This is useful both for creating new models and for decomposing existing models
 into separate components without visibile changes to downstream consumers,
 while maintaining the encapsulation provided by SDFormat 1.8.
 The cost of this feature is that users must take care to avoid name collisions
-between the entities of the models to be merged.
+between the entities of the models to be merged: consider an analogy to Python
+module imports. A normal `//model/include` is similar to a `import my_model`.
+If the `//model/include/name` element is specified, then it is is similar to
+`import my_model as renamed_model`. With the proposed behavior, a merge include
+is effectively the same as `from my_model import *`.
 
 ## Document summary
 
@@ -173,7 +177,7 @@ which is the canonical link of `test_model`.
 
 The following is an abridged version of a Clearpath Husky skid-steer with
 sensors mounted on a pan-tilt gimbal used in the DARPA Subterranean Challenge
-([MARBLE HUSKY SENSOR CONFIG 3](https://app.ignitionrobotics.org/OpenRobotics/fuel/models/MARBLE_HUSKY_SENSOR_CONFIG_3)):
+([MARBLE HUSKY SENSOR CONFIG 3](https://app.ignitionrobotics.org/OpenRobotics/fuel/models/MARBLE_HUSKY_SENSOR_CONFIG_3/10)):
 
 ~~~
 <sdf version="1.7">
@@ -426,3 +430,5 @@ The split files can then be recomposed as follows by merge-including both
 ~~~
 
 ## Appendix
+
+(Unused)
