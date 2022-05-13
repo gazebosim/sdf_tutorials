@@ -13,11 +13,19 @@ Prerequisites:
 
 [[file:pendulum.png|400px]]
 
-[[file:pendulum_demo.gif|465px]]
-
 ### `//pose/@relative_to`
 
-A new `/@relative_to` attribute for `//pose` tags to specify the relative relation of the current pose to another entity pose.
+Each pose must be defined **relative to** (or be measured in) a certain frame.
+SDFormat 1.6 and earlier has
+[fixed rules for each type of element](/tutorials?tut=pose_frame_semantics&ver=1.5#parent-frames-in-sdf-1-4)
+to determine the relative-to frame for its pose.
+In SDFormat 1.7, the `//pose/@relative_to` attribute provides flexibility to
+model authors to specify this relative-to frame.
+For the pendulum with base illustrated above,
+the pose of the `joint` is defined relative to the `base` link, and the pose of
+the `pendulum` link is defined relative to the `joint`, in each case by
+specifying the name of the relative-to link or joint in the `@relative_to`
+attribute.
 
 ```xml
 <sdf version="1.7">
@@ -44,9 +52,18 @@ A new `/@relative_to` attribute for `//pose` tags to specify the relative relati
 </sdf>
 ```
 
-### `//frame/@attach_to`
+### `//frame/@attached_to`
 
-A new `/@attach_to` attribute for `//frame` tags to specify the parent frame of the current frame.
+The `//frame` tag allows arbitrary frames to be defined. In addition to
+specifying its name (`//frame/@name`) and pose (`//frame/pose`), a frame must
+be **attached to** another frame or link. In SDFormat 1.7, this attached-to
+frame is specified with the `//frame/@attached_to` attribute.
+When `//frame/pose/@relative_to` is unspecified, it defaults to the frame's
+attached-to frame.
+For the pendulum with base illustrated above, a frame named `tip` is attached
+to the `pendulum` link at its farthest end by specifying the link's name in the
+`@attached_to` attribute and expressing its pose relative-to the `pendulum`
+link frame.
 
 ```xml
 <sdf version="1.7">
@@ -65,9 +82,11 @@ A new `/@attach_to` attribute for `//frame` tags to specify the parent frame of 
 </sdf>
 ```
 
-### Canonical link
+### Canonical link and model frame
 
-A new `/@canonical_link` attribute for `//model` tags to specify the canonical link of the model.
+Each model frame must be attached to a link, which can be specified in the
+`//model/@canonical_link` attribute. If unspecified, the canonical link
+defaults to the first `//link` element in the model.
 
 ```xml
 <sdf version="1.7">
@@ -81,7 +100,10 @@ A new `/@canonical_link` attribute for `//model` tags to specify the canonical l
 
 ### Naming requirements for links, joints and frames
 
-New naming and scoping rules for links, joints, and frames; new unique names and reserved names in SDFormat 1.7.
+There are more restrictive rules in SDFormat 1.7 for naming entities related
+to name uniqueness and reserved names. In addition, scoping rules are defined
+that affect uniqueness and name collisions as well as which frames a given
+element is permitted to reference in an SDFormat file.
 
 See [Name conflicts and scope](#name-conflicts-and-scope) and
 [Unique names and reserved names](#unique-names-and-reserved-names).
