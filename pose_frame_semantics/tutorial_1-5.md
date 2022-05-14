@@ -398,6 +398,34 @@ to define an SDFormat model that behaves identically to a URDF model
 by specifying the parent reference frames according to the URDF convention.
 
 
+### Specifying joint axes in sdf 1.4
+
+Joints that specify axis directions use a unit vector in the `//joint/axis/xyz`
+element and optionally the `//joint/axis2/xyz` element for joints with multiple
+degrees of freedom, such as Universal joints.
+The most intuitive frame in which to express these unit vectors is the joint
+frame, and the SDFormat specification initially declared this convention.
+Due to a bug in Gazebo, the primary consumer of SDFormat files at that time
+(see [osrf/gazebo#494](https://github.com/osrf/gazebo/issues/494)),
+joint axis unit vectors were interpreted in the model frame corresponding to
+the joint's parent link. This was not an error in the specification, but many
+models had already been written according to the incorrect implementation,
+so version 1.4 of the specification was changed to match the actual behavior
+at that time with the plan of reverting to the intended behavior in a
+future version of SDFormat
+(see [//joint/axis documentation](/spec?ver=1.4&elem=joint#joint_axis)).
+
+### Specifying joint axes in sdf 1.5 with `//joint/axis/use_parent_model_frame`
+
+In SDFormat 1.5, the default behavior is changed, so that joint axis unit
+vectors are interpreted in the joint frame. For backwards compatibility,
+the boolean `//use_parent_model_frame` element was added to `//joint/axis` and
+`//joint/axis2` with a value of `true` corresponding to the SDFormat 1.4
+behavior and its default value of `false` corresponding to interpretation of
+the unit vectors in the joint frame.
+When forward-converting an SDFormat 1.4 file to version 1.5, the script sets
+`//use_parent_model_frame` to true for all `//axis` and `//axis2` elements.
+
 ### Specifying parent and child link names for joints in sdf 1.4
 
 Joints specify the parent and child links by name in the `<parent>` and
