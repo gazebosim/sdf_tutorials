@@ -190,6 +190,19 @@
       <skill>advanced</skill>
     </tutorial>
 
+    <tutorial title="Merging for Composition: Proposed behavior" ref='composition_merge_proposal' type='proposal'>
+      <markdown version="1.9">composition/merge_proposal.md</markdown>
+      <description>
+          Proposed new behavior for merging models via composition, rather than
+          purely scoped nesting.
+      </description>
+      <tags>
+        <tag>nesting</tag>
+        <tag>composition</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
     <tutorial title="Proposal for parameter passing" ref='param_passing_proposal' type='proposal'>
       <markdown version="1.7">param_passing/proposal.md</markdown>
       <description>
@@ -272,6 +285,7 @@
         <tutorial>custom_elements_attributes_proposal</tutorial>
         <tutorial>param_passing_proposal</tutorial>
         <tutorial>composition_proposal</tutorial>
+        <tutorial>composition_merge_proposal</tutorial>
         <tutorial>better_pose_proposal</tutorial>
       </tutorials>
     </category>
