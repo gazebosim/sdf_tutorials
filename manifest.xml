@@ -237,6 +237,15 @@
       <skill>advanced</skill>
     </tutorial>
 
+    <tutorial title="Proposal for added mass" ref='added_mass_proposal' type='proposal'>
+      <markdown version="1.9">added_mass/proposal.md</markdown>
+      <description>Setting added mass matrix inertial parameters.</description>
+      <tags>
+        <tag>proposal</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
  </tutorials>
 
   <!-- *************************************** -->
@@ -287,6 +296,7 @@
         <tutorial>composition_proposal</tutorial>
         <tutorial>composition_merge_proposal</tutorial>
         <tutorial>better_pose_proposal</tutorial>
+        <tutorial>added_mass_proposal</tutorial>
       </tutorials>
     </category>
 
