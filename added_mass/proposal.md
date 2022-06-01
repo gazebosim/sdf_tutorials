@@ -1,11 +1,11 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 
-# Added Mass Proposal
+# Hydrodynamic Added Mass Proposal
 
 * **Authors**:
 Louise Poubel `<louise@openrobotics.org>`,
 Andrew Hamilton `<hamilton@mbari.org>`,
-Michael Anderson `<anderson@mbari.org>`,
+Michael Anderson `<anderson@mbari.org>`
 * **Status**: Draft
 * **SDFormat Version**: 1.9
 * **`libsdformat` Version**: 12.X
@@ -13,12 +13,13 @@ Michael Anderson `<anderson@mbari.org>`,
 ## Introduction
 
 This proposal suggests the addition of elements under the `//link/inertial` element
-to support the simulation of [added mass](https://en.wikipedia.org/wiki/Added_mass)
-in SDFormat 1.9.
+to support the inclusion of [hydrodynamic added mass] (https://en.wikipedia.org/wiki/Added_mass)
+effects in SDFormat 1.9.
 
-Current implementations of added mass, such as that of
-[gz::sim::systems::Hydrodynamics](https://gazebosim.org/api/gazebo/6.9/classignition_1_1gazebo_1_1systems_1_1Hydrodynamics.html#details)
-apply forces as separate external forces after the physics step, adding to simulation instability.
+Current implementations, such as
+[gz::sim::systems::Hydrodynamics](https://gazebosim.org/api/gazebo/6.9/classignition_1_1gazebo_1_1systems_1_1Hydrodynamics.html#details),
+include forces due to added mass effects by estimating these forces from the last time-steps 
+acceleration value and applying these estimates as separate external forces, reducing simulation accuracy and stability.
 
 Native support of added mass through the SDF specification makes it possible for physics
 engines to handle these terms together with other inertial terms during the physics update
@@ -33,131 +34,123 @@ The proposal includes the following sections:
 
 ## Motivation
 
-Newton's second law describes how forces affect a body's motion. It can be written as:
+Newton's second law describes how forces affect a body's motion in an inertial frame. It can be written as:
 
-$$ M * \ddot{X} = \sum{F} $$
+$$ (\bf{M} + \bf{\mu})   \ddot{\bf x} = \sum{F({\bf x}, t)} $$
 
-where \\(\sum{F}\\) is the sum of all forces applied to the body, \\(M\\) is the body's
-spatial mass matrix, and \\(\ddot{X}\\) is the resulting acceleration.
-
-The mass matrix can be broken down into [1]:
+where $M$ is the body mass inertia matrix, $\mu$ is the hydrodynamic added mass matrix, 
+$\sum{F}$ is the sum of all forces applied to the body, and $\ddot{\bf x}$ is the resulting acceleration, with:
 
 $$
-    M
-    =
-    m
+    {\bf x}^T 
     =
     \begin{bmatrix}
-      m           & 0           & 0           & 0           &  m z\_{CoM} & -m y\_{CoM} \\\
-      0           & m           & 0           & -m z\_{CoM} & 0           &  m x\_{CoM} \\\
-      0           & 0           & m           &  m y\_{CoM} & -m x\_{CoM} & 0           \\\
-      0           & -m z\_{CoM} &  m y\_{CoM} & i\_{xx}     & i\_{xy}     & i\_{xz}     \\\
-       m z\_{CoM} & 0           & -m x\_{CoM} & i\_{xy}     & i\_{yy}     & i\_{yz}     \\\
-      -m y\_{CoM} &  mx\_{CoM}  & 0           & i\_{xz}     & i\_{yz}     & i\_{zz}
+      x           & y           & z           & p           &  q         & r 
+    \end{bmatrix}
+$$
+
+where,
+
+* $x$ : Position in X axis
+* $y$ : Position in Y axis
+* $z$ : Position in Z axis 
+* $p$ : Rotation about X axis
+* $q$ : Rotation about Y axis
+* $q$ : Rotation about Z axis
+> Note that the p-q-r notation is used for rotation, for this is common in maritime literature and cooresponds to roll-pitch-yaw.
+
+> Note also that DART stores the state vector with the rotational modes first ${\bf x}^T = [p & q & r & x & y & z]$, and re-orients the interia matrix accordingly, for this document the more usual ordering with translational modes first in the state vector is used.  
+
+&nbsp;
+
+&nbsp;
+
+The body mass matrix is a result of the mass and mass-distribution of the body and is defined as [1]:
+
+$$
+    \bf M 
+    =
+    \begin{bmatrix}
+      m           & 0           & 0           & 0           &  m z_{CoM} & -m y_{CoM} \\\
+      0           & m           & 0           & -m z_{CoM} & 0           &  m x_{CoM} \\\
+      0           & 0           & m           &  m y_{CoM} & -m x_{CoM} & 0           \\\
+      0           & -m z_{CoM} &  m y_{CoM} & I_{xx}     & I_{xy}     & I_{xz}     \\\
+       m z_{CoM} & 0           & -m x_{CoM} & I_{yx}     & I_{yy}     & I_{yz}     \\\
+      -m y_{CoM} &  mx_{CoM}  & 0           & I_{zx}     & I_{zy}     & I_{zz}
+    \end{bmatrix}
+$$
+
+where
+* $m$ : Body's mass
+* $I_{xx}$ : Principal mass moment of inertia about the X axis
+* $I_{yy}$ : Principal mass moment of inertia about the Y axis
+* $I_{zz}$ : Principal mass moment of inertia about the Z axis
+* $I_{xy} = I_{yx}$ : Product mass moment of inertia about the X and Y axes, and vice-versa
+* $I_{xz} = I_{zx}$ : Product mass moment of inertia about the X and Z axes, and vice-versa
+* $I_{yz} = I_{zy}$ : Product mass moment of inertia about the Y and Z axes, and vice-versa
+* $x_{CoM}$ : Center of mass X coordinate
+* $y_{CoM}$ : Center of mass Y coordinate
+* $z_{CoM}$ : Center of mass Z coordinate
+
+$M$ is sufficient to represent the body's inertia when the density of the surrounding fluid is much less than the density of the body, and this matrix is formed by sdf descriptions of $m$, $(x_{CoM},y_{CoM},z_{CoM})$, and the moment of inertial matrix $\bf I$, and so no access is given to the individiual components of $\bf M$.
+
+When the density of the surrounding fluid is not negligible compared to the density of the body, the added mass matrix $\bf{\mu}$ must be included for accurate simulations.  This situation commonly arises for submerged and floating bodies which have average densities comparable to the density of water, or very lightweight objects such as ballons in air.  In this case, $\bf{\mu}$ is symmetric and contains 21 unique values in the most general case. The off-diagonal terms result physically from the situation in which acceleration of the body in one direction results in an acceleration of the surrounding fluid in a different direction.  [2]
+
+$$
+    \bf{\mu}
+    =
+    \begin{bmatrix}
+      \mu_{11} & \mu_{12} & \mu_{13} & \mu_{14} & \mu_{15} & \mu_{16} \\\
+      \mu_{21} & \mu_{22} & \mu_{23} & \mu_{24} & \mu_{25} & \mu_{26} \\\
+      \mu_{31} & \mu_{32} & \mu_{33} & \mu_{34} & \mu_{35} & \mu_{36} \\\
+      \mu_{41} & \mu_{42} & \mu_{43} & \mu_{44} & \mu_{45} & \mu_{46} \\\
+      \mu_{51} & \mu_{52} & \mu_{53} & \mu_{54} & \mu_{55} & \mu_{56} \\\
+      \mu_{61} & \mu_{62} & \mu_{63} & \mu_{64} & \mu_{65} & \mu_{66}
     \end{bmatrix}
 $$
 
 where
 
-* \\(m\\): Body's mass
-* \\(i\_{xx}\\): Principal moment of inertia about the X axis
-* \\(i\_{yy}\\): Principal moment of inertia about the Y axis
-* \\(i\_{zz}\\): Principal moment of inertia about the Z axis
-* \\(i\_{xy}\\): Product moment of inertia about the X and Y axes
-* \\(i\_{xz}\\): Product moment of inertia about the X and Z axes
-* \\(i\_{yz}\\): Product moment of inertia about the Y and Z axes
-* \\(x\_{CoM}\\) Center of mass's X coordinate
-* \\(y\_{CoM}\\) Center of mass's Y coordinate
-* \\(z\_{CoM}\\) Center of mass's Z coordinate
+* $\mu_{11}$ : added mass in the X direction due to linear acceleration in the X direction
+* $\mu_{12}$ : added mass in the X direction due to linear acceleration in the Y direction
+* $\mu_{13}$ : added mass in the X direction due to linear acceleration in the Z direction
+* $\mu_{14}$ : added mass in the X axis due to angular acceleration about the X direction
+* $\mu_{15}$ : added mass in the X axis due to angular acceleration about the X direction
+* $\mu_{16}$ : added mass orce along the X axis due to angular acceleration about the X direction
+* $\mu_{21} = \mu_{12}$ : added mass in the Y axis due to linear acceleration in the X direction, and vice-versa
+* $\mu_{22}$ : added mass in the Y axis due to linear acceleration in the Y direction
+* $\mu_{23}$ : added mass in the Y axis due to linear acceleration in the Z direction
+* $\mu_{24}$ : added mass in the Y axis due to angular acceleration about the X direction
+* $\mu_{25}$ : added mass in the Y axis due to angular acceleration about the X direction
+* $\mu_{26}$ : added mass in the Y axis due to angular acceleration about the X direction
+* $\mu_{31} = \mu_{13}$ : added mass in the Z axis due to linear acceleration in the X direction, and vice-versa
+* $\mu_{32} = \mu_{23}$ : added mass in the Z axis due to linear acceleration in the Y direction, and vice-versa
+* $\mu_{33}$ : added mass in the Z axis due to linear acceleration in the Z direction
+* $\mu_{34}$ : added mass in the Z axis due to angular acceleration about the X direction
+* $\mu_{35}$ : added mass in the Z axis due to angular acceleration about the X direction
+* $\mu_{36}$ : added mass in the Z axis due to angular acceleration about the X direction
+* $\mu_{41} = \mu_{14}$ : added mass moment about the X axis due to linear acceleration in the X direction, and vice-versa
+* $\mu_{42} = \mu_{24}$ : added mass moment about the X axis due to linear acceleration in the Y direction, and vice-versa
+* $\mu_{43} = \mu_{34}$ : added mass moment about the X axis due to linear acceleration in the Z direction
+* $\mu_{44}$ : added mass moment about the X axis due to angular acceleration about the X direction
+* $\mu_{45}$ : added mass moment about the X axis due to angular acceleration about the X direction
+* $\mu_{46}$ : added mass moment about the X axis due to angular acceleration about the X direction
+* $\mu_{51} = \mu_{15}$ : added mass moment about the Y axis due to linear acceleration in the X direction, and vice-versa
+* $\mu_{52} = \mu_{25}$ : added mass moment about the Y axis due to linear acceleration in the Y direction, and vice-versa
+* $\mu_{53} = \mu_{35}$ : added mass moment about the Y axis due to linear acceleration in the Z direction, and vice-versa
+* $\mu_{54} = \mu_{45}$ : added mass moment about the Y axis due to angular acceleration about the X direction, and vice-versa
+* $\mu_{55}$ : added mass moment about the Y axis due to angular acceleration about the X direction
+* $\mu_{56}$ : added mass moment about the Y axis due to angular acceleration about the X direction
+* $\mu_{61} = \mu_{16}$ : added mass moment about the Z axis due to linear acceleration in the X direction, and vice-versa
+* $\mu_{62} = \mu_{26}$ : added mass moment about the Z axis due to linear acceleration in the Y direction, and vice-versa
+* $\mu_{63} = \mu_{36}$ : added mass moment about the Z axis due to linear acceleration in the Z direction, and vice-versa
+* $\mu_{64} = \mu_{46}$ : added mass moment about the Z axis due to angular acceleration about the X direction, and vice-versa
+* $\mu_{65} =\mu_{56}$ : added mass moment about the Z axis due to angular acceleration about the X direction, and vice-versa
+* $\mu_{66}$ : added mass moment about the Z axis due to angular acceleration about the Z direction
 
-and
+&nbsp;
 
-$$
-    X
-    =
-    \begin{bmatrix}
-      x \\\
-      y \\\
-      z \\\
-      p \\\
-      q \\\
-      r
-    \end{bmatrix}
-$$
-
-where
-
-* \\(x\\): Position in X axis
-* \\(y\\): Position in Y axis
-* \\(z\\): Position in Z axis
-* \\(p\\): Rotation about X axis
-* \\(q\\): Rotation about Y axis
-* \\(q\\): Rotation about Z axis
-
-> Note that the p-q-r notation is used for rotation, for this is common in maritime literature.
-  They're equivalent to roll-pitch-yaw.
-
-When the density of the fluid surrounding a moving body isn't negligible compared to the density of
-the body, the forces required to dislocate that fluid are relevant. That's called "added mass"
-and can be included by adding to \\(m\\), e.g. \\(M = m + n\\), where \\(n\\) is a symmetric matrix
-defined in the link frame:
-
-$$
-    n
-    =
-    \begin{bmatrix}
-      n\_{11} & n\_{12} & n\_{13} & n\_{14} & n\_{15} & n\_{16} \\\
-      n\_{12} & n\_{22} & n\_{23} & n\_{24} & n\_{25} & n\_{26} \\\
-      n\_{13} & n\_{23} & n\_{33} & n\_{34} & n\_{35} & n\_{36} \\\
-      n\_{14} & n\_{24} & n\_{34} & n\_{44} & n\_{45} & n\_{46} \\\
-      n\_{15} & n\_{25} & n\_{35} & n\_{45} & n\_{55} & n\_{56} \\\
-      n\_{16} & n\_{26} & n\_{36} & n\_{46} & n\_{56} & n\_{66}
-    \end{bmatrix}
-$$
-
-where
-
-* \\(n\_{11}\\): added mass force along the X axis due to linear acceleration in the X direction
-* \\(n\_{12}\\): added mass force along the X axis due to linear acceleration in the Y direction
-* \\(n\_{13}\\): added mass force along the X axis due to linear acceleration in the Z direction
-* \\(n\_{14}\\): added mass force along the X axis due to angular acceleration about the X direction
-* \\(n\_{15}\\): added mass force along the X axis due to angular acceleration about the X direction
-* \\(n\_{16}\\): added mass force along the X axis due to angular acceleration about the X direction
-* \\(n\_{21} == n\_{12}\\): added mass force along the Y axis due to linear acceleration in the X direction
-* \\(n\_{22}\\): added mass force along the Y axis due to linear acceleration in the Y direction
-* \\(n\_{23}\\): added mass force along the Y axis due to linear acceleration in the Z direction
-* \\(n\_{24}\\): added mass force along the Y axis due to angular acceleration about the X direction
-* \\(n\_{25}\\): added mass force along the Y axis due to angular acceleration about the X direction
-* \\(n\_{26}\\): added mass force along the Y axis due to angular acceleration about the X direction
-* \\(n\_{31} == n\_{13}\\): added mass force along the Z axis due to linear acceleration in the X direction
-* \\(n\_{32} == n\_{23}\\): added mass force along the Z axis due to linear acceleration in the Y direction
-* \\(n\_{33}\\): added mass force along the Z axis due to linear acceleration in the Z direction
-* \\(n\_{34}\\): added mass force along the Z axis due to angular acceleration about the X direction
-* \\(n\_{35}\\): added mass force along the Z axis due to angular acceleration about the X direction
-* \\(n\_{36}\\): added mass force along the Z axis due to angular acceleration about the X direction
-* \\(n\_{41} == n\_{14}\\): added mass torque about the X axis due to linear acceleration in the X direction
-* \\(n\_{42} == n\_{24}\\): added mass torque about the X axis due to linear acceleration in the Y direction
-* \\(n\_{43} == n\_{34}\\): added mass torque about the X axis due to linear acceleration in the Z direction
-* \\(n\_{44}\\): added mass torque about the X axis due to angular acceleration about the X direction
-* \\(n\_{45}\\): added mass torque about the X axis due to angular acceleration about the X direction
-* \\(n\_{46}\\): added mass torque about the X axis due to angular acceleration about the X direction
-* \\(n\_{51} == n\_{15}\\): added mass torque about the Y axis due to linear acceleration in the X direction
-* \\(n\_{52} == n\_{25}\\): added mass torque about the Y axis due to linear acceleration in the Y direction
-* \\(n\_{53} == n\_{35}\\): added mass torque about the Y axis due to linear acceleration in the Z direction
-* \\(n\_{54} == n\_{45}\\): added mass torque about the Y axis due to angular acceleration about the X direction
-* \\(n\_{55}\\): added mass torque about the Y axis due to angular acceleration about the X direction
-* \\(n\_{56}\\): added mass torque about the Y axis due to angular acceleration about the X direction
-* \\(n\_{61} == n\_{16}\\): added mass torque about the Z axis due to linear acceleration in the X direction
-* \\(n\_{62} == n\_{26}\\): added mass torque about the Z axis due to linear acceleration in the Y direction
-* \\(n\_{63} == n\_{36}\\): added mass torque about the Z axis due to linear acceleration in the Z direction
-* \\(n\_{64} == n\_{46}\\): added mass torque about the Z axis due to angular acceleration about the X direction
-* \\(n\_{65} ==n\_{56}\\): added mass torque about the Z axis due to angular acceleration about the X direction
-* \\(n\_{66}\\): added mass torque about the Z axis due to angular acceleration about the X direction
-
-This matrix is composed of 21 unique values, which are usually determined using boundary
-element methods to evaluate the flow due to body acceleration. It can have off-diagonal
-elements (\\(n\_{ij}, i \neq j \\)) that result when a body's motion accelerates fluid in
-a different direction.
+&nbsp;
 
 ## Proposed changes
 
@@ -185,27 +178,27 @@ A new `<added_mass>` element will be added under `//link/inertial/`. It will con
     <izz>0.16666</izz>
   </inertia>
   <added_mass>
-    <n11>1</n11>
-    <n12>0</n12>
-    <n13>0</n13>
-    <n14>0</n14>
-    <n15>0</n15>
-    <n16>0</n16>
-    <n22>1</n22>
-    <n23>0</n23>
-    <n24>0</n24>
-    <n25>0</n25>
-    <n26>0</n26>
-    <n33>1</n33>
-    <n34>0</n34>
-    <n35>0</n35>
-    <n36>0</n36>
-    <n44>0.1</n44>
-    <n45>0</n45>
-    <n46>0</n46>
-    <n55>0.1</n55>
-    <n56>0</n56>
-    <n66>0.1</n66>
+    <mu11>1</mu11>
+    <mu12>0</mu12>
+    <mu13>0</mu13>
+    <mu14>0</mu14>
+    <mu15>0</mu15>
+    <mu16>0</mu16>
+    <mu22>1</mu22>
+    <mu23>0</mu23>
+    <mu24>0</mu24>
+    <mu25>0</mu25>
+    <mu26>0</mu26>
+    <mu33>1</mu33>
+    <mu34>0</mu34>
+    <mu35>0</mu35>
+    <mu36>0</mu36>
+    <mu44>0.1</mu44>
+    <mu45>0</mu45>
+    <mu46>0</mu46>
+    <mu55>0.1</mu55>
+    <mu56>0</mu56>
+    <mu66>0.1</mu66>
   </added_mass>
 </inertial>
 ```
@@ -259,3 +252,4 @@ and contain the minimal API needed by `Inertial`.
 
 * [1] Fossen, T. I., Guidance and Control of Ocean Vehicles, John Wiley &
 Sons Ltd (1994).
+* [2] Newman, J. N., Marine Hydrodynamics, MIT Press (1977)
