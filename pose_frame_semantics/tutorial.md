@@ -86,7 +86,7 @@ New naming and scoping rules for links, joints, and frames; new unique names and
 See [Name conflicts and scope](#name-conflicts-and-scope) and
 [Unique names and reserved names](#unique-names-and-reserved-names).
 
-### `@expressed_in` instead of `use_parent_model_frame`
+### `//joint/axis/xyz/@expressed_in` instead of `use_parent_model_frame`
 
 Replacing `/@use_parent_model_frame` attribute with `/@expressed_in` attribute to specify the frame in which the pose is defined in. 
 
