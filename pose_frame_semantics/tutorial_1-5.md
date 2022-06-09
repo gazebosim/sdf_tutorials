@@ -402,7 +402,7 @@ by specifying the parent reference frames according to the URDF convention.
 
 Joints that specify axis directions use a unit vector in the `//joint/axis/xyz`
 element and optionally the `//joint/axis2/xyz` element for joints with multiple
-degrees of freedom, such as Universal joints.
+degrees of freedom, such as universal joints.
 The most intuitive frame in which to express these unit vectors is the joint
 frame, and the SDFormat specification initially declared this convention.
 Due to a bug in Gazebo, the primary consumer of SDFormat files at that time
