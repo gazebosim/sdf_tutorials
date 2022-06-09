@@ -28,9 +28,9 @@ frames in addition to the existing link and joint frames in the model.
 This document is a work in progress to define the semantics of the pose frame
 attribute.
 
-### Element naming rules in sdf 1.4
+### Element naming rules in SDFormat 1.4
 
-In sdf 1.4, sibling elements of the same type must have unique names.
+In SDFormat 1.4, sibling elements of the same type must have unique names.
 For example, the following models are invalid because links, joints, and
 collisions with the same parent do not have unique names.
 
@@ -120,9 +120,9 @@ so it is not recommended to do so.
       </model>
     </sdf>
 
-### Parent frames in sdf 1.4
+### Parent frames in SDFormat 1.4
 
-With the exception of joint frames, all `<pose>` tags in sdf 1.4 define
+With the exception of joint frames, all `<pose>` tags in SDFormat 1.4 define
 a relative transform between the current element's frame and the frame of its
 parent xml element.
 
@@ -173,7 +173,7 @@ to the link frame of `link2`.
     </sdf>
 
 Given this longstanding behavior, this pattern should be followed for
-sdf 1.5+ when the pose frame attribute is empty.
+SDFormat 1.5+ when the pose frame attribute is empty.
 This would imply that the following models are equivalent to the previous
 models discussed in this section:
 
@@ -398,7 +398,7 @@ to define an SDFormat model that behaves identically to a URDF model
 by specifying the parent reference frames according to the URDF convention.
 
 
-### Specifying joint axes in sdf 1.4
+### Specifying joint axes in SDFormat 1.4
 
 Joints that specify axis directions use a unit vector in the `//joint/axis/xyz`
 element and optionally the `//joint/axis2/xyz` element for joints with multiple
@@ -415,7 +415,7 @@ at that time with the plan of reverting to the intended behavior in a
 future version of SDFormat
 (see [//joint/axis documentation](/spec?ver=1.4&elem=joint#joint_axis)).
 
-### Specifying joint axes in sdf 1.5 with `//joint/axis/use_parent_model_frame`
+### Specifying joint axes in SDFormat 1.5 with `//joint/axis/use_parent_model_frame`
 
 In SDFormat 1.5, the default behavior is changed, so that joint axis unit
 vectors are interpreted in the joint frame. For backwards compatibility,
@@ -426,7 +426,7 @@ the unit vectors in the joint frame.
 When forward-converting an SDFormat 1.4 file to version 1.5, the script sets
 `//use_parent_model_frame` to true for all `//axis` and `//axis2` elements.
 
-### Specifying parent and child link names for joints in sdf 1.4
+### Specifying parent and child link names for joints in SDFormat 1.4
 
 Joints specify the parent and child links by name in the `<parent>` and
 `<child>` elements.
@@ -527,9 +527,9 @@ but the naming conventions for this case are not established, as this use case
 is not supported by Gazebo or any other known software.
 
 
-### Specifying parent and child link names for joints in sdf 1.5 with nested models
+### Specifying parent and child link names for joints in SDFormat 1.5 with nested models
 
-Support for nested models was added in sdf 1.5, which allows a `<model>`
+Support for nested models was added in SDFormat 1.5, which allows a `<model>`
 element to contain child `<model>`s.
 For example, the following model contains two links nested inside child models.
 
@@ -545,7 +545,7 @@ For example, the following model contains two links nested inside child models.
     </sdf>
 
 The coordinate frame of each child model is defined relative to its parent
-element, following the convention from sdf 1.4.
+element, following the convention from SDFormat 1.4.
 
 A joint can specify the names of parent and child links from sibling models
 by specifying the sibling model name with the delimiter `::` followed
@@ -592,9 +592,9 @@ discussion and subject to change.
 Please see the [proposal](/tutorials?tut=pose_frame_semantics_proposal)
 for the potential new behavior in SDF 1.7.
 
-### Phases of parsing kinematics of an sdf 1.4 model
+### Phases of parsing kinematics of an SDFormat 1.4 model
 
-This section describes phases for parsing the kinematics of an sdf 1.4 model.
+This section describes phases for parsing the kinematics of an SDFormat 1.4 model.
 It does not discuss proper validation of collision and visual geometries,
 link inertia, and many other parameters.
 There are three phases for validating the kinematics data in a model.
@@ -636,18 +636,18 @@ in several ways:
 * Recursively compute initial frame poses for links and joints using the rules
   for parent frames defined in the previous section.
 
-### Phases of parsing kinematics of an sdf 1.5 model
+### Phases of parsing kinematics of an SDFormat 1.5 model
 
-Parsing an sdf 1.5 model is similar to parsing an sdf 1.4 model, with the
+Parsing an SDFormat 1.5 model is similar to parsing an SDFormat 1.4 model, with the
 addition of nested models.
 Validation steps 1 and 2 are the same, but the procedure for checking
 parent and child names for joints must account for the `::` separator,
 which allows links to be specified as the descendants of sibling models
 of a joint.
 
-### Phases of parsing kinematics of an sdf world
+### Phases of parsing kinematics of an SDFormat world
 
-Parsing an sdf world file involves the first two steps in parsing a model
+Parsing an SDFormat world file involves the first two steps in parsing a model
 followed by parsing each model according to the phases described above.
 The models can be parsed independently and in any order.
 These three phases are listed below:
@@ -670,4 +670,4 @@ These three phases are listed below:
 
 3.  **Model checking:**
     Check each model according to the three phases of parsing kinematics of an
-    sdf model.
+    SDFormat model.
