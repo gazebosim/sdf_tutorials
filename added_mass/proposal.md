@@ -57,30 +57,28 @@ where,
 * \\(p\\) : Rotation about X axis
 * \\(q\\) : Rotation about Y axis
 * \\(r\\) : Rotation about Z axis
+
 > Note that the p-q-r notation is used for rotation, for this is common in maritime literature and cooresponds to roll-pitch-yaw.
-
-> Note also that DART stores the state vector with the rotational modes first ${\bf x}^T = [p & q & r & x & y & z]$, and re-orients the interia matrix accordingly, for this document the more usual ordering with translational modes first in the state vector is used.
-
-&nbsp;
 
 &nbsp;
 
 The body mass matrix is a result of the mass and mass-distribution of the body and is defined as [1]:
 
 $$
-    \bf M
+    M
     =
     \begin{bmatrix}
-      m          & 0          & 0          & 0          &  m z_{CoM} & -m y_{CoM} \\\
-      0          & m          & 0          & -m z_{CoM} & 0          &  m x_{CoM} \\\
-      0          & 0          & m          &  m y_{CoM} & -m x_{CoM} & 0          \\\
-      0          & -m z_{CoM} &  m y_{CoM} & I_{xx}     & I_{xy}     & I_{xz}     \\\
-       m z_{CoM} & 0          & -m x_{CoM} & I_{yx}     & I_{yy}     & I_{yz}     \\\
-      -m y_{CoM} &  mx_{CoM}  & 0          & I_{zx}     & I_{zy}     & I_{zz}
+      m           & 0           & 0           & 0           &  m z\_{CoM} & -m y\_{CoM} \\\
+      0           & m           & 0           & -m z\_{CoM} & 0           &  m x\_{CoM} \\\
+      0           & 0           & m           &  m y\_{CoM} & -m x\_{CoM} & 0           \\\
+      0           & -m z\_{CoM} &  m y\_{CoM} & I\_{xx}     & I\_{xy}     & I\_{xz}     \\\
+       m z\_{CoM} & 0           & -m x\_{CoM} & I\_{xy}     & I\_{yy}     & I\_{yz}     \\\
+      -m y\_{CoM} &  mx\_{CoM}  & 0           & I\_{xz}     & I\_{yz}     & I\_{zz}
     \end{bmatrix}
 $$
 
 where
+
 * \\(m\\) : Body's mass
 * \\(I_{xx}\\) : Principal mass moment of inertia about the X axis
 * \\(I_{yy}\\) : Principal mass moment of inertia about the Y axis
@@ -92,7 +90,9 @@ where
 * \\(y_{CoM}\\) : Center of mass Y coordinate
 * \\(z_{CoM}\\) : Center of mass Z coordinate
 
-\\(M\\) is sufficient to represent the body's inertia when the density of the surrounding fluid is much less than the density of the body, and this matrix is formed by sdf descriptions of \\(m\\), \\((x_{CoM},y_{CoM},z_{CoM})\\), and the moment of inertial matrix \\(\bf I\\), and so no access is given to the individiual components of \\(\bf M\\).
+\\(M\\) is sufficient to represent the body's inertia when the density of the
+surrounding fluid is much less than the density of the body, and this matrix is
+formed by sdf descriptions of \\(m\\), \\((x\_{CoM},y\_{CoM},z\_{CoM})\\), and the moment of inertial matrix \\(\bf I\\), and so no access is given to the individiual components of \\(\bf M\\).
 
 When the density of the surrounding fluid is not negligible compared to the density of the body, the added mass matrix \\(\bf{\mu}\\) must be included for accurate simulations.  This situation commonly arises for submerged and floating bodies which have average densities comparable to the density of water, or very lightweight objects such as ballons in air.  In this case, \\(\bf{\mu}\\) is symmetric and contains 21 unique values in the most general case. The off-diagonal terms result physically from the situation in which acceleration of the body in one direction results in an acceleration of the surrounding fluid in a different direction.  [2]
 
