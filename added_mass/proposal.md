@@ -38,7 +38,7 @@ Newton's second law describes how forces affect a body's motion in an inertial f
 
 $$ (\bf{M} + \bf{\mu})   \ddot{\bf x} = \sum{F({\bf x}, t)} $$
 
-where \\(M\\) is the body mass inertia matrix, \\(\mu\\) is the hydrodynamic added mass matrix,
+where \\(\bf{M}\\) is the body mass inertia matrix, \\(\mu\\) is the hydrodynamic added mass matrix,
 \\(\sum{F}\\) is the sum of all forces applied to the body, and \\(\ddot{\bf x}\\) is the resulting acceleration, with:
 
 $$
@@ -80,21 +80,31 @@ $$
 where
 
 * \\(m\\) : Body's mass
-* \\(I_{xx}\\) : Principal mass moment of inertia about the X axis
-* \\(I_{yy}\\) : Principal mass moment of inertia about the Y axis
-* \\(I_{zz}\\) : Principal mass moment of inertia about the Z axis
-* \\(I_{xy} = I_{yx}\\) : Product mass moment of inertia about the X and Y axes, and vice-versa
-* \\(I_{xz} = I_{zx}\\) : Product mass moment of inertia about the X and Z axes, and vice-versa
-* \\(I_{yz} = I_{zy}\\) : Product mass moment of inertia about the Y and Z axes, and vice-versa
-* \\(x_{CoM}\\) : Center of mass X coordinate
-* \\(y_{CoM}\\) : Center of mass Y coordinate
-* \\(z_{CoM}\\) : Center of mass Z coordinate
+* \\(I\_{xx}\\) : Principal mass moment of inertia about the X axis
+* \\(I\_{xy}\\) : Product mass moment of inertia about the X and Y axes, and vice-versa
+* \\(I\_{xz}\\) : Product mass moment of inertia about the X and Z axes, and vice-versa
+* \\(I\_{yy}\\) : Principal mass moment of inertia about the Y axis
+* \\(I\_{yz}\\) : Product mass moment of inertia about the Y and Z axes, and vice-versa
+* \\(I\_{zz}\\) : Principal mass moment of inertia about the Z axis
+* \\(x\_{CoM}\\) : Center of mass X coordinate
+* \\(y\_{CoM}\\) : Center of mass Y coordinate
+* \\(z\_{CoM}\\) : Center of mass Z coordinate
 
-\\(M\\) is sufficient to represent the body's inertia when the density of the
+\\(\bf{M}\\) is sufficient to represent the body's inertia when the density of the
 surrounding fluid is much less than the density of the body, and this matrix is
-formed by sdf descriptions of \\(m\\), \\((x\_{CoM},y\_{CoM},z\_{CoM})\\), and the moment of inertial matrix \\(\bf I\\), and so no access is given to the individiual components of \\(\bf M\\).
+formed by sdf descriptions of \\(m\\), \\((x\_{CoM},y\_{CoM},z\_{CoM})\\), and the
+moment of inertial matrix \\(\bf I\\), and so no access is given to the individiual
+components of \\(\bf M\\).
 
-When the density of the surrounding fluid is not negligible compared to the density of the body, the added mass matrix \\(\bf{\mu}\\) must be included for accurate simulations.  This situation commonly arises for submerged and floating bodies which have average densities comparable to the density of water, or very lightweight objects such as ballons in air.  In this case, \\(\bf{\mu}\\) is symmetric and contains 21 unique values in the most general case. The off-diagonal terms result physically from the situation in which acceleration of the body in one direction results in an acceleration of the surrounding fluid in a different direction.  [2]
+When the density of the surrounding fluid is not negligible compared to the
+density of the body, the added mass matrix \\(\bf{\mu}\\) must be included for
+accurate simulations.  This situation commonly arises for submerged and floating
+bodies which have average densities comparable to the density of water, or very
+lightweight objects such as ballons in air.  In this case, \\(\bf{\mu}\\) is
+symmetric and contains 21 unique values in the most general case. The
+off-diagonal terms result physically from the situation in which acceleration of
+the body in one direction results in an acceleration of the surrounding fluid in
+a different direction.  [2]
 
 $$
     \bf{\mu}
@@ -148,7 +158,7 @@ to zero if unset. This preserves the behaviour for links that don't have those t
 ### XML spec
 
 A new `<added_mass>` element will be added under `//link/inertial/`. It will contain each of the
-21 matrix elements started by `n` and followed by its index.
+21 matrix elements.
 
 ```xml
 <inertial>
