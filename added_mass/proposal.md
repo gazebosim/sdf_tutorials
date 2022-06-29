@@ -30,7 +30,7 @@ step.
 The proposal includes the following sections:
 
 * [Motivation](#motivation): An explanation of the background and rationale behind the proposal
-* [Proposed changes](#proposed-changes): Terms to be added to the SDFormat specification and C++ API
+* [Proposed implementation](#proposed-implementation): Terms to be added to the SDFormat specification and C++ API
 
 ## Motivation
 
@@ -143,19 +143,30 @@ where
 * \\(qr\\) : added mass moment about the Y axis due to angular acceleration about the X direction, and vice-versa
 * \\(rr\\) : added mass moment about the Z axis due to angular acceleration about the Z direction
 
-&nbsp;
+## Proposed implementation
 
-&nbsp;
+While many physics engines may not have direct support for added mass, they often
+support directly setting each element of the resulting \\(\bf{M} + \bf{\mu}\\)
+matrix that's multiplied by acceleration. That's the case for
+[DART](https://dartsim.github.io/dart/main/d6/d91/classdart_1_1dynamics_1_1Inertia.html#aa4661f9950d5958efa4c8609d42aedf7),
+for example.
 
-## Proposed changes
+Although the matrices may be combined by the time they're fed into the physics
+engine, this proposal suggests storing all the terms of the fluid added mass
+matrix as they are in \\(\bf{\mu}\\) before being added to the mass matrix
+\\(\bf{M}\\). This includes the representation of the matrix within SDF files,
+as well as their storage in memory in C++ objects. Keeping them separate makes
+sure they hold values with clear meaning that can be obtained from external
+software. That also makes them easier to introspect and change independently of
+other inertial terms.
+
+### XML spec
 
 The [`//link/inertial`](http://sdformat.org/spec?ver=1.9&elem=link#link_inertial) term
 in SDF currenly accepts elements to describe the m matrix (mass and moments of inertia),
 as well as a center of mass pose. This proposal suggests exposing each of the 21 elements
 for the mass matrix in addition to that. All added mass elements are optional and default
 to zero if unset. This preserves the behaviour for links that don't have those terms.
-
-### XML spec
 
 A new `<fluid_added_mass>` element will be added under `//link/inertial/`.
 It will contain each of the 21 matrix elements.
@@ -224,17 +235,21 @@ public: Inertial(const MassMatrix3<T> &_massMatrix,
 ///
 /// \param[in] _m New Matrix6 object, which must be a symmetric matrix.
 /// \return True if the Matrix6 is valid.
-public: bool SetAddedMass(const Matrix6<T> &_m)
+public: bool SetFluidAddedMass(const Matrix6<T> &_m)
 
 /// \brief Get the added mass matrix.
 /// \return The added mass matrix.
-public: const Matrix6<T> &AddedMass() const
+public: const Matrix6<T> &FluidAddedMass() const
 
 /// \brief Spatial mass matrix, which is the resulting 6x6 matrix including
 /// added mass.
 /// \return The spatial mass matrix.
 public: const Matrix6<T> &SpatialMatrix() const
 ```
+
+These changes are ABI-breaking, because they will require adding new private members
+to the `Inertial` class. Therefore, this proposal targets the upcoming Gazebo release,
+Garden, which will use libSDFormat 13 and Gazebo Math 7.
 
 In order to support this API, a new `gz::math::Matrix6<T>` class will be created.
 It will mirror functionality from the existing

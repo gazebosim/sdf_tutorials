@@ -239,7 +239,7 @@
 
     <tutorial title="Proposal for added mass" ref='added_mass_proposal' type='proposal'>
       <markdown version="1.9">added_mass/proposal.md</markdown>
-      <description>Setting added mass matrix inertial parameters.</description>
+      <description>Setting fluid added mass inertial parameters.</description>
       <tags>
         <tag>proposal</tag>
       </tags>
