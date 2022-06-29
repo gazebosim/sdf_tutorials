@@ -1,19 +1,19 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 
-# Hydrodynamic Added Mass Proposal
+# Fluid Added Mass Proposal
 
 * **Authors**:
 Louise Poubel `<louise@openrobotics.org>`,
 Andrew Hamilton `<hamilton@mbari.org>`,
 Michael Anderson `<anderson@mbari.org>`
 * **Status**: Draft
-* **SDFormat Version**: 1.9
-* **`libsdformat` Version**: 12.X
+* **SDFormat Version**: 1.10
+* **`libsdformat` Version**: 13.X (Gazebo Garden)
 
 ## Introduction
 
 This proposal suggests the addition of elements under the `//link/inertial` element
-to support the inclusion of [hydrodynamic added mass] (https://en.wikipedia.org/wiki/Added_mass)
+to support the inclusion of [fluid added mass] (https://en.wikipedia.org/wiki/Added_mass)
 effects in SDFormat 1.9.
 
 Current implementations, such as
@@ -38,7 +38,7 @@ Newton's second law describes how forces affect a body's motion in an inertial f
 
 $$ (\bf{M} + \bf{\mu})   \ddot{\bf x} = \sum{F({\bf x}, t)} $$
 
-where \\(\bf{M}\\) is the body mass inertia matrix, \\(\mu\\) is the hydrodynamic added mass matrix,
+where \\(\bf{M}\\) is the body mass inertia matrix, \\(\mu\\) is the fluid added mass matrix,
 \\(\sum{F}\\) is the sum of all forces applied to the body, and \\(\ddot{\bf x}\\) is the resulting acceleration, with:
 
 $$
@@ -157,8 +157,8 @@ to zero if unset. This preserves the behaviour for links that don't have those t
 
 ### XML spec
 
-A new `<added_mass>` element will be added under `//link/inertial/`. It will contain each of the
-21 matrix elements.
+A new `<fluid_added_mass>` element will be added under `//link/inertial/`.
+It will contain each of the 21 matrix elements.
 
 ```xml
 <inertial>
@@ -172,7 +172,7 @@ A new `<added_mass>` element will be added under `//link/inertial/`. It will con
     <iyz>0</iyz>
     <izz>0.16666</izz>
   </inertia>
-  <added_mass>
+  <fluid_added_mass>
     <xx>1.0</xx>
     <xy>0.0</xy>
     <xz>0.0</xz>
@@ -194,7 +194,7 @@ A new `<added_mass>` element will be added under `//link/inertial/`. It will con
     <qq>0.1</qq>
     <qr>0.0</qr>
     <rr>0.1</rr>
-  </added_mass>
+  </fluid_added_mass>
 </inertial>
 ```
 
