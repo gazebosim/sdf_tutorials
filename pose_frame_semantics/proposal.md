@@ -1627,7 +1627,7 @@ returning an error code if errors are found during parsing:
 
 6.  ***Check `//model/frame/@attached_to` attribute values:***
     For each `//model/frame`, if the `attached_to` attribute exists and is not
-    an empty string `""`, check that the value of the `attached_to` attribute
+    an empty string `""` or `__model__`, check that the value of the `attached_to` attribute
     matches the name of a sibling link, nested model, joint, or frame.
     The `//frame/@attached_to` value must not match `//frame/@name`,
     as this would cause a graph cycle.
@@ -1702,7 +1702,7 @@ returning an error code if errors are found during parsing:
 8.  ***Check `//pose/@relative_to` attribute values:***
     For each `//pose` that does not correspond to the `__model__` frame (e.g. nested `//model/model/pose`, `//link/pose`,
     `//joint/pose`, `//frame/pose`, `//collision/pose`, `//light/pose`, etc.),
-    if the `relative_to` attribute exists and is not an empty string `""`,
+    if the `relative_to` attribute exists and is not an empty string `""` or `__model__`,
     check that the value of the `relative_to` attribute
     matches the name of a link, nested model, joint, or frame in this model's scope.
     In `libsdformat9`, these checks are performed by
@@ -1845,7 +1845,7 @@ There are *seven* phases for validating the kinematics data in a world:
 
 4.  ***Check `//world/frame/@attached_to` attribute values:***
     For each `//world/frame`, if the `attached_to` attribute exists and is not
-    an empty string `""`, check that the value of the `attached_to` attribute
+    an empty string `""` or `world`, check that the value of the `attached_to` attribute
     matches the name of a sibling model or frame.
     The `//frame/@attached_to` value must not match `//frame/@name`,
     as this would cause a graph cycle.
@@ -1899,7 +1899,7 @@ There are *seven* phases for validating the kinematics data in a world:
 
 6.  ***Check `//pose/@relative_to` attribute values:***
     For each `//model/pose` and `//world/frame/pose`,
-    if the `relative_to` attribute exists and is not an empty string `""`,
+    if the `relative_to` attribute exists and is not an empty string `""` or `world`,
     check that the value of the `relative_to` attribute
     matches the name of a model or frame that is a sibling of the element
     that contains the `//pose`.
