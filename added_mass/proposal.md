@@ -8,13 +8,13 @@ Andrew Hamilton `<hamilton@mbari.org>`,
 Michael Anderson `<anderson@mbari.org>`
 * **Status**: Draft
 * **SDFormat Version**: 1.10
-* **`libsdformat` Version**: 13.X (Gazebo Garden)
+* **`libSDFormat` Version**: 13.X (Gazebo Garden)
 
 ## Introduction
 
 This proposal suggests the addition of elements under the `//link/inertial` element
 to support the inclusion of [fluid added mass] (https://en.wikipedia.org/wiki/Added_mass)
-effects in SDFormat 1.9.
+effects in SDFormat 1.10 and support for parsing it in libSDFormat 13.
 
 Current implementations, such as
 [gz::sim::systems::Hydrodynamics](https://gazebosim.org/api/gazebo/6.9/classignition_1_1gazebo_1_1systems_1_1Hydrodynamics.html#details),
