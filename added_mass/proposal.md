@@ -126,7 +126,7 @@ where
 * \\(xz\\) : added mass in the X direction due to linear acceleration in the Z direction, and vice-versa
 * \\(xp\\) : added mass in the X axis due to angular acceleration about the X direction, and vice-versa
 * \\(xq\\) : added mass in the X axis due to angular acceleration about the X direction, and vice-versa
-* \\(xr\\) : added mass orce along the X axis due to angular acceleration about the X direction, and vice-versa
+* \\(xr\\) : added mass in the X axis due to angular acceleration about the X direction, and vice-versa
 * \\(yy\\) : added mass in the Y axis due to linear acceleration in the Y direction
 * \\(yz\\) : added mass in the Y axis due to linear acceleration in the Z direction, and vice-versa
 * \\(yp\\) : added mass in the Y axis due to angular acceleration about the X direction, and vice-versa
