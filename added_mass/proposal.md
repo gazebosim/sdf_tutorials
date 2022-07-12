@@ -121,27 +121,27 @@ $$
 
 where
 
-* \\(xx\\) : added mass in the X direction due to linear acceleration in the X direction
-* \\(xy\\) : added mass in the X direction due to linear acceleration in the Y direction, and vice-versa
-* \\(xz\\) : added mass in the X direction due to linear acceleration in the Z direction, and vice-versa
-* \\(xp\\) : added mass in the X axis due to angular acceleration about the X direction, and vice-versa
-* \\(xq\\) : added mass in the X axis due to angular acceleration about the X direction, and vice-versa
-* \\(xr\\) : added mass in the X axis due to angular acceleration about the X direction, and vice-versa
-* \\(yy\\) : added mass in the Y axis due to linear acceleration in the Y direction
-* \\(yz\\) : added mass in the Y axis due to linear acceleration in the Z direction, and vice-versa
-* \\(yp\\) : added mass in the Y axis due to angular acceleration about the X direction, and vice-versa
-* \\(yq\\) : added mass in the Y axis due to angular acceleration about the X direction, and vice-versa
-* \\(yr\\) : added mass in the Y axis due to angular acceleration about the X direction, and vice-versa
-* \\(zz\\) : added mass in the Z axis due to linear acceleration in the Z direction
-* \\(zp\\) : added mass in the Z axis due to angular acceleration about the X direction, and vice-versa
-* \\(zq\\) : added mass in the Z axis due to angular acceleration about the X direction, and vice-versa
-* \\(zr\\) : added mass in the Z axis due to angular acceleration about the X direction, and vice-versa
-* \\(pp\\) : added mass moment about the X axis due to angular acceleration about the X direction
-* \\(pq\\) : added mass moment about the X axis due to angular acceleration about the X direction, and vice-versa
-* \\(pr\\) : added mass moment about the X axis due to angular acceleration about the X direction, and vice-versa
-* \\(qq\\) : added mass moment about the Y axis due to angular acceleration about the X direction
-* \\(qr\\) : added mass moment about the Y axis due to angular acceleration about the X direction, and vice-versa
-* \\(rr\\) : added mass moment about the Z axis due to angular acceleration about the Z direction
+* \\(xx\\) : added mass in the X axis due to linear acceleration in the X axis
+* \\(xy\\) : added mass in the X axis due to linear acceleration in the Y axis, and vice-versa
+* \\(xz\\) : added mass in the X axis due to linear acceleration in the Z axis, and vice-versa
+* \\(xp\\) : added mass in the X axis due to angular acceleration about the X axis, and vice-versa
+* \\(xq\\) : added mass in the X axis due to angular acceleration about the X axis, and vice-versa
+* \\(xr\\) : added mass in the X axis due to angular acceleration about the X axis, and vice-versa
+* \\(yy\\) : added mass in the Y axis due to linear acceleration in the Y axis
+* \\(yz\\) : added mass in the Y axis due to linear acceleration in the Z axis, and vice-versa
+* \\(yp\\) : added mass in the Y axis due to angular acceleration about the X axis, and vice-versa
+* \\(yq\\) : added mass in the Y axis due to angular acceleration about the X axis, and vice-versa
+* \\(yr\\) : added mass in the Y axis due to angular acceleration about the X axis, and vice-versa
+* \\(zz\\) : added mass in the Z axis due to linear acceleration in the Z axis
+* \\(zp\\) : added mass in the Z axis due to angular acceleration about the X axis, and vice-versa
+* \\(zq\\) : added mass in the Z axis due to angular acceleration about the X axis, and vice-versa
+* \\(zr\\) : added mass in the Z axis due to angular acceleration about the X axis, and vice-versa
+* \\(pp\\) : added mass moment about the X axis due to angular acceleration about the X axis
+* \\(pq\\) : added mass moment about the X axis due to angular acceleration about the X axis, and vice-versa
+* \\(pr\\) : added mass moment about the X axis due to angular acceleration about the X axis, and vice-versa
+* \\(qq\\) : added mass moment about the Y axis due to angular acceleration about the X axis
+* \\(qr\\) : added mass moment about the Y axis due to angular acceleration about the X axis, and vice-versa
+* \\(rr\\) : added mass moment about the Z axis due to angular acceleration about the Z axis
 
 ## Proposed implementation
 
