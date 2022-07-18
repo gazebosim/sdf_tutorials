@@ -225,34 +225,54 @@ object. To support added mass, the following member functions will be added to t
 `Inertial` class:
 
 ```cpp
+/// \brief Holds fluid added mass information.
+template<typename T>
+struct FluidAddedMass
+{
+  /// \brief Symmetric matrix with added mass coefficients that will be
+  /// multiplied by `fluidDensity`.
+  Matrix6<T> matrix;
+
+  /// \brief Density of fluid in kg/m^3.
+  T fluidDensity;
+}
+
 /// \brief Constructs an inertial object from the mass matrix for a body
-/// B, about its center of mass Bcm, and expressed in a frame that we’ll
+/// B, about its center of mass Bcm, and expressed in a frame that we'll
 /// call the "inertial" frame Bi, i.e. the frame in which the components
-/// of the mass matrix are specified (see this class’s documentation for
+/// of the mass matrix are specified (see this class's documentation for
 /// details). The pose object specifies the pose X_FBi of the inertial
 /// frame Bi in the frame F of this inertial object
-/// (see class’s documentation). The added mass matrix is also expressed
+/// (see class's documentation). The added mass matrix is also expressed
 /// in frame Bi.
 /// \param[in] _massMatrix Mass and inertia matrix.
 /// \param[in] _pose Pose of center of mass reference frame.
+/// \param[in] _addedMass Coefficients for fluid added mass.
 public: Inertial(const MassMatrix3<T> &_massMatrix,
                  const Pose3<T> &_pose,
-                 const Matrix6<T> &_addedMass)
+                 const FluidAddedMass &_addedMass)
 
-/// \brief Set the added mass matrix.
+/// \brief Set the matrix representing the inertia of the fluid that is
+/// dislocated when the body moves. Added mass should be zero if the
+/// density of the surrounding fluid is negligible with respect to the
+/// body's density.
 ///
-/// \param[in] _m New Matrix6 object, which must be a symmetric matrix.
-/// \return True if the Matrix6 is valid.
-public: bool SetFluidAddedMass(const Matrix6<T> &_m)
+/// \param[in] _m New fluid added mass object, whose matrix must be symmetric.
+/// \return True if the matrix is symmetric and density is larger than zero.
+/// \sa SpatialMatrix
+public: bool SetFluidAddedMass(const FluidAddedMass &_m)
 
-/// \brief Get the added mass matrix.
-/// \return The added mass matrix.
-public: const Matrix6<T> &FluidAddedMass() const
+/// \brief Get the fluid added mass.
+/// \return The added mass matrix. It will be nullopt of the added mass
+/// was never set.
+public: std::optional<FluidAddedMass> FluidAddedMass() const
 
-/// \brief Spatial mass matrix, which is the resulting 6x6 matrix including
-/// added mass.
+/// \brief Spatial mass matrix, which includes the body's inertia, as well
+/// as the inertia of the fluid that is dislocated when the body moves.
 /// \return The spatial mass matrix.
-public: const Matrix6<T> &SpatialMatrix() const
+/// \sa BodyMatrix
+/// \sa FluidAddedMass
+public: Matrix6<T> SpatialMatrix() const
 ```
 
 These changes are ABI-breaking, because they will require adding new private members
