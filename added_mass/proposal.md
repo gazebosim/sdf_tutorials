@@ -104,11 +104,14 @@ lightweight objects such as ballons in air.  In this case, \\(\bf{\mu}\\) is
 symmetric and contains 21 unique values in the most general case. The
 off-diagonal terms result physically from the situation in which acceleration of
 the body in one direction results in an acceleration of the surrounding fluid in
-a different direction.  [2]
+a different direction.  [2] Because the added mass values depend on the fluid's
+density, that's exposed as a separate value, ``(\rho\\), which is multiplied by
+the matrix of coefficients.
 
 $$
     \bf{\mu}
     =
+    \rho
     \begin{bmatrix}
       xx & xy & xz & xp & xq & xr \\\
       xy & yy & yz & yp & yq & yr \\\
@@ -121,26 +124,27 @@ $$
 
 where
 
+* \\(\rho\\) : fluid's density in \\(kg/m^3\\)
 * \\(xx\\) : added mass in the X axis due to linear acceleration in the X axis
 * \\(xy\\) : added mass in the X axis due to linear acceleration in the Y axis, and vice-versa
 * \\(xz\\) : added mass in the X axis due to linear acceleration in the Z axis, and vice-versa
 * \\(xp\\) : added mass in the X axis due to angular acceleration about the X axis, and vice-versa
-* \\(xq\\) : added mass in the X axis due to angular acceleration about the X axis, and vice-versa
-* \\(xr\\) : added mass in the X axis due to angular acceleration about the X axis, and vice-versa
+* \\(xq\\) : added mass in the X axis due to angular acceleration about the Y axis, and vice-versa
+* \\(xr\\) : added mass in the X axis due to angular acceleration about the Z axis, and vice-versa
 * \\(yy\\) : added mass in the Y axis due to linear acceleration in the Y axis
 * \\(yz\\) : added mass in the Y axis due to linear acceleration in the Z axis, and vice-versa
 * \\(yp\\) : added mass in the Y axis due to angular acceleration about the X axis, and vice-versa
-* \\(yq\\) : added mass in the Y axis due to angular acceleration about the X axis, and vice-versa
-* \\(yr\\) : added mass in the Y axis due to angular acceleration about the X axis, and vice-versa
+* \\(yq\\) : added mass in the Y axis due to angular acceleration about the Y axis, and vice-versa
+* \\(yr\\) : added mass in the Y axis due to angular acceleration about the Z axis, and vice-versa
 * \\(zz\\) : added mass in the Z axis due to linear acceleration in the Z axis
 * \\(zp\\) : added mass in the Z axis due to angular acceleration about the X axis, and vice-versa
-* \\(zq\\) : added mass in the Z axis due to angular acceleration about the X axis, and vice-versa
-* \\(zr\\) : added mass in the Z axis due to angular acceleration about the X axis, and vice-versa
+* \\(zq\\) : added mass in the Z axis due to angular acceleration about the Y axis, and vice-versa
+* \\(zr\\) : added mass in the Z axis due to angular acceleration about the Z axis, and vice-versa
 * \\(pp\\) : added mass moment about the X axis due to angular acceleration about the X axis
-* \\(pq\\) : added mass moment about the X axis due to angular acceleration about the X axis, and vice-versa
-* \\(pr\\) : added mass moment about the X axis due to angular acceleration about the X axis, and vice-versa
-* \\(qq\\) : added mass moment about the Y axis due to angular acceleration about the X axis
-* \\(qr\\) : added mass moment about the Y axis due to angular acceleration about the X axis, and vice-versa
+* \\(pq\\) : added mass moment about the X axis due to angular acceleration about the Y axis, and vice-versa
+* \\(pr\\) : added mass moment about the X axis due to angular acceleration about the Z axis, and vice-versa
+* \\(qq\\) : added mass moment about the Y axis due to angular acceleration about the Y axis
+* \\(qr\\) : added mass moment about the Y axis due to angular acceleration about the Z axis, and vice-versa
 * \\(rr\\) : added mass moment about the Z axis due to angular acceleration about the Z axis
 
 ## Proposed implementation
@@ -169,7 +173,10 @@ for the mass matrix in addition to that. All added mass elements are optional an
 to zero if unset. This preserves the behaviour for links that don't have those terms.
 
 A new `<fluid_added_mass>` element will be added under `//link/inertial/`.
-It will contain each of the 21 matrix elements.
+It will contain each of the 21 matrix elements, and the fluid density.
+
+The fluid density's unit is \\(kg/m^3\\), and the unit of each matrix element is \\(m^3\\),
+so that the unit of the final matrix is \\(kg\\).
 
 ```xml
 <inertial>
@@ -184,6 +191,7 @@ It will contain each of the 21 matrix elements.
     <izz>0.16666</izz>
   </inertia>
   <fluid_added_mass>
+    <fluid_density>1025</fluid_density>
     <xx>1.0</xx>
     <xy>0.0</xy>
     <xz>0.0</xz>
