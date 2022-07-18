@@ -104,14 +104,11 @@ lightweight objects such as ballons in air.  In this case, \\(\bf{\mu}\\) is
 symmetric and contains 21 unique values in the most general case. The
 off-diagonal terms result physically from the situation in which acceleration of
 the body in one direction results in an acceleration of the surrounding fluid in
-a different direction.  [2] Because the added mass values depend on the fluid's
-density, that's exposed as a separate value, ``(\rho\\), which is multiplied by
-the matrix of coefficients.
+a different direction.  [2]
 
 $$
     \bf{\mu}
     =
-    \rho
     \begin{bmatrix}
       xx & xy & xz & xp & xq & xr \\\
       xy & yy & yz & yp & yq & yr \\\
@@ -124,7 +121,6 @@ $$
 
 where
 
-* \\(\rho\\) : fluid's density in \\(kg/m^3\\)
 * \\(xx\\) : added mass in the X axis due to linear acceleration in the X axis
 * \\(xy\\) : added mass in the X axis due to linear acceleration in the Y axis, and vice-versa
 * \\(xz\\) : added mass in the X axis due to linear acceleration in the Z axis, and vice-versa
@@ -146,6 +142,10 @@ where
 * \\(qq\\) : added mass moment about the Y axis due to angular acceleration about the Y axis
 * \\(qr\\) : added mass moment about the Y axis due to angular acceleration about the Z axis, and vice-versa
 * \\(rr\\) : added mass moment about the Z axis due to angular acceleration about the Z axis
+
+The unit of each matrix element matches its corresponding element on the mass matrix \\(\bf{M}\\).
+That is, elements on the top-left 3x3 corner are in \\(kg\\), the bottom-right ones are in
+\\(kg\cdotm^2\\), and the rest are in \\(kg\cdotm\\).
 
 ## Proposed implementation
 
@@ -175,9 +175,6 @@ to zero if unset. This preserves the behaviour for links that don't have those t
 A new `<fluid_added_mass>` element will be added under `//link/inertial/`.
 It will contain each of the 21 matrix elements, and the fluid density.
 
-The fluid density's unit is \\(kg/m^3\\), and the unit of each matrix element is \\(m^3\\),
-so that the unit of the final matrix is \\(kg\\).
-
 ```xml
 <inertial>
   <mass>10</mass>
@@ -191,7 +188,6 @@ so that the unit of the final matrix is \\(kg\\).
     <izz>0.16666</izz>
   </inertia>
   <fluid_added_mass>
-    <fluid_density>1025</fluid_density>
     <xx>1.0</xx>
     <xy>0.0</xy>
     <xz>0.0</xz>
@@ -225,18 +221,6 @@ object. To support added mass, the following member functions will be added to t
 `Inertial` class:
 
 ```cpp
-/// \brief Holds fluid added mass information.
-template<typename T>
-struct FluidAddedMass
-{
-  /// \brief Symmetric matrix with added mass coefficients that will be
-  /// multiplied by `fluidDensity`.
-  Matrix6<T> matrix;
-
-  /// \brief Density of fluid in kg/m^3.
-  T fluidDensity;
-}
-
 /// \brief Constructs an inertial object from the mass matrix for a body
 /// B, about its center of mass Bcm, and expressed in a frame that we'll
 /// call the "inertial" frame Bi, i.e. the frame in which the components
@@ -250,22 +234,22 @@ struct FluidAddedMass
 /// \param[in] _addedMass Coefficients for fluid added mass.
 public: Inertial(const MassMatrix3<T> &_massMatrix,
                  const Pose3<T> &_pose,
-                 const FluidAddedMass &_addedMass)
+                 const Matrix6<T> &_addedMass)
 
 /// \brief Set the matrix representing the inertia of the fluid that is
 /// dislocated when the body moves. Added mass should be zero if the
 /// density of the surrounding fluid is negligible with respect to the
 /// body's density.
 ///
-/// \param[in] _m New fluid added mass object, whose matrix must be symmetric.
-/// \return True if the matrix is symmetric and density is larger than zero.
+/// \param[in] _m New Matrix6 object, which must be a symmetric matrix.
+/// \return True if the Matrix6 is symmetric.
 /// \sa SpatialMatrix
-public: bool SetFluidAddedMass(const FluidAddedMass &_m)
+public: bool SetFluidAddedMass(const Matrix6<T> &_m)
 
-/// \brief Get the fluid added mass.
+/// \brief Get the fluid added mass matrix.
 /// \return The added mass matrix. It will be nullopt of the added mass
 /// was never set.
-public: std::optional<FluidAddedMass> FluidAddedMass() const
+public: std::optional< Matrix6<T> > FluidAddedMass() const
 
 /// \brief Spatial mass matrix, which includes the body's inertia, as well
 /// as the inertia of the fluid that is dislocated when the body moves.
