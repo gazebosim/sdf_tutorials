@@ -221,42 +221,69 @@ object. To support added mass, the following member functions will be added to t
 `Inertial` class:
 
 ```cpp
-/// \brief Constructs an inertial object from the mass matrix for a body
-/// B, about its center of mass Bcm, and expressed in a frame that we'll
-/// call the "inertial" frame Bi, i.e. the frame in which the components
-/// of the mass matrix are specified (see this class's documentation for
-/// details). The pose object specifies the pose X_FBi of the inertial
-/// frame Bi in the frame F of this inertial object
-/// (see class's documentation). The added mass matrix is also expressed
-/// in frame Bi.
-/// \param[in] _massMatrix Mass and inertia matrix.
-/// \param[in] _pose Pose of center of mass reference frame.
-/// \param[in] _addedMass Coefficients for fluid added mass.
-public: Inertial(const MassMatrix3<T> &_massMatrix,
-                 const Pose3<T> &_pose,
-                 const Matrix6<T> &_addedMass)
+      /// \brief Constructs an inertial object from the mass matrix for a body
+      /// B, about its center of mass Bcm, and expressed in a frame that we'll
+      /// call the "inertial" frame Bi, i.e. the frame in which the components
+      /// of the mass matrix are specified (see this class's documentation for
+      /// details). The pose object specifies the pose X_FBi of the inertial
+      /// frame Bi in the frame F of this inertial object
+      /// (see class's documentation). The added mass matrix is expressed
+      /// in the link origin frame F.
+      /// \param[in] _massMatrix Mass and inertia matrix.
+      /// \param[in] _pose Pose of center of mass reference frame.
+      /// \param[in] _addedMass Coefficients for fluid added mass.
+      public: Inertial(const MassMatrix3<T> &_massMatrix,
+                       const Pose3<T> &_pose,
+                       const Matrix6<T> &_addedMass)
+      : massMatrix(_massMatrix), pose(_pose), addedMass(_addedMass)
+      {}
 
-/// \brief Set the matrix representing the inertia of the fluid that is
-/// dislocated when the body moves. Added mass should be zero if the
-/// density of the surrounding fluid is negligible with respect to the
-/// body's density.
-///
-/// \param[in] _m New Matrix6 object, which must be a symmetric matrix.
-/// \return True if the Matrix6 is symmetric.
-/// \sa SpatialMatrix
-public: bool SetFluidAddedMass(const Matrix6<T> &_m)
 
-/// \brief Get the fluid added mass matrix.
-/// \return The added mass matrix. It will be nullopt of the added mass
-/// was never set.
-public: std::optional< Matrix6<T> > FluidAddedMass() const
+      /// \brief Set the matrix representing the inertia of the fluid that is
+      /// dislocated when the body moves. Added mass should be zero if the
+      /// density of the surrounding fluid is negligible with respect to the
+      /// body's density.
+      ///
+      /// \param[in] _m New Matrix6 object, which must be a symmetric matrix.
+      /// \return True if the Matrix6 is symmetric.
+      /// \sa SpatialMatrix
+      public: bool SetFluidAddedMass(const Matrix6<T> &_m);
 
-/// \brief Spatial mass matrix, which includes the body's inertia, as well
-/// as the inertia of the fluid that is dislocated when the body moves.
-/// \return The spatial mass matrix.
-/// \sa BodyMatrix
-/// \sa FluidAddedMass
-public: Matrix6<T> SpatialMatrix() const
+      /// \brief Get the fluid added mass matrix.
+      /// \return The added mass matrix. It will be nullopt if the added mass
+      /// was never set.
+      public: const std::optional< Matrix6<T> > &FluidAddedMass() const;
+
+      /// \brief Spatial mass matrix for body B. It does not include fluid
+      /// added mass. The matrix is expressed in the object's frame F, not to
+      /// be confused with the center of mass frame Bi.
+      ///
+      /// The matrix is arranged as follows:
+      ///
+      /// | m          0          0          0           m * Pz    -m * Py |
+      /// | 0          m          0          -m * Pz    0           m * Px |
+      /// | 0          0          m           m * Py    -m * Px    0       |
+      /// | 0          -m * Pz     m * Py    Ixx        Ixy        Ixz     |
+      /// |  m * Pz    0          -m * Px    Ixy        Iyy        Iyz     |
+      /// | -m * Py     m* Px     0          Ixz        Iyz        Izz     |
+      ///
+      /// \return The body's 6x6 inertial matrix.
+      /// \sa SpatialMatrix
+      public: Matrix6<T> BodyMatrix() const;
+
+      /// \brief Spatial mass matrix, which includes the body's inertia, as well
+      /// as the inertia of the fluid that is dislocated when the body moves.
+      /// The matrix is expressed in the object's frame F, not to be confused
+      /// with the center of mass frame Bi.
+      /// \return The spatial mass matrix.
+      /// \sa BodyMatrix
+      /// \sa FluidAddedMass
+      public: Matrix6<T> SpatialMatrix() const
+      {
+        return this->addedMass.has_value() ?
+            this->BodyMatrix() + this->addedMass.value() : this->BodyMatrix();
+      }
+
 ```
 
 These changes are ABI-breaking, because they will require adding new private members
