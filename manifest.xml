@@ -142,6 +142,17 @@
       <skill>beginner</skill>
     </tutorial>
 
+    <tutorial title='Python bindings' ref='python_bindings' type='documentation'>
+      <markdown version='1.6'>python/tutorial_13.md</markdown>
+      <description>
+          How to use SDFormat Python bindings
+      </description>
+      <tags>
+        <tag>python</tag>
+      </tags>
+      <skill>beginner</skill>
+    </tutorial>
+
     <tutorial title="Custom elements and attributes" ref='custom_elements_attributes_proposal' type='proposal'>
       <markdown version="1.7">custom_elements_attributes/proposal.md</markdown>
       <description>
@@ -299,6 +310,7 @@
         <tutorial>install</tutorial>
         <tutorial>quickstart</tutorial>
         <tutorial>convert_sdf_to_usd</tutorial>
+        <tutorial>python_bindings</tutorial>
         <tutorial>roadmap</tutorial>
         <tutorial>proposal_format</tutorial>
       </tutorials>
