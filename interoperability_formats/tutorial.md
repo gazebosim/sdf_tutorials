@@ -7,6 +7,7 @@ It takes as input an SDFormat file that works in Gazebo Sim and produces as outp
 that works in Mujoco/NVIDIA Omniverse with approximately equivalent results; and vice versa.
 
 ## USD
+This repo provides tools to convert between SDF and USD files.
 
  - [How to install gz-usd](https://github.com/gazebosim/gz-usd/tree/ahcorde/update/readme#requirements)
  - [Tutorials](https://github.com/gazebosim/gz-usd/blob/ahcorde/update/readme/tutorials/convert_sdf_to_usd.md)
