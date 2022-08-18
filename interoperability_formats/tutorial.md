@@ -17,6 +17,6 @@ This repo provides tools to convert between SDF and USD files.
 This Python package ([gz-mujoco](https://github.com/gazebosim/gz-mujoco/)) allows bidirectional
 conversion between SDFormat and MJCF to share worlds and robot models.
 
- - [How to install gz-mujoco](https://github.com/gazebosim/gz-mujoco/tree/main/sdformat_mjcf#install-sdformat-mjcf)
- - [Tools for converting SDFormat to MJCF](https://github.com/gazebosim/gz-mujoco/tree/main/sdformat_mjcf#tools-for-converting-sdformat-to-mjcf)
- - [Tools for converting MJCF to SDFormat](https://github.com/gazebosim/gz-mujoco/tree/main/sdformat_mjcf#tools-for-converting-mjcf-to-sdformat)
+ - [How to install gz-mujoco](https://github.com/gazebosim/gz-mujoco/sdformat_mjcf#install-sdformat-mjcf)
+ - [Tools for converting SDFormat to MJCF](https://github.com/gazebosim/gz-mujoco/sdformat_mjcf#tools-for-converting-sdformat-to-mjcf)
+ - [Tools for converting MJCF to SDFormat](https://github.com/gazebosim/gz-mujoco/sdformat_mjcf#tools-for-converting-mjcf-to-sdformat)
