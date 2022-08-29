@@ -161,14 +161,23 @@ and one `gearbox` joint.
         </joint>
 ~~~
 
-The `gearbox` joint could be equivalently and more concisely expressed as
-the following `mimic` joint:
+The `gearbox` joint could replaced equivalently by adding the ``<mimic>``
+tag to joint axes :
 
 ~~~
-        <joint name="mimic_demo" type="mimic">
-            <parent>gearbox_input_joint</parent>
-            <child>gearbox_output_joint</child>
-            <gearbox_ratio>5</gearbox_ratio>
+        <!-- Gearbox links revolute joints, so create a couple revolute joints -->
+        <joint name="gearbox_input_joint" type="revolute">
+            <parent>gearbox_base</parent>
+            <child>gearbox_input</child>
+            <axis>
+                <xyz>1 0 0</xyz>
+                <mimic joint="gearbox_output_joint" multiplier="5"/>
+            </axis>
+            <pose>0 0.075 0 0 0 0</pose>
+        </joint>
+        <joint name="gearbox_output_joint" type="revolute">
+            <parent>gearbox_base</parent>
+            <child>gearbox_output</child>
         </joint>
 ~~~
 
