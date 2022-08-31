@@ -9,7 +9,7 @@ Aditya Pande `<aditya.pande@osrfoundation.org>`
 
 ## Introduction
 
-This proposal suggests adding a new joint type called the Mimic joint
+This proposal suggests adding a new joint contraint type called the Mimic
 that adds a linear equality constraint between the output position of
 two joints.
 
@@ -24,12 +24,16 @@ Another drawback of the Gearbox joint is that  it only constrains rotational
 motion, so it cannot model constraints involving translational motion,
 such as a rack and pinion mechanism.
 
-The Mimic joint will simplify the definition of this constraint by
+The Mimic constraint will simplify the definition of this constraint by
 specifying joints instead of links in `//parent` and `//child` so
 that the joint axis information does not need to be duplicated.
-The Mimic joint will be more flexible than the Gearbox joint by
+It will be more flexible than the Gearbox joint by
 allowing constraints on the output of prismatic joints and other
 joints with translational outputs.
+
+An alternative was to add a new joint type called a Mimic joint,
+but since DART already supports a [MimicMotorConstraint](https://github.com/dartsim/dart/blob/main/dart/constraint/MimicMotorConstraint.hpp),
+it would be easier to add a new sdf tag called ``<mimic>`` inside the ``//joint/axis/`` tag.
 
 ## Document summary
 
