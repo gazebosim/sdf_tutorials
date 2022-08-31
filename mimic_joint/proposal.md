@@ -171,13 +171,16 @@ tag to joint axes :
             <child>gearbox_input</child>
             <axis>
                 <xyz>1 0 0</xyz>
-                <mimic joint="gearbox_output_joint" multiplier="5"/>
             </axis>
             <pose>0 0.075 0 0 0 0</pose>
         </joint>
         <joint name="gearbox_output_joint" type="revolute">
             <parent>gearbox_base</parent>
             <child>gearbox_output</child>
+            <axis>
+                <xyz>1 0 0</xyz>
+                <mimic joint="gearbox_input_joint" multiplier="5"/>
+            </axis>
         </joint>
 ~~~
 
