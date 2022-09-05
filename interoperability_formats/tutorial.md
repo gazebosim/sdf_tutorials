@@ -3,7 +3,7 @@
 SDFormat can interoperate with other formats, in particular with [USD](https://graphics.pixar.com/usd/release/index.html)
 and [MJCF](https://mujoco.readthedocs.io/en/latest/modeling.html).
 We have created command line tools to convert between these formats.
-It takes as input an SDFormat file that works in Gazebo Sim and produces as output a MJCF/USD file
+The tools take as input SDFormat files that works in Gazebo Sim and produce as output a MJCF/USD files
 that work in Mujoco/NVIDIA Omniverse with approximately equivalent results; and vice versa.
 
 ## USD
