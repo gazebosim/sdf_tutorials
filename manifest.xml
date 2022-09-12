@@ -128,13 +128,15 @@
       <skill>intermediate</skill>
     </tutorial>
 
-    <tutorial title='Convert SDF to USD' ref='convert_sdf_to_usd' type='documentation'>
-      <markdown version='12'>convert_sdf_to_usd/tutorial.md</markdown>
+    <tutorial title='Interoperability with other modeling formats' ref='interoperability_formats' type='documentation'>
+      <markdown version='12'>interoperability_formats/tutorial.md</markdown>
       <description>
-          Converting SDF to USD.
+          Interoperability with other modeling formats
       </description>
       <tags>
         <tag>usd</tag>
+        <tag>mjcf</tag>
+        <tag>mujoco</tag>
         <tag>nvidia</tag>
         <tag>omniverse</tag>
         <tag>isaac sim</tag>
@@ -309,8 +311,8 @@
       <tutorials>
         <tutorial>install</tutorial>
         <tutorial>quickstart</tutorial>
-        <tutorial>convert_sdf_to_usd</tutorial>
         <tutorial>python_bindings</tutorial>
+        <tutorial>interoperability_formats</tutorial>
         <tutorial>roadmap</tutorial>
         <tutorial>proposal_format</tutorial>
       </tutorials>

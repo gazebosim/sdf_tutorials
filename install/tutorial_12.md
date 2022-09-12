@@ -71,50 +71,6 @@ If you have previously installed from source, be sure you are installing to the 
     wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
     sudo apt-get update
 
-##### USD
-
-USD is a high-performance extensible software platform for collaboratively constructing animated 3D scenes, designed to meet the needs of large-scale film and visual effects production.
-
-With the USD component, sdformat provide tools to convert between SDF and USD files.
-
-**Note: USD support is only available when building sdformat from source.**
-
-**USD requires CMAKE 3.12 this package is available from Ubuntu 20.04**
-
-Clone the USD repository
-
-```bash
-git clone --depth 1 -b v21.11 https://github.com/PixarAnimationStudios/USD.git
-```
-**Note: Only v21.11 is supported currently**
-
-Install dependencies not managed by the build script
-
-```bash
-sudo apt install libpyside2-dev python3-opengl cmake libglu1-mesa-dev freeglut3-dev mesa-common-dev
-```
-
-Use the build script to compile USD. In order to speed up compilation, it is recommended to disable unneeded components.
-
-```bash
-cd USD
-python3 build_scripts/build_usd.py --build-variant release --no-tests --no-examples --no-tutorials --no-docs --no-python <install_dir>
-```
-
-For more information regarding the build options, see the USD docs at https://github.com/PixarAnimationStudios/USD/tree/v21.11#getting-and-building-the-code.
-
-Add USD to system paths (replace `<install_dir>` with the path to your USD install directory)
-
-```bash
-export PATH=<install_dir>/bin:$PATH
-export LD_LIBRARY_PATH=<install_dir>/lib:$LD_LIBRARY_PATH
-export CMAKE_PREFIX_PATH=<install_dir>:$CMAKE_PREFIX_PATH
-```
-
-Continue installing sdformat as normal, sdformat will automatically detect and enable USD support if it is present.
-
-**Note: Be sure to build sdformat on a terminal with the above environment variables exported.**
-
 #### Build And Install SDFormat
 
 This section describes how to install SDFormat into `/usr`,
