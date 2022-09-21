@@ -64,13 +64,13 @@ which both share the same definition of roll, pitch, and yaw angles:
 
 For a command-line utility to convert between roll-pitch-yaw angles,
 quaternions, and rotation matrices, please see the
-[quaternion\_from\_euler](https://github.com/ignitionrobotics/ign-math/blob/ign-math4/examples/quaternion_from_euler.cc)
-and [quaternion\_to\_euler](https://github.com/ignitionrobotics/ign-math/blob/ign-math4/examples/quaternion_to_euler.cc)
-example programs in ignition math.
+[quaternion\_from\_euler](https://github.com/gazebosim/gz-math/blob/ign-math4/examples/quaternion_from_euler.cc)
+and [quaternion\_to\_euler](https://github.com/gazebosim/gz-math/blob/ign-math4/examples/quaternion_yo_euler.cc)
+example programs in Gazebo math.
 
 Software implementations for converting between this Euler angle convention and
 quaternions can be found in
-[ignition::math::Quaternion](https://github.com/ignitionrobotics/ign-math/blob/ignition-math4_4.0.0/include/ignition/math/Quaternion.hh#L308-L398)
+[gz::math::Quaternion](https://github.com/gazebosim/gz-math/blob/gz-math7/include/gz/math/Quaternion.hh#L309-L399)
 C++ class, and the [urdf::Rotation](https://github.com/ros/urdfdom_headers/blob/1.0.3/urdf_model/include/urdf_model/pose.h#L103-L155) C++ class.
 
 Some other implementations:

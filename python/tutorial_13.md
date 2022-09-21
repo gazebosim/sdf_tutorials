@@ -137,7 +137,7 @@ def main():
 Or you can create and add a new element to the SDF DOM, finally we will save it in a new file:
 
 ```python
-from ignition.math import Vector3d
+from gz.math7 import Vector3d
 
 ...
 

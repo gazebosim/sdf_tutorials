@@ -22,7 +22,7 @@ Install prerequisites.  A clean Ubuntu system will need:
 
     sudo apt-get install ruby-dev build-essential libtinyxml-dev libboost-all-dev cmake mercurial pkg-config
 
-### ignition-math4:
+### gz-math4:
 
 for Ubuntu distros earlier than bionic, the OSRF package repository should be used:
 
@@ -33,7 +33,7 @@ for Ubuntu distros earlier than bionic, the OSRF package repository should be us
 
 for Ubuntu bionic and later, skip to here:
 
-    sudo apt-get install libignition-math4-dev
+    sudo apt-get install libgz-math4-dev
 
 ## Build And Install SDFormat
 
@@ -59,7 +59,7 @@ shell scripts for setting the necessary environment variables.
 
         mkdir ~/sdf_source
         cd ~/sdf_source/
-        git clone https://github.com/ignitionrobotics/sdformat
+        git clone https://github.com/gazebosim/sdformat
 
 1. Change directory into the sdformat repository and switch to the sdf6 branch
 
