@@ -22,7 +22,7 @@ Install prerequisites.  A clean Ubuntu system will need:
 
     sudo apt-get install ruby-dev build-essential libtinyxml-dev libboost-all-dev cmake mercurial pkg-config
 
-### gz-math4:
+### ignition-math4:
 
 for Ubuntu distros earlier than bionic, the OSRF package repository should be used:
 
