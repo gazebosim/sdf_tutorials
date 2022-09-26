@@ -70,12 +70,12 @@ if __name__ == "__main__":
   main()
 ```
 
-The easiest way to include SDFormat is through `import sdformat as sdf`.
+The easiest way to include SDFormat is through `import sdformat13 as sdf`.
 
 At this point your main file should look like
 
 ```python
-import sdformat as sdf
+import sdformat13 as sdf
 
 def main():
     pass
@@ -89,7 +89,7 @@ for this reason we will use `try/except` and if there is any exception we will
 print the error in the terminal.
 
 ```python
-import sdformat as sdf
+import sdformat13 as sdf
 import sys
 
 
@@ -137,7 +137,7 @@ def main():
 Or you can create and add a new element to the SDF DOM, finally we will save it in a new file:
 
 ```python
-from ignition.math import Vector3d
+from gz.math7 import Vector3d
 
 ...
 
