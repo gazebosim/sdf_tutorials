@@ -9,7 +9,7 @@ Aditya Pande `<aditya.pande@osrfoundation.org>`
 
 ## Introduction
 
-This proposal suggests adding a new joint type called the Mimic joint
+This proposal suggests adding a new joint contraint type called the Mimic
 that adds a linear equality constraint between the output position of
 two joints.
 
@@ -24,12 +24,16 @@ Another drawback of the Gearbox joint is that  it only constrains rotational
 motion, so it cannot model constraints involving translational motion,
 such as a rack and pinion mechanism.
 
-The Mimic joint will simplify the definition of this constraint by
+The Mimic constraint will simplify the definition of this constraint by
 specifying joints instead of links in `//parent` and `//child` so
 that the joint axis information does not need to be duplicated.
-The Mimic joint will be more flexible than the Gearbox joint by
+It will be more flexible than the Gearbox joint by
 allowing constraints on the output of prismatic joints and other
 joints with translational outputs.
+
+An alternative was to add a new joint type called a Mimic joint,
+but since DART already supports a [MimicMotorConstraint](https://github.com/dartsim/dart/blob/main/dart/constraint/MimicMotorConstraint.hpp),
+it would be easier to add a new sdf tag called ``<mimic>`` inside the ``//joint/axis/`` tag.
 
 ## Document summary
 
@@ -161,14 +165,26 @@ and one `gearbox` joint.
         </joint>
 ~~~
 
-The `gearbox` joint could be equivalently and more concisely expressed as
-the following `mimic` joint:
+The `gearbox` joint could replaced equivalently by adding the ``<mimic>``
+tag to joint axes :
 
 ~~~
-        <joint name="mimic_demo" type="mimic">
-            <parent>gearbox_input_joint</parent>
-            <child>gearbox_output_joint</child>
-            <gearbox_ratio>5</gearbox_ratio>
+        <!-- Gearbox links revolute joints, so create a couple revolute joints -->
+        <joint name="gearbox_input_joint" type="revolute">
+            <parent>gearbox_base</parent>
+            <child>gearbox_input</child>
+            <axis>
+                <xyz>1 0 0</xyz>
+            </axis>
+            <pose>0 0.075 0 0 0 0</pose>
+        </joint>
+        <joint name="gearbox_output_joint" type="revolute">
+            <parent>gearbox_base</parent>
+            <child>gearbox_output</child>
+            <axis>
+                <xyz>1 0 0</xyz>
+                <mimic joint="gearbox_input_joint" multiplier="5"/>
+            </axis>
         </joint>
 ~~~
 
