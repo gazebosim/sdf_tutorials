@@ -1,19 +1,19 @@
-# Proposal Procedure and Format
+# Proposal for Mimic Joint Actuation Constraint
 
 * **Authors**:
 Steve Peters`<scpeters@openrobotics.org>`,
 Aditya Pande `<aditya.pande@osrfoundation.org>`
 * **Status**: *Draft*
-* **SDFormat Version**: *1.8+*
-* **`libsdformat` Version**: *11*
+* **SDFormat Version**: *1.10+*
+* **`libsdformat` Version**: *13*
 
 ## Introduction
 
-This proposal suggests adding a new joint contraint type called the Mimic
-that adds a linear equality constraint between the output position of
-two joints.
+This proposal suggests adding a new joint actuation contraint called the Mimic
+Constraint that adds a linear equality constraint between the output position
+of two joint axes.
 
-Currently, the Gearbox joint adds a similar constraint on the rotation
+Currently, the Gearbox joint type adds a similar constraint on the rotation
 of `//parent` and `//child` links relative to a reference link
 `//gearbox_reference_body`, with the rotation axes specified by
 `//axis/xyz` for `//parent` and `//axis2/xyz` for `//child`.
@@ -25,15 +25,18 @@ motion, so it cannot model constraints involving translational motion,
 such as a rack and pinion mechanism.
 
 The Mimic constraint will simplify the definition of this constraint by
-specifying joints instead of links in `//parent` and `//child` so
+specifying the joint axes to which it applies instead of links so
 that the joint axis information does not need to be duplicated.
 It will be more flexible than the Gearbox joint by
 allowing constraints on the output of prismatic joints and other
 joints with translational outputs.
 
 An alternative was to add a new joint type called a Mimic joint,
-but since DART already supports a [MimicMotorConstraint](https://github.com/dartsim/dart/blob/main/dart/constraint/MimicMotorConstraint.hpp),
-it would be easier to add a new sdf tag called ``<mimic>`` inside the ``//joint/axis/`` tag.
+but since URDF already supports the `//joint/mimic` tag (see
+[URDF documentation](https://wiki.ros.org/urdf/XML/joint) and
+[ros/robot\_state\_publisher#1](https://github.com/ros/robot_state_publisher/issues/1))
+it would be more consistent to add a new sdf tag called ``<mimic>`` inside
+the ``//joint/axis/`` tag.
 
 ## Document summary
 
@@ -90,6 +93,8 @@ individual changes under one `###` heading, those parts can go directly under
 the `###` heading instead of under each `####` heading.
 
 ## Examples
+
+### Alternative to gearbox joint type
 
 There is an example `gearbox` joint in the
 [demo\_joint\_types](https://github.com/osrf/gazebo_models/blob/master/demo_joint_types/model.sdf#L156-L328)
@@ -183,7 +188,10 @@ tag to joint axes :
             <child>gearbox_output</child>
             <axis>
                 <xyz>1 0 0</xyz>
-                <mimic joint="gearbox_input_joint" multiplier="5"/>
+                <mimic joint="gearbox_input_joint">
+                  <multiplier>5</multiplier>
+                  <offset>0</offset>
+                </mimic>
             </axis>
         </joint>
 ~~~
