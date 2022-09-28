@@ -196,4 +196,53 @@ tag to joint axes :
         </joint>
 ~~~
 
+### Example of rack and pinion constraint
+
+~~~
+<sdf version="1.10">
+  <model name="mimic_rack_and_pinion">
+    <link name="rack">
+        <pose >0 0 0 0 0 0</pose>
+        <visual name="box_visual">
+            <geometry>
+                <box>
+                    <size>0.4 0.03 0.03</size>
+                </box>
+            </geometry>
+        </visual>
+    </link>
+    <link name="pinion">
+        <pose degrees='true'>0 0 0.02 90 0 0</pose>
+        <visual name="cylinder_visual">
+            <geometry>
+                <cylinder>
+                  <length>0.03</length>
+                  <radius>0.02</radius>
+                </cylinder>
+            </geometry>
+        </visual>
+    </link>
+    <joint name="pinion_joint" type="revolute">
+      <parent>chassis</parent>
+      <child>pinion</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+      </axis>
+    </joint>
+    <joint name="rack_joint" type="prismatic">
+      <parent>chassis</parent>
+      <child>rack</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <mimic joint="pinion_joint">
+          <multiplier>0.02</multiplier>
+          <offset>0.0</offset>
+        </mimic>
+      </axis>
+    </joint>
+  </model>
+</sdf>
+~~~
+
+
 ## Appendix
