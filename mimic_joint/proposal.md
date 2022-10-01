@@ -20,7 +20,7 @@ of `//parent` and `//child` links relative to a reference link
 The Gearbox joint is typically used in conjunction with a pair of
 revolute joints with identical axes but requires duplication of the
 axis definitions.
-Another drawback of the Gearbox joint is that  it only constrains rotational
+Another drawback of the Gearbox joint is that it only constrains rotational
 motion, so it cannot model constraints involving translational motion,
 such as a rack and pinion mechanism.
 
@@ -46,7 +46,16 @@ Make a bullet list of all major sections:
 
 ## Syntax (optional)
 
-* Define any possibly-unclear syntax used in the document.
+The proposal uses [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp)
+to describe elements and attributes concisely.
+For example, `<model>` tags are referred to as `//model` using XPath.
+XPath is even more concise for referring to nested tags and attributes.
+In the following example, `<link>` elements inside `<model>` tags are
+referenced as `//model/link` and  model `name` attributes as `//model/@name`:
+
+    <model name="model_name">
+      <link/>
+    </model>
 
 ## Motivation
 
@@ -61,7 +70,36 @@ Make a bullet list of all major sections:
 
 Introduce the section before listing changes
 
-### *{number}* *{Proposed change}*
+### Definition of Mimic Constraint
+
+A Mimic Constraint encodes a linear equality constraint on the position of
+two joint axes with `multiplier` and `offset` parameters according to the
+equation below. These parameter names match the
+[URDF mimic](https://wiki.ros.org/urdf/XML/joint#Elements)
+tag parameter names.
+
+`mimic_angle = multiplier * other_joint_angle + offset`
+
+### Addition of //axis/mimic and //axis2/mimic tags
+
+A new `//mimic` tag is defined and added to the `//axis` and `//axis2` elements
+to encode a mimic constraint between two joint axes.
+The `//mimic` tag encodes the `multiplier` and `offset` parameters in the
+`//mimic/multiplier` and `//mimic/offset` elements, respectively.
+The name and axis of the joint to be mimicked are specified in the
+`//mimic/@joint` and `//mimic/@axis` attributes, respectively.
+The `@joint` attribute is required and must resolve to a joint name from
+the current scope.
+The `@axis` attribute is optional with a default value of `axis`. A value of
+`axis2` may be specified in `@axis` if `@joint` refers to a multi-axis joint.
+The only valid values of `//mimic/@axis` are `axis` and `axis2`.
+
+~~~
+<mimic joint="joint_name" axis="axis">
+  <multiplier>1.0</multiplier>
+  <offset>0.0</offset>
+</mimic>
+~~~
 
 **Change**
 
