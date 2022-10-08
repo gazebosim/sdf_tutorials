@@ -73,12 +73,13 @@ Introduce the section before listing changes
 ### Definition of Mimic Constraint
 
 A Mimic Constraint encodes a linear equality constraint on the position of
-two joint axes with `multiplier` and `offset` parameters according to the
-equation below. These parameter names match the
+two joint axes with `multiplier`, `offset`, and `reference` parameters
+according to the equation below. Note that the `multiplier` and `offset`
+parameters match the parameters of the
 [URDF mimic](https://wiki.ros.org/urdf/XML/joint#Elements)
-tag parameter names.
+tag if the `reference` parameter is `0`.
 
-`mimic_angle = multiplier * other_joint_angle + offset`
+`mimic_angle = multiplier * (other_joint_position - reference) + offset`
 
 ### Addition of //axis/mimic and //axis2/mimic tags
 
@@ -98,6 +99,7 @@ The only valid values of `//mimic/@axis` are `axis` and `axis2`.
 <mimic joint="joint_name" axis="axis">
   <multiplier>1.0</multiplier>
   <offset>0.0</offset>
+  <reference>0.0</reference>
 </mimic>
 ~~~
 
@@ -229,6 +231,7 @@ tag to joint axes :
                 <mimic joint="gearbox_input_joint">
                   <multiplier>5</multiplier>
                   <offset>0</offset>
+                  <reference>0</reference>
                 </mimic>
             </axis>
         </joint>
@@ -275,6 +278,7 @@ tag to joint axes :
         <mimic joint="pinion_joint">
           <multiplier>0.02</multiplier>
           <offset>0.0</offset>
+          <reference>0.0</reference>
         </mimic>
       </axis>
     </joint>
