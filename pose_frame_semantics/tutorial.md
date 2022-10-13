@@ -177,11 +177,11 @@ element is permitted to reference in an SDFormat file.
 See [Name conflicts and scope](#name-conflicts-and-scope) and
 [Unique names and reserved names](#unique-names-and-reserved-names).
 
-### `//joint/axis/xyz/@@expressed_in` instead of `use_parent_model_frame`
+### `//joint/axis/xyz/@expressed_in` instead of `use_parent_model_frame`
 
 Just as `//pose/@relative_to` provides flexibility to model authors when
-specifying pose, the new `//joint/axis/xyz/@@expressed_in` and
-`//joint/axis2/xyz/@@expressed_in` attributes provide flexibility when
+specifying pose, the new `//joint/axis/xyz/@expressed_in` and
+`//joint/axis2/xyz/@expressed_in` attributes provide flexibility when
 specifying joint axis unit vectors.
 These attributes also allow the `//use_parent_model_frame` element to be
 removed and replaced by setting `//xyz/@expressed_in` to `__model__`.
