@@ -41,6 +41,8 @@ to determine the frame in which a pose is specified. For example, all link
 poses are specified relative to the model frame. This is illustrated for the
 pendulum with base model in SDFormat 1.6 format and an illustration.
 
+[[file:pendulum_16.png|400px]]
+
 ~~~
 <sdf version="1.6">
   <model name="pendulum_with_base">
@@ -62,9 +64,7 @@ pendulum with base model in SDFormat 1.6 format and an illustration.
 </sdf>
 ~~~
 
-[[file:pendulum_16.png|400px]]
-
-With SDFormat 1.7, a pose value can be specified relative to a another frame
+With SDFormat 1.7, a pose value can be specified relative to another frame
 of your choice.
 The `//pose` element now gets an attribute called `@relative_to`, which takes
 the name of another link, joint, or nested model or the name of a frame created
@@ -72,11 +72,13 @@ with the `//frame` tag (see next section).
 This makes SDFormat more expressive and may reduce duplication of numerical
 values in pose data within a model file.
 
-For the pendulum with base illustrated above,
-the pose of the `joint` is defined relative to the `base` link, and the pose of
-the `pendulum` link is defined relative to the `joint`, in each case by
+The same pendulum with base model can be expressed in SDFormat 1.7 by defining
+the `joint` pose relative to the `base` link, and the pose of
+the `pendulum` link relative to the `joint`, in each case by
 specifying the name of the relative-to link or joint in the `@relative_to`
 attribute.
+
+[[file:pendulum_17.png|400px]]
 
 ```xml
 <sdf version="1.7">
@@ -102,8 +104,6 @@ attribute.
   </model>
 </sdf>
 ```
-
-[[file:pendulum_17.png|400px]]
 
 For more details, see the [Pose and Frame Semantics](#pose-and-frame-semantics)
 section of this document.
