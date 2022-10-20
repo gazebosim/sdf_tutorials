@@ -151,22 +151,6 @@ so specifying `<pose relative_to="tip"/>` will co-locate an entity with the
 For more details, see the [Pose and Frame Semantics](#pose-and-frame-semantics)
 section of this document.
 
-### Canonical link and model frame
-
-Each model frame must be attached to a link, which can be specified in the
-`//model/@canonical_link` attribute. If unspecified, the canonical link
-defaults to the first `//link` element in the model.
-
-```xml
-<sdf version="1.7">
-  <model name="pendulum_with_base" canonical_link="base">
-    <link name="base">
-    ...
-    </link>
-  </model>
-</sdf>
-```
-
 ### Naming requirements for links, joints and frames
 
 There are more restrictive rules in SDFormat 1.7 for naming entities related
@@ -176,6 +160,46 @@ element is permitted to reference in an SDFormat file.
 
 See [Name conflicts and scope](#name-conflicts-and-scope) and
 [Unique names and reserved names](#unique-names-and-reserved-names).
+
+### Canonical link and model frame
+
+Each model frame must be attached to a link, which can be specified in the
+`//model/@canonical_link` attribute. If unspecified, the canonical link
+defaults to the first `//link` element in the model. Additionally, the model
+frame can be referenced using the reserved name `__model__`.
+
+In the previous examples of the `pendulum_with_base` XML snippets,
+since the `@canonical_link` attribute is unspecified the `base` link is the
+canonical link by default as the first link listed in the XML.
+In the following snippet, the order of the links in the XML is reversed, so
+the `@canonical_link` attribute is used to explicitly specify `base`.
+Additionally, the joint pose is specified relative to the model frame instead
+of the base link.
+
+```xml
+<sdf version="1.7">
+  <model name="pendulum_with_base" canonical_link="base">
+    <link name="pendulum">
+      <pose relative_to="joint">
+        0 0 -0.5 0 0 0
+      </pose>
+    </link>
+    <link name="base">
+      <pose>0 0 0.3   0 0 0</pose>
+    </link>
+    <joint name="joint" type="revolute">
+      <parent>base</parent>
+      <child>pendulum</child>
+      <pose relative_to="__model__">
+        0 0 1.03 1.57 0 0
+      </pose>
+      <axis>
+        <xyz>1 0 0</xyz>
+      </axis>
+    </joint>
+  </model>
+</sdf>
+```
 
 ### `//joint/axis/xyz/@expressed_in` instead of `use_parent_model_frame`
 
