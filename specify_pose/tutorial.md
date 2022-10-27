@@ -65,7 +65,7 @@ which both share the same definition of roll, pitch, and yaw angles:
 For a command-line utility to convert between roll-pitch-yaw angles,
 quaternions, and rotation matrices, please see the
 [quaternion\_from\_euler](https://github.com/gazebosim/gz-math/blob/ign-math4/examples/quaternion_from_euler.cc)
-and [quaternion\_to\_euler](https://github.com/gazebosim/gz-math/blob/ign-math4/examples/quaternion_yo_euler.cc)
+and [quaternion\_to\_euler](https://github.com/gazebosim/gz-math/blob/ign-math4/examples/quaternion_to_euler.cc)
 example programs in Gazebo math.
 
 Software implementations for converting between this Euler angle convention and

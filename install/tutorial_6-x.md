@@ -33,7 +33,7 @@ for Ubuntu distros earlier than bionic, the OSRF package repository should be us
 
 for Ubuntu bionic and later, skip to here:
 
-    sudo apt-get install libgz-math4-dev
+    sudo apt-get install libignition-math4-dev
 
 ## Build And Install SDFormat
 
