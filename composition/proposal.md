@@ -609,7 +609,7 @@ reserved `::` delimiter in an invalid fashion (to define a link, joint, etc.).
 
 This would not be an issue if this flattened XML were a transient artifact
 (e.g. temporary serialization for communicating models from a Gazebo server to
-a client). However, users could have converted their models with `ign sdf`, and
+a client). However, users could have converted their models with `gz sdf`, and
 thus there would be "data at rest" in this format.
 
 To work around this, the conversion from SDFormat 1.7 to 1.8 should have an
@@ -993,7 +993,7 @@ returning an error code if errors are found during parsing:
 
 - `sdf::readFile` and `sdf::readString` APIs perform parsing Stage 1
 - `sdf::Root::Load` performs most parsing stages, but skips some of the more expensive checks
-- `ign sdf --check` performs all parsing stages, including more expensive checks
+- `gz sdf --check` performs all parsing stages, including more expensive checks
 
 1.  **XML parsing and schema validation:**
     Parse model file from XML into a tree data structure,
@@ -1033,7 +1033,7 @@ returning an error code if errors are found during parsing:
         in [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L323-L340),
         returning a `DUPLICATE_NAME` error code if non-unique names are detected.
 
-    2.3 The `ign sdf --check` command loads all DOM elements and also
+    2.3 The `gz sdf --check` command loads all DOM elements and also
         recursively checks for name uniqueness among all sibling elements
         using the [recursiveSiblingUniqueNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1633-L1655)
         helper function.
@@ -1046,7 +1046,7 @@ returning an error code if errors are found during parsing:
     then the joint is attached to a fixed reference frame.
     In `libsdformat9`, these checks are all performed by the helper function
     [checkJointParentChildLinkNames](https://github.com/osrf/sdformat/blob/4fd00c795bafb6f10a7a36356fe3f61a93c961c8/src/parser.cc#L1814-L1911),
-    which is invoked by `ign sdf --check`.
+    which is invoked by `gz sdf --check`.
     A subset of these checks are performed by
     [Joint::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Joint.cc#L199-L213)
     (checking that parent and child ~~link~~ names are different and that
@@ -1129,7 +1129,7 @@ returning an error code if errors are found during parsing:
     *6.8 Verify that the parent and child frames of each joint resolve to*
         *different values. This check can be skipped in the special case that*
         *"world" is the joint's parent frame since that frame is not in a*
-        *model's `FrameAttachedToGraph` (checked in `libsdformat11` by `ign sdf --check`, see*
+        *model's `FrameAttachedToGraph` (checked in `libsdformat11` by `gz sdf --check`, see*
         *[Joint::ResolveParentLink](https://github.com/osrf/sdformat/blob/44cab95014e61849f508ec92a613100301512aaf/src/Joint.cc#L407-L418)*
         *and [parser.cc:1895-1930](https://github.com/osrf/sdformat/blob/44cab95014e61849f508ec92a613100301512aaf/src/parser.cc#L1895-L1930)).*
 
@@ -1270,7 +1270,7 @@ There are seven phases for validating the kinematics data in a world:
         in [World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L347-L362),
         returning a `DUPLICATE_NAME` error code if non-unique names are detected.
 
-    2.3 The `ign sdf --check` command loads all DOM elements and also
+    2.3 The `gz sdf --check` command loads all DOM elements and also
         recursively checks for name uniqueness among all sibling elements
         using the [recursiveSiblingUniqueNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1633-L1655)
         helper function.

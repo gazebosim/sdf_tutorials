@@ -20,7 +20,7 @@ which version you need.
 
 On macOS, add OSRF packages:
 
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     brew tap osrf/simulation
 
 Install sdformat:
@@ -37,8 +37,8 @@ Miniconda suffices.
 
 Create if necessary, and activate a Conda environment:
 
-    conda create -n ign-ws
-    conda activate ign-ws
+    conda create -n gz-ws
+    conda activate gz-ws
 
 Install `sdformat`:
 
@@ -95,7 +95,7 @@ shell scripts for setting the necessary environment variables.
 
         mkdir ~/sdf_source
         cd ~/sdf_source/
-        git clone https://github.com/ignitionrobotics/sdformat
+        git clone https://github.com/gazebosim/sdformat
 
 2. Change directory into the sdformat repository and switch to the sdf<#> branch
 
@@ -146,7 +146,7 @@ If you need to uninstall SDF or switch back to a debian-based install of SDF whe
 
 Clone the repository
 
-    git clone https://github.com/ignitionrobotics/sdformat -b sdf<#>
+    git clone https://github.com/gazebosim/sdformat -b sdf<#>
 
 Be sure to replace `<#>` with a number value, such as 9 or 10, depending on
 which version you need.
@@ -183,14 +183,14 @@ Miniconda suffices.
 
 Create if necessary, and activate a Conda environment:
 
-    conda create -n ign-ws
-    conda activate ign-ws
+    conda create -n gz-ws
+    conda activate gz-ws
 
 Install prerequisites:
 
     conda install urdfdom --channel conda-forge
 
-Install Ignition dependencies:
+Install Gazebo dependencies:
 
 You can view lists of dependencies:
 

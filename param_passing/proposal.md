@@ -47,7 +47,7 @@ The motivation behind this proposal is to avoid duplication when constructing
 models. For example, in [SubT's robots](
   https://github.com/osrf/subt/wiki/Robots), X1 has 8-10 different sensor
 configurations but all have the same base. If we take a look at all the
-different configurations in [Fuel](https://app.ignitionrobotics.org/), we see
+different configurations in [Fuel](https://app.gazebosim.org/), we see
 that they are essentially copies of each other but with different parameters for
 these sensors.
 

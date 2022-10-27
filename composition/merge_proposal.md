@@ -103,7 +103,7 @@ to be merged and assigned the pose specified in `//model/include/pose`.
 If no `//model/@placement_frame` or `//include/placement_frame` is specified,
 the raw pose may simply be copied, but in general the model to be merged should
 be loaded into an `sdf::Root` object so that graphs are constructed and
-the model pose can be resolved (see code in [parser.cc](https://github.com/ignitionrobotics/sdformat/blob/sdformat12_12.4.0/src/parser.cc#L263-L277)).
+the model pose can be resolved (see code in [parser.cc](https://github.com/gazebosim/sdformat/blob/sdformat12_12.4.0/src/parser.cc#L263-L277)).
 For the entities to be merged, any explicit references to the
 implicit `__model__` frame are replaced with references to the proxy frame.
 Additionally, the name of the proxy frame is inserted anywhere there is an
@@ -177,7 +177,7 @@ which is the canonical link of `test_model`.
 
 The following is an abridged version of a Clearpath Husky skid-steer with
 sensors mounted on a pan-tilt gimbal used in the DARPA Subterranean Challenge
-([MARBLE HUSKY SENSOR CONFIG 3](https://app.ignitionrobotics.org/OpenRobotics/fuel/models/MARBLE_HUSKY_SENSOR_CONFIG_3/10)):
+([MARBLE HUSKY SENSOR CONFIG 3](https://app.gazebosim.org/OpenRobotics/fuel/models/MARBLE_HUSKY_SENSOR_CONFIG_3/10)):
 
 ~~~
 <sdf version="1.7">
@@ -262,24 +262,24 @@ sensors mounted on a pan-tilt gimbal used in the DARPA Subterranean Challenge
     </joint>
     <!-- Gimbal Joints Plugins -->
     <plugin
-      filename="libignition-gazebo-joint-controller-system.so"
-      name="ignition::gazebo::systems::JointController">
+      filename="libgz-gazebo-joint-controller-system.so"
+      name="gz::sim::systems::JointController">
       <joint_name>pan_gimbal_joint</joint_name>
       <use_force_commands>true</use_force_commands>
       <p_gain>0.4</p_gain>
       <i_gain>10</i_gain>
     </plugin>
     <plugin
-      filename="libignition-gazebo-joint-controller-system.so"
-      name="ignition::gazebo::systems::JointController">
+      filename="libgz-gazebo-joint-controller-system.so"
+      name="gz::sim::systems::JointController">
       <joint_name>tilt_gimbal_joint</joint_name>
       <use_force_commands>true</use_force_commands>
       <p_gain>0.4</p_gain>
       <i_gain>10</i_gain>
     </plugin>
     <plugin
-      filename="libignition-gazebo-joint-state-publisher-system.so"
-      name="ignition::gazebo::systems::JointStatePublisher">
+      filename="libgz-gazebo-joint-state-publisher-system.so"
+      name="gz::sim::systems::JointStatePublisher">
       <joint_name>pan_gimbal_joint</joint_name>
       <joint_name>tilt_gimbal_joint</joint_name>
     </plugin>
@@ -376,24 +376,24 @@ violate encapsulation to include it in either file):
     </joint>
     <!-- Gimbal Joints Plugins -->
     <plugin
-      filename="libignition-gazebo-joint-controller-system.so"
-      name="ignition::gazebo::systems::JointController">
+      filename="libgz-gazebo-joint-controller-system.so"
+      name="gz::sim::systems::JointController">
       <joint_name>pan_gimbal_joint</joint_name>
       <use_force_commands>true</use_force_commands>
       <p_gain>0.4</p_gain>
       <i_gain>10</i_gain>
     </plugin>
     <plugin
-      filename="libignition-gazebo-joint-controller-system.so"
-      name="ignition::gazebo::systems::JointController">
+      filename="libgz-gazebo-joint-controller-system.so"
+      name="gz::sim::systems::JointController">
       <joint_name>tilt_gimbal_joint</joint_name>
       <use_force_commands>true</use_force_commands>
       <p_gain>0.4</p_gain>
       <i_gain>10</i_gain>
     </plugin>
     <plugin
-      filename="libignition-gazebo-joint-state-publisher-system.so"
-      name="ignition::gazebo::systems::JointStatePublisher">
+      filename="libgz-gazebo-joint-state-publisher-system.so"
+      name="gz::sim::systems::JointStatePublisher">
       <joint_name>pan_gimbal_joint</joint_name>
       <joint_name>tilt_gimbal_joint</joint_name>
     </plugin>

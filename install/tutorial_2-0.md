@@ -26,7 +26,7 @@ Install prerequisites.  A clean Ubuntu system will need:
 
         mkdir ~/sdf_source
         cd ~/sdf_source/
-        git clone https://github.com/ignitionrobotics/sdformat
+        git clone https://github.com/gazebosim/sdformat
 
 1. Change directory into the sdformat repository and switch to the 2.0 branch
 

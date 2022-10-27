@@ -295,8 +295,7 @@ really hard (and annoying) to support an already complex specification.
 
 #### 1.1.1 Re-describe API Implications, potential sources of numerical error
 
-The `ignition::math::Pose3d` stores its rotation as
-`ignition::math::Quaternion`.
+The `gz::math::Pose3d` stores its rotation as `gz::math::Quaternion`.
 
 Therefore, when storing quaternions, users should be aware of what numeric
 changes happen to their data (e.g. normalization), so they should generally
