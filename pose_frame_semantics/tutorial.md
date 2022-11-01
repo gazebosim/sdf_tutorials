@@ -116,8 +116,8 @@ Three things are needed to create a frame using the `//frame` element:
 * in `//frame/@attached_to`: the name of a parent frame to which this frame is
   attached. If `@attached_to` is not specified, the frame will be attached to
   the model frame (see next section).
-* in `//frame/pose`: a pose, which may be defined relative to another frame.
-  Other links and joints are considered frames so they can be used here.
+* in `//frame/pose`: a pose, which may be defined relative to another frame
+  using `//frame/pose/@relative_to`.
   If `//frame/pose/@relative_to` is not specified, the pose will be relative to
   the attached-to frame.
 
