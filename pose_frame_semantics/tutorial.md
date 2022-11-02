@@ -39,7 +39,7 @@ SDFormat 1.6 and earlier have
 [fixed rules for each type of element](/tutorials?tut=pose_frame_semantics&ver=1.5#parent-frames-in-sdf-1-4)
 to determine the frame in which a pose is specified. For example, all link
 poses are specified relative to the model frame. This is illustrated for the
-pendulum with base model in SDFormat 1.6 format and an illustration.
+pendulum with base model in SDFormat 1.6 format.
 
 [[file:pendulum_16.png|400px]]
 
