@@ -205,7 +205,7 @@ which is the canonical link of `test_model`.
 
 Given a world SDFormat file:
 
-~~~
+~~~xml
 <sdf version="1.10">
   <world name="world_model">
     <include merge="true">
@@ -218,15 +218,15 @@ Given a world SDFormat file:
 
 and the included model:
 
-~~~
+~~~xml
 <sdf version="1.10">
   <model name="multiple_robots">
     <include>
-      <uri>robot</uri> <!-- `robot` is a model form the previous example
+      <uri>robot</uri> <!-- `robot` is a model form the previous example -->
       <name>robot1</name>
     </include>
     <include>
-      <uri>robot</uri> <!-- `robot` is a model form the previous example
+      <uri>robot</uri> <!-- `robot` is a model form the previous example -->
       <pose>0 10 0   0 0 0</pose>
       <name>robot2</name>
     </include>
@@ -239,7 +239,7 @@ A proxy frame is added with the pose
 value of `100 0 0 0 0 0` from `//world/include/pose` and attached to `robot1::L1`,
 which is the canonical link of `multiple_robots`.
 
-~~~
+~~~xml
 <sdf version='1.10'>
   <world name="world_model">
     <frame name='_merged__multiple_robots__model__' attached_to='robot1::L1'>
