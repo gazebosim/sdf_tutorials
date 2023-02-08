@@ -243,7 +243,7 @@ which is the canonical link of `multiple_robots`.
 <sdf version='1.10'>
   <world name="world_model">
     <frame name='_merged__multiple_robots__model__' attached_to='robot1::L1'>
-      <pose relative_to='__model__'>100 0 0 0 0 0</pose>
+      <pose relative_to='world'>100 0 0 0 0 0</pose>
     </frame>
     <model name='robot1'>
       <pose relative_to='_merged__multiple_robots__model__'/>
