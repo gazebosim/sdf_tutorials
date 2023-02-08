@@ -207,7 +207,7 @@ Given a world SDFormat file:
 
 ~~~xml
 <sdf version="1.10">
-  <world name="world_model">
+  <world name="example_world">
     <include merge="true">
       <uri>multiple_robots</uri>
       <pose>100 0 0   0 0 0</pose>
@@ -241,7 +241,7 @@ which is the canonical link of `multiple_robots`.
 
 ~~~xml
 <sdf version='1.10'>
-  <world name="world_model">
+  <world name="example_world">
     <frame name='_merged__multiple_robots__model__' attached_to='robot1::L1'>
       <pose relative_to='world'>100 0 0 0 0 0</pose>
     </frame>
