@@ -238,6 +238,20 @@
       <skill>intermediate</skill>
     </tutorial>
 
+    <tutorial title="SDFormat extensions to URDF (the 'gazebo' tag)" ref='sdformat_urdf_extensions' type='tutorial'>
+      <markdown version="1.6">urdf/sdf_extensions.md</markdown>
+      <description>
+        Describes how the "gazebo" tag can be used to extend URDF to include SDFormat content.
+        
+      </description>
+      <tags>
+        <tag>model</tag>
+        <tag>urdf</tag>
+        <tag>gazebo</tag>
+      </tags>
+      <skill>intermediate</skill>
+    </tutorial>
+
     <tutorial title="Proposal Procedure and Format" ref='proposal_format' type='documentation'>
       <markdown version="1.7">developers/proposal_format.md</markdown>
       <description>
@@ -297,6 +311,7 @@
         <tutorial>pose_frame_semantics</tutorial>
         <tutorial>composition</tutorial>
         <tutorial>param_passing_tutorial</tutorial>
+        <tutorial>sdformat_urdf_extensions</tutorial>
       </tutorials>
     </category>
 

@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<robot name='link_ref_example'>
+  <link name='base_link'>
+    <inertial>
+      <mass value='0.1' />
+      <origin rpy='0 0 0' xyz='0 0 0' />
+      <inertia ixx='0.01' ixy='0' ixz='0' iyy='0.01' iyz='0' izz='0.01' />
+    </inertial>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="2"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference='base_link'>
+    <mu1>0.5</mu1> <!-- Will create collision/surface/friction/ode/mu -->
+
+    <!-- <light> is inserted directly into the link since it is not a special element -->
+    <light name="point_light" type="point">
+      <diffuse>1.0 1.0 1.0 1.0</diffuse>
+      <specular>0.1 0.1 0.1 1.0</specular>
+    </light>
+  </gazebo>
+</robot>
+

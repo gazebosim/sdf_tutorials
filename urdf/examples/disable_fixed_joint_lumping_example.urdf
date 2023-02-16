@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<robot name='disable_fixed_joint_lumping_example'>
+  <link name='base_link'>
+    <inertial>
+      <mass value='0.25' />
+      <inertia ixx='0.01' ixy='0' ixz='0' iyy='0.01' iyz='0' izz='0.01' />
+    </inertial>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="2"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name='j1' type='fixed'>
+    <parent link='base_link'/>
+    <child link='end_effector'/>
+    <origin xyz='0 0 1' rpy='0 0 0'/>
+  </joint>
+  <link name='end_effector'>
+    <inertial>
+      <mass value='0.25' />
+      <inertia ixx='0.01' ixy='0' ixz='0' iyy='0.01' iyz='0' izz='0.01' />
+    </inertial>
+    <visual>
+      <origin xyz="2 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="1" radius="2"/>
+      </geometry>
+    </visual>
+  </link>
+  <gazebo reference='j1'>
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+  </gazebo>
+</robot>
+
