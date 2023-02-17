@@ -8,6 +8,20 @@ Steve Peters `<scpeters@openrobotics.org>`
 * **SDFormat Version**: 1.9
 * **`libsdformat` Version**: 12.0
 
+
+All sections affected by amendments are explicitly denoted as being added or
+modified.
+
+These are added as amendments given that the current proposal has not yet been
+migrated to the specification documentation.
+
+### Amendment 1: World merge-include (`//world/include/@merge`)
+
+* **Status**: Draft
+* **SDFormat Version**: 1.10
+* **`libsdformat` Version**: TBD
+
+
 ## Introduction
 
 This proposal suggests a new behavior for the `//model/include` tag that copies
@@ -26,7 +40,7 @@ composition.
 The proposed behavior decouples the model structures available via composition
 from the file structure used to store the underlying model components.
 This is useful both for creating new models and for decomposing existing models
-into separate components without visibile changes to downstream consumers,
+into separate components without visible changes to downstream consumers,
 while maintaining the encapsulation provided by SDFormat 1.8.
 The cost of this feature is that users must take care to avoid name collisions
 between the entities of the models to be merged: consider an analogy to Python
@@ -123,6 +137,22 @@ to the included model's `__model__` frame or to use
 `//include/experimental:params` to inject such a frame directly (see
 [documentation](/tutorials?tut=param_passing_tutorial)).
 
+### `//world/include/@merge`
+
+**Amendment**: This section has been added as part of Amendment 1.
+
+Merge-include in `<world>` would allow models that themselves contain nested
+models to be merged into the world such that the nested models are placed
+directly in the `<world>` without the additional name scope of the parent
+model. The mechanism for merging works the same way as for models except that
+links and grippers cannot be merged into the world since `//world/link` and 
+`//world/gripper` are not valid SDFormat elements. Note: as of [libsdformat
+13.x](https://github.com/gazebosim/sdformat/pull/1117), `//world/joint` is
+included in the spec, thus `//model/joint` is allowed. `//model/frame` is also 
+allowed and gets converted to `//world/frame`. The parser should emit
+errors if it encounters forbidden elements while trying to merge-include models
+into the world. 
+
 ## Examples
 
 ### Small example:
@@ -131,14 +161,12 @@ Given the parent model:
 
 ~~~
 <sdf version="1.9">
-  <world name="world_model">
-    <model name="robot">
-      <include merge="true">
-        <uri>test_model</uri>
-        <pose>100 0 0 0 0 0</pose>
-      </include>
-    </model>
-  </world>
+  <model name="robot">
+    <include merge="true">
+      <uri>test_model</uri>
+      <pose>100 0 0 0 0 0</pose>
+    </include>
+  </model>
 </sdf>
 ~~~
 
@@ -160,17 +188,76 @@ which is the canonical link of `test_model`.
 
 ~~~
 <sdf version='1.9'>
-  <world name='world_model'>
-    <model name='robot'>
-      <frame name='_merged__test_model__model__' attached_to='L1'>
-        <pose relative_to='__model__'>100 0 0 0 0 0</pose>
-      </frame>
-      <link name='L1'>
-        <pose relative_to='_merged__test_model__model__'/>
-      </link>
-      <frame name='F1' attached_to='_merged__test_model__model__'/>
+  <model name='robot'>
+    <frame name='_merged__test_model__model__' attached_to='L1'>
+      <pose relative_to='__model__'>100 0 0 0 0 0</pose>
+    </frame>
+    <link name='L1'>
+      <pose relative_to='_merged__test_model__model__'/>
+    </link>
+    <frame name='F1' attached_to='_merged__test_model__model__'/>
+  </model>
+</sdf>
+~~~
+
+## Example of `//world/include/@merge`
+
+**Amendment**: This example has been added as part of Amendment 1.
+
+Given a world SDFormat file:
+
+~~~xml
+<sdf version="1.10">
+  <world name="example_world">
+    <include merge="true">
+      <uri>multiple_robots</uri>
+      <pose>100 0 0   0 0 0</pose>
+    </include>
+  </world>
+</sdf>
+~~~
+
+and the included model:
+
+~~~xml
+<sdf version="1.10">
+  <model name="multiple_robots">
+    <include>
+      <uri>robot</uri> <!-- `robot` is a model form the previous example -->
+      <name>robot1</name>
+    </include>
+    <include>
+      <uri>robot</uri> <!-- `robot` is a model form the previous example -->
+      <pose>0 10 0   0 0 0</pose>
+      <name>robot2</name>
+    </include>
+  </model>
+</sdf>
+~~~
+
+The resulting merged world is shown below.
+A proxy frame is added with the pose
+value of `100 0 0 0 0 0` from `//world/include/pose` and attached to `robot1::L1`,
+which is the canonical link of `multiple_robots`.
+
+~~~xml
+<sdf version='1.10'>
+  <world name="example_world">
+    <frame name='_merged__multiple_robots__model__' attached_to='robot1::L1'>
+      <pose relative_to='world'>100 0 0 0 0 0</pose>
+    </frame>
+    <model name='robot1'>
+      <pose relative_to='_merged__multiple_robots__model__'/>
+      <link name='L1'/>
+      <frame name='F1'/>
+    </model>
+    <model name='robot2'>
+      <pose relative_to='_merged__multiple_robots__model__'>0 10 0   0 0 0</pose>
+      <link name='L1'/>
+      <frame name='F1'/>
     </model>
   </world>
+</sdf>
 ~~~
 
 ### Decomposing an existing model into separate model files
