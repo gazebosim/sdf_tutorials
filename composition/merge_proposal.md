@@ -146,7 +146,7 @@ models to be merged into the world such that the nested models are placed
 directly in the `<world>` without the additional name scope of the parent
 model. The mechanism for merging works the same way as for models except that
 links and grippers cannot be merged into the world since `//world/link` and 
-`//world/gripper` are  not a valid SDFormat elements. Note: as of [libsdformat
+`//world/gripper` are not valid SDFormat elements. Note: as of [libsdformat
 13.x](https://github.com/gazebosim/sdformat/pull/1117), `//world/joint` is
 included in the spec, thus `//model/joint` is allowed. `//model/frame` is also 
 allowed and gets converted to `//world/frame`. The parser should emit
