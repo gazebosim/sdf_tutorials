@@ -21,6 +21,7 @@ In order to retain the semantics and hierarchy of each element in the URDF, zero
 ### Case 1: Fixed parent joint, joint lumping occurs, conversion not required
 
 URDF example,
+
 ```xml
 <robot name='test_robot'>
   <link name='link1'>
@@ -52,6 +53,7 @@ URDF example,
 ```
 
 Converted SDF model has a changed hierarchy as joint lumping occured. With `joint2_3` changing its parent to `link1`, while `joint1_2` and `link2` have been converted into frames and are attached to `link1` and `joint1_2` respectively instead.
+
 ```xml
 <sdf version="1.7">
     <model name="test_robot">
@@ -107,6 +109,7 @@ In this scenario, joint lumping resolves the issue of a zero mass link for the u
 ### Case 2: Fixed parent joint, joint lumping turned off, zero mass URDF link converted to SDF frame
 
 URDF example,
+
 ```xml
 <robot name='test_robot'>
   <link name='link1'>
@@ -144,6 +147,7 @@ URDF example,
 ```
 
 `link2` is converted into a frame attached to `link1`, and `joint1_2` is converted into a frame as well, attached to the newly converted frame `link2`. This time, unlike Case 1, the hierarchy stays almost untouched, with `link2` still being the parent of `joint2_3`,
+
 ```xml
 <sdf version="1.7">
     <model name="test_robot">
@@ -199,6 +203,7 @@ URDF example,
 ### Case 3: Fixed child joint, joint lumping turned off, conversion does not happen
 
 URDF example,
+
 ```xml
 <robot name='test_robot'>
   <link name='link1'>
@@ -281,6 +286,7 @@ Users can all joint lumping on the fixed child joint, and allow the parser to co
 ### Case 4: Non-fixed parent joint and no fixed child joints
 
 URDF example,
+
 ```xml
 <robot name='test_robot'>
   <link name='link1'>
@@ -312,6 +318,7 @@ URDF example,
 ```
 
 Allowing joint lumping on the child fixed joint `joint2_3`, the joint lumping mechanism will move the inertial elements of `link3` into `link2`, with the proper transforms, while converting `joint2_3` into a frame attached to `link2`, and `link3` into a frame attached to `joint2_3`.
+
 ```xml
 <sdf version="1.7">
     <model name="test_robot">
@@ -365,6 +372,7 @@ Allowing joint lumping on the child fixed joint `joint2_3`, the joint lumping me
 ### Special case: sensors targeting joints that will be converted to frames, e.g. force-torque sensor
 
 URDF example,
+
 ```xml
 <robot name="force_torque_sensor_test">
   <link name="base_link">
