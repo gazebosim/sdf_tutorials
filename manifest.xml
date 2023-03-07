@@ -259,6 +259,19 @@
       <skill>advanced</skill>
     </tutorial>
 
+    <tutorial title="URDF to SDF: Zero mass links" ref="zero_mass_links" type="documentation">
+      <markdown version="1.7">urdf_to_sdf/zero_mass_links.md</markdown>
+      <description></description>
+      <tags>
+        <tag>urdf</tag>
+        <tag>model</tag>
+        <tag>link</tag>
+        <tag>joint</tag>
+        <tag>frame</tag>
+      </tags>
+      <skill>intermediate</advanced>
+    </tutorial>
+
  </tutorials>
 
   <!-- *************************************** -->
@@ -297,6 +310,7 @@
         <tutorial>pose_frame_semantics</tutorial>
         <tutorial>composition</tutorial>
         <tutorial>param_passing_tutorial</tutorial>
+        <tutorial>urdf_to_sdf</tutorial>
       </tutorials>
     </category>
 
