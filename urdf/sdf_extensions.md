@@ -438,15 +438,26 @@ corresponding `<joint>` element in the SDFormat output.
     <td><code>physics/ode/fudge_factor</code></td>
   </tr>
   <tr>
-    <td>disableFixedJointLumping</td>
+    <td>preserveFixedJoint</td>
     <td>bool</td>
-    <td>By default, fixed joints in the URDF are "lumped", meaning that the contents of the child link are merged with the parent link with appropriate pose offsets and the joint is discarded. Setting this to <code>true</code> disables fixed joint lumping</td>
+    <td>By default, fixed joints in the URDF are "lumped", meaning that the
+    contents of the child link are merged with the parent link with appropriate
+    pose offsets and the joint is discarded. Setting this to <code>true</code>
+    preserves the fixed joint and effectively disables fixed joint
+    lumping.</td>
     <td></td>
   </tr>
   <tr>
-    <td>preserveFixedJoint</td>
+    <td>disableFixedJointLumping</td>
     <td>bool</td>
-    <td>By default, when <code>disableFixedJointLumping</code> is set to <code>true</code>, fixed joints in the URDF are converted to revolute joints with limits set to 0 in the SDFormat file. Setting this to <code>true</code> will cause "fixed" joints to be used in the SDFormat output.</td>
+    <td>By default, fixed joints in the URDF are "lumped", meaning that the
+    contents of the child link are merged with the parent link with appropriate
+    pose offsets and the joint is discarded. Setting this to <code>true</code>
+    disables fixed joint lumping. This has a similar effect as <code>preserveFixedJoint</code>
+    but, for backward compatibility reasons, replaces the fixed joint with a
+    revolute joint with position limits set to 0. Users are encouraged to use
+    <code>preserveFixedJoint</code> instead.
+    </td>
     <td></td>
   </tr>
 </table>
@@ -529,7 +540,9 @@ of the SDFormat output.
 
 Fixed joint lumping (aka joint reduction), in the URDF to SDFormat conversion
 is the process of taking the child link of a *fixed* joint and merging all of
-its contents into the parent link. The process preserves the total mass of the
+its contents into the parent link. It is an optimization that benefits maximal 
+coordinate physics engines by reducing the number of constraints needed to 
+simulate the model. The process preserves the total mass of the
 two links and computes the center of mass and moment of inertia of the
 resultant link. All `visual` and `collision` elements present in the child link
 are moved to the parent link with appropriate pose offsets. The fixed joint
@@ -537,15 +550,21 @@ itself is discarded and does not appear in the SDFormat output. As of
 `libsdformat 9.9.0` `frame` elements that represent the discarded joint and
 child link are generated to preserve their pose information.
 
-Fixed joint lumping is an optimization that benefits maximal coordinate physics
-engines by reducing the number of constraints needed to simulate the model.
-
 Fixed joint lumping is enabled by default, but can be disabled by setting
-`disableFixedJointLumping` to `true`.
+`preserveFixedJoint` or `disableFixedJointLumping` to `true`. The two 
+parameters behave similarly, but the `preserveFixedJoint=true` configuration 
+results in a joint with a `fixed` type whereas the 
+`disableFixedJointLumping=true` configuration results in a revolute joint with 
+position limits set to 0. Note that when both `preserveFixedJoint=true` and 
+`disableFixedJointLumping=true` are set on a joint, the `preserveFixedJoint` 
+setting will take precedence and the resulting joint will have a `fixed` type.
+Fixed joint lumping can also be disabled for all joints if 
+`ParserConfig::URDFPreserveFixedJoint` is `true`.
 
-> **Warning:** Disabling joint lumping (`disableFixedJointLumping=true`) should
-only be done when both parent and child links have positive mass and
-corresponding `<inertial>` elements.
+> **Warning:** Disabling joint lumping should only be done when both parent and
+> child links have positive mass and corresponding `<inertial>` elements.
+
+
 
 **Example:** The following URDF demonstrates fixed joint lumping where the
 resulting SDFormat output only has one link
@@ -602,6 +621,86 @@ Note that the mass of `base_link` is the sum of the masses of the original
 has been merged into `base_link` with a pose value that takes into account the
 pose of the original `end_effector` link and joint `j1` as well as the pose of
 the original `visual`.
+
+**Example:** The same example above is repeated, but fixed joints preserved (`preserveFixedJoint=true`).
+
+<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/preserve_fixed_joint_example.urdf' />
+
+results in:
+
+```xml
+<!--SDFormat-->
+<sdf version='1.9'>
+  <model name='preserve_fixed_joint_lumping_example'>
+    <link name='base_link'>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.25</mass>
+        <inertia>
+          <ixx>0.01</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.01</iyy>
+          <iyz>0</iyz>
+          <izz>0.01</izz>
+        </inertia>
+      </inertial>
+      <collision name='base_link_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>2</radius>
+          </sphere>
+        </geometry>
+      </collision>
+    </link>
+    <joint name='j1' type='fixed'>
+      <pose relative_to='base_link'>0 0 1 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>end_effector</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-10000000000000000</lower>
+          <upper>10000000000000000</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.20000000000000001</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='end_effector'>
+      <pose relative_to='j1'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.25</mass>
+        <inertia>
+          <ixx>0</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0</iyy>
+          <iyz>0</iyz>
+          <izz>0</izz>
+        </inertia>
+      </inertial>
+    </link>
+  </model>
+</sdf>
+```
+
+Here, the link `end_effector` is still present in the SDFormat output with mass
+and inertia equal to the URDF `end_effector` link. The `visual` of
+`end_effector` is also still present in the `end_effector` link of the SDFormat
+output. The joint `j1` is also still present and its type is `fixed`.
 
 **Example:** The same example above is repeated, but with fixed joint lumping
 disabled (`disableFixedJointLumping=true`).
@@ -690,7 +789,5 @@ results in:
 </sdf>
 ```
 
-Here, the link `end_effector` is still present in the SDFormat output with mass
-and inertia equal to the URDF `end_effector` link. The `visual` of
-`end_effector` is also still present in the `end_effector` link of the SDFormat
-output.
+The output is the same as `preserveFixedJoint=true` example, execept that joint 
+`j1` has a `revolute` type. 
