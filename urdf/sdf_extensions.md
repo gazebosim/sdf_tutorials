@@ -2,15 +2,15 @@
 
 When URDF files are loaded by Gazebo (both Gazebo-classic and the new Gazebo),
 the URDF content is first converted to SDFormat before being processed by
-Gazebo. Users who to modify the resulting SDFormat output to include SDFormat
+Gazebo. Users who want to modify the resulting SDFormat output to include SDFormat
 specific elements may do so using the `<gazebo>` tag in the original URDF file.
 This is known as the Gazebo extension to the [URDF
 specification](http://wiki.ros.org/urdf/XML) (see
 http://wiki.ros.org/urdf/XML/Gazebo)
 
 The URDF to SDFormat conversion usually happens automatically without users
-observing the resultang SDFormat file. To diagnose any issues that might come
-up during the conversion, the tool 
+observing the resulting SDFormat file. To diagnose any issues that might come
+up during the conversion, the tool
 
 ```gz sdf -p <path to urdf file>```
 
@@ -31,16 +31,7 @@ tag are inserted into the SDF `<model>` tag for the generated SDF.
 
 **Example:**
 
-```xml
-<!--URDF-->
-<robot name='no_ref_example'>
-  <link name='world'/>
-  <gazebo>
-    <static>true</static>
-    <plugin name='testPlugin' filename='testFileName'/>
-  </gazebo>
-</robot>
-```
+<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/no_ref_example.urdf' />
 
 results in:
 
@@ -60,7 +51,8 @@ When using the `<gazebo>` extension for links, the name of the link has to be
 specified in the `reference` attribute. There are a number of special tags that
 modify the values of elements or attributes in the generated SDFormat file. Any
 tag that is not listed in the table below will be directly inserted into the
-the corresponding `<link>` element in the SDFormat output.
+corresponding `<link>` element in the SDFormat output. This direct insertion is
+sometimes referred to as blob insertion.
 
 **Table of elements with special meaning:**
 
@@ -86,13 +78,19 @@ the corresponding `<link>` element in the SDFormat output.
   <tr>
     <td>maxVel</td>
     <td>double</td>
-    <td>maximum contact correction velocity truncation term.</td>
+    <td>Maximum contact correction velocity truncation term. (See the 
+    Gazebo-classic tutorial on <a 
+    href="https://classic.gazebosim.org/tutorials?tut=physics_params&cat=physics#Constraintsparameters">Constraints 
+    Parameters</a> for more detail)</td>
     <td><code>collision/surface/contact/ode/max_vel</code></td>
   </tr>
   <tr>
     <td>minDepth</td>
     <td>double</td>
-    <td>minimum allowable depth before contact correction impulse is applied</td>
+    <td>Minimum allowable depth before contact correction impulse is applied. 
+    (See the Gazebo-classic tutorial on <a 
+    href="https://classic.gazebosim.org/tutorials?tut=physics_params&cat=physics#Constraintsparameters">Constraints 
+    Parameters</a> for more detail)</td>
     <td><code>collision/surface/contact/ode/min_depth</code></td>
   </tr>
   <tr>
@@ -100,7 +98,11 @@ the corresponding `<link>` element in the SDFormat output.
     <td rowspan="2">double</td>
     <td rowspan="2">Friction coefficients μ for the principal contact directions along the contact surface as defined by the
       <a href="http://www.ode.org">Open Dynamics Engine (ODE)</a>
-      (see parameter descriptions in <a href="http://www.ode.org/ode-latest-userguide.html#sec_7_3_7">ODE's user guide</a>)
+      (see parameter descriptions in <a 
+      href="http://www.ode.org/ode-latest-userguide.html#sec_7_3_7">ODE's user 
+      guide</a> and the Gazebo-classic tutorial on <a 
+      href="https://classic.gazebosim.org/tutorials?tut=physics_params&cat=physics#Frictionparameters">Friction 
+      Parameters</a> for more detail)
     </td>
     <td><code>collision/surface/friction/ode/mu</code></td>
   </tr>
@@ -111,7 +113,10 @@ the corresponding `<link>` element in the SDFormat output.
   <tr>
     <td>fdir1</td>
     <td>vector</td>
-    <td>3-tuple specifying direction of mu1 in the collision local reference frame.</td>
+    <td>3-tuple specifying direction of mu1 in the collision local reference 
+    frame. (See the Gazebo-classic tutorial on <a 
+    href="https://classic.gazebosim.org/tutorials?tut=physics_params&cat=physics#Frictionparameters">Friction 
+    Parameters</a> for more detail)</td>
     <td><code>collision/surface/friction/ode/fdir1</code></td>
   </tr>
   <tr>
@@ -120,7 +125,12 @@ the corresponding `<link>` element in the SDFormat output.
     <td rowspan="2">Contact stiffness k_p and damping k_d for rigid body contacts as defined by ODE
       (<a href="http://www.ode.org/ode-latest-userguide.html#sec_7_3_7">ODE uses erp and cfm</a>
       but there is a
-      <a href="https://github.com/osrf/gazebo/blob/gazebo9/gazebo/physics/ode/ODEJoint.cc">mapping between erp/cfm and stiffness/damping</a>)
+      <a 
+      href="https://github.com/osrf/gazebo/blob/gazebo9/gazebo/physics/ode/ODEJoint.cc">mapping 
+      between erp/cfm and stiffness/damping</a>. Also see See the 
+      Gazebo-classic tutorial on <a 
+      href="https://classic.gazebosim.org/tutorials?tut=physics_params&cat=physics#Contactparameters">Contact 
+      Parameters</a> for more detail)
     </td>
     <td><code>collision/surface/contact/ode/kp</code></td>
   </tr>
@@ -137,13 +147,15 @@ the corresponding `<link>` element in the SDFormat output.
   <tr>
     <td>maxContacts</td>
     <td>int</td>
-    <td>Maximum number of contacts allowed between two entities. This value overrides the max_contacts element defined in physics.</td>
+    <td>Maximum number of contacts allowed between two entities. This value overrides the max_contacts element defined in physics.(See the Gazebo-classic tutorial on <a 
+    href="https://classic.gazebosim.org/tutorials?tut=physics_params&cat=physics#Contactparameters">Contact 
+    Parameters</a> for more detail)</td>
     <td><code>collision/max_contacts</code></td>
   </tr>
   <tr>
     <td>laserRetro</td>
     <td>double</td>
-    <td>intensity value returned by laser sensor.</td>
+    <td>Intensity value returned by laser sensor.</td>
     <td><code>collision/laser_retro</code></td>
   </tr>
   <tr>
@@ -170,28 +182,10 @@ the corresponding `<link>` element in the SDFormat output.
 
 **Example:**
 
-The following shows how to set the the first coefficient of friction for all
+The following shows how to set the first coefficient of friction for all
 `<collision>` elements in a link
 
-```xml
-<!--URDF-->
-<robot name='friction_example'>
-  <link name='base_link'>
-    <inertial>
-      <mass value='0.12' />
-      <inertia ixx='0.01' ixy='0' ixz='0' iyy='0.01' iyz='0' izz='0.01' />
-    </inertial>
-    <collision>
-      <geometry>
-        <sphere radius="2"/>
-      </geometry>
-    </collision>
-  </link>
-  <gazebo reference='base_link'>
-    <mu1>0.25</mu1>
-  </gazebo>
-</robot>
-```
+<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/friction_example.urdf' />
 
 This creates the element `//surface/friction/ode/mu` in the collision element of the referenced link.
 
@@ -230,6 +224,25 @@ This creates the element `//surface/friction/ode/mu` in the collision element of
           </friction>
         </surface>
       </collision>
+      <collision name='base_link_collision_1'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>2</length>
+            <radius>1</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.25</mu>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
     </link>
   </model>
 </sdf>
@@ -248,33 +261,7 @@ respectively, found in the referenced link.
 Given the following URDF file with two visuals, the `<gazebo>` extension
 applies the element `<transparency>` to each visual in `base_link`.
 
-```xml
-<!--URDF-->
-<robot name='visual_example'>
-  <link name='base_link'>
-    <inertial>
-      <mass value='0.12' />
-      <inertia ixx='0.01' ixy='0' ixz='0' iyy='0.01' iyz='0' izz='0.01' />
-    </inertial>
-    <visual>
-      <geometry>
-        <sphere radius="2"/>
-      </geometry>
-    </visual>
-    <visual>
-      <origin xyz="2 0 0" rpy="0 0 0"/>
-      <geometry>
-        <cylinder length="1" radius="2"/>
-      </geometry>
-    </visual>
-  </link>
-  <gazebo reference='base_link'>
-    <visual>
-      <transparency>0.25</transparency>
-    </visual>
-  </gazebo>
-</robot>
-```
+<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/visual_example.urdf' />
 
 Converts to the following SDFormat
 
@@ -322,7 +309,7 @@ Converts to the following SDFormat
 
 
 
-The `<material>` tag, when used direclty under the `<gazebo>` tag, i.e
+The `<material>` tag, when used directly under the `<gazebo>` tag, i.e
 `//gazebo/material`, accepts a string value of the name of a material defined
 in a Gazebo-classic's material [script](
 https://github.com/gazebosim/gazebo-classic/blob/d0c34b8a5d6bc9a3271000fb1baeb3f8d9f43afa/media/materials/scripts/gazebo.material).
@@ -332,26 +319,7 @@ referenced link, similar to the behavior of `<visual>` and `<collision>`
 
 **Example:**
 
-```xml
-<!--URDF-->
-<robot name='link_ref_example'>
-  <link name='base_link'>
-    <inertial>
-      <mass value='0.1' />
-      <inertia ixx='0.01' ixy='0' ixz='0' iyy='0.01' iyz='0' izz='0.01' />
-    </inertial>
-    <visual>
-      <geometry>
-        <sphere radius="2"/>
-      </geometry>
-    </visual>
-  </link>
-  <gazebo reference='base_link'>
-    <material>Gazebo/Orange</material>
-  </gazebo>
-</robot>
-
-```
+<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/link_ref_example.urdf' />
 
 results in:
 
@@ -412,8 +380,8 @@ tags in the **URDF** file have names.
 When using the `<gazebo>` extension for joints, the name of the joint has to be
 specified in the `reference` attribute. There are a number of special tags that
 modify the values of elements or attributes in the generated SDFormat file. Any
-tag that is not listed in the table below will be directly inserted into the
-the corresponding `<joint>` element in the SDFormat output.
+tag that is not listed in the table below will be directly inserted into the 
+corresponding `<joint>` element in the SDFormat output.
 
 
 **Table of elements with special meaning:**
@@ -490,32 +458,7 @@ the corresponding `<joint>` element in the SDFormat output.
 The spring reference and stiffness of a joint can be set using
 `<springReference>` and `<springStiffness>` respectively.
 
-```xml
-<!--URDF-->
-<robot name='joint_example'>
-  <link name='base_link'>
-    <inertial>
-      <mass value='0.12' />
-      <inertia ixx='0.01' ixy='0' ixz='0' iyy='0.01' iyz='0' izz='0.01' />
-    </inertial>
-  </link>
-  <joint name='j1' type='continuous'>
-    <parent link='base_link'/>
-    <child link='end_effector'/>
-    <origin xyz='0 0 1' rpy='0 0 0'/>
-  </joint>
-  <link name='end_effector'>
-    <inertial>
-      <mass value='0.12' />
-      <inertia ixx='0.01' ixy='0' ixz='0' iyy='0.01' iyz='0' izz='0.01' />
-    </inertial>
-  </link>
-  <gazebo reference='j1'>
-    <springReference>0.5</springReference>
-    <springStiffness>0.25</springStiffness>
-  </gazebo>
-</robot>
-```
+<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/joint_example.urdf' />
 
 This creates the elements `//axis/dynamics/spring_reference`
 and `//axis/dynamics//spring_stiffness` in the referenced joint
@@ -607,44 +550,11 @@ corresponding `<inertial>` elements.
 **Example:** The following URDF demonstrates fixed joint lumping where the
 resulting SDFormat output only has one link
 
-```xml
-<!--URDF-->
-<robot name='fixed_joint_lumping_example'>
-  <link name='base_link'>
-    <inertial>
-      <mass value='0.25' />
-      <inertia ixx='0.01' ixy='0' ixz='0' iyy='0.01' iyz='0' izz='0.01' />
-    </inertial>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <sphere radius="2"/>
-      </geometry>
-    </collision>
-  </link>
-  <joint name='j1' type='fixed'>
-    <parent link='base_link'/>
-    <child link='end_effector'/>
-    <origin xyz='0 0 1' rpy='0 0 0'/>
-  </joint>
-  <link name='end_effector'>
-    <inertial>
-      <mass value='0.25' />
-      <inertia ixx='0.01' ixy='0' ixz='0' iyy='0.01' iyz='0' izz='0.01' />
-    </inertial>
-    <visual>
-      <origin xyz="2 0 0" rpy="0 0 0"/>
-      <geometry>
-        <cylinder length="1" radius="2"/>
-      </geometry>
-    </visual>
-  </link>
-</robot>
-```
+<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/fixed_joint_lumping_example.urdf' />
 
 results in:
 
-```xml 
+```xml
 <!--SDFormat-->
 <sdf version='1.9'>
   <model name='fixed_joint_lumping_example'>
@@ -696,43 +606,7 @@ the original `visual`.
 **Example:** The same example above is repeated, but with fixed joint lumping
 disabled (`disableFixedJointLumping=true`).
 
-```xml
-<!--URDF-->
-<robot name='disable_fixed_joint_lumping_example'>
-  <link name='base_link'>
-    <inertial>
-      <mass value='0.25' />
-      <inertia ixx='0.01' ixy='0' ixz='0' iyy='0.01' iyz='0' izz='0.01' />
-    </inertial>
-    <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry>
-        <sphere radius="2"/>
-      </geometry>
-    </collision>
-  </link>
-  <joint name='j1' type='fixed'>
-    <parent link='base_link'/>
-    <child link='end_effector'/>
-    <origin xyz='0 0 1' rpy='0 0 0'/>
-  </joint>
-  <link name='end_effector'>
-    <inertial>
-      <mass value='0.25' />
-      <inertia ixx='0.01' ixy='0' ixz='0' iyy='0.01' iyz='0' izz='0.01' />
-    </inertial>
-    <visual>
-      <origin xyz="2 0 0" rpy="0 0 0"/>
-      <geometry>
-        <cylinder length="1" radius="2"/>
-      </geometry>
-    </visual>
-  </link>
-  <gazebo reference='j1'>
-    <disableFixedJointLumping>true</disableFixedJointLumping>
-  </gazebo>
-</robot>
-```
+<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/disable_fixed_joint_lumping_example.urdf' />
 
 results in:
 
