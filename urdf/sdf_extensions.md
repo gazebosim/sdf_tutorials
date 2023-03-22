@@ -367,6 +367,46 @@ tag as the `<material>` tag is not directly under `<gazebo>`, but under
 `<visual>`. This `<material>` tag contains child elements as defined in the
 [material](http://sdformat.org/spec?ver=1.9&elem=material) specification.
 
+**Example:**
+
+<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/material_visual_example.urdf' />
+
+results in:
+
+```xml
+<!--SDFormat-->
+<sdf version='1.9'>
+  <model name='material_example'>
+    <link name='base_link'>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.12</mass>
+        <inertia>
+          <ixx>0.01</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.01</iyy>
+          <iyz>0</iyz>
+          <izz>0.01</izz>
+        </inertia>
+      </inertial>
+      <visual name='base_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>2</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <diffuse>0 0 1 1</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
+```
+
+where the `<diffuse>` tag has been added to the visual of `base_link`.
 
 > **Warning:**
 At the time of writing, there is
