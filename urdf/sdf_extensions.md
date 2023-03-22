@@ -319,14 +319,14 @@ referenced link, similar to the behavior of `<visual>` and `<collision>`
 
 **Example:**
 
-<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/link_ref_example.urdf' />
+<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/material_example.urdf' />
 
 results in:
 
 ```xml
 <!--SDFormat-->
 <sdf version='1.9'>
-  <model name='link_ref_example'>
+  <model name='material_example'>
     <link name='base_link'>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
@@ -357,7 +357,6 @@ results in:
     </link>
   </model>
 </sdf>
-
 ```
 
 This tag is only relevant when using Gazebo-classic as the new version of
@@ -684,14 +683,23 @@ results in:
         <pose>0 0 0 0 0 0</pose>
         <mass>0.25</mass>
         <inertia>
-          <ixx>0</ixx>
+          <ixx>0.01</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0</iyy>
+          <iyy>0.01</iyy>
           <iyz>0</iyz>
-          <izz>0</izz>
+          <izz>0.01</izz>
         </inertia>
       </inertial>
+      <visual name='end_effector_visual'>
+        <pose>2 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>1</length>
+            <radius>2</radius>
+          </cylinder>
+        </geometry>
+      </visual>
     </link>
   </model>
 </sdf>
