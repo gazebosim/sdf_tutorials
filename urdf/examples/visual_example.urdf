@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--URDF-->
+<robot name='visual_example'>
+  <link name='base_link'>
+    <inertial>
+      <mass value='0.12' />
+      <inertia ixx='0.01' ixy='0' ixz='0' iyy='0.01' iyz='0' izz='0.01' />
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="2"/>
+      </geometry>
+    </visual>
+    <visual>
+      <origin xyz="2 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="1" radius="2"/>
+      </geometry>
+    </visual>
+  </link>
+  <gazebo reference='base_link'>
+    <visual>
+      <transparency>0.25</transparency>
+    </visual>
+  </gazebo>
+</robot>
+

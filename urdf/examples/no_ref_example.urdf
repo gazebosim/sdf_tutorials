@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--URDF-->
+<robot name='no_ref_example'>
+  <link name='world'/>
+  <gazebo>
+    <static>true</static>
+    <plugin name='testPlugin' filename='testFileName'/>
+  </gazebo>
+</robot>
+
