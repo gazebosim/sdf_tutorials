@@ -31,7 +31,7 @@ tag are inserted into the SDF `<model>` tag for the generated SDF.
 
 **Example:**
 
-<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/no_ref_example.urdf' />
+<include src='https://github.com/gazebosim/sdf_tutorials/raw/master/urdf/examples/no_ref_example.urdf' />
 
 results in:
 
@@ -185,7 +185,7 @@ sometimes referred to as blob insertion.
 The following shows how to set the first coefficient of friction for all
 `<collision>` elements in a link
 
-<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/friction_example.urdf' />
+<include src='https://github.com/gazebosim/sdf_tutorials/raw/master/urdf/examples/friction_example.urdf' />
 
 This creates the element `//surface/friction/ode/mu` in the collision element of the referenced link.
 
@@ -261,7 +261,7 @@ respectively, found in the referenced link.
 Given the following URDF file with two visuals, the `<gazebo>` extension
 applies the element `<transparency>` to each visual in `base_link`.
 
-<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/visual_example.urdf' />
+<include src='https://github.com/gazebosim/sdf_tutorials/raw/master/urdf/examples/visual_example.urdf' />
 
 Converts to the following SDFormat
 
@@ -319,7 +319,7 @@ referenced link, similar to the behavior of `<visual>` and `<collision>`
 
 **Example:**
 
-<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/material_example.urdf' />
+<include src='https://github.com/gazebosim/sdf_tutorials/raw/master/urdf/examples/material_example.urdf' />
 
 results in:
 
@@ -369,7 +369,7 @@ tag as the `<material>` tag is not directly under `<gazebo>`, but under
 
 **Example:**
 
-<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/material_visual_example.urdf' />
+<include src='https://github.com/gazebosim/sdf_tutorials/raw/master/urdf/examples/material_visual_example.urdf' />
 
 results in:
 
@@ -508,7 +508,7 @@ corresponding `<joint>` element in the SDFormat output.
 The spring reference and stiffness of a joint can be set using
 `<springReference>` and `<springStiffness>` respectively.
 
-<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/joint_example.urdf' />
+<include src='https://github.com/gazebosim/sdf_tutorials/raw/master/urdf/examples/joint_example.urdf' />
 
 This creates the elements `//axis/dynamics/spring_reference`
 and `//axis/dynamics//spring_stiffness` in the referenced joint
@@ -608,7 +608,7 @@ Fixed joint lumping can also be disabled for all joints if
 **Example:** The following URDF demonstrates fixed joint lumping where the
 resulting SDFormat output only has one link
 
-<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/fixed_joint_lumping_example.urdf' />
+<include src='https://github.com/gazebosim/sdf_tutorials/raw/master/urdf/examples/fixed_joint_lumping_example.urdf' />
 
 results in:
 
@@ -663,7 +663,7 @@ the original `visual`.
 
 **Example:** The same example above is repeated, but fixed joints preserved (`preserveFixedJoint=true`).
 
-<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/preserve_fixed_joint_example.urdf' />
+<include src='https://github.com/gazebosim/sdf_tutorials/raw/master/urdf/examples/preserve_fixed_joint_example.urdf' />
 
 results in:
 
@@ -753,7 +753,7 @@ output. The joint `j1` is also still present and its type is `fixed`.
 **Example:** The same example above is repeated, but with fixed joint lumping
 disabled (`disableFixedJointLumping=true`).
 
-<include src='https://github.com/azeey/sdf_tutorials/raw/urdf_sdf_extension/urdf/examples/disable_fixed_joint_lumping_example.urdf' />
+<include src='https://github.com/gazebosim/sdf_tutorials/raw/master/urdf/examples/disable_fixed_joint_lumping_example.urdf' />
 
 results in:
 
