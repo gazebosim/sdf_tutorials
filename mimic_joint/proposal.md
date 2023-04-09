@@ -81,7 +81,7 @@ This simplification is achieved by specifying the pair of joint axes to which
 a Mimic constraint applies instead of specifying a group of three links,
 a pair of axis directions, and a separate pair of revolute joints with
 redundant axis information.
-The Mimic constraint will also be more flexible than the gearbox joints 
+The Mimic constraint will also be more flexible than the gearbox joints
 expanding the number of joint types that are supported, such as prismatic
 joints and other joints with translational outputs.
 
@@ -93,64 +93,29 @@ how to specify it in an SDFormat `//joint` element.
 ### Definition of Mimic Constraint
 
 A Mimic Constraint encodes a linear equality constraint on the position of
-two joint axes with `multiplier`, `offset`, and `reference` parameters
-according to the equation below. Note that the `multiplier` and `offset`
-parameters match the parameters of the
+two joint axes. One joint axis is labelled as the *leader* and the other as the
+*follower*. The `multiplier`, `offset`, and `reference` parameters determine
+the linear relationship according to the equation below.
+
+`follower_position = multiplier * (leader_position - reference) + offset`
+
+The `multiplier` parameter represents the ratio between changes in the
+*follower* joint position relative to changes in the *leader* joint position.
+
+`multiplier = (follower_position - offset) / (leader_position - reference)`
+
+Note that the `multiplier` and `offset` parameters match the parameters of the
 [URDF mimic](https://wiki.ros.org/urdf/XML/joint#Elements)
 tag if the `reference` parameter is `0`.
 
-`mimic_angle = multiplier * (other_joint_position - reference) + offset`
+### New SDFormat tags: `//axis/mimic` and `//axis2/mimic`
 
-### Addition of //axis/mimic and //axis2/mimic tags
-
-A new `//mimic` tag is defined and added to the `//axis` and `//axis2` elements
-to encode a mimic constraint between two joint axes.
-The `//mimic` tag encodes the `multiplier` and `offset` parameters in the
-`//mimic/multiplier` and `//mimic/offset` elements, respectively.
-The name and axis of the joint to be mimicked are specified in the
-`//mimic/@joint` and `//mimic/@axis` attributes, respectively.
-The `@joint` attribute is required and must resolve to a joint name from
-the current scope.
-The `@axis` attribute is optional with a default value of `axis`. A value of
-`axis2` may be specified in `@axis` if `@joint` refers to a multi-axis joint.
-The only valid values of `//mimic/@axis` are `axis` and `axis2`.
-
-~~~
-<mimic joint="joint_name" axis="axis">
-  <multiplier>1.0</multiplier>
-  <offset>0.0</offset>
-  <reference>0.0</reference>
-</mimic>
-~~~
-
-**Change**
-
-"*{concept}* must *{behavior}*".
-
-**Details**
-
-* "This is achieved by..." (or simply list details without standard language).
-* Use bullet lists for long lists of like-details.
-* Code snippets/examples belong here.
-
-**Previous behavior**
-
-* "Previously..." or "In *{previous version}*..."
-* Referring to current behavior, but written in past tense (POV of the
-proposal).
-
-**Justification**
-
-"*{change}* is necessary because..."
-
-For proposals with many "Proposed changes":
-
-* Number each group of like changes under a descriptive `###` subheading.
-* Individual changes under `####` subheadings.
-* "Alternatives considered" for each individual change under `#####` subheading.
-* If "Previous behavior" and/or "Justification" sections are shared by all the
-individual changes under one `###` heading, those parts can go directly under
-the `###` heading instead of under each `####` heading.
+To specify the Mimic constraint between two joint axes, an optional `//mimic`
+tag is added to the `//joint/axis` and `//joint/axis2` elements.
+The `//mimic` tag should be added to the *follower* joint axis, and
+the *leader* joint axis is specified using the `//mimic/@joint` and
+`//mimic/@axis` attributes. The `multiplier`, `offset`, and `reference`
+parameters are specified as child elements of `//mimic`.
 
 An alternative was to add a new joint type called a Mimic joint,
 but since URDF already supports the `//joint/mimic` tag (see
@@ -158,6 +123,36 @@ but since URDF already supports the `//joint/mimic` tag (see
 [ros/robot\_state\_publisher#1](https://github.com/ros/robot_state_publisher/issues/1))
 it would be more consistent to add a new sdf tag called ``<mimic>`` inside
 the ``//joint/axis/`` tag.
+
+### Details of `//mimic`
+
+When added to a `//joint/axis` or `//joint/axis2` element, the `//mimic` tag
+causes that joint axis to be treated as the *follower* in a Mimic constraint.
+The `//mimic` tag must have a `@joint` attribute that specifies the name of a
+joint accessible from the current scope and may optionally specify an `@axis`
+attribute as well. The `@axis` attribute has a default value of `axis`, and
+its only valid values are `axis` and `axis2`. Together, the `@joint` and
+`@axis` attributes specify the *leader* joint axis for the mimic constraint.
+Note that the `@axis` attribute may only take a value of `axis2` if `@joint`
+refers to a multi-axis joint.
+The `multiplier`, `offset`, and `reference` parameters are specified in the
+`//mimic/multiplier`, `/mimic/offset`, and `/mimic/reference` child elements,
+respectively.
+
+~~~
+<mimic joint="leader_joint_name" axis="axis">
+  <multiplier>1.0</multiplier>
+  <offset>0.0</offset>
+  <reference>0.0</reference>
+</mimic>
+~~~
+
+### Deprecation of `gearbox` joint type
+
+Since the `mimic` joint provides equivalent functionality to the gearbox joint
+but with more flexibility and less repeated information, the `gearbox` joint
+type and the associated `//joint/gearbox_reference_body` and
+`//joint/gearbox_ratio` elements are deprecated.
 
 ## Examples
 
