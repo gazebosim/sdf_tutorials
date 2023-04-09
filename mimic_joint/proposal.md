@@ -13,16 +13,11 @@ This proposal suggests adding a new joint actuation contraint called the Mimic
 Constraint that adds a linear equality constraint between the output position
 of two joint axes.
 
-Currently, the Gearbox joint type adds a similar constraint on the rotation
-of `//parent` and `//child` links relative to a reference link
-`//gearbox_reference_body`, with the rotation axes specified by
-`//axis/xyz` for `//parent` and `//axis2/xyz` for `//child`.
-The Gearbox joint is typically used in conjunction with a pair of
-revolute joints with identical axes but requires duplication of the
-axis definitions.
-Another drawback of the Gearbox joint is that it only constrains rotational
-motion, so it cannot model constraints involving translational motion,
-such as a rack and pinion mechanism.
+Currently, the Gearbox joint type provides equivalent functionality for
+three specified links along specified axis directions, if the three links are
+also connected by two revolute joints with matching axis directions.
+This is an issue because it requires diplication of axis definitions, and it is
+nonintuitive to specify three links instead of two joints.
 
 The Mimic constraint will simplify the definition of this constraint by
 specifying the joint axes to which it applies instead of links so
@@ -31,20 +26,14 @@ It will be more flexible than the Gearbox joint by
 allowing constraints on the output of prismatic joints and other
 joints with translational outputs.
 
-An alternative was to add a new joint type called a Mimic joint,
-but since URDF already supports the `//joint/mimic` tag (see
-[URDF documentation](https://wiki.ros.org/urdf/XML/joint) and
-[ros/robot\_state\_publisher#1](https://github.com/ros/robot_state_publisher/issues/1))
-it would be more consistent to add a new sdf tag called ``<mimic>`` inside
-the ``//joint/axis/`` tag.
-
 ## Document summary
 
-Make a bullet list of all major sections:
+* *Syntax*: description of XPath syntax used in this proposal.
+* *Motivation*:
+* *Proposed changes*:
+* *Examples*:
 
-* "*{section}*: *{single-sentence summary of content in that section}*".
-
-## Syntax (optional)
+## Syntax
 
 The proposal uses [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp)
 to describe elements and attributes concisely.
@@ -59,16 +48,47 @@ referenced as `//model/link` and  model `name` attributes as `//model/@name`:
 
 ## Motivation
 
-* Elaborate on "Background" statement from "Introduction".
-* Elaborate on "Conclusion" statement from "Introduction".
-  * "*{changes covered in proposal}* will improve *{concept being iterated on}* by *{key improvements}*".
-* Explain why *{changes}* are beneficial/chosen to solve the issues of *{concept}*.
-* If you have discussions or material that can easily be cross-referenced and
-  accessed, be sure to include them here.
+Currently, a Gearbox joint is specified by the following SDFormat parameters:
+
+* 3 links
+  * `//joint/gearbox_reference_body`
+  * `//joint/parent`
+  * `//joint/child`
+* 2 axis directions
+  * `//joint/axis/xyz`
+  * `//joint/axis2/xyz`
+* 1 scalar
+  * `//joint/gearbox_ratio`
+
+The relative rotation of the `child` link with respect to the
+`gearbox_reference_body` about the `//joint/axis/xyz` direction is defined as
+`angle_C`, and similarly for the `parent` link with respect to the
+`gearbox_reference_body` about the `//joint/axis2/xyz` direction as `angle_P`.
+The Gearbox joint creates a proportional equality constraint:
+
+`angle_C = -gearbox_ration * angle_P`
+
+The Gearbox joint is typically used in conjunction with a pair of
+revolute joints with identical axes, so the axis definitions must be duplicated
+between the revolute joints and the gearbox joint.
+The Gearbox joint only constrains the rotational motion of revolute joints,
+so it cannot model constraints involving translational motion,
+such as a rack and pinion mechanism.
+
+The proposed Mimic constraint will simplify the specification of joint output
+constraints by eliminating the need for redundant information.
+This simplification is achieved by specifying the pair of joint axes to which
+a Mimic constraint applies instead of specifying a group of three links,
+a pair of axis directions, and a separate pair of revolute joints with
+redundant axis information.
+The Mimic constraint will also be more flexible than the gearbox joints 
+expanding the number of joint types that are supported, such as prismatic
+joints and other joints with translational outputs.
 
 ## Proposed changes
 
-Introduce the section before listing changes
+This section defines the Mimic constraint mathematically and then explains
+how to specify it in an SDFormat `//joint` element.
 
 ### Definition of Mimic Constraint
 
@@ -131,6 +151,13 @@ For proposals with many "Proposed changes":
 * If "Previous behavior" and/or "Justification" sections are shared by all the
 individual changes under one `###` heading, those parts can go directly under
 the `###` heading instead of under each `####` heading.
+
+An alternative was to add a new joint type called a Mimic joint,
+but since URDF already supports the `//joint/mimic` tag (see
+[URDF documentation](https://wiki.ros.org/urdf/XML/joint) and
+[ros/robot\_state\_publisher#1](https://github.com/ros/robot_state_publisher/issues/1))
+it would be more consistent to add a new sdf tag called ``<mimic>`` inside
+the ``//joint/axis/`` tag.
 
 ## Examples
 
