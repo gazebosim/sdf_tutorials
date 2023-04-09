@@ -103,7 +103,7 @@ if (!sdf::readFile(sdfPath, sdfElement))
 }
 ```
 
-Given an `sdf_path` , `sdf::readFile` will attempt to parse such file into our `sdf_element`. If it fails to do so, either because the file could not be accessed or it was not a valid SDF or URDF (yes, sdformat handles both formats seamlessly!), it will return `false` . 
+Given an `sdf_path` , `sdf::readFile` will attempt to parse such file into our `sdf_element`. If it fails to do so, either because the file could not be accessed or it was not a valid SDF or URDF (yes, sdformat handles both formats seamlessly!), it will return `false` .
 
 ----------------
 
@@ -154,7 +154,7 @@ std::cout << "Joint " << jointName << " connects " << parentLinkName
 
 ```
 
-As you might guess, we're getting the `name` attribute of the current `joint_element` and then retrieving its `parent` and `child` elements' values. It is interesting to note all `Get()` method's use cases: `Get()` is a template method that returns the given attribute value or the element value itself (that is, the plain text in between tags) if called with no arguments. To this end, it has been specialized to parse such value accordingly into primitive types (i.e. `double`), common std types (i.e. `std::string`) or [`ignition::math`](http://ignitionrobotics.org/libraries/math) types for the most complex ones (like poses).
+As you might guess, we're getting the `name` attribute of the current `joint_element` and then retrieving its `parent` and `child` elements' values. It is interesting to note all `Get()` method's use cases: `Get()` is a template method that returns the given attribute value or the element value itself (that is, the plain text in between tags) if called with no arguments. To this end, it has been specialized to parse such value accordingly into primitive types (i.e. `double`), common std types (i.e. `std::string`) or [`ignition::math`](http://gazebosim.org/libraries/math) types for the most complex ones (like poses).
 
 ### Building the code
 
@@ -171,6 +171,7 @@ Copy the code into a file and name it `check_sdf.cc`. Along with it, add a `CMak
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 find_package(SDFormat REQUIRED)
+# find_package(sdformat<version of sdformat> REQUIRED) # sdformat7 or higher
 
 include_directories(${SDFormat_INCLUDE_DIRS})
 link_directories(${SDFormat_LIBRARY_DIRS})
@@ -178,6 +179,8 @@ link_directories(${SDFormat_LIBRARY_DIRS})
 add_executable(check_sdf check_sdf.cc)
 target_link_libraries(check_sdf ${SDFormat_LIBRARIES})
 ```
+
+**Note**: If you are using a higher version than 6 you should use to find the library `find_package(sdformat<version of sdformat> REQUIRED)`
 
 Now build it:
 

@@ -1,7 +1,9 @@
 # Pose Frame Semantics Tutorial
 
 This documentation explains the implemented changes proposed by
-[Pose Frame Semantics Proposal](http://sdformat.org/tutorials?tut=pose_frame_semantics_proposal) in SDFormat 1.7.
+[Pose Frame Semantics Proposal](http://sdformat.org/tutorials?tut=pose_frame_semantics_proposal) in SDFormat 1.7,
+using visuals from the [Pose Frame Specification for SDFormat 1.7](https://doi.org/10.36288/ROSCon2019-900911)
+presentation at [ROSCon 2019](https://roscon.ros.org/2019/).
 
 Prerequisites:
 
@@ -9,15 +11,74 @@ Prerequisites:
 
 - [Specifying model kinematics in SDFormat](http://sdformat.org/tutorials?tut=spec_model_kinematics&cat=specification&#specifying-model-kinematics-in-sdformat)
 
+## Syntax
+
+This document uses [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp)
+to describe elements and attributes concisely.
+For example, `<model>` tags are referred to as `//model` using XPath.
+XPath is even more concise for referring to nested tags and attributes.
+In the following example, `<link>` elements inside `<model>` tags are
+referenced as `//model/link` and  model `name` attributes as `//model/@name`:
+
+    <model name="model_name">
+      <link/>
+    </model>
+
 ## What's New In SDFormat 1.7 With Examples
+
+The primary new features in SDFormat 1.7 are specifying poses relative to a
+frame of your choice using `//pose/@relative_to` and creating named frames
+using `//frame`. A model consisting of two links (`base` and `pendulum`)
+and one revolute joint is used to illustrate these new features.
 
 [[file:pendulum.png|400px]]
 
-[[file:pendulum_demo.gif|465px]]
+### Specifying relative poses with `//pose/@relative_to`
 
-### `//pose/@relative_to`
+SDFormat 1.6 and earlier have
+[fixed rules for each type of element](/tutorials?tut=pose_frame_semantics&ver=1.5#parent-frames-in-sdf-1-4)
+to determine the frame in which a pose is specified. For example, all link
+poses are specified relative to the model frame. This is illustrated for the
+pendulum with base model in SDFormat 1.6 format.
 
-A new `/@relative_to` attribute for `//pose` tags to specify the relative relation of the current pose to another entity pose.
+[[file:pendulum_16.png|400px]]
+
+~~~
+<sdf version="1.6">
+  <model name="pendulum_with_base">
+    <link name="base">
+      <pose>0 0 0.3   0 0 0</pose>
+    </link>
+    <link name="pendulum">
+      <pose>0 0.5 1.0   1.57 0 0</pose>
+    </link>
+    <joint name="joint" type="revolute">
+      <parent>base</parent>
+      <child>pendulum</child>
+      <pose>0 0 0.5   0 0 0</pose>
+      <axis>
+        <xyz>1 0 0</xyz>
+      </axis>
+    </joint>
+  </model>
+</sdf>
+~~~
+
+With SDFormat 1.7, a pose value can be specified relative to another frame
+of your choice.
+The `//pose` element now gets an attribute called `@relative_to`, which takes
+the name of another link, joint, or nested model or the name of a frame created
+with the `//frame` tag (see next section).
+This makes SDFormat more expressive and may reduce duplication of numerical
+values in pose data within a model file.
+
+The same pendulum with base model can be expressed in SDFormat 1.7 by defining
+the `joint` pose relative to the `base` link, and the pose of
+the `pendulum` link relative to the `joint`, in each case by
+specifying the name of the relative-to link or joint in the `@relative_to`
+attribute.
+
+[[file:pendulum_17.png|400px]]
 
 ```xml
 <sdf version="1.7">
@@ -44,9 +105,31 @@ A new `/@relative_to` attribute for `//pose` tags to specify the relative relati
 </sdf>
 ```
 
-### `//frame/@attach_to`
+For more details, see the [Pose and Frame Semantics](#pose-and-frame-semantics)
+section of this document.
 
-A new `/@attach_to` attribute for `//frame` tags to specify the parent frame of the current frame.
+### Named frames
+
+Three things are needed to create a frame using the `//frame` element:
+
+* in `//frame/@name`: a unique name.
+* in `//frame/@attached_to`: the name of a parent frame to which this frame is
+  attached. If `@attached_to` is not specified, the frame will be attached to
+  the model frame (see next section).
+* in `//frame/pose`: a pose, which may be defined relative to another frame
+  using `//frame/pose/@relative_to`.
+  If `//frame/pose/@relative_to` is not specified, the pose will be relative to
+  the attached-to frame.
+
+For the pendulum with base illustrated above, a frame named `tip` is attached
+to the `pendulum` link at its farthest end by specifying the link's name in the
+`@attached_to` attribute and expressing its pose relative-to the `pendulum`
+link frame.
+A visual in the pendulum link is created whose pose is relative-to the `tip`
+frame.
+Note that in SDFormat 1.7, an empty `//pose` is treated as an identity,
+so specifying `<pose relative_to="tip"/>` will co-locate an entity with the
+`tip` frame.
 
 ```xml
 <sdf version="1.7">
@@ -65,30 +148,67 @@ A new `/@attach_to` attribute for `//frame` tags to specify the parent frame of 
 </sdf>
 ```
 
-### Canonical link
-
-A new `/@canonical_link` attribute for `//model` tags to specify the canonical link of the model.
-
-```xml
-<sdf version="1.7">
-  <model name="pendulum_with_base" canonical_link="base">
-    <link name="base">
-    ...
-    </link>
-  </model>
-</sdf>
-```
+For more details, see the [Pose and Frame Semantics](#pose-and-frame-semantics)
+section of this document.
 
 ### Naming requirements for links, joints and frames
 
-New naming and scoping rules for links, joints, and frames; new unique names and reserved names in SDFormat 1.7.
+There are more restrictive rules in SDFormat 1.7 for naming entities related
+to name uniqueness and reserved names. In addition, scoping rules are defined
+that affect uniqueness and name collisions as well as which frames a given
+element is permitted to reference in an SDFormat file.
 
 See [Name conflicts and scope](#name-conflicts-and-scope) and
 [Unique names and reserved names](#unique-names-and-reserved-names).
 
-### `@expressed_in` instead of `use_parent_model_frame`
+### Canonical link and model frame
 
-Replacing `/@use_parent_model_frame` attribute with `/@expressed_in` attribute to specify the frame in which the pose is defined in. 
+Each model frame must be attached to a link, which can be specified in the
+`//model/@canonical_link` attribute. If unspecified, the canonical link
+defaults to the first `//link` element in the model. Additionally, the model
+frame can be referenced using the reserved name `__model__`.
+
+In the previous examples of the `pendulum_with_base` XML snippets,
+since the `@canonical_link` attribute is unspecified the `base` link is the
+canonical link by default as the first link listed in the XML.
+In the following snippet, the order of the links in the XML is reversed, so
+the `@canonical_link` attribute is used to explicitly specify `base`.
+Additionally, the joint pose is specified relative to the model frame instead
+of the base link.
+
+```xml
+<sdf version="1.7">
+  <model name="pendulum_with_base" canonical_link="base">
+    <link name="pendulum">
+      <pose relative_to="joint">
+        0 0 -0.5 0 0 0
+      </pose>
+    </link>
+    <link name="base">
+      <pose>0 0 0.3   0 0 0</pose>
+    </link>
+    <joint name="joint" type="revolute">
+      <parent>base</parent>
+      <child>pendulum</child>
+      <pose relative_to="__model__">
+        0 0 1.03 1.57 0 0
+      </pose>
+      <axis>
+        <xyz>1 0 0</xyz>
+      </axis>
+    </joint>
+  </model>
+</sdf>
+```
+
+### `//joint/axis/xyz/@expressed_in` instead of `use_parent_model_frame`
+
+Just as `//pose/@relative_to` provides flexibility to model authors when
+specifying pose, the new `//joint/axis/xyz/@expressed_in` and
+`//joint/axis2/xyz/@expressed_in` attributes provide flexibility when
+specifying joint axis unit vectors.
+These attributes also allow the `//use_parent_model_frame` element to be
+removed and replaced by setting `//xyz/@expressed_in` to `__model__`.
 
 ```xml
 <sdf version="1.7">
@@ -102,14 +222,14 @@ Replacing `/@use_parent_model_frame` attribute with `/@expressed_in` attribute t
     <joint name="joint" type="revolute">
       ...
       <axis>
-        <xyz expressed_in="pendulum_with_base">1 0 0</xyz>
+        <xyz expressed_in="__model__">1 0 0</xyz>
       </axis>
     </joint>
   </model>
 </sdf>
 ```
 
-## Pose and frame
+## Pose and frame semantics
 
 The pose of a model represents the location and orientation of the model in
 a three-dimensional space. See [Specifying Pose in SDFormat](http://sdformat.org/tutorials?tut=specify_pose&cat=specification&) for more detail.

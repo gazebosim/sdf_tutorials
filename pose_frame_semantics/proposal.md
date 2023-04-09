@@ -1548,7 +1548,7 @@ returning an error code if errors are found during parsing:
 
 - `sdf::readFile` and `sdf::readString` APIs perform parsing Stage 1
 - `sdf::Root::Load` performs most parsing stages, but skips some of the more expensive checks
-- `ign sdf --check` performs all parsing stages, including more expensive checks
+- `gz sdf --check` performs all parsing stages, including more expensive checks
 
 1.  **XML parsing and schema validation:**
     Parse model file from XML into a tree data structure,
@@ -1588,7 +1588,7 @@ returning an error code if errors are found during parsing:
         *in [Model::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Model.cc#L323-L340),*
         *returning a `DUPLICATE_NAME` error code if non-unique names are detected.*
 
-    2.3 *The `ign sdf --check` command loads all DOM elements and also*
+    2.3 *The `gz sdf --check` command loads all DOM elements and also*
         *recursively checks for name uniqueness among all sibling elements*
         *using the [recursiveSiblingUniqueNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1633-L1655)*
         *helper function.*
@@ -1604,7 +1604,7 @@ returning an error code if errors are found during parsing:
     then the joint is attached to a fixed reference frame.
     *In `libsdformat9`, these checks are all performed by the helper function*
     *[checkJointParentChildLinkNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1820-L1885),*
-    *which is invoked by `ign sdf --check`.*
+    *which is invoked by `gz sdf --check`.*
     *A subset of these checks are performed by*
     *[Joint::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/Joint.cc#L199-L213)*
     *(checking that parent and child link names are different and that*
@@ -1627,7 +1627,7 @@ returning an error code if errors are found during parsing:
 
 6.  ***Check `//model/frame/@attached_to` attribute values:***
     For each `//model/frame`, if the `attached_to` attribute exists and is not
-    an empty string `""`, check that the value of the `attached_to` attribute
+    an empty string `""` or `__model__`, check that the value of the `attached_to` attribute
     matches the name of a sibling link, nested model, joint, or frame.
     The `//frame/@attached_to` value must not match `//frame/@name`,
     as this would cause a graph cycle.
@@ -1702,7 +1702,7 @@ returning an error code if errors are found during parsing:
 8.  ***Check `//pose/@relative_to` attribute values:***
     For each `//pose` that does not correspond to the `__model__` frame (e.g. nested `//model/model/pose`, `//link/pose`,
     `//joint/pose`, `//frame/pose`, `//collision/pose`, `//light/pose`, etc.),
-    if the `relative_to` attribute exists and is not an empty string `""`,
+    if the `relative_to` attribute exists and is not an empty string `""` or `__model__`,
     check that the value of the `relative_to` attribute
     matches the name of a link, nested model, joint, or frame in this model's scope.
     In `libsdformat9`, these checks are performed by
@@ -1834,7 +1834,7 @@ There are *seven* phases for validating the kinematics data in a world:
         *in [World::Load](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/World.cc#L347-L362),*
         *returning a `DUPLICATE_NAME` error code if non-unique names are detected.*
 
-    2.3 *The `ign sdf --check` command loads all DOM elements and also*
+    2.3 *The `gz sdf --check` command loads all DOM elements and also*
         *recursively checks for name uniqueness among all sibling elements*
         *using the [recursiveSiblingUniqueNames](https://github.com/osrf/sdformat/blob/sdformat9_9.2.0/src/parser.cc#L1633-L1655)*
         *helper function.*
@@ -1845,7 +1845,7 @@ There are *seven* phases for validating the kinematics data in a world:
 
 4.  ***Check `//world/frame/@attached_to` attribute values:***
     For each `//world/frame`, if the `attached_to` attribute exists and is not
-    an empty string `""`, check that the value of the `attached_to` attribute
+    an empty string `""` or `world`, check that the value of the `attached_to` attribute
     matches the name of a sibling model or frame.
     The `//frame/@attached_to` value must not match `//frame/@name`,
     as this would cause a graph cycle.
@@ -1899,7 +1899,7 @@ There are *seven* phases for validating the kinematics data in a world:
 
 6.  ***Check `//pose/@relative_to` attribute values:***
     For each `//model/pose` and `//world/frame/pose`,
-    if the `relative_to` attribute exists and is not an empty string `""`,
+    if the `relative_to` attribute exists and is not an empty string `""` or `world`,
     check that the value of the `relative_to` attribute
     matches the name of a model or frame that is a sibling of the element
     that contains the `//pose`.

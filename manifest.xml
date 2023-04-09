@@ -8,6 +8,8 @@
     <tutorial title="Install" ref='install'>
       <markdown version="2.0">install/tutorial_2-0.md</markdown>
       <markdown version="6.x">install/tutorial_6-x.md</markdown>
+      <markdown version=">= 9">install/tutorial_9_later.md</markdown>
+      <markdown version=">= 12">install/tutorial_12.md</markdown>
       <description>Installation instructions for libsdformat.</description>
       <tags>
         <tag>install</tag>
@@ -16,7 +18,7 @@
     </tutorial>
 
     <tutorial title="Quickstart" ref='quickstart'>
-      <markdown version="2.0">quickstart/tutorial_2-0.md</markdown>
+      <markdown version="X.0">quickstart/tutorial_2-0.md</markdown>
       <description>Quickstart guide to SDFormat parsing with libsdformat.</description>
       <tags>
         <tag>quickstart</tag>
@@ -34,7 +36,7 @@
     </tutorial>
 
     <tutorial title="Proposal for a better pose" ref='better_pose_proposal' type='proposal'>
-      <markdown version="1.8">specify_pose/proposal.md</markdown>
+      <markdown version="1.9">specify_pose/proposal.md</markdown>
       <description>Specifying pose in SDFormat using different rotation representations.</description>
       <tags>
         <tag>pose</tag>
@@ -126,6 +128,33 @@
       <skill>intermediate</skill>
     </tutorial>
 
+    <tutorial title='Interoperability with other modeling formats' ref='interoperability_formats' type='documentation'>
+      <markdown version='12'>interoperability_formats/tutorial.md</markdown>
+      <description>
+          Interoperability with other modeling formats
+      </description>
+      <tags>
+        <tag>usd</tag>
+        <tag>mjcf</tag>
+        <tag>mujoco</tag>
+        <tag>nvidia</tag>
+        <tag>omniverse</tag>
+        <tag>isaac sim</tag>
+      </tags>
+      <skill>beginner</skill>
+    </tutorial>
+
+    <tutorial title='Python bindings' ref='python_bindings' type='documentation'>
+      <markdown version='1.6'>python/tutorial_13.md</markdown>
+      <description>
+          How to use SDFormat Python bindings
+      </description>
+      <tags>
+        <tag>python</tag>
+      </tags>
+      <skill>beginner</skill>
+    </tutorial>
+
     <tutorial title="Custom elements and attributes" ref='custom_elements_attributes_proposal' type='proposal'>
       <markdown version="1.7">custom_elements_attributes/proposal.md</markdown>
       <description>
@@ -174,6 +203,19 @@
       <skill>advanced</skill>
     </tutorial>
 
+    <tutorial title="Merging for Composition: Proposed behavior" ref='composition_merge_proposal' type='proposal'>
+      <markdown version="1.9">composition/merge_proposal.md</markdown>
+      <description>
+          Proposed new behavior for merging models via composition, rather than
+          purely scoped nesting.
+      </description>
+      <tags>
+        <tag>nesting</tag>
+        <tag>composition</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
     <tutorial title="Proposal for parameter passing" ref='param_passing_proposal' type='proposal'>
       <markdown version="1.7">param_passing/proposal.md</markdown>
       <description>
@@ -181,17 +223,6 @@
       </description>
       <tags>
         <tag>model</tag>
-      </tags>
-      <skill>advanced</skill>
-    </tutorial>
-
-    <tutorial title="Mimic constraint to replace the Gearbox joint type" ref='mimic_proposal' type='proposal'>
-      <markdown version="1.10">mimic_constraint/proposal.md</markdown>
-      <description>
-          Proposal for a mimic constraint between joint axes to replace the Gearbox joint type.
-      </description>
-      <tags>
-        <tag>joint</tag>
       </tags>
       <skill>advanced</skill>
     </tutorial>
@@ -207,6 +238,20 @@
       <skill>intermediate</skill>
     </tutorial>
 
+    <tutorial title="SDFormat extensions to URDF (the 'gazebo' tag)" ref='sdformat_urdf_extensions' type='tutorial'>
+      <markdown version="1.6">urdf/sdf_extensions.md</markdown>
+      <description>
+        Describes how the "gazebo" tag can be used to extend URDF to include SDFormat content.
+        
+      </description>
+      <tags>
+        <tag>model</tag>
+        <tag>urdf</tag>
+        <tag>gazebo</tag>
+      </tags>
+      <skill>intermediate</skill>
+    </tutorial>
+
     <tutorial title="Proposal Procedure and Format" ref='proposal_format' type='documentation'>
       <markdown version="1.7">developers/proposal_format.md</markdown>
       <description>
@@ -215,6 +260,26 @@
       </description>
       <tags>
         <tag>proposal</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
+    <tutorial title="Proposal for added mass" ref='added_mass_proposal' type='proposal'>
+      <markdown version="1.9">added_mass/proposal.md</markdown>
+      <description>Setting fluid added mass inertial parameters.</description>
+      <tags>
+        <tag>proposal</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
+    <tutorial title="Mimic constraint to replace the Gearbox joint type" ref='mimic_proposal' type='proposal'>
+      <markdown version="1.10">mimic_constraint/proposal.md</markdown>
+      <description>
+          Proposal for a mimic constraint between joint axes to replace the Gearbox joint type.
+      </description>
+      <tags>
+        <tag>joint</tag>
       </tags>
       <skill>advanced</skill>
     </tutorial>
@@ -257,6 +322,7 @@
         <tutorial>pose_frame_semantics</tutorial>
         <tutorial>composition</tutorial>
         <tutorial>param_passing_tutorial</tutorial>
+        <tutorial>sdformat_urdf_extensions</tutorial>
       </tutorials>
     </category>
 
@@ -265,9 +331,11 @@
       <tutorials>
         <tutorial>pose_frame_semantics_proposal</tutorial>
         <tutorial>custom_elements_attributes_proposal</tutorial>
-        <tutorial>composition_proposal</tutorial>
-        <tutorial>better_pose_proposal</tutorial>
         <tutorial>param_passing_proposal</tutorial>
+        <tutorial>composition_proposal</tutorial>
+        <tutorial>composition_merge_proposal</tutorial>
+        <tutorial>better_pose_proposal</tutorial>
+        <tutorial>added_mass_proposal</tutorial>
         <tutorial>mimic_proposal</tutorial>
       </tutorials>
     </category>
@@ -280,6 +348,8 @@
       <tutorials>
         <tutorial>install</tutorial>
         <tutorial>quickstart</tutorial>
+        <tutorial>python_bindings</tutorial>
+        <tutorial>interoperability_formats</tutorial>
         <tutorial>roadmap</tutorial>
         <tutorial>proposal_format</tutorial>
       </tutorials>

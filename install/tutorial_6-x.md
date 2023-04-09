@@ -59,7 +59,7 @@ shell scripts for setting the necessary environment variables.
 
         mkdir ~/sdf_source
         cd ~/sdf_source/
-        git clone https://github.com/osrf/sdformat
+        git clone https://github.com/gazebosim/sdformat
 
 1. Change directory into the sdformat repository and switch to the sdf6 branch
 
