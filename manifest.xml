@@ -185,6 +185,17 @@
       <skill>advanced</skill>
     </tutorial>
 
+    <tutorial title="Mimic constraint to replace the Gearbox joint type" ref='mimic_proposal' type='proposal'>
+      <markdown version="1.10">mimic_constraint/proposal.md</markdown>
+      <description>
+          Proposal for a mimic constraint between joint axes to replace the Gearbox joint type.
+      </description>
+      <tags>
+        <tag>joint</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
     <tutorial title="Tutorial for parameter passing" ref='param_passing_tutorial' type='tutorial'>
       <markdown version="1.7">param_passing/tutorial.md</markdown>
       <description>
@@ -257,6 +268,7 @@
         <tutorial>composition_proposal</tutorial>
         <tutorial>better_pose_proposal</tutorial>
         <tutorial>param_passing_proposal</tutorial>
+        <tutorial>mimic_proposal</tutorial>
       </tutorials>
     </category>
 
