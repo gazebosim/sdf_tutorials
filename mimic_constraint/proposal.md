@@ -261,11 +261,16 @@ tag to joint axes :
 
 ### Example of rack and pinion constraint
 
+Another advantage of the Mimic constraint compared to the Gearbox joint is
+support for translational joints. The following example shows a rack and
+pinion mechanism with the translation of a prismatic "rack" joint coupled
+to the rotation of the revolute "pinion" joint.
+
 ~~~
 <sdf version="1.10">
   <model name="mimic_rack_and_pinion">
     <link name="rack">
-        <pose >0 0 0 0 0 0</pose>
+        <pose >0 0 -0.03 0 0 0</pose>
         <visual name="box_visual">
             <geometry>
                 <box>
@@ -286,14 +291,14 @@ tag to joint axes :
         </visual>
     </link>
     <joint name="pinion_joint" type="revolute">
-      <parent>chassis</parent>
+      <parent>world</parent>
       <child>pinion</child>
       <axis>
         <xyz>0 1 0</xyz>
       </axis>
     </joint>
     <joint name="rack_joint" type="prismatic">
-      <parent>chassis</parent>
+      <parent>world</parent>
       <child>rack</child>
       <axis>
         <xyz>1 0 0</xyz>
