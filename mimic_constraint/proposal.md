@@ -9,14 +9,14 @@ Aditya Pande `<aditya.pande@osrfoundation.org>`
 
 ## Introduction
 
-This proposal suggests adding a new joint actuation contraint called the Mimic
-Constraint that adds a linear equality constraint between the output position
+This proposal suggests adding a new joint actuation constraint called the Mimic
+constraint that enforces a linear relationship between the output position
 of two joint axes.
 
 Currently, the Gearbox joint type provides equivalent functionality for
-three specified links along specified axis directions, if the three links are
+three specified links along specified axis directions if the three links are
 also connected by two revolute joints with matching axis directions.
-This is an issue because it requires diplication of axis definitions, and it is
+This is an issue because it requires duplication of axis definitions, and it is
 nonintuitive to specify three links instead of two joints.
 
 The Mimic constraint will simplify the definition of this constraint by
@@ -66,7 +66,7 @@ The relative rotation of the `child` link with respect to the
 `gearbox_reference_body` about the `//joint/axis2/xyz` direction as `angle_P`.
 The Gearbox joint creates a proportional equality constraint:
 
-`angle_C = -gearbox_ration * angle_P`
+`angle_C = -gearbox_ratio * angle_P`
 
 The Gearbox joint is typically used in conjunction with a pair of
 revolute joints with identical axes, so the axis definitions must be duplicated
