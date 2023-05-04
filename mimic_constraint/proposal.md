@@ -90,9 +90,9 @@ joints and other joints with translational outputs.
 This section defines the Mimic constraint mathematically and then explains
 how to specify it in an SDFormat `//joint` element.
 
-### Definition of Mimic Constraint
+### Definition of Mimic constraint
 
-A Mimic Constraint encodes a linear equality constraint on the position of
+A Mimic constraint encodes a linear equality constraint on the position of
 two joint axes. One joint axis is labelled as the *leader* and the other as the
 *follower*. The `multiplier`, `offset`, and `reference` parameters determine
 the linear relationship according to the equation below.
@@ -100,7 +100,8 @@ the linear relationship according to the equation below.
 `follower_position = multiplier * (leader_position - reference) + offset`
 
 The `multiplier` parameter represents the ratio between changes in the
-*follower* joint position relative to changes in the *leader* joint position.
+*follower* joint axis position relative to changes in the *leader* joint axis
+position.
 
 `multiplier = (follower_position - offset) / (leader_position - reference)`
 
