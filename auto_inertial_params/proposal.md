@@ -3,16 +3,16 @@
 # Automatically Compute Inertia Tensor Proposal
 
 * **Authors**:
-Jasmeet Singh `<jasmeet0915@gmail.com>`, Addisu Taddese `<addisu@openrobotics.org>`, Dharini Dutia `<dharinidutia@intrinsic.ai>`
+Jasmeet Singh `<jasmeet0915@gmail.com>`, Addisu Taddese `<addisu@openrobotics.org>`, Dharini Dutia `<dharinidutia@openrobotics.org>`
 * **Status**: Draft
 * **SDFormat Version**: 1.11
 * **`libSDFormat` Version**: 14.X 
 
 ## Introduction
 
-This proposal suggests adding new attributes and elements to support the automatic calculation of Moments of Inertia and Products of Inertia for a link in SDFormat 1.11. It also proposes adding support for parsing these elements and attributes in libsdformat14.
+This proposal suggests adding new attributes and elements to support the automatic calculation of [Moments of Inertia and Products of Inertia](https://en.wikipedia.org/wiki/List_of_moments_of_inertia) for a link in SDFormat 1.11. It also proposes adding support for parsing these elements and attributes in libsdformat14.
 
-Setting physically plausible values for inertial parameters is crucial for an accurate simulation. However, these parameters are often complex to comprehend and visualize. Therefore, incorporating native support for the automatic calculation of inertial parameters of a link through the SDF specification would enable simulators that utilize SDFormat to provide an enhanced and smoother workflow.
+Setting physically plausible values for inertial parameters is crucial for an accurate simulation. However, these parameters are often complex to comprehend and visualize. And users may tend to enter wrong values leading to incorrect simulation. Therefore, native support for calculating inertial parameters through SDF specification would enable accurate simulations in simulators that use SDFormat.
 
 ## Document summary
 
@@ -24,19 +24,17 @@ The proposal includes the following sections:
 
 ## Motivation
 
-Physically plausible values for inertial parameters like mass, center of mass, moments of inertia, etc. are required for an accurate simulation. Such parameters are often difficult to visualize and a user may tend to enter wrong values for parameters This often leads to an incorrect simulation which is hard to debug.
-
 Currently, there are 2 major workflows used by the users to obtain the correct inertial parameters of their models:
 
  * Using CAD softwares like [Fusion360](https://www.autodesk.in/products/fusion-360/overview?term=1-YEAR&tab=subscription) or [Solidworks](https://www.solidworks.com/). Many users design their robot models using such CAD software which usually provide plugins that automatically generates the URDF/SDF for their model. These plugins handle the calculation of the inertial parameters. For eg, Fusion360 provides the [Fusion2URDF](https://github.com/syuntoku14/fusion2urdf) plugin which automatically generates a URDF with all the inertial parameters.
 
  * Another way is to use 3rd-party Mesh Processing Software like [Meshlab](https://www.meshlab.net/). Such softwares take the mesh file as an input and provide the inertial parameters as an output which can then be copied and pasted into the URDF/SDF file. This is also the method that was suggested in official [Classic Gazebo docs](https://classic.gazebosim.org/tutorials?cat=build_robot&tut=inertia).
 
-Both of these ways create a dependency on external software and might be complicated for beginners. Integrating this directly in Gz Sim would provide a smoother and user-friendly workflow.
+Both of these ways create a dependency on external software and might be complicated for beginners. Native support for this feature directly into Gz Sim would facilitate the effortless generation of accurate simulations.
 
 ## User Perspective
 
-Currently to specify the `<inertial>` element of a `<link>` in SDFormat, the user needs to add the `<mass>`, `<pose>`, and `<inertia>` tags. Here `<mass>` is the mass of the link and `<pose>` is the pose of the Centre of Mass with respect to the link frame. The `<inertia>` tag, on the other hand, needs to enclose the following 6 tags:
+To specify the `<inertial>` element of a `<link>` in SDFormat, the user needs to add the `<mass>`, `<pose>`, and `<inertia>` tags. Here `<mass>` is the mass of the link and `<pose>` is the pose of the Centre of Mass with respect to the link frame. The `<inertia>` tag, on the other hand, needs to enclose the following 6 tags:
 
  * `<ixx>` (Moment of Inertia)
 
@@ -50,21 +48,45 @@ Currently to specify the `<inertial>` element of a `<link>` in SDFormat, the use
  
  * `<izy>` (Product of Inertia)
 
-This proposal suggests the addition of an `auto` parameter for the `<inertia>` tag that would tell `libsdformat` to calculate Inertia matrix values automatically for the respective link. 
+This proposal suggests the addition of the following in `SDFormat`: 
 
-Usage example:    
-```
-<inertia auto=”true” />
-```
+ 1. An `auto` parameter for the `<inertia>` tag that would tell `libsdformat` to calculate Inertia matrix values automatically for the respective link. 
 
-Addition of a `//link/collision/material_density` tag is also suggested. This density value would be used to calculate the inertial parameters of the respective collision geometry. Adding this as part of the `<collision>` tag would allow a user to simulate links with different material types for different collisions. By default, the value of density would be set equal to that of water which is 1 kg/m^3.  
+ 2. A `//link/collision/material_density` tag for specifying the density of the collision geometry. This density value would be used to calculate the inertial parameters of the respective collision geometry. Adding this as part of the `<collision>` tag would allow a user to simulate links with different material types for different collisions. By default, the value of density would be set equal to that of water which is 1 kg/m^3.  
+
+The example snippet below shows how the above proposed elements would be used in a SDFormat `<link>`:
+
+```
+<link name="robot_link">
+  <inertial>
+    <inertia auto=”true” />
+  </inertial>
+  <collision name="collision">
+    <material_density>*some_float_value*</material_density>
+      <geometry>
+        .
+        .
+      </geometry>
+  </collision>
+  <visual name="visual">
+    <geometry>
+      .
+      .
+    </geometry>
+    <material>
+      .
+      .
+    </material>
+  </visual>
+</link>
+```
 
 ## Proposed Implementation
 Below are some key architectural considerations for the implementation of this feature:
 
- *  The parsing of the proposed SDFormat elements and the Moment of Inertia calculations for primitive geometries(Box, Cylinder, Sphere, Ellipsoid and Capsule) can be developed as an integral part of libsdformat. This would help enable all simulators that rely on SDFormat to utilize this feature and not limit it to just Gazebo.
+ *  The parsing of the proposed SDFormat elements and the Moment of Inertia calculations for primitive geometries(Box, Cylinder, Sphere, Ellipsoid and Capsule) can be implemented as an integral part of `libsdformat`. This would help enable all simulators that rely on SDFormat to utilize this feature.
 
- * In case of 3D meshes being used as geometries, a modular architecture can be followed where the user is free to develop and use their own Moments of Inertia Calculators. The default approach for handling MOI calculations of 3D meshes for Gazebo is proposed below and would rely on [Voxelization of Meshes](#inertia-matrix-calculation-with-voxelization-for-3d-mesh).
+ * In case of 3D meshes being used as geometries, a modular architecture can be followed where the user can integrate a custom Moments of Inertia calculator. Though for a default implementation of MOI calculations of 3D meshes, a [Voxelization-based](#inertia-matrix-calculation-with-voxelization-for-3d-mesh) method is proposed.
 
  * For links where `<inertial>` tag is not set, the inertial calculations would be omitted if `<static>` is set to true. Currently a [default value](https://github.com/gazebosim/sdformat/blob/4530dba5e83b5ee7868156d3040e7554f93b19a6/src/Link.cc#L164) is set with \\(I\_{xx}=I\_{yy}=I\_{zz}=1\\) and \\(I\_{xy}=I\_{yz}=I\_{xz}=0\\).
 
