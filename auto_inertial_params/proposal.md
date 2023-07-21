@@ -12,7 +12,7 @@ Jasmeet Singh `<jasmeet0915@gmail.com>`, Addisu Taddese `<addisu@openrobotics.or
 
 This proposal suggests adding new attributes and elements to support the automatic calculation of [Moments of Inertia and Products of Inertia](https://en.wikipedia.org/wiki/List_of_moments_of_inertia) for a link in SDFormat 1.11. It also proposes adding support for parsing these elements and attributes in libsdformat14.
 
-Setting physically plausible values for inertial parameters is crucial for an accurate simulation. However, these parameters are often complex to comprehend and visualize. And users may tend to enter wrong values leading to incorrect simulation. Therefore, native support for calculating inertial parameters through SDF specification would enable accurate simulations in simulators that use SDFormat.
+Setting physically plausible values for inertial parameters is crucial for an accurate simulation. However, these parameters are often complex to comprehend and visualize, and users may tend to enter wrong values leading to incorrect simulation. Therefore, native support for calculating inertial parameters through SDFormat specification would enable accurate simulations in simulators that use SDFormat.
 
 ## Document summary
 
@@ -26,11 +26,11 @@ The proposal includes the following sections:
 
 Currently, there are 2 major workflows used by the users to obtain the correct inertial parameters of their models:
 
- * Using CAD softwares like [Fusion360](https://www.autodesk.in/products/fusion-360/overview?term=1-YEAR&tab=subscription) or [Solidworks](https://www.solidworks.com/). Many users design their robot models using such CAD software which usually provide plugins that automatically generates the URDF/SDF for their model. These plugins handle the calculation of the inertial parameters. For eg, Fusion360 provides the [Fusion2URDF](https://github.com/syuntoku14/fusion2urdf) plugin which automatically generates a URDF with all the inertial parameters.
+ * Using CAD software like [Fusion360](https://www.autodesk.in/products/fusion-360/overview?term=1-YEAR&tab=subscription) or [Solidworks](https://www.solidworks.com/). Many users design their robot models using such CAD software which provide plugins that automatically generate the URDF/SDF for their model. Such plugins handle the calculation of the inertial parameters. For example, Fusion360 provides the [Fusion2URDF](https://github.com/syuntoku14/fusion2urdf) plugin which automatically generates a URDF with all the inertial parameters.
 
  * Another way is to use 3rd-party Mesh Processing Software like [Meshlab](https://www.meshlab.net/). Such softwares take the mesh file as an input and provide the inertial parameters as an output which can then be copied and pasted into the URDF/SDF file. This is also the method that was suggested in official [Classic Gazebo docs](https://classic.gazebosim.org/tutorials?cat=build_robot&tut=inertia).
 
-Both of these ways create a dependency on external software and might be complicated for beginners. Native support for this feature directly into Gz Sim would facilitate the effortless generation of accurate simulations.
+Both of these ways create a dependency on external software and might be complicated for beginners. Native support for this feature directly into libsdformat would facilitate the effortless generation of accurate simulations.
 
 ## User Perspective
 
@@ -52,7 +52,7 @@ This proposal suggests the addition of the following in `SDFormat`:
 
  1. An `auto` parameter for the `<inertia>` tag that would tell `libsdformat` to calculate Inertia matrix values automatically for the respective link. 
 
- 2. A `//link/collision/material_density` tag for specifying the density of the collision geometry. This density value would be used to calculate the inertial parameters of the respective collision geometry. Adding this as part of the `<collision>` tag would allow a user to simulate links with different material types for different collisions. By default, the value of density would be set equal to that of water which is 1 kg/m^3.  
+ 2. A `//link/collision/material_density` tag for specifying the density of the collision geometry. This density value would be used to calculate the inertial parameters of the respective collision geometry. Adding this as part of the `<collision>` tag would allow a user to simulate links with different material types for different collisions. By default, the value of density would be set equal to that of water which is 1000 kg/m^3.  
 
 The example snippet below shows how the above proposed elements would be used in a SDFormat `<link>`:
 
@@ -63,10 +63,10 @@ The example snippet below shows how the above proposed elements would be used in
   </inertial>
   <collision name="collision">
     <material_density>*some_float_value*</material_density>
-      <geometry>
-        .
-        .
-      </geometry>
+    <geometry>
+      .
+      .
+    </geometry>
   </collision>
   <visual name="visual">
     <geometry>
