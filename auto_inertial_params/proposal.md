@@ -22,6 +22,16 @@ The proposal includes the following sections:
 * [User Perspective](#user-perspective): Describes the current usage and the proposed usage by describing the terms to be added in the SDFormat specification
 * [Proposed Implmentation](#proposed-implementation): Detailed explanation of the proposed implmentation and modifications to be done in the C++ API of requried libraries like libsdformat. 
 
+## Syntax
+
+The proposal uses [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp) to describe elements and attributes concisely. For example, `<model>` tags are referred to as `//model` using XPath. XPath is even more concise for referring to nested tags and attributes. In the following example, `<link>` elements inside `<model>` tags are referenced as `//model/link` and  model `name` attributes as `//model/@name`:
+
+```
+<model name="model_name">
+  <link/>
+</model>
+```
+
 ## Motivation
 
 Currently, there are 2 major workflows used by the users to obtain the correct inertial parameters of their models:
