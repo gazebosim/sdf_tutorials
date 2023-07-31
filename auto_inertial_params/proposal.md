@@ -62,7 +62,7 @@ This proposal suggests the addition of the following in `SDFormat`:
 
  1. An `auto` parameter for the `<inertia>` tag that would tell `libsdformat` to calculate Inertia matrix values automatically for the respective link. 
 
- 2. A `//link/collision/material_density` tag for specifying the density of the collision geometry. This density value would be used to calculate the inertial parameters of the respective collision geometry. Adding this as part of the `<collision>` tag would allow a user to simulate links with different material types for different collisions. By default, the value of density would be set equal to that of water which is 1000 kg/m^3.  
+ 2. A `//link/collision/density` tag for specifying the density of the collision geometry. This density value would be used to calculate the inertial parameters of the respective collision geometry. Adding this as part of the `<collision>` tag would allow a user to simulate links with different material types for different collisions. By default, the value of density would be set equal to that of water which is 1000 kg/m^3.  
 
 The example snippet below shows how the above proposed elements would be used in a SDFormat `<link>`:
 
@@ -72,7 +72,7 @@ The example snippet below shows how the above proposed elements would be used in
     <inertia auto=”true” />
   </inertial>
   <collision name="collision">
-    <material_density>*some_float_value*</material_density>
+    <density>*some_float_value*</density>
     <geometry>
       .
       .
