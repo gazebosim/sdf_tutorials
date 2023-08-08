@@ -60,17 +60,15 @@ To specify the `<inertial>` element of a `<link>` in SDFormat, the user needs to
 
 This proposal suggests the addition of the following in `SDFormat`: 
 
- 1. An `auto` parameter for the `<inertia>` tag that would tell `libsdformat` to calculate Inertia matrix values automatically for the respective link. 
+ 1.  `//inertial/@auto` attribute that would tell `libsdformat` to calculate the Inertial values (Mass, Mass Matrix & Inertial Pose) automatically for the respective link. 
 
- 2. A `//link/collision/density` tag for specifying the density of the collision geometry. This density value would be used to calculate the inertial parameters of the respective collision geometry. Adding this as part of the `<collision>` tag would allow a user to simulate links with different material types for different collisions. By default, the value of density would be set equal to that of water which is 1000 kg/m^3.  
+ 2. `//link/collision/density` element for specifying the density of the collision geometry. This density value would be used to calculate the inertial parameters of the respective collision geometry. Adding this as part of the `<collision>` tag would allow a user to simulate links with different material types for different collisions. By default, the value of density would be set equal to that of water which is 1000 kg/m^3.  
 
 The example snippet below shows how the above proposed elements would be used in a SDFormat `<link>`:
 
 ```
 <link name="robot_link">
-  <inertial>
-    <inertia auto=”true” />
-  </inertial>
+  <inertial auto="true" />
   <collision name="collision">
     <density>*some_float_value*</density>
     <geometry>
@@ -96,7 +94,7 @@ Below are some key architectural considerations for the implementation of this f
 
  *  The parsing of the proposed SDFormat elements and the Moment of Inertia calculations for primitive geometries(Box, Cylinder, Sphere, Ellipsoid and Capsule) can be implemented as an integral part of `libsdformat`. This would help enable all simulators that rely on SDFormat to utilize this feature.
 
- * In case of 3D meshes being used as geometries, a modular architecture can be followed where the user can integrate a custom Moments of Inertia calculator. Though for a default implementation of MOI calculations of 3D meshes, a [Voxelization-based](#inertia-matrix-calculation-with-voxelization-for-3d-mesh) method is proposed.
+ * In case of 3D meshes being used as geometries, a modular callback-based architecture can be followed where the user can integrate a custom Moments of Inertia calculator. Though for a default implementation of MOI calculations of 3D meshes, a [Voxelization-based](#inertia-matrix-calculation-with-voxelization-for-3d-mesh) method is proposed.
 
  * For links where `<inertial>` tag is not set, the inertial calculations would be omitted if `<static>` is set to true. Currently a [default value](https://github.com/gazebosim/sdformat/blob/4530dba5e83b5ee7868156d3040e7554f93b19a6/src/Link.cc#L164) is set with \\(I\_{xx}=I\_{yy}=I\_{zz}=1\\) and \\(I\_{xy}=I\_{yz}=I\_{xz}=0\\).
 
