@@ -4,8 +4,8 @@
 Steve Peters`<scpeters@openrobotics.org>`,
 Aditya Pande `<aditya.pande@osrfoundation.org>`
 * **Status**: *Draft*
-* **SDFormat Version**: *1.10+*
-* **`libsdformat` Version**: *13*
+* **SDFormat Version**: *1.11+*
+* **`libsdformat` Version**: *14*
 
 ## Introduction
 
@@ -233,7 +233,7 @@ and one `gearbox` joint.
         </joint>
 ~~~
 
-The `gearbox` joint could replaced equivalently by adding the ``<mimic>``
+The `gearbox` joint could be replaced equivalently by adding the `<mimic>`
 tag to joint axes :
 
 ~~~
@@ -313,6 +313,3 @@ to the rotation of the revolute "pinion" joint.
   </model>
 </sdf>
 ~~~
-
-
-## Appendix
