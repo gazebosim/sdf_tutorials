@@ -18,15 +18,15 @@ Setting physically plausible values for inertial parameters is crucial for an ac
 
 The proposal includes the following sections:
 
-* [Motivation](#motivation): A short explanation to provide context reagrding the problem statement and the need for this feature
+* [Motivation](#motivation): A short explanation to provide context regarding the problem statement and the need for this feature
 * [User Perspective](#user-perspective): Describes the current usage and the proposed usage by describing the terms to be added in the SDFormat specification
-* [Proposed Implmentation](#proposed-implementation): Detailed explanation of the proposed implmentation and modifications to be done in the C++ API of requried libraries like libsdformat. 
+* [Proposed Implementation](#proposed-implementation): Detailed explanation of the proposed implementation and modifications to be done in the C++ API of requried libraries like libsdformat. 
 
 ## Syntax
 
 The proposal uses [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp) to describe elements and attributes concisely. For example, `<model>` tags are referred to as `//model` using XPath. XPath is even more concise for referring to nested tags and attributes. In the following example, `<link>` elements inside `<model>` tags are referenced as `//model/link` and  model `name` attributes as `//model/@name`:
 
-```
+```xml
 <model name="model_name">
   <link/>
 </model>
@@ -66,7 +66,7 @@ This proposal suggests the addition of the following in `SDFormat`:
 
 The example snippet below shows how the above proposed elements would be used in a SDFormat `<link>`:
 
-```
+```xml
 <link name="robot_link">
   <inertial auto="true" />
   <collision name="collision">
@@ -96,7 +96,7 @@ Below are some key architectural considerations for the implementation of this f
 
  * In case of 3D meshes being used as geometries, a modular callback-based architecture can be followed where the user can integrate a custom Moments of Inertia calculator. Though for a default implementation of MOI calculations of 3D meshes, a [Voxelization-based](#inertia-matrix-calculation-with-voxelization-for-3d-mesh) method is proposed.
 
- * For links where `<inertial>` tag is not set, the inertial calculations would be omitted if `<static>` is set to true. Currently a [default value](https://github.com/gazebosim/sdformat/blob/4530dba5e83b5ee7868156d3040e7554f93b19a6/src/Link.cc#L164) is set with \\(I\_{xx}=I\_{yy}=I\_{zz}=1\\) and \\(I\_{xy}=I\_{yz}=I\_{xz}=0\\).
+ * For links where `<inertial>` tag is not set, the inertial calculations would be omitted if `<static>` is set to true. [By default](https://github.com/gazebosim/sdformat/blob/4530dba5e83b5ee7868156d3040e7554f93b19a6/src/Link.cc#L164) it is set as \\(I\_{xx}=I\_{yy}=I\_{zz}=1\\) and \\(I\_{xy}=I\_{yz}=I\_{xz}=0\\).
 
  * The collision geometry of the link would used for all the inertial calculations.
 
