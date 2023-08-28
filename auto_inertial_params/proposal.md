@@ -282,6 +282,6 @@ I\_{23}  = I\_{yz} = \rho\int -yzdv = I\_{zy} = I\_{32} \\\
  * Voxelization is more intuitive way of moment of inertia calculations as compared to other integral methods.
 
 ### Integration-based numerical method
-It uses Gauss’s Theorem and Greene’s Theorem of integration to convert volume integrals to surface integrals (Gauss’s Theorem) and then surface integrals to line integrals(Greene’s Theorem).[1](https://www.geometrictools.com/Documentation/PolyhedralMassProperties.pdf) 
+It uses Gauss’s Theorem and Greene’s Theorem of integration to convert volume integrals to surface integrals (Gauss’s Theorem) and then surface integrals to line integrals(Greene’s Theorem). More about this approach can be found [here](https://www.geometrictools.com/Documentation/PolyhedralMassProperties.pdf)
 This method works for triangle meshes which are simple water-tight polyhedrons. Currently, the origin of the mesh being used needs to be set at the geometric centre to obtain the correct value.
 Since this method uses the vertex data for calculations, a high vertex count would be required for near-ideal values. For eg, in case of a cylinder, it was observed that with a vertex count of 4096, the inertial values obtained were withtin a 0.005 tolerance of the ideal values.
