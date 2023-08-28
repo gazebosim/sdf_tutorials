@@ -273,6 +273,17 @@
       <skill>advanced</skill>
     </tutorial>
 
+    <tutorial title="Mimic constraint to replace the Gearbox joint type" ref='mimic_proposal' type='proposal'>
+      <markdown version="1.10">mimic_constraint/proposal.md</markdown>
+      <description>
+          Proposal for a mimic constraint between joint axes to replace the Gearbox joint type.
+      </description>
+      <tags>
+        <tag>joint</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
  </tutorials>
 
   <!-- *************************************** -->
@@ -325,6 +336,7 @@
         <tutorial>composition_merge_proposal</tutorial>
         <tutorial>better_pose_proposal</tutorial>
         <tutorial>added_mass_proposal</tutorial>
+        <tutorial>mimic_proposal</tutorial>
       </tutorials>
     </category>
 
