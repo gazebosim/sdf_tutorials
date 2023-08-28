@@ -1168,8 +1168,8 @@ For reference, equivalent expressions of `Jc` are defined as `Jc1` and `Jc2`.
 #### 1.1 Parity with URDF using `//pose/@relative_to`
 
 The following image from the URDF documentation corresponds to the example URDF from the
-"Parent frames in URDF" section of the
-[Pose Frame Semantics: Legacy Behavior documentation](/tutorials?tut=pose_frame_semantics).
+"[Parent frames in URDF](/tutorials?tut=pose_frame_semantics&ver=1.5#parent-frames-in-urdf)" section of the
+[Pose Frame Semantics: Legacy Behavior documentation (version 1.5)](/tutorials?tut=pose_frame_semantics&ver=1.5).
 
 <img src="http://wiki.ros.org/urdf/XML/model?action=AttachFile&do=get&target=link.png"
      alt="urdf coordinate frames"
