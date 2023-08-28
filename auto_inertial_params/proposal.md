@@ -40,7 +40,7 @@ Currently, there are 2 major workflows used by the users to obtain the correct i
 
  * Another way is to use 3rd-party Mesh Processing Software like [Meshlab](https://www.meshlab.net/). Such softwares take the mesh file as an input and provide the inertial parameters as an output which can then be copied and pasted into the URDF/SDF file. This is also the method that was suggested in official [Classic Gazebo docs](https://classic.gazebosim.org/tutorials?cat=build_robot&tut=inertia).
 
-Both of these ways create a dependency on external software and might be complicated for beginners. Native support for this feature directly into libsdformat would facilitate the effortless generation of accurate simulations.
+Both of these ways create a dependency on external software and might be complicated for beginners. In case the user doesn't provide any inertial values, a default Mass Matrix is used with `mass = 1.0` and `Diagonal Elements = (1, 1, 1)` which might not be best suited for all kinds of models. Native support for automatic inertia calculations directly into `libsdformat` would work as a better alternative to using the default values and facilitate the effortless generation of accurate simulations.
 
 ## User Perspective
 
@@ -58,17 +58,22 @@ To specify the `<inertial>` element of a `<link>` in SDFormat, the user needs to
  
  * `<izy>` (Product of Inertia)
 
-This proposal suggests the addition of the following in `SDFormat`: 
+This proposal suggests the addition of the following elements and attributes in `SDFormat Spec`: 
 
  1.  `//inertial/@auto` attribute that would tell `libsdformat` to calculate the Inertial values (Mass, Mass Matrix & Inertial Pose) automatically for the respective link. 
 
- 2. `//link/collision/density` element for specifying the density of the collision geometry. This density value would be used to calculate the inertial parameters of the respective collision geometry. Adding this as part of the `<collision>` tag would allow a user to simulate links with different material types for different collisions. By default, the value of density would be set equal to that of water which is 1000 kg/m^3.  
+ 2. `//collision/density` element for specifying the density of the collision geometry. This density value would be used to calculate the inertial parameters of the respective collision geometry. Adding this as part of the `<collision>` tag would allow a user to simulate links with different material types for different collisions. By default, the value of density would be set equal to that of water which is 1000 kg/m^3. A `//link/inertial/density` element would also be added in the spec to allow users to specify the density values on a link level instead of specifying the same values for each collision.
+
+ 3. `//collision/auto_inertia_params` element would be added that can be used to provide some parameters or options for a custom inertia calculator. Similar to the `density` element above, a link-level `//link/inertial/auto_inertia_params` element would also be added. This would allow the user to provide inertia calculator params for the whole link while retainging the flexibility to specify different parameters for each collision. Custom elements and attributes using a namespace prefix can be used to provide the user-defined parameters for a custom calculator. More about this can be found in [this](http://sdformat.org/tutorials?tut=custom_elements_attributes_proposal&cat=pose_semantics_docs&#specifying-custom-elements-and-attributes) proposal.
 
 The example snippet below shows how the above proposed elements would be used in a SDFormat `<link>`:
 
 ```xml
 <link name="robot_link">
-  <inertial auto="true" />
+  <inertial auto="true">
+    <auto_inertia_params>
+      <gz:voxel_size>0.01</gz:voxel_size>
+    </auto_inertia_params>
   <collision name="collision">
     <density>*some_float_value*</density>
     <geometry>
@@ -90,18 +95,50 @@ The example snippet below shows how the above proposed elements would be used in
 ```
 
 ## Proposed Implementation
+> Note: In the section below, the term `primitive geometries` is used to collectively describe Box, Capusle, Cylinder, Ellipsoid and Sphere geometries.
+
 Below are some key architectural considerations for the implementation of this feature:
 
- *  The parsing of the proposed SDFormat elements and the Moment of Inertia calculations for primitive geometries(Box, Cylinder, Sphere, Ellipsoid and Capsule) can be implemented as an integral part of `libsdformat`. This would help enable all simulators that rely on SDFormat to utilize this feature.
+ *  The parsing of the proposed SDFormat elements and the Moment of Inertia calculations for primitive geometries (Box, Cylinder, Sphere, Ellipsoid and Capsule) can be implemented as an integral part of `libsdformat`. This would help enable all simulators that rely on SDFormat to utilize this feature.
 
- * In case of 3D meshes being used as geometries, a modular callback-based architecture can be followed where the user can integrate a custom Moments of Inertia calculator. Though for a default implementation of MOI calculations of 3D meshes, a [Voxelization-based](#inertia-matrix-calculation-with-voxelization-for-3d-mesh) method is proposed.
+ * In case of 3D meshes being used as geometries, a modular callback-based architecture can be followed where the user can integrate their custom Moments of Inertia calculator.  A [Voxelization-based](#inertia-matrix-calculation-with-voxelization-for-3d-mesh) and an integration-based numerical method were explored for computing the inertial properties (mass, mass matrix and center of mass) of 3D meshes.
 
  * For links where `<inertial>` tag is not set, the inertial calculations would be omitted if `<static>` is set to true. [By default](https://github.com/gazebosim/sdformat/blob/4530dba5e83b5ee7868156d3040e7554f93b19a6/src/Link.cc#L164) it is set as \\(I\_{xx}=I\_{yy}=I\_{zz}=1\\) and \\(I\_{xy}=I\_{yz}=I\_{xz}=0\\).
 
- * The collision geometry of the link would used for all the inertial calculations.
+ * The collision geometry of the link would used for all the inertial calculations. In case of multiple collisions, the inertial pose of each collision would be set in the link frame (if not already done) and then inertials would be aggregated using the `+` operator from the `gz::math::Inertial` class. If, however, no collisions are provided, an error would be thrown. 
 
-Existing [`MassMatrix()`](https://github.com/gazebosim/gz-math/blob/2dd5ab6f9e0b7b3220723c5fa5f4f763746c0851/include/gz/math/detail/Capsule.hh#L100) function from the `gz::math` class of each primitive geometry would be used for their inertial calculations. 
-An additional data member of type `gz::math::Material` would be added to `sdf::Collision` to set the density value of each collision. This `gz::math::Material` object would be passed to the `MassMatrix()` call for the respective geometry as specified above.
+A `std::optional<gz::math::Inertiald> CalculateInertial(double density)` function would be added to the classes of all the Geometry Types which would be supported by this feature (Box, Capsule, Cylinder, Ellipsoid, Sphere and Mesh). For all the types except Mesh, existing [`MassMatrix()`](https://github.com/gazebosim/gz-math/blob/2dd5ab6f9e0b7b3220723c5fa5f4f763746c0851/include/gz/math/detail/Capsule.hh#L100) functions from the `gz::math` class of the respective geometry would be used for their inertial calculations.
+An additional data member `double density` would be added to `sdf::Collision` along with getter and setter functinons to get/set the `density` value of each collision. The density value would be sent to `CalculateInertial()` functions as a param. 
+In case of the primitive geometries, the density value would be used to create a `gz::math::Material` object before calling the `MassMatrix()` function of the respective geometry. Below is the implmentation of the `Box::CalculateInertial()` function as an example:
+
+```C++
+/// \brief Calculate and return the Mass Matrix values for the Box
+/// \param[in] _density Density of the box in kg/m^3
+/// \return A std::optional with gz::math::Inertiald object or std::nullopt
+public: std::optional<gz::math::Inertiald>
+        CalculateInertial(double _density);
+
+/////////////////////////////////////////////////
+std::optional<gz::math::Inertiald> Box::CalculateInertial(double _density)
+{
+  gz::math::Material material = gz::math::Material(_density);
+  this->dataPtr->box.SetMaterial(material);
+
+  auto boxMassMatrix = this->dataPtr->box.MassMatrix();
+
+  if (!boxMassMatrix)
+  {
+    return std::nullopt;
+  }
+  else
+  {
+    gz::math::Inertiald boxInertial;
+    boxInertial.SetMassMatrix(boxMassMatrix.value());
+    return std::make_optional(boxInertial);
+  }
+}
+```
+
 The flow of the [`sdf::Link::Load()`](https://github.com/gazebosim/sdformat/blob/4530dba5e83b5ee7868156d3040e7554f93b19a6/src/Link.cc#L170) function would be updated to check for the value of the `auto` parameter if the `<inertial>` tag is found and then accordingly call the required functions.
 
 ## Inertia Matrix Calculation with Voxelization for 3D Mesh
