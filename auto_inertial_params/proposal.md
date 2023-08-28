@@ -229,7 +229,7 @@ Setting values from the above enum for the `sdf::ParserConfig` object, the user 
 
 ## Proposed Mesh Inertia Calculation Methods
 
-## Voxelization-based method
+### Voxelization-based method
 
 Voxels are the 3D equivalent of a pixel in 2D. Voxels can be arranged in ‘Voxel Grids’ which are the 3D equivalent of a structured image using pixels. 
 
