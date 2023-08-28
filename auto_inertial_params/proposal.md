@@ -203,9 +203,33 @@ Functions to get and register a custom inertia calculator is provided through th
   }
 ```
 
-The flow of the [`sdf::Link::Load()`](https://github.com/gazebosim/sdformat/blob/4530dba5e83b5ee7868156d3040e7554f93b19a6/src/Link.cc#L170) function would be updated to check for the value of the `auto` parameter if the `<inertial>` tag is found and then accordingly call the required functions.
+### Configuring the `CalculateInertial()` function behavior
 
-## Inertia Matrix Calculation with Voxelization for 3D Mesh
+`CalculateInertial()` functions are also added to the `sdf::Root`, `sdf::World`, `sdf::Model`, `sdf::Link`, `sdf::Collision` and then `sdf::Geometry` classes. Calling the `CalculateInertial()` function of any class, in turn recursively calls the `CalculateInertial()` for each element below it down the chain. For eg, generally a user might call the `Root::CalculateInertial()` which would in turn call `World::CalculateInertials()` for all the worlds which in turn calls the `Model::CaluclateInertials()` for all the models in the world and so on until the final `CalculateInertial()` for the respective geometry type is called where the chain ends.
+
+The `sdf::ParserConfig` object is sent down the `CalculateInertial()` chain as a function parameter and is used to get the configuration information like the registered Custom Inertia Calculator. An `enum class` would be added to the `sdf::ParserConfig` with values that would allow the user to configure the behavior of the `CalculateInertial()` function:
+
+```C++
+/// \enum ConfigureCalculateInertial
+/// \brief Configuration options of how CalculateInertial() function
+/// would be used
+enum class ConfigureCalculateInertial
+{
+  /// \brief If this value is used, CalculateInertial() won't be 
+  /// called from inside the Root::Load() function
+  SKIP_CALCULATION_IN_LOAD,
+
+  /// \brief If this values is used, CalculateInertial() would be 
+  /// called and the computed inertial values would be saved 
+  SAVE_CALCULATION
+};
+```
+
+Setting values from the above enum for the `sdf::ParserConfig` object, the user can configure the `CalculateInertial()` functions. For eg: if the configuration is set to `SKIP_CALCULATION_IN_LOAD` (which would be the default configuration), then the `Root::CalculateInertial()` won't be called from within the `Root::Load()`. The user would need to call the `Root:CalculateInertial()` separately after the load is complete. This is also recommended as the inertia calculation uses the `PoseGraph` to resolve the inertial poses for different collisions if they are not in the link frame. 
+
+## Proposed Mesh Inertia Calculation Methods
+
+## Voxelization-based method
 
 Voxels are the 3D equivalent of a pixel in 2D. Voxels can be arranged in ‘Voxel Grids’ which are the 3D equivalent of a structured image using pixels. 
 
@@ -252,7 +276,12 @@ I\_{13}  = I\_{xz} = \rho\int -xzdv = I\_{zx} = I\_{31} \\\
 I\_{23}  = I\_{yz} = \rho\int -yzdv = I\_{zy} = I\_{32} \\\
 \end{eqnarray}$$
 
-### Advantages of the Voxelization Approach
+#### Advantages of the Voxelization Approach
  * Voxelization is a generalized approach that would work for all kinds of meshes (convex and non-convex meshes).
  * It can be made configurable by allowing the user to set an appropriate `voxel_size` for the process. A smaller `voxel_size` would be comparitively computationally heavy but would provide closer to real world value for moment of inertia.
- * Voxelization is more intuitive way of moment of inertia calculations as compared to other integral methods. 
+ * Voxelization is more intuitive way of moment of inertia calculations as compared to other integral methods.
+
+### Integration-based numerical method
+It uses Gauss’s Theorem and Greene’s Theorem of integration to convert volume integrals to surface integrals (Gauss’s Theorem) and then surface integrals to line integrals(Greene’s Theorem).[1](https://www.geometrictools.com/Documentation/PolyhedralMassProperties.pdf) 
+This method works for triangle meshes which are simple water-tight polyhedrons. Currently, the origin of the mesh being used needs to be set at the geometric centre to obtain the correct value.
+Since this method uses the vertex data for calculations, a high vertex count would be required for near-ideal values. For eg, in case of a cylinder, it was observed that with a vertex count of 4096, the inertial values obtained were withtin a 0.005 tolerance of the ideal values.
