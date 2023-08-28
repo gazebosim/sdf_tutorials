@@ -97,6 +97,8 @@ The example snippet below shows how the above proposed elements would be used in
 ## Proposed Implementation
 > Note: In the section below, the term `primitive geometries` is used to collectively describe Box, Capusle, Cylinder, Ellipsoid and Sphere geometries.
 
+### Some Architectural Considerations
+
 Below are some key architectural considerations for the implementation of this feature:
 
  *  The parsing of the proposed SDFormat elements and the Moment of Inertia calculations for primitive geometries (Box, Cylinder, Sphere, Ellipsoid and Capsule) can be implemented as an integral part of `libsdformat`. This would help enable all simulators that rely on SDFormat to utilize this feature.
@@ -107,6 +109,7 @@ Below are some key architectural considerations for the implementation of this f
 
  * The collision geometry of the link would used for all the inertial calculations. In case of multiple collisions, the inertial pose of each collision would be set in the link frame (if not already done) and then inertials would be aggregated using the `+` operator from the `gz::math::Inertial` class. If, however, no collisions are provided, an error would be thrown. 
 
+### Implemetation for Primitive Geometries
 A `std::optional<gz::math::Inertiald> CalculateInertial(double density)` function would be added to the classes of all the Geometry Types which would be supported by this feature (Box, Capsule, Cylinder, Ellipsoid, Sphere and Mesh). For all the types except Mesh, existing [`MassMatrix()`](https://github.com/gazebosim/gz-math/blob/2dd5ab6f9e0b7b3220723c5fa5f4f763746c0851/include/gz/math/detail/Capsule.hh#L100) functions from the `gz::math` class of the respective geometry would be used for their inertial calculations.
 An additional data member `double density` would be added to `sdf::Collision` along with getter and setter functinons to get/set the `density` value of each collision. The density value would be sent to `CalculateInertial()` functions as a param. 
 In case of the primitive geometries, the density value would be used to create a `gz::math::Material` object before calling the `MassMatrix()` function of the respective geometry. Below is the implmentation of the `Box::CalculateInertial()` function as an example:
@@ -137,6 +140,67 @@ std::optional<gz::math::Inertiald> Box::CalculateInertial(double _density)
     return std::make_optional(boxInertial);
   }
 }
+```
+
+### Callback-based API for Mesh/Custom Inertia Calculator
+
+A `CustomInertiaCalcProperties` class with the following members would be added:
+
+```C++
+class CustomInertiaCalcProperties::Implementation
+{
+  /// \brief Density of the mesh. 1000 kg/m^3 by default
+  public: double density{1000.0};
+
+  /// \brief Optional SDF mesh object. Default is std::nullopt
+  public: std::optional<sdf::Mesh> mesh{std::nullopt};
+
+  /// \brief SDF element pointer to <auto_inertia_params> tag.
+  /// This can be used to access custom params for the
+  /// Inertia Caluclator
+  public: sdf::ElementPtr inertiaCalculatorParams{nullptr};
+};
+```
+
+This class would act as an interface between `libsdformat` and the custom calculator to bridge the data like density, properties of the mesh and user-defined calculator params given through the SDF. A signature for the Custom Calculator function is provided through an alias:
+
+```C++
+using CustomInertiaCalculator = std::function<std::optional<gz::math::Inertiald>(sdf::Errors &, const sdf::CustomInertiaCalcProperties &)>;
+```
+
+Functions to get and register a custom inertia calculator is provided through the `sdf::ParserConfig`. Using all these additions, the `Mesh::CalculateInertial()` function would be implmented as follows:
+
+```C++
+  /// \brief Calculate and return the Mass Matrix values for the Mesh
+  /// \param[in] density Density of the mesh in kg/m^3
+  /// \param[in] _autoInertiaParams ElementPtr to
+  /// <auto_inertia_params> element
+  /// \param[in] _config Parser Configuration
+  /// \param[out] _errors A vector of Errors object. Each object
+  /// would contain an error code and an error message.
+  /// \return A std::optional with gz::math::Inertiald object or std::nullopt
+  public: std::optional<gz::math::Inertiald> CalculateInertial(double _density, const sdf::ElementPtr _autoInertiaParams, const ParserConfig &_config, sdf::Errors &_errors);
+
+  //////////////////////////////////////////////////
+  std::optional<gz::math::Inertiald> Mesh::CalculateInertial(double _density,
+      const sdf::ElementPtr _autoInertiaParams, const ParserConfig &_config,
+      sdf::Errors &_errors)
+  {
+    if (this->dataPtr->filePath.empty())
+    {
+      _errors.push_back({
+        sdf::ErrorCode::WARNING,
+        "File Path for the mesh was empty. Could not calculate inertia"});
+      return std::nullopt;
+    }
+
+    const auto &customCalculator = _config.CustomInertiaCalc();
+
+    sdf::CustomInertiaCalcProperties calcInterface = CustomInertiaCalcProperties(
+      _density, *this, _autoInertiaParams);
+
+    return customCalculator(_errors, calcInterface);
+  }
 ```
 
 The flow of the [`sdf::Link::Load()`](https://github.com/gazebosim/sdformat/blob/4530dba5e83b5ee7868156d3040e7554f93b19a6/src/Link.cc#L170) function would be updated to check for the value of the `auto` parameter if the `<inertial>` tag is found and then accordingly call the required functions.
