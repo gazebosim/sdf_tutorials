@@ -20,7 +20,7 @@ The proposal includes the following sections:
 
 * [Motivation](#motivation): A short explanation to provide context regarding the problem statement and the need for this feature
 * [User Perspective](#user-perspective): Describes the current usage and the proposed usage by describing the terms to be added in the SDFormat specification
-* [Proposed Implementation](#proposed-implementation): Detailed explanation of the proposed implementation and modifications to be done in the C++ API of requried libraries like libsdformat. 
+* [Proposed Implementation](#proposed-implementation): Detailed explanation of the proposed implementation and modifications to be done in the C++ API of requried libraries like `libsdformat`. 
 
 ## Syntax
 
@@ -62,9 +62,9 @@ This proposal suggests the addition of the following elements and attributes in 
 
  1.  `//inertial/@auto` attribute that would tell `libsdformat` to calculate the Inertial values (Mass, Mass Matrix & Inertial Pose) automatically for the respective link. 
 
- 2. `//collision/density` element for specifying the density of the collision geometry. This density value would be used to calculate the inertial parameters of the respective collision geometry. Adding this as part of the `<collision>` tag would allow a user to simulate links with different material types for different collisions. By default, the value of density would be set equal to that of water which is 1000 kg/m^3. A `//link/inertial/density` element would also be added in the spec to allow users to specify the density values on a link level instead of specifying the same values for each collision.
+ 2. `//collision/density` element for specifying the density of the collision geometry of a link. This density values would be used to calculate the inertial parameters of the respective collision geometries. Adding this as part of the `<collision>` tag would allow a user to simulate links with different material types for different collisions. By default, the value of density would be set equal to that of water which is 1000 kg/m^3. A `//link/inertial/density` element would also be added in the spec to allow users to specify the density values on a link level instead of specifying the same values for each collision.
 
- 3. `//collision/auto_inertia_params` element would be added that can be used to provide some parameters or options for a custom inertia calculator. Similar to the `density` element above, a link-level `//link/inertial/auto_inertia_params` element would also be added. This would allow the user to provide inertia calculator params for the whole link while retainging the flexibility to specify different parameters for each collision. Custom elements and attributes using a namespace prefix can be used to provide the user-defined parameters for a custom calculator. More about this can be found in [this](http://sdformat.org/tutorials?tut=custom_elements_attributes_proposal&cat=pose_semantics_docs&#specifying-custom-elements-and-attributes) proposal.
+ 3. `//collision/auto_inertia_params` element would be added that can be used to provide some parameters or options for a custom inertia calculator. Similar to the `density` element above, a link-level `//link/inertial/auto_inertia_params` element would also be added. This would allow the user to provide inertia calculator parameters for the whole link while retaining the flexibility to specify different parameters for each collision. Custom elements and attributes using a namespace prefix can be used to provide the user-defined parameters for a custom calculator. More about this can be found in [this](http://sdformat.org/tutorials?tut=custom_elements_attributes_proposal&cat=pose_semantics_docs&#specifying-custom-elements-and-attributes) proposal.
 
 The example snippet below shows how the above proposed elements would be used in a SDFormat `<link>`:
 
@@ -95,7 +95,7 @@ The example snippet below shows how the above proposed elements would be used in
 ```
 
 ## Proposed Implementation
-> Note: In the section below, the term `primitive geometries` is used to collectively describe Box, Capusle, Cylinder, Ellipsoid and Sphere geometries.
+> Note: In the section below, the term **primitive geometries** is used to collectively describe Box, Capusle, Cylinder, Ellipsoid and Sphere geometries.
 
 ### Some Architectural Considerations
 
@@ -103,11 +103,11 @@ Below are some key architectural considerations for the implementation of this f
 
  *  The parsing of the proposed SDFormat elements and the Moment of Inertia calculations for primitive geometries (Box, Cylinder, Sphere, Ellipsoid and Capsule) can be implemented as an integral part of `libsdformat`. This would help enable all simulators that rely on SDFormat to utilize this feature.
 
- * In case of 3D meshes being used as geometries, a modular callback-based architecture can be followed where the user can integrate their custom Moments of Inertia calculator.  A [Voxelization-based](#inertia-matrix-calculation-with-voxelization-for-3d-mesh) and an integration-based numerical method were explored for computing the inertial properties (mass, mass matrix and center of mass) of 3D meshes.
+ * In case of 3D meshes being used as geometries, a modular callback-based architecture can be followed where the user can integrate their custom Moments of Inertia calculator. [Two methods](#proposed-mesh-inertia-calculation-methods) were explored computing the inertial properties (mass, mass matrix and center of mass) of 3D meshes: a [Voxelization-based] and an integration-based numerical method.
 
  * For links where `<inertial>` tag is not set, the inertial calculations would be omitted if `<static>` is set to true. [By default](https://github.com/gazebosim/sdformat/blob/4530dba5e83b5ee7868156d3040e7554f93b19a6/src/Link.cc#L164) it is set as \\(I\_{xx}=I\_{yy}=I\_{zz}=1\\) and \\(I\_{xy}=I\_{yz}=I\_{xz}=0\\).
 
- * The collision geometry of the link would used for all the inertial calculations. In case of multiple collisions, the inertial pose of each collision would be set in the link frame (if not already done) and then inertials would be aggregated using the `+` operator from the `gz::math::Inertial` class. If, however, no collisions are provided, an error would be thrown. 
+ * The collision geometry of the link would used for all the inertial calculations. In case of multiple collisions, the inertial pose of each collision would be set in the link frame (if not already done) and then inertials would be aggregated using the `+` operator from the `gz::math::Inertial` class. If, however, no collisions are provided, an `ELEMENT_MISSING` error would be thrown. 
 
 ### Implemetation for Primitive Geometries
 A `std::optional<gz::math::Inertiald> CalculateInertial(double density)` function would be added to the classes of all the Geometry Types which would be supported by this feature (Box, Capsule, Cylinder, Ellipsoid, Sphere and Mesh). For all the types except Mesh, existing [`MassMatrix()`](https://github.com/gazebosim/gz-math/blob/2dd5ab6f9e0b7b3220723c5fa5f4f763746c0851/include/gz/math/detail/Capsule.hh#L100) functions from the `gz::math` class of the respective geometry would be used for their inertial calculations.
@@ -205,7 +205,7 @@ Functions to get and register a custom inertia calculator is provided through th
 
 ### Configuring the `CalculateInertial()` function behavior
 
-`CalculateInertial()` functions are also added to the `sdf::Root`, `sdf::World`, `sdf::Model`, `sdf::Link`, `sdf::Collision` and then `sdf::Geometry` classes. Calling the `CalculateInertial()` function of any class, in turn recursively calls the `CalculateInertial()` for each element below it down the chain. For eg, generally a user might call the `Root::CalculateInertial()` which would in turn call `World::CalculateInertials()` for all the worlds which in turn calls the `Model::CaluclateInertials()` for all the models in the world and so on until the final `CalculateInertial()` for the respective geometry type is called where the chain ends.
+`CalculateInertial()` functions are also added to the `sdf::Root`, `sdf::World`, `sdf::Model`, `sdf::Link`, `sdf::Collision` and `sdf::Geometry` classes. Calling the `CalculateInertial()` function of any class, in turn recursively calls the `CalculateInertial()` for each element below it down the chain. For eg, generally a user might call the `Root::CalculateInertial()` which further calls `World::CalculateInertials()` for all the worlds which in turn calls the `Model::CaluclateInertials()` for all the models in the world and so on until the final `CalculateInertial()` for the respective geometry type is called where the chain ends.
 
 The `sdf::ParserConfig` object is sent down the `CalculateInertial()` chain as a function parameter and is used to get the configuration information like the registered Custom Inertia Calculator. An `enum class` would be added to the `sdf::ParserConfig` with values that would allow the user to configure the behavior of the `CalculateInertial()` function:
 
