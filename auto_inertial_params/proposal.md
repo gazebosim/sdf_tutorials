@@ -231,13 +231,13 @@ Setting values from the above enum for the `sdf::ParserConfig` object, the user 
 
 ### Voxelization-based method
 
-Voxels are the 3D equivalent of a pixel in 2D. Voxels can be arranged in ‘Voxel Grids’ which are the 3D equivalent of a structured image using pixels. 
+Voxels are the 3D equivalent of a pixel in 2D<sup>[\[1\]](#References)</sup>. Voxels can be arranged in ‘Voxel Grids’ <sup>[\[2, 3\]](#References)</sup> which are the 3D equivalent of a structured image using pixels. 
 
 During the voxelization of a point cloud or mesh, all the points in the 3D data are intersected with a Voxel Grid. The voxels which contain a point of the mesh are kept while others are zeroed out(discarded). This way, we are left with a voxelized mesh that closely resembles the original mesh.
 
-Voxelization of meshes/point cloud data is widely used for mesh processing. It can be used for feature extraction, occupancy analysis, asset generation, surface simplification, etc. 
+Voxelization of meshes/point cloud data is widely used for mesh processing. It can be used for feature extraction, occupancy analysis, asset generation, surface simplification, etc.<sup>[\[4\]](#References)</sup>
 
-### Moment of Inertia Matrix Calculation
+#### Moment of Inertia Matrix Calculation
 
 The Moment of Inertia Matrix of an object is a 3x3 symmetric matrix. This means for all elements in a Moment of Inertia Matrix, I:
 
@@ -282,6 +282,18 @@ I\_{23}  = I\_{yz} = \rho\int -yzdv = I\_{zy} = I\_{32} \\\
  * Voxelization is more intuitive way of moment of inertia calculations as compared to other integral methods.
 
 ### Integration-based numerical method
-It uses Gauss’s Theorem and Greene’s Theorem of integration to convert volume integrals to surface integrals (Gauss’s Theorem) and then surface integrals to line integrals(Greene’s Theorem). More about this approach can be found [here](https://www.geometrictools.com/Documentation/PolyhedralMassProperties.pdf)
+It uses Gauss’s Theorem and Greene’s Theorem of integration to convert volume integrals to surface integrals (Gauss’s Theorem) and then surface integrals to line integrals(Greene’s Theorem)<sup>[\[5\]](#References)</sup>.
 This method works for triangle meshes which are simple water-tight polyhedrons. Currently, the origin of the mesh being used needs to be set at the geometric centre to obtain the correct value.
 Since this method uses the vertex data for calculations, a high vertex count would be required for near-ideal values. For eg, in case of a cylinder, it was observed that with a vertex count of 4096, the inertial values obtained were withtin a 0.005 tolerance of the ideal values.
+
+## References
+
+ * [1]: https://en.wikipedia.org/wiki/Voxel
+
+ * [2]: https://davidstutz.de/efficiently-voxelizing-watertight-meshes-into-occupancy-grids-and-signed-distance-functions/\
+
+ * [3]: https://towardsdatascience.com/how-to-voxelize-meshes-and-point-clouds-in-python-ca94d403f81d
+
+ * [4]: https://blog.spatial.com/the-main-benefits-and-disadvantages-of-voxel-modeling
+
+ * [5]: https://www.geometrictools.com/Documentation/PolyhedralMassProperties.pdf
