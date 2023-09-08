@@ -77,7 +77,7 @@ effortless generation of accurate simulations.
 
 To specify the `<inertial>` element of a `<link>` in SDFormat, the user needs to add the 
 `<mass>`, `<pose>`, and `<inertia>` tags. Here `<mass>` is the mass 
-of the link and `<pose>` is the pose of the Centre of Mass with respect to the link frame. 
+of the link and `<pose>` is the pose of the center of Mass with respect to the link frame. 
 The `<inertia>` tag, on the other hand, needs to enclose the following 6 tags:
 
  * `<ixx>` (Moment of Inertia)
@@ -157,7 +157,7 @@ Below are some key architectural considerations for the implementation of this f
  * In case of 3D meshes being used as geometries, a modular callback-based architecture 
  can be followed where the user can integrate their custom Moments of Inertia calculator. 
  [Two methods](#proposed-mesh-inertia-calculation-methods) were explored computing the 
- inertial properties (mass, mass matrix and center of mass) of 3D meshes: a [Voxelization-based] 
+ inertial properties (mass, mass matrix and center of mass) of 3D meshes: a [Voxelization-based](#voxelization-based-method)
  and an integration-based numerical method.
 
  * For links where `<inertial>` tag is not set, the inertial calculations would be omitted if 
@@ -323,7 +323,7 @@ of a structured image using pixels.
 
 During the voxelization of a point cloud or mesh, all the points in the 3D data are intersected 
 with a Voxel Grid. The voxels which contain a point of the mesh are kept while others are zeroed 
-out(discarded). This way, we are left with a voxelized mesh that closely resembles the original mesh.
+out (discarded). This way, we are left with a voxelized mesh that closely resembles the original mesh.
 
 Voxelization of meshes/point cloud data is widely used for mesh processing. It can be used for 
 feature extraction, occupancy analysis, asset generation, surface simplification, etc.<sup>[\[4\]](#References)</sup>
@@ -386,16 +386,20 @@ I\_{23}  = I\_{yz} = \rho\int -yzdv = I\_{zy} = I\_{32} \\\
  compared to other integral methods.
 
 ### Integration-based numerical method
-It uses Gauss’s Theorem and Greene’s Theorem of integration to convert volume 
-integrals to surface integrals (Gauss’s Theorem) and then surface integrals to line 
-integrals(Greene’s Theorem)<sup>[\[5\]](#References)</sup>.
+This method utilizes Gauss’s Theorem and Greene’s Theorem of integration. First, we convert volume 
+integrals to surface integrals using Gauss’s Theorem and then surface integrals to line 
+integrals using Greene’s Theorem<sup>[\[5\]](#References)</sup>.
 This method works for triangle meshes which are simple water-tight polyhedrons. 
-Currently, the origin of the mesh being used needs to be set at the geometric centre 
+Currently, the origin of the mesh being used needs to be set at the geometric center 
 to obtain the correct value.
-Since this method uses the vertex data for calculations, a high vertex count would be 
-required for near-ideal values. For eg, in case of a cylinder, it was observed that with 
-a vertex count of 4096, the inertial values obtained were withtin a 0.005 tolerance 
-of the ideal values.
+
+#### Some Key Points Regarding the Integration-based numerical method
+
+ * Water-tight triangle meshes are required for the Mesh Inertia Calculator.
+
+ * The inertia in this method is calculated about the mesh origin. Since the link inertia value needs to be about the Center of Mass, the mesh origin needs to be set at the Center of Mass (Centroid) of the mesh.
+
+ * Since this method utilizes the mesh's vertex data for calculations, a high vertex count would be needed for near-ideal values. However, it is recommended to use basic shapes with the geometry tag (Box, Capsule, Cylinder, Ellipsoid, and Sphere) as collision geometries to reduce the load of calculations. For eg: in this integration test a cylinder mesh with 4096 vertices was used which resulted in inertia values withing a 0.005 tolerance of ideal.
 
 ## References
 
