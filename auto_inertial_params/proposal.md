@@ -3,7 +3,7 @@
 # Automatically Compute Inertia Tensor Proposal
 
 * **Authors**:
-Jasmeet Singh `<jasmeet0915@gmail.com>`, Addisu Taddese `<addisu@openrobotics.org>`, Dharini Dutia `<dharinidutia@openrobotics.org>`
+Jasmeet Singh `<jasmeet0915@gmail.com>`, Addisu Taddese `<addisu@openrobotics.org>`, Dharini Dutia `<dharini@openrobotics.org>`
 * **Status**: Draft
 * **SDFormat Version**: 1.11
 * **`libSDFormat` Version**: 14.X 
