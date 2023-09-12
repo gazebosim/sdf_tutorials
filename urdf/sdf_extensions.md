@@ -37,7 +37,7 @@ results in:
 
 ```xml
 <!--SDFormat-->
-<sdf version='1.9'>
+<sdf version='1.11'>
   <model name='no_ref_example'>
     <static>true</static>
     <plugin name='testPlugin' filename='testFileName'/>
