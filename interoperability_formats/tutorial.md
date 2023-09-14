@@ -1,6 +1,6 @@
 # Interoperability with other modeling formats
 
-SDFormat can interoperate with other formats, in particular with [USD](https://graphics.pixar.com/usd/release/index.html)
+SDFormat can interoperate with other formats, in particular with [USD](https://openusd.org/release/index.html)
 and [MJCF](https://mujoco.readthedocs.io/en/latest/modeling.html).
 We have created command line tools to convert between these formats.
 The tools take as input SDFormat files that works in Gazebo Sim and produce as output a MJCF/USD files
@@ -10,8 +10,8 @@ that work in Mujoco/NVIDIA Omniverse with approximately equivalent results; and 
 
 [gz-usd](https://github.com/gazebosim/gz-usd) provides tools to convert between SDF and USD files.
 
- - [How to install gz-usd](https://github.com/gazebosim/gz-usd/tree/ahcorde/update/readme#requirements)
- - [Tutorials](https://github.com/gazebosim/gz-usd/blob/ahcorde/update/readme/tutorials/convert_sdf_to_usd.md)
+ - [How to install gz-usd](https://github.com/gazebosim/gz-usd#requirements)
+ - [Tutorials](https://github.com/gazebosim/gz-usd/blob/main/tutorials/convert_sdf_to_usd.md)
 
 ## MJCF
 
