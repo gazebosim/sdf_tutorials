@@ -284,6 +284,15 @@
       <skill>advanced</skill>
     </tutorial>
 
+    <tutorial title="Proposal for Automatic Moments of Inertia Calculations" ref='auto_inertial_params_proposal' type='proposal'>
+      <markdown version="1.11">auto_inertial_params/proposal.md</markdown>
+      <description>Enabling automatic calculations for inertial parameters</description>
+      <tags>
+        <tag>proposal</tag>
+      </tags>
+      <skill>advanced</skill>
+    </tutorial>
+
  </tutorials>
 
   <!-- *************************************** -->
@@ -337,6 +346,7 @@
         <tutorial>better_pose_proposal</tutorial>
         <tutorial>added_mass_proposal</tutorial>
         <tutorial>mimic_proposal</tutorial>
+        <tutorial>auto_inertial_params_proposal</tutorial>
       </tutorials>
     </category>
 
