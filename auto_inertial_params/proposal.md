@@ -54,7 +54,7 @@ inertial parameters of their models:
  * Using CAD software like [Fusion360](https://www.autodesk.in/products/fusion-360/overview?term=1-YEAR&tab=subscription) or 
  [Solidworks](https://www.solidworks.com/). Many users design their robot models 
  using such CAD software which provide plugins that automatically generate 
- the URDF/SDF for their model. Such plugins handle the calculation of the 
+ the URDF/SDFormat for their model. Such plugins handle the calculation of the 
  inertial parameters. For example, Fusion360 provides the 
  [Fusion2URDF](https://github.com/syuntoku14/fusion2urdf) plugin which 
  automatically generates a URDF with all the inertial parameters.
@@ -62,7 +62,7 @@ inertial parameters of their models:
  * Another way is to use 3rd-party Mesh Processing Software like [Meshlab](https://www.meshlab.net/). 
  Such softwares take the mesh file as an input and 
  provide the inertial parameters as an output which can then be copied and pasted into 
- the URDF/SDF file. This is also the method that was suggested 
+ the URDF/SDFormat file. This is also the method that was suggested 
  in official [Classic Gazebo docs](https://classic.gazebosim.org/tutorials?cat=build_robot&tut=inertia).
 
 Both of these ways create a dependency on external software and might be complicated for beginners. 
@@ -220,10 +220,10 @@ class CustomInertiaCalcProperties::Implementation
   /// \brief Density of the mesh. 1000 kg/m^3 by default
   public: double density{1000.0};
 
-  /// \brief Optional SDF mesh object. Default is std::nullopt
+  /// \brief Optional SDFormat mesh object. Default is std::nullopt
   public: std::optional<sdf::Mesh> mesh{std::nullopt};
 
-  /// \brief SDF element pointer to <auto_inertia_params> tag.
+  /// \brief SDFormat element pointer to <auto_inertia_params> tag.
   /// This can be used to access custom params for the
   /// Inertia Caluclator
   public: sdf::ElementPtr inertiaCalculatorParams{nullptr};
@@ -308,10 +308,11 @@ enum class ConfigureCalculateInertial
 Setting values from the above enum for the `sdf::ParserConfig` object, the user can 
 configure the `CalculateInertial()` functions. For eg: if the configuration is set to 
 `SKIP_CALCULATION_IN_LOAD` (which would be the default configuration), then the 
-`Root::CalculateInertial()` won't be called from within the `Root::Load()`. The user 
-would need to call the `Root:CalculateInertial()` separately after the load is complete. 
-This is also recommended as the inertia calculation uses the `PoseGraph` to resolve the 
-inertial poses for different collisions if they are not in the link frame. 
+`Root::CalculateInertial()` won't be called from within the `Root::Load()`. 
+Since the inertia calculations require a valid `PoseGraph` to be built for resolving the
+inertial poses in the link frame, this configuration would allow the user to skip inertial
+calculation in load if they know the DOM object doesn't have a valid `PoseGraph`. `Root:CalculateInertial()` can then be called separately after the load is complete and
+a valid `PoseGraph` is available.
 
 ## Proposed Mesh Inertia Calculation Methods
 
@@ -394,6 +395,7 @@ Currently, the origin of the mesh being used needs to be set at the geometric ce
 to obtain the correct value.
 
 #### Some Key Points Regarding the Integration-based numerical method
+These points are listed according to the [reference implementation](https://github.com/gazebosim/gz-sim/blob/gz-sim8/src/MeshInertiaCalculator.cc) in `gz-sim` 
 
  * Water-tight triangle meshes are required for the Mesh Inertia Calculator.
 
