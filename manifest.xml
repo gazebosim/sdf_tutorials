@@ -284,7 +284,7 @@
       <skill>advanced</skill>
     </tutorial>
 
-    <tutorial title="Proposal for Automatic Moment of Inertia Calculations" ref='auto_inertial_params_proposal' type='proposal'>
+    <tutorial title="Proposal for Automatic Moments of Inertia Calculations" ref='auto_inertial_params_proposal' type='proposal'>
       <markdown version="1.11">auto_inertial_params/proposal.md</markdown>
       <description>Enabling automatic calculations for inertial parameters</description>
       <tags>

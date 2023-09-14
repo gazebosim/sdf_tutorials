@@ -1,6 +1,6 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 
-# Automatically Compute Inertia Tensor Proposal
+# Proposal for Automatic Moments of Inertia Calculations
 
 * **Authors**:
 Jasmeet Singh `<jasmeet0915@gmail.com>`, Addisu Taddese `<addisu@openrobotics.org>`, Dharini Dutia `<dharini@openrobotics.org>`
