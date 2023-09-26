@@ -274,7 +274,7 @@
     </tutorial>
 
     <tutorial title="Mimic constraint to replace the Gearbox joint type" ref='mimic_proposal' type='proposal'>
-      <markdown version="1.10">mimic_constraint/proposal.md</markdown>
+      <markdown version="1.11">mimic_constraint/proposal.md</markdown>
       <description>
           Proposal for a mimic constraint between joint axes to replace the Gearbox joint type.
       </description>
