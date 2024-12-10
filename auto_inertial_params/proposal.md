@@ -103,7 +103,7 @@ This proposal suggests the addition of the following elements and attributes in 
  different material types for different collisions. By default, the value of density would be set
  equal to that of water which is 1000 kg/m^3. A `//link/inertial/density` element would also be
  added in the spec to allow users to specify the density values on a link level instead of
- specifying the same values for each collision. Note that if `//link/inertial/mass is also
+ specifying the same values for each collision. Note that if `//link/inertial/mass` is also
  specified, the link's inertial parameters will be scaled to match the input mass while
  respecting the ratio of collision density values.
 
