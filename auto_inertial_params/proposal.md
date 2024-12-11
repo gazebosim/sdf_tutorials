@@ -104,7 +104,7 @@ This proposal suggests the addition of the following elements and attributes in 
  equal to that of water which is 1000 kg/m^3. A `//link/inertial/density` element would also be
  added in the spec to allow users to specify the density values on a link level instead of
  specifying the same values for each collision. Note that in libSDFormat versions equal to or newer
- than 14.7.0 and 15.2.0, if `//link/inertial/mass` is also  specified, the link's inertial
+ than 14.7.0 and 15.2.0, if `//link/inertial/mass` is also specified, the link's inertial
  parameters will be scaled to match the input mass while respecting the ratio of collision density
  values.
 
