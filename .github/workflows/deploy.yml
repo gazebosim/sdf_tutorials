@@ -43,6 +43,9 @@ jobs:
 
   # Deployment job
   deploy:
+    # The workflow upto this point is good for generating a preview,
+    # but only commit to deploy if we are on the master branch (not a pull request).
+    if: github.ref == 'refs/heads/master'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
