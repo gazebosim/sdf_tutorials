@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="box">
+    <pose>0 0 0.5 0 0 0</pose>
+    <static>false</static>
+
+    <link name="link">
+      ...
+    </link>
+
+    <joint type="revolute" name="my_joint">
+      ...
+    </joint>
+
+    <plugin filename="libMyPlugin.so" name="my_plugin"/>
+
+  </model>
+</sdf>

@@ -1,0 +1,68 @@
+<div class="container">
+<a id="download"></a>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Latest version: <%=releaseVersion%><small> (<%=releaseDate%>)</small></h1>
+        <p style="margin-top: 20px">
+        <a class="btn btn-primary btn-lg" role="button"
+          style="margin-bottom:4px" data-toggle="modal"
+          data-target="#binaryModal"><span class="glyphicon glyphicon-download-alt"></span> Debian <small>(.deb)</small></a>
+ 
+        <a class="btn btn-primary btn-lg" role="button"
+          style="margin-bottom:4px"
+          onclick="_gaq.push(['_trackEvent', 'Download', 'source-tar.bz2', <%=releaseTar%>]);"
+          href='<%="https://osrf-distributions.s3.amazonaws.com/sdformat/releases/#{releaseTar}"%>'><span class="glyphicon glyphicon-download-alt"></span> Source <small>(.tar.bz2)</small></a>
+        </p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <p class="text-left"><a href="https://github.com/osrf/sdformat/blob/master/Changelog.md">Change Log</a> | <a href="/tutorials/developers/install">Install</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-5 col-md-offset-1 text-center visible-lg">
+    <img src="<%= asset_path 'images/download-box.png'%>"
+         class="img-responsive" alt="download-box"/>
+  </div>
+
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h3>Get the Source</h3>
+    <p>If you'd like the full source, you can check it out from our <a href="https://github.com/osrf/sdformat">Github repository</a>, or clone it with this command:</p>
+    <p class="well well-sm">git clone https://github.com/osrf/sdformat</p>
+    <p>Want to contribute? <a href="https://github.com/osrf/sdformat/fork">Fork</a> the SDFormat repository.</p>
+  </div>
+</div>
+
+<br/>
+
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Past Releases</h1>
+      <p>This is a currated list of releases. Visit the <a href='https://gazebosim.org/distributions/sdformat/releases/'>S3 bucket</a> for a complete list</p>
+      <table class='table table-striped table-hover'>
+        <tr><th>Version</th><th>Date</th><th class='text-center'>Tarball</th></tr>
+        <% versions.each do |version| %>
+          <% if !version[1][:tarball].empty? %>
+            <tr>
+            <td><%= version[0]%></td>
+            <td><%= version[1][:release]%></td>
+            <td class='text-center'><a href='<%= version[1][:tarball]%>'><span class="glyphicon glyphicon-cloud-download"></span></a></td>
+            </tr>
+          <%end%>
+        <%end%>
+      </table>
+    </div>
+  </div>
+
+<%= render "/_download_modal.*" %>
+</div>
+

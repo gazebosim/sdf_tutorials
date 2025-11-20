@@ -1,0 +1,22 @@
+.jumbotron {
+  background-size: cover;
+  padding-bottom: 5px;
+  padding: 0;
+}
+
+.jumboopaque {
+  padding: 20px;
+  background-color: rgba(240,240,240, 0.9);
+}
+
+.jumbo-list {
+  padding-left: 0px;
+}
+
+.jumbo-list-item {
+  padding: 10px;
+  min-width: 100px !important;
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 16px;
+}

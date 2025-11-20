@@ -1,0 +1,29 @@
+// Script to redirect old sdf_web_app URLs to the statically generated pages. The following examples show the redirection rules:
+// 1. `/spec?ver=1.12&elem=world` to `/spec/1.12/world`
+// 2. `/tutorials?tut=specify_pose&cat=specification` to `/tutorials/specification/specify_pose`
+// 3. `/tutorials?cat=pose_semantics_docs&` to `/tutorials/pose_semantics_docs`
+// 4. `/tutorials?tut=pose_frame_semantics_proposal&ver=1.7&cat=pose_semantics_docs&` to `/tutorials/pose_semantics_docs/pose_frame_semantics_proposal/1.7`
+$(function () {
+  var path = window.location.pathname;
+  var params = new URLSearchParams(window.location.search);
+
+  if (path.startsWith('/spec')) {
+    var ver = params.get('ver');
+    var elem = params.get('elem');
+    if (ver && elem) {
+      window.location.href = '/spec/' + ver + '/' + elem;
+    }
+  } else if (path.startsWith('/tutorials')) {
+    var tut = params.get('tut');
+    var cat = params.get('cat');
+    var ver = params.get('ver');
+
+    if (tut && cat && ver) {
+      window.location.href = '/tutorials/' + cat + '/' + tut + '/' + ver;
+    } else if (tut && cat) {
+      window.location.href = '/tutorials/' + cat + '/' + tut;
+    } else if (cat) {
+      window.location.href = '/tutorials/' + cat;
+    }
+  }
+})

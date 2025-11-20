@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<%= render '/_head.html.erb' %>
+<body>
+
+<a id="top"></a>
+
+<div class="wrap">
+<%= render '/_top_nav.html.erb' %>
+
+<% if @item[:content_layout] %>
+  <%= render "/#{@item[:content_layout]}.*" %>
+<% else %>
+  <%= yield %>
+<% end %>
+</div>
+
+<%= render '/_footer.html.erb' %>
+</body>
+</html>
+

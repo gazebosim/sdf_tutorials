@@ -1,0 +1,33 @@
+<?xml version='1.0'?>
+<sdf version='__VERSION__'>
+  <world name='default'>
+    ...
+  </world>
+</sdf>
+
+or
+
+<?xml version='1.0'?>
+<sdf version='__VERSION__'>
+  <model name='my_model'>
+    ...
+  </model>
+</sdf>
+
+or 
+
+<?xml version='1.0'?>
+<sdf version='__VERSION__'>
+  <actor name='my_actor'>
+    ...
+  </actor>
+</sdf>
+
+or
+
+<?xml version='1.0'?>
+<sdf version='__VERSION__'>
+  <light name='my_light'>
+    ...
+  </light>
+</sdf>

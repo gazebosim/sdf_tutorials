@@ -1,0 +1,19 @@
+# A list of file extensions that Nanoc will consider to be textual rather than
+# binary. If an item with an extension not in this list is found,  the file
+# will be considered as binary.
+text_extensions: [ 'adoc', 'asciidoc', 'atom', 'coffee', 'css', 'erb', 'haml', 'handlebars', 'hb', 'htm', 'html', 'js', 'less', 'markdown', 'md', 'ms', 'mustache', 'org', 'php', 'rb', 'rdoc', 'sass', 'scss', 'slim', 'tex', 'txt', 'xhtml', 'xml' ]
+
+prune:
+  auto_prune: true
+
+extra_watchers:
+  - .external_data
+
+
+data_sources:
+  - type: filesystem
+    encoding: utf-8
+  - type: sdf_spec
+    items_root: /spec
+  - type: sdf_documentation
+    items_root: /tutorials

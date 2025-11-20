@@ -1,0 +1,247 @@
+releaseVersion: "15.0.0"
+releaseDate: "25 Sep 2024"
+releaseTar: "sdformat-15.0.0.tar.bz2"
+
+defaultVersion: '1.12'
+knownVersions: ['1.4', '1.5', '1.6', '1.7', '1.8', '1.9', '1.10', '1.11', '1.12']
+
+versions:
+  15.0.0:
+      release: "2024-09-25"
+      tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-15.0.0.tar.bz2"
+      api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/15.0.0/index.html"
+
+  14.0.0:
+    release: "2023-09-29"
+    tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-14.0.0.tar.bz2"
+    api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/14.0.0/index.html"
+
+  13.6.0:
+    release: "2023-08-30"
+    tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-13.6.0.tar.bz2"
+    api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/13.6.0/index.html"
+
+  13.5.0:
+        release: 2023-05-18"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-13.5.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/13.5.0/index.html"
+
+  13.4.0:
+        release: "2023-03-03"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-13.4.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/13.4.0/index.html"
+
+  13.3.0:
+        release: "2023-02-07"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-13.3.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/13.3.0/index.html"
+
+  13.2.0:
+        release: "2022-10-20"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-13.2.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/13.2.0/index.html"
+
+  13.1.0:
+        release: "2022-10-12"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-13.1.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/13.1.0/index.html"
+
+  13.0.0:
+        release: "2022-09-23"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-13.0.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/13.0.0/index.html"
+
+  12.7.0:
+        release: "2023-02-06"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-12.7.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/12.7.0/index.html"
+
+  12.6.0:
+        release: "2022-09-07"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-12.6.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/12.6.0/index.html"
+
+  12.5.0:
+        release: "2022-05-12"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-12.5.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/12.5.0/index.html"
+
+  12.4.0:
+        release: "2022-03-29"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-12.4.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/12.4.0/index.html"
+
+  12.3.0:
+        release: "2021-12-01"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-12.3.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/12.3.0/index.html"
+
+  12.2.0:
+        release: "2021-11-23"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-12.2.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/12.2.0/index.html"
+
+  12.1.0:
+        release: "2021-11-09"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-12.1.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/12.1.0/index.html"
+
+  12.0.0:
+        release: "2021-09-30"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-12.0.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/12.0.0/index.html"
+
+  11.2.0:
+        release: "2021-06-23"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-11.2.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/11.2.0/index.html"
+
+  11.1.0:
+        release: "2021-04-30"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-11.1.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/11.1.0/index.html"
+
+  11.0.0:
+        release: "2021-03-31"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-11.0.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/11.0.0/index.html"
+
+  10.5.0:
+        release: "2021-05-18"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-10.5.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/10.5.0/index.html"
+
+  10.4.0:
+        release: "2021-04-06"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-10.4.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/10.4.0/index.html"
+
+  10.3.0:
+        release: "2021-02-18"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-10.3.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/10.3.0/index.html"
+
+  10.2.0:
+        release: "2021-01-13"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-10.2.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/10.2.0/index.html"
+
+  10.1.0:
+        release: "2020-12-15"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-10.1.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/10.1.0/index.html"
+
+  10.0.0:
+        release: "2020-09-29"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-10.0.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/10.0.0/index.html"
+
+  9.9.0:
+        release: "2022-09-07"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-9.9.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/9.9.0/index.html"
+
+  9.8.0:
+        release: "2022-04-26"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-9.8.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/9.8.0/index.html"
+
+  9.7.0:
+        release: "2021-11-03"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-9.7.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/9.7.0/index.html"
+
+  9.6.0:
+        release: "2021-08-18"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-9.6.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/9.6.0/index.html"
+
+  9.5.0:
+        release: "2021-02-11"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-9.5.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/9.5.0/index.html"
+
+  9.4.0:
+        release: "2021-01-11"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-9.4.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/9.4.0/index.html"
+
+  9.3.0:
+        release: "2020-09-07"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-9.3.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/9.3.0/index.html"
+
+  9.2.0:
+        release: "2020-04-02"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-9.2.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/9.2.0/index.html"
+
+  9.1.0:
+        release: "2020-01-30"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-9.1.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/9.1.0/index.html"
+
+  9.0.0:
+        release: "2019-12-10"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-9.0.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/9.0.0/index.html"
+
+  8.6.1:
+        release: "2019-12-05"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-8.6.1.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/8.2.0/index.html"
+
+  8.2.0:
+        release: "2019-06-19"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-8.2.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/8.2.0/index.html"
+
+  6.2.0:
+        release: "2019-01-18"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-6.2.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/6.0.0/index.html"
+
+  6.0.0:
+        release: "2018-01-25"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-6.0.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/6.0.0/index.html"
+
+  5.3.0:
+        release: "2017-11-13"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-5.3.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/5.3.0/index.html"
+
+  4.4.0:
+        release: "2017-10-26"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-4.4.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/4.0.0/index.html"
+
+  4.0.0:
+        release: "2016-01-12"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-4.0.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/4.0.0/index.html"
+
+  3.7.0:
+        release: "2015-11-20"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-3.7.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/3.0/index.html"
+
+  3.0.0:
+        release: "2015-07-24"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-3.0.0.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/3.0/index.html"
+
+  2.3.2:
+        release: "2015-03-13"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-2.3.2.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/2.0/index.html"
+
+  2.0.1:
+        release: "2014-07-11"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-2.0.1.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/2.0/index.html"
+
+  1.4.9:
+        release: "2014-07-11"
+        tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-1.4.9.tar.bz2"
+        api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/1.4/index.html"

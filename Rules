@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
+compile '/**/*.html' do
+  layout '/default.*'
+
+  if item.identifier =~ '**/index.*'
+    write item.identifier.to_s
+  else
+    write item.identifier.without_ext + '/index.html'
+  end
+end
+
+passthrough '/tutorials/**/*.png'
+
+compile '/tutorials/**/*.md' do
+  layout '/default.html.erb'
+
+  if item.identifier.to_s.end_with?('/index.md')
+    write '/tutorials/index.html'
+  else
+    write item.identifier.without_ext + '/index.html'
+  end
+end
+
+compile '/**/*.erb' do
+  filter :erb
+  layout '/default.*'
+
+  if item.identifier =~ '**/index.*'
+    write item.identifier.without_ext + '.html'
+  else
+    write item.identifier.without_ext + '/index.html'
+  end
+end
+
+compile '/spec/**/*.spec' do
+  layout '/spec.*'
+  if item.identifier =~ '**/index.*'
+    write item.identifier.without_ext + '.html'
+  else
+    write item.identifier.without_ext + '/index.html'
+  end
+end
+
+compile '/**/*.css.scss' do
+  filter :dart_sass, syntax: 'scss'
+  write item.identifier.without_ext
+end
+
+# Leave yaml files out
+ignore '/_data/*.yaml'
+ignore '/_spec_files/*'
+
+passthrough '/**/*'
+
+layout '/**/*', :erb

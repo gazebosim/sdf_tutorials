@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'>
+  <xsd:include schemaLocation='http://sdformat.org/schemas/types.xsd'/>
+  <xsd:include schemaLocation='http://sdformat.org/schemas/link.xsd'/>
+  <xsd:include schemaLocation='http://sdformat.org/schemas/joint.xsd'/>
+  <xsd:include schemaLocation='http://sdformat.org/schemas/plugin.xsd'/>
+  <xsd:element name='actor'>
+    <xsd:complexType>
+      <xsd:choice maxOccurs='unbounded'>
+        <xsd:choice  minOccurs='0' maxOccurs='1'>
+        <xsd:element name='static' type='xsd:boolean'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[Actors should be static, in terms of physics simulation.]]>
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='0' maxOccurs='1'>
+        <xsd:element name='pose' type='pose'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[Origin of the actor]]>
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='1' maxOccurs='1'>
+        <xsd:element name='skin'>
+          <xsd:complexType>
+            <xsd:choice maxOccurs='unbounded'>
+              <xsd:choice  minOccurs='1' maxOccurs='1'>
+              <xsd:element name='filename' type='xsd:string'>
+              </xsd:element>
+              </xsd:choice>
+              <xsd:choice  minOccurs='0' maxOccurs='1'>
+              <xsd:element name='scale' type='xsd:double'>
+              </xsd:element>
+              </xsd:choice>
+            </xsd:choice>
+          </xsd:complexType>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='1' maxOccurs='unbounded'>
+        <xsd:element name='animation'>
+          <xsd:complexType>
+            <xsd:choice maxOccurs='unbounded'>
+              <xsd:choice  minOccurs='1' maxOccurs='1'>
+              <xsd:element name='filename' type='xsd:string'>
+              </xsd:element>
+              </xsd:choice>
+              <xsd:choice  minOccurs='0' maxOccurs='1'>
+              <xsd:element name='scale' type='xsd:double'>
+              </xsd:element>
+              </xsd:choice>
+              <xsd:choice  minOccurs='0' maxOccurs='1'>
+              <xsd:element name='interpolate_x' type='xsd:boolean'>
+              </xsd:element>
+              </xsd:choice>
+            </xsd:choice>
+            <xsd:attribute name='name' type='xsd:string' use='required' >
+            </xsd:attribute>
+          </xsd:complexType>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='1' maxOccurs='1'>
+        <xsd:element name='script'>
+          <xsd:complexType>
+            <xsd:choice maxOccurs='unbounded'>
+              <xsd:choice  minOccurs='0' maxOccurs='1'>
+              <xsd:element name='loop' type='xsd:boolean'>
+              </xsd:element>
+              </xsd:choice>
+              <xsd:choice  minOccurs='0' maxOccurs='1'>
+              <xsd:element name='delay_start' type='xsd:double'>
+              </xsd:element>
+              </xsd:choice>
+              <xsd:choice  minOccurs='0' maxOccurs='1'>
+              <xsd:element name='auto_start' type='xsd:boolean'>
+              </xsd:element>
+              </xsd:choice>
+              <xsd:choice  minOccurs='0' maxOccurs='unbounded'>
+              <xsd:element name='trajectory'>
+                <xsd:complexType>
+                  <xsd:choice maxOccurs='unbounded'>
+                    <xsd:choice  minOccurs='0' maxOccurs='unbounded'>
+                    <xsd:element name='waypoint'>
+                      <xsd:complexType>
+                        <xsd:choice maxOccurs='unbounded'>
+                          <xsd:choice  minOccurs='1' maxOccurs='1'>
+                          <xsd:element name='time' type='xsd:double'>
+                          </xsd:element>
+                          </xsd:choice>
+                          <xsd:choice  minOccurs='1' maxOccurs='1'>
+                          <xsd:element name='pose' type='pose'>
+                          </xsd:element>
+                          </xsd:choice>
+                        </xsd:choice>
+                      </xsd:complexType>
+                    </xsd:element>
+                    </xsd:choice>
+                  </xsd:choice>
+                  <xsd:attribute name='id' type='xsd:int' use='required' >
+                  </xsd:attribute>
+                  <xsd:attribute name='type' type='xsd:string' use='required' >
+                  </xsd:attribute>
+                </xsd:complexType>
+              </xsd:element>
+              </xsd:choice>
+            </xsd:choice>
+          </xsd:complexType>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:element ref='link'/>
+        <xsd:element ref='joint'/>
+        <xsd:element ref='plugin'/>
+      </xsd:choice>
+      <xsd:attribute name='name' type='xsd:string' use='required' >
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
