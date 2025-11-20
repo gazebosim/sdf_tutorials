@@ -35,7 +35,7 @@ jobs:
       - name: Build site with docker
         run: |
           docker build -t sdf_tutorials .
-          docker run --rm -v ${{ github.workspace }}:/usr/src/app sdf_tutorials bundle nanoc compile
+          docker run --rm -v ${{ github.workspace }}:/usr/src/app sdf_tutorials bundle exec nanoc compile
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
