@@ -5,6 +5,8 @@
 compile '/**/*.html' do
   layout '/default.*'
 
+  filter :relativize_paths, type: :html5
+
   if item.identifier =~ '**/index.*'
     write item.identifier.to_s
   else
@@ -16,6 +18,7 @@ passthrough '/tutorials/**/*.png'
 
 compile '/tutorials/**/*.md' do
   layout '/default.html.erb'
+  filter :relativize_paths, type: :html5
 
   if item.identifier.to_s.end_with?('/index.md')
     write '/tutorials/index.html'
@@ -27,6 +30,7 @@ end
 compile '/**/*.erb' do
   filter :erb
   layout '/default.*'
+  filter :relativize_paths, type: :html5
 
   if item.identifier =~ '**/index.*'
     write item.identifier.without_ext + '.html'
@@ -37,6 +41,7 @@ end
 
 compile '/spec/**/*.spec' do
   layout '/spec.*'
+  filter :relativize_paths, type: :html5
   if item.identifier =~ '**/index.*'
     write item.identifier.without_ext + '.html'
   else
@@ -46,6 +51,7 @@ end
 
 compile '/**/*.css.scss' do
   filter :dart_sass, syntax: 'scss'
+  filter :relativize_paths, type: :css
   write item.identifier.without_ext
 end
 

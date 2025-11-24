@@ -17,3 +17,6 @@ data_sources:
     items_root: /spec
   - type: sdf_documentation
     items_root: /tutorials
+
+base_url: https://sdformat.org
+site_name: sdformat.org
