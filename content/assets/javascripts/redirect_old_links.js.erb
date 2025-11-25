@@ -3,10 +3,9 @@
 // 2. `/tutorials?tut=specify_pose&cat=specification` to `/tutorials/specification/specify_pose`
 // 3. `/tutorials?cat=pose_semantics_docs&` to `/tutorials/pose_semantics_docs`
 // 4. `/tutorials?tut=pose_frame_semantics_proposal&ver=1.7&cat=pose_semantics_docs&` to `/tutorials/pose_semantics_docs/pose_frame_semantics_proposal/1.7`
-$(function () {
+$(function redirect_old_links() {
   var path = window.location.pathname;
   var params = new URLSearchParams(window.location.search);
-
   if (path.startsWith('/spec')) {
     var ver = params.get('ver');
     var elem = params.get('elem');
@@ -25,5 +24,19 @@ $(function () {
     } else if (cat) {
       window.location.href = '/tutorials/' + cat;
     }
+    else if (tut) {
+      <% tutorial_map = @items.find_all("/tutorials/**/*.md").filter_map { |item|
+        [File.basename(item[:ref]), item[:ref]] if item[:ref]
+      }.to_h %>
+      // If we only have the name of the tutorial without the category, look it up in the dictionary of available tutorials
+      const tutorials = {
+        <% tutorial_map.each do |k, v| %> <%= "'#{k}': '#{v}'," %>
+        <% end %>
+      }
+      if (tut in tutorials) {
+        window.location.href = '/tutorials/' + tutorials[tut];
+      }
+    }
   }
+
 })

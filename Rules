@@ -27,6 +27,11 @@ compile '/tutorials/**/*.md' do
   end
 end
 
+compile '/**/*.js.erb' do
+  filter :erb
+  write item.identifier.without_ext
+end
+
 compile '/**/*.erb' do
   filter :erb
   layout '/default.*'
