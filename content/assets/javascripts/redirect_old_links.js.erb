@@ -10,7 +10,7 @@ $(function redirect_old_links() {
   const spec_re = /.*\?=spec.*/
   const tutorials_re = /.*\?tut=.*/
 
-  new_loc = null
+  var new_loc = null
 
   if (spec_re.test(window.location)) {
     var ver = params.get('ver');
