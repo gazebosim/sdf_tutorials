@@ -18,5 +18,12 @@ data_sources:
   - type: sdf_documentation
     items_root: /tutorials
 
-base_url: https://sdformat.org
+base_url: http://localhost:3000
 site_name: sdformat.org
+
+environments:
+  staging:
+    base_url: https://gazebosim.github.io/sdf_tutorials
+
+  production:
+    base_url: https://sdformat.org

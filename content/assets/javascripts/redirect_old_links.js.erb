@@ -9,27 +9,30 @@ $(function redirect_old_links() {
 
   const spec_re = /.*\?=spec.*/
   const tutorials_re = /.*\?tut=.*/
-  if (spec_re.test(window.location)) {
 
+  new_loc = null
+
+  if (spec_re.test(window.location)) {
     var ver = params.get('ver');
     var elem = params.get('elem');
     if (ver && elem) {
-      window.location.href = '/spec/' + ver + '/' + elem;
+      new_loc = '/spec/' + ver + '/' + elem;
+    }
+    else {
+      new_loc = "/404/"
     }
   } else if (tutorials_re.test(window.location)) {
-    console.log("Redir: tut")
     var tut = params.get('tut');
     var cat = params.get('cat');
     var ver = params.get('ver');
 
     if (tut && cat && ver) {
-      window.location.href = '/tutorials/' + cat + '/' + tut + '/' + ver;
+      new_loc = '/tutorials/' + cat + '/' + tut + '/' + ver;
     } else if (tut && cat) {
-      window.location.href = '/tutorials/' + cat + '/' + tut;
+      new_loc = '/tutorials/' + cat + '/' + tut;
     } else if (cat) {
-      window.location.href = '/tutorials/' + cat;
-    }
-    else if (tut) {
+      new_loc = '/tutorials/' + cat;
+    } else if (tut) {
       <% tutorial_map = @items.find_all("/tutorials/**/*.md").filter_map { |item|
         [File.basename(item[:ref]), item[:ref]] if item[:ref]
       }.to_h %>
@@ -39,9 +42,15 @@ $(function redirect_old_links() {
         <% end %>
       }
       if (tut in tutorials) {
-        window.location.href = '/tutorials/' + tutorials[tut];
+        new_loc = '/tutorials/' + tutorials[tut];
+      } else {
+        new_loc = "/404/"
       }
     }
+  }
+
+  if (new_loc) {
+    window.location.href = '<%= @config[:base_url] %>' + new_loc
   }
 
 })

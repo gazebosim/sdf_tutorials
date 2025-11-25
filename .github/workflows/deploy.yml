@@ -32,10 +32,17 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
+      - id: determine_env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+            echo "ENV_TYPE=production" >> $GITHUB_ENV
+          else
+            echo "ENV_TYPE=staging" >> $GITHUB_ENV
+          fi
       - name: Build site with docker
         run: |
           docker build -t sdf_tutorials .
-          docker run --rm -v ${{ github.workspace }}:/usr/src/app sdf_tutorials bundle exec nanoc compile
+          docker run --rm -v ${{ github.workspace }}:/usr/src/app sdf_tutorials bundle exec nanoc compile -e $ENV_TYPE
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
