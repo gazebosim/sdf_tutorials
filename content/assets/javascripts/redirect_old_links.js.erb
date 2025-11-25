@@ -10,16 +10,16 @@ $(function redirect_old_links() {
   const spec_re = /.*\?=spec.*/
   const tutorials_re = /.*\?tut=.*/
 
-  new_loc = null
+  var new_loc = null
 
   if (spec_re.test(window.location)) {
     var ver = params.get('ver');
     var elem = params.get('elem');
     if (ver && elem) {
-      new_loc = '/spec/' + ver + '/' + elem;
+      new_loc = "<%= relative_path_to('/spec/') %>" + ver + '/' + elem;
     }
     else {
-      new_loc = "/404/"
+      new_loc = "<%= relative_path_to('/404/') %>";
     }
   } else if (tutorials_re.test(window.location)) {
     var tut = params.get('tut');
@@ -27,14 +27,14 @@ $(function redirect_old_links() {
     var ver = params.get('ver');
 
     if (tut && cat && ver) {
-      new_loc = '/tutorials/' + cat + '/' + tut + '/' + ver;
+      new_loc = "<%= relative_path_to('/tutorials/') %>" + cat + '/' + tut + '/' + ver;
     } else if (tut && cat) {
-      new_loc = '/tutorials/' + cat + '/' + tut;
+      new_loc = "<%= relative_path_to('/tutorials/') %>" + cat + '/' + tut;
     } else if (cat) {
-      new_loc = '/tutorials/' + cat;
+      new_loc = "<%= relative_path_to('/tutorials/') %>" + cat;
     } else if (tut) {
       <% tutorial_map = @items.find_all("/tutorials/**/*.md").filter_map { |item|
-        [File.basename(item[:ref]), item[:ref]] if item[:ref]
+        [File.basename(item[:ref]), relative_path_to(item)] if item[:ref]
       }.to_h %>
       // If we only have the name of the tutorial without the category, look it up in the dictionary of available tutorials
       const tutorials = {
@@ -42,15 +42,15 @@ $(function redirect_old_links() {
         <% end %>
       }
       if (tut in tutorials) {
-        new_loc = '/tutorials/' + tutorials[tut];
+        new_loc = tutorials[tut];
       } else {
-        new_loc = "/404/"
+        new_loc = "<%= relative_path_to('/404/') %>";
       }
     }
   }
 
   if (new_loc) {
-    window.location.href = '<%= @config[:base_url] %>' + new_loc
+    window.location.href =  new_loc
   }
 
 })
