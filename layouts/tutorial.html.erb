@@ -17,12 +17,16 @@
             style="width: 60px; margin-left: 10px">Edit</a>
           <select class="form-control pull-right"
             style="width: 140px" id="ver"
-            onchange='if (this.value) window.location.href="/tutorials/<%= @item[:ref] %>/" + this.value'>
+            onchange='if (this.value) window.location.href=this.value'>
             <% @item[:versions].each do |version_hash| %>
+              <%
+                option_item=@items["/tutorials/#{@item[:ref]}/#{version_hash[:safe_version]}.*"]
+                option_item_href=relative_path_to(option_item)
+              %>
               <% if version_hash[:version] == @item[:ver] %>
-                <option selected value='<%=version_hash[:safe_version]%>'>Version: <%= version_hash[:version] %></option>
+                <option selected value='<%=option_item_href%>'>Version: <%= version_hash[:version] %></option>
               <% else %>
-                <option value='<%=version_hash[:safe_version]%>'>Version: <%= version_hash[:version] %></option>
+                <option value='<%=option_item_href%>'>Version: <%= version_hash[:version] %></option>
               <%end%>
             <%end%>
           </select>

@@ -19,9 +19,11 @@
           <h5 class="pull-left">Versions</h5>
           <form class="form-inline" role="form">
             <select class="form-control pull-right" id="version"
-              onchange='if (this.value) window.location.href="/spec/" + this.value'>
-              <% knownVersions.each do |knownVersion|%>
-                <option <%= @item[:version] == knownVersion ? 'selected' : ''%> value="<%= knownVersion %>">SDFormat Version <%= knownVersion %></option>
+              onchange='if (this.value) window.location.href=this.value'>
+              <% knownVersions.each do |knownVersion|
+                option_item=@items["/spec/#{knownVersion}/#{@item[:tab]}.*"]
+                option_item_href=relative_path_to(option_item) %>
+                <option <%= @item[:version] == knownVersion ? 'selected' : ''%> value="<%= option_item_href %>">SDFormat Version <%= knownVersion %></option>
               <% end %>
             </select>
           </form>
