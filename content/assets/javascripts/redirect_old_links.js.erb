@@ -26,12 +26,14 @@ $(function redirect_old_links() {
     var cat = params.get('cat');
     var ver = params.get('ver');
 
-    if (tut && cat && ver) {
-      new_loc = '/tutorials/' + cat + '/' + tut + '/' + ver;
-    } else if (tut && cat) {
-      new_loc = '/tutorials/' + cat + '/' + tut;
-    } else if (cat) {
+    if (cat) {
       new_loc = '/tutorials/' + cat;
+      if (tut) {
+        new_loc += '/' + tut
+        if (ver) {
+          new_loc += '/' + ver
+        }
+      }
     } else if (tut) {
       <% tutorial_map = @items.find_all("/tutorials/**/*.md").filter_map { |item|
         [File.basename(item[:ref]), item[:ref]] if item[:ref]
@@ -41,16 +43,18 @@ $(function redirect_old_links() {
         <% tutorial_map.each do |k, v| %> <%= "'#{k}': '#{v}'," %>
         <% end %>
       }
-      if (tut in tutorials) {
-        new_loc = '/tutorials/' + tutorials[tut];
-      } else {
-        new_loc = "/404/"
+
+      new_loc = '/tutorials/' + tutorials[tut];
+      if (ver) {
+        new_loc += '/' + ver
       }
+    } else {
+      new_loc = "/404/"
+    }
+    if (new_loc) {
+      window.location.href = '<%= @config[:base_url] %>' + new_loc
     }
   }
 
-  if (new_loc) {
-    window.location.href = '<%= @config[:base_url] %>' + new_loc
-  }
 
 })
