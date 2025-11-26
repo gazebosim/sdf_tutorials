@@ -32,8 +32,3 @@ def markdown_toc
                                             strikethrough: true,
                                             fenced_code_blocks: true)
 end
-
-# TODO(azeey): Implement
-def truncate(str, options)
-  str
-end

@@ -6,13 +6,9 @@
 <a id="top"></a>
 
 <div class="wrap">
-<%= render '/_top_nav.html.erb' %>
+  <%= render '/_top_nav.html.erb' %>
 
-<% if @item[:content_layout] %>
-  <%= render "/#{@item[:content_layout]}.*" %>
-<% else %>
   <%= yield %>
-<% end %>
 </div>
 
 <%= render '/_footer.html.erb' %>

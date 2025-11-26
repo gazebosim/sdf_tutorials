@@ -17,7 +17,10 @@ end
 passthrough '/tutorials/**/*.png'
 
 compile '/tutorials/**/*.md' do
+  layout item[:content_layout]
+  filter :erb
   layout '/default.html.erb'
+  filter :erb
   filter :relativize_paths, type: :html5
 
   if item.identifier.to_s.end_with?('/index.md')

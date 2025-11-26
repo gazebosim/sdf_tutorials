@@ -115,6 +115,7 @@ class SdfDocumentationSource < Nanoc::DataSources::Filesystem
     manifest = Nokogiri::XML(File.read(File.join(@config[:content_dir], "manifest.xml")))
     new_items = []
     extra_files = []
+    title_suffix = " - Documentation"
 
     # Create a hash to store the category of each tutorial
     tutorial_categories = {}
@@ -167,6 +168,7 @@ class SdfDocumentationSource < Nanoc::DataSources::Filesystem
           cat: cat,
           type: 'tutorial',
           content_layout: 'tutorial',
+          page_title: "#{title}#{title_suffix}"
         }
 
         new_items << new_item(
@@ -233,7 +235,8 @@ class SdfDocumentationSource < Nanoc::DataSources::Filesystem
           desc: cat_desc,
           tutorials: tutorials_in_cat
         },
-        tuts: all_tuts
+        tuts: all_tuts,
+        page_title: "#{cat_title}#{title_suffix}"
       }
 
       new_items << new_item(
