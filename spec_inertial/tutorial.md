@@ -26,10 +26,41 @@ coordinate frame as well. This pose specifies the relative position and orientat
 of the inertial frame relative to the link frame.
 The link's center of mass is located at the origin of the inertial frame.
 The orientation of the inertial frame is used to interpret the moment of inertia
-values described in the `<inertia>` tag (note: **inertia**, not **inertial**).
+values described in the `<inertia>` element.
 
 If unspecified, the inertial pose is an identity pose and the inertial frame
 is identical to the link frame.
+
+## The `<inertia>` tags
+
+The link's moments of inertia `<ixx>`, `<iyy>`, `<izz>` and products of inertia
+`<ixy>`, `<ixz>`, `<iyz>` are expressedabout the link's center of mass for the unit vectors
+fixed to the X-Y-Z axes of the inertial frame is specified by the diagonal values
+ixx, iyy, izz and 
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+$$
+    R_{PC}
+    =
+    \begin{bmatrix}
+      \cos(yaw) & -\sin(yaw) & 0 \\\
+      \sin(yaw) &  \cos(yaw) & 0 \\\
+             0  &         0  & 1
+    \end{bmatrix}
+    *
+    \begin{bmatrix}
+       \cos(pitch) & 0 & \sin(pitch) \\\
+                0  & 1 &          0  \\\
+      -\sin(pitch) & 0 & \cos(pitch)
+    \end{bmatrix}
+    *
+    \begin{bmatrix}
+      1 &         0  &          0  \\\
+      0 & \cos(roll) & -\sin(roll) \\\
+      0 & \sin(roll) &  \cos(roll)
+    \end{bmatrix}
+$$
 
   <element name="inertia" required="0">
     <description>
