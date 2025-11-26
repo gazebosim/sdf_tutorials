@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'>
+  <xsd:include schemaLocation='http://sdformat.org/schemas/types.xsd'/>
+  <xsd:include schemaLocation='http://sdformat.org/schemas/plugin.xsd'/>
+  <xsd:element name='gui'>
+    <xsd:complexType>
+      <xsd:choice maxOccurs='unbounded'>
+        <xsd:choice  minOccurs='0' maxOccurs='1'>
+        <xsd:element name='camera'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[ ]]>
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:choice maxOccurs='unbounded'>
+              <xsd:choice  minOccurs='0' maxOccurs='1'>
+              <xsd:element name='view_controller' type='xsd:string'>
+              </xsd:element>
+              </xsd:choice>
+              <xsd:choice  minOccurs='0' maxOccurs='1'>
+              <xsd:element name='projection_type' type='xsd:string'>
+                <xsd:annotation>
+                  <xsd:documentation xml:lang='en'>
+                    <![CDATA[Set the type of projection for the camera. Valid values are "perspective" and "orthographic".]]>
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              </xsd:choice>
+              <xsd:choice  minOccurs='0' maxOccurs='1'>
+              <xsd:element name='pose' type='pose'>
+              </xsd:element>
+              </xsd:choice>
+              <xsd:choice  minOccurs='0' maxOccurs='1'>
+              <xsd:element name='track_visual'>
+                <xsd:complexType>
+                  <xsd:choice maxOccurs='unbounded'>
+                    <xsd:choice  minOccurs='1' maxOccurs='1'>
+                    <xsd:element name='name' type='xsd:string'>
+                    </xsd:element>
+                    </xsd:choice>
+                    <xsd:choice  minOccurs='0' maxOccurs='1'>
+                    <xsd:element name='min_dist' type='xsd:double'>
+                    </xsd:element>
+                    </xsd:choice>
+                    <xsd:choice  minOccurs='0' maxOccurs='1'>
+                    <xsd:element name='max_dist' type='xsd:double'>
+                    </xsd:element>
+                    </xsd:choice>
+                  </xsd:choice>
+                </xsd:complexType>
+              </xsd:element>
+              </xsd:choice>
+            </xsd:choice>
+            <xsd:attribute name='name' type='xsd:string' use='required' >
+            </xsd:attribute>
+          </xsd:complexType>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:element ref='plugin'/>
+      </xsd:choice>
+      <xsd:attribute name='fullscreen' type='xsd:boolean' use='optional' default='false'>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

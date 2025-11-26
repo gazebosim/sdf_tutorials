@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="100"
+   height="100"
+   id="svg4263"
+   version="1.1"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="sdf_vert.svg">
+  <defs
+     id="defs4265" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="54.127691"
+     inkscape:cy="-55.249509"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="2560"
+     inkscape:window-height="1412"
+     inkscape:window-x="2560"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-bbox="true" />
+  <metadata
+     id="metadata4268">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-240.04023,-318.89557)">
+    <path
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#297d0d;fill-opacity:1;stroke:none;stroke-width:1.71236229px;marker:none;enable-background:accumulate"
+       d="m 283.17599,206.53972 c -46.30395,0 -83.84089,39.15459 -83.84089,87.45395 0,47.99177 37.06101,86.91772 82.95793,87.41209 0.0473,-5.23072 -4.58367,-30.00763 -4.61546,-45.17127 -0.0168,-7.65784 7.19992,-35.17436 3.13049,-47.30637 -39.2147,-23.55441 -23.78057,-42.23876 -50.81023,-49.94377 28.22047,0.4059 26.00613,-6.19227 48.00082,13.06158 7.64516,7.16676 7.27618,16.26202 7.06366,31.27243 -0.18515,13.07891 1.16831,13.63864 1.56524,23.4857 3.57015,-1.6102 12.22045,-4.56607 17.94011,-9.71245 8.71452,-7.84109 23.79409,-22.1522 30.42192,-21.85302 6.32809,0.0887 21.5106,1.88983 30.50218,2.17694 -7.4307,-40.3665 -41.44949,-70.87581 -82.31577,-70.87581 z m 82.63685,72.67597 c -13.52657,5.97888 -13.91537,7.93262 -36.52235,19.55048 -8.10015,3.10065 -37.7206,0.74695 -43.02414,20.34592 -0.88123,4.19635 -3.17542,14.4129 -2.12713,28.76059 0.97839,13.39087 5.30229,30.19363 6.78273,33.19816 42.67563,-4.07461 76.09493,-41.49981 76.09493,-87.07717 0,-5.04065 -0.41907,-9.97065 -1.20404,-14.77798 z"
+       id="path4464"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       inkscape:export-filename="/home/addisu/Downloads/text2591.png" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:108.88133748px;line-height:1.25;font-family:Roboto;-inkscape-font-specification:'Roboto, Light';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.72203016;"
+       x="31.465145"
+       y="477.89066"
+       id="text2591"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"
+       transform="scale(1.0336785,0.96741879)"
+       inkscape:export-filename="/home/addisu/Downloads/text2591.png"><tspan
+         sodipodi:role="line"
+         id="tspan2589"
+         x="31.465145"
+         y="477.89066"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:108.88133748px;font-family:Roboto;-inkscape-font-specification:'Roboto, Light';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr;text-anchor:start;stroke-width:2.72203016;">SDFormat</tspan></text>
+  </g>
+</svg>

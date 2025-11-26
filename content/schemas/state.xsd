@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'>
+  <xsd:include schemaLocation='http://sdformat.org/schemas/types.xsd'/>
+  <xsd:element name='state'>
+    <xsd:complexType>
+      <xsd:choice maxOccurs='unbounded'>
+        <xsd:choice  minOccurs='0' maxOccurs='1'>
+        <xsd:element name='sim_time' type='time'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[Simulation time stamp of the state [seconds nanoseconds]]]>
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='0' maxOccurs='1'>
+        <xsd:element name='wall_time' type='time'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[Wall time stamp of the state [seconds nanoseconds]]]>
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='0' maxOccurs='1'>
+        <xsd:element name='real_time' type='time'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[Real time stamp of the state [seconds nanoseconds]]]>
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='1' maxOccurs='1'>
+        <xsd:element name='iterations' type='xsd:unsignedInt'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[Number of simulation iterations.]]>
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='0' maxOccurs='1'>
+        <xsd:element name='insertions'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[A list of new model names]]>
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:choice maxOccurs='unbounded'>
+            </xsd:choice>
+          </xsd:complexType>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='0' maxOccurs='1'>
+        <xsd:element name='deletions'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[A list of deleted model names]]>
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:choice maxOccurs='unbounded'>
+              <xsd:choice  minOccurs='1' maxOccurs='unbounded'>
+              <xsd:element name='name' type='xsd:string'>
+                <xsd:annotation>
+                  <xsd:documentation xml:lang='en'>
+                    <![CDATA[The name of a deleted model]]>
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              </xsd:choice>
+            </xsd:choice>
+          </xsd:complexType>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='0' maxOccurs='unbounded'>
+        <xsd:element name='model'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[Model state]]>
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:choice maxOccurs='unbounded'>
+              <xsd:choice  minOccurs='1' maxOccurs='1'>
+              <xsd:element name='pose' type='pose'>
+                <xsd:annotation>
+                  <xsd:documentation xml:lang='en'>
+                    <![CDATA[Pose of the model]]>
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:element>
+              </xsd:choice>
+              <xsd:choice  minOccurs='0' maxOccurs='unbounded'>
+              <xsd:element name='joint'>
+                <xsd:annotation>
+                  <xsd:documentation xml:lang='en'>
+                    <![CDATA[Joint angle]]>
+                  </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                  <xsd:choice maxOccurs='unbounded'>
+                    <xsd:choice  minOccurs='1' maxOccurs='unbounded'>
+                    <xsd:element name='angle' type='xsd:double'>
+                      <xsd:annotation>
+                        <xsd:documentation xml:lang='en'>
+                          <![CDATA[Angle of an axis]]>
+                        </xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:element>
+                    </xsd:choice>
+                  </xsd:choice>
+                  <xsd:attribute name='name' type='xsd:string' use='required' >
+                    <xsd:annotation>
+                      <xsd:documentation xml:lang='en'>
+                        <![CDATA[Name of the joint]]>
+                      </xsd:documentation>
+                    </xsd:annotation>
+                  </xsd:attribute>
+                </xsd:complexType>
+              </xsd:element>
+              </xsd:choice>
+              <xsd:choice  minOccurs='0' maxOccurs='unbounded'>
+              <xsd:element name='link'>
+                <xsd:annotation>
+                  <xsd:documentation xml:lang='en'>
+                    <![CDATA[Link state]]>
+                  </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                  <xsd:choice maxOccurs='unbounded'>
+                    <xsd:choice  minOccurs='1' maxOccurs='1'>
+                    <xsd:element name='pose' type='pose'>
+                      <xsd:annotation>
+                        <xsd:documentation xml:lang='en'>
+                          <![CDATA[Pose of the link relative to the model]]>
+                        </xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:element>
+                    </xsd:choice>
+                    <xsd:choice  minOccurs='0' maxOccurs='1'>
+                    <xsd:element name='velocity' type='pose'>
+                      <xsd:annotation>
+                        <xsd:documentation xml:lang='en'>
+                          <![CDATA[Velocity of the link]]>
+                        </xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:element>
+                    </xsd:choice>
+                    <xsd:choice  minOccurs='0' maxOccurs='1'>
+                    <xsd:element name='acceleration' type='pose'>
+                      <xsd:annotation>
+                        <xsd:documentation xml:lang='en'>
+                          <![CDATA[Acceleration of the link]]>
+                        </xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:element>
+                    </xsd:choice>
+                    <xsd:choice  minOccurs='0' maxOccurs='1'>
+                    <xsd:element name='wrench' type='pose'>
+                      <xsd:annotation>
+                        <xsd:documentation xml:lang='en'>
+                          <![CDATA[Force applied to the link]]>
+                        </xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:element>
+                    </xsd:choice>
+                    <xsd:choice  minOccurs='0' maxOccurs='unbounded'>
+                    <xsd:element name='collision'>
+                      <xsd:annotation>
+                        <xsd:documentation xml:lang='en'>
+                          <![CDATA[Collision state]]>
+                        </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:complexType>
+                        <xsd:choice maxOccurs='unbounded'>
+                          <xsd:choice  minOccurs='1' maxOccurs='1'>
+                          <xsd:element name='pose' type='pose'>
+                            <xsd:annotation>
+                              <xsd:documentation xml:lang='en'>
+                                <![CDATA[Pose of the link relative to the model]]>
+                              </xsd:documentation>
+                            </xsd:annotation>
+                          </xsd:element>
+                          </xsd:choice>
+                        </xsd:choice>
+                        <xsd:attribute name='name' type='xsd:string' use='required' >
+                          <xsd:annotation>
+                            <xsd:documentation xml:lang='en'>
+                              <![CDATA[Name of the collision]]>
+                            </xsd:documentation>
+                          </xsd:annotation>
+                        </xsd:attribute>
+                      </xsd:complexType>
+                    </xsd:element>
+                    </xsd:choice>
+                  </xsd:choice>
+                  <xsd:attribute name='name' type='xsd:string' use='required' >
+                    <xsd:annotation>
+                      <xsd:documentation xml:lang='en'>
+                        <![CDATA[Name of the link]]>
+                      </xsd:documentation>
+                    </xsd:annotation>
+                  </xsd:attribute>
+                </xsd:complexType>
+              </xsd:element>
+              </xsd:choice>
+            </xsd:choice>
+            <xsd:attribute name='name' type='xsd:string' use='required' >
+              <xsd:annotation>
+                <xsd:documentation xml:lang='en'>
+                  <![CDATA[Name of the model]]>
+                </xsd:documentation>
+              </xsd:annotation>
+            </xsd:attribute>
+          </xsd:complexType>
+        </xsd:element>
+        </xsd:choice>
+      </xsd:choice>
+      <xsd:attribute name='world_name' type='xsd:string' use='required' >
+        <xsd:annotation>
+          <xsd:documentation xml:lang='en'>
+            <![CDATA[Name of the world this state applies to]]>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

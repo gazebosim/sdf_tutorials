@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<%= render '/_head.html.erb' %>
+<body>
+
+<a id="top"></a>
+
+<div class="wrap">
+  <%= render '/_top_nav.html.erb' %>
+
+  <%= yield %>
+</div>
+
+<%= render '/_footer.html.erb' %>
+</body>
+</html>
+

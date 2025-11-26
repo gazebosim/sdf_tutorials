@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'>
+  <xsd:annotation>
+    <xsd:documentation xml:lang='en'>
+      <![CDATA[The properties of a sensor noise model.]]>
+    </xsd:documentation>
+  </xsd:annotation>
+  <xsd:include schemaLocation='http://sdformat.org/schemas/types.xsd'/>
+  <xsd:element name='noise'>
+    <xsd:complexType>
+      <xsd:choice maxOccurs='unbounded'>
+        <xsd:choice  minOccurs='0' maxOccurs='1'>
+        <xsd:element name='mean' type='xsd:double'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[For type "gaussian*", the mean of the Gaussian distribution from which noise values are drawn.]]>
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='0' maxOccurs='1'>
+        <xsd:element name='stddev' type='xsd:double'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[For type "gaussian*", the standard deviation of the Gaussian distribution from which noise values are drawn.]]>
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='0' maxOccurs='1'>
+        <xsd:element name='bias_mean' type='xsd:double'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[For type "gaussian*", the mean of the Gaussian distribution from which bias values are drawn.]]>
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='0' maxOccurs='1'>
+        <xsd:element name='bias_stddev' type='xsd:double'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[For type "gaussian*", the standard deviation of the Gaussian distribution from which bias values are drawn.]]>
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        </xsd:choice>
+        <xsd:choice  minOccurs='0' maxOccurs='1'>
+        <xsd:element name='precision' type='xsd:double'>
+          <xsd:annotation>
+            <xsd:documentation xml:lang='en'>
+              <![CDATA[
+      For type "gaussian_quantized", the precision of output signals. A value
+      of zero implies infinite precision / no quantization.
+    ]]>
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        </xsd:choice>
+      </xsd:choice>
+      <xsd:attribute name='type' type='xsd:string' use='required' >
+        <xsd:annotation>
+          <xsd:documentation xml:lang='en'>
+            <![CDATA[
+      The type of noise. Currently supported types are:
+      "none" (no noise).
+      "gaussian" (draw noise values independently for each measurement from a Gaussian distribution).
+      "gaussian_quantized" ("gaussian" plus quantization of outputs (ie. rounding))
+    ]]>
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
