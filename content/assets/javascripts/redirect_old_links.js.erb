@@ -4,15 +4,15 @@
 // 3. `/tutorials?cat=pose_semantics_docs&` to `/tutorials/pose_semantics_docs`
 // 4. `/tutorials?tut=pose_frame_semantics_proposal&ver=1.7&cat=pose_semantics_docs&` to `/tutorials/pose_semantics_docs/pose_frame_semantics_proposal/1.7`
 $(function redirect_old_links() {
-  var path = window.location.pathname;
-  var params = new URLSearchParams(window.location.search);
+  var url = new URL(window.location);
+  var params = url.searchParams
 
   const spec_re = /.*\?=spec.*/
   const tutorials_re = /.*\?tut=.*/
 
   var new_loc = null
 
-  if (spec_re.test(window.location)) {
+  if (spec_re.test(url.search)) {
     var ver = params.get('ver');
     var elem = params.get('elem');
     if (ver && elem) {
@@ -21,7 +21,7 @@ $(function redirect_old_links() {
     else {
       new_loc = "/404/"
     }
-  } else if (tutorials_re.test(window.location)) {
+  } else if (tutorials_re.test(url.search)) {
     var tut = params.get('tut');
     var cat = params.get('cat');
     var ver = params.get('ver');
@@ -52,7 +52,10 @@ $(function redirect_old_links() {
       new_loc = "/404/"
     }
     if (new_loc) {
-      window.location.href = '<%= @config[:base_url] %>' + new_loc
+      var new_url = new URL('<%= @config[:base_url] %>')
+      new_url.pathname += new_loc
+      new_url.hash = url.hash
+      window.location.href = new_url
     }
   }
 
