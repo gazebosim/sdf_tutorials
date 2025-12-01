@@ -1,11 +1,16 @@
-releaseVersion: "15.0.0"
-releaseDate: "25 Sep 2024"
+releaseVersion: "16.0.0"
+releaseDate: "30 Sep 2025"
 releaseTar: "sdformat-15.0.0.tar.bz2"
 
 defaultVersion: '1.12'
 knownVersions: ['1.4', '1.5', '1.6', '1.7', '1.8', '1.9', '1.10', '1.11', '1.12']
 
 versions:
+  16.0.0:
+      release: "2025-09-30"
+      tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-16.0.0.tar.bz2"
+      api: "https://osrf-distributions.s3.amazonaws.com/sdformat/api/16.0.0/index.html"
+
   15.0.0:
       release: "2024-09-25"
       tarball: "https://osrf-distributions.s3.amazonaws.com/sdformat/releases/sdformat-15.0.0.tar.bz2"
