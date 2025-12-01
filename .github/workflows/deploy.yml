@@ -5,7 +5,7 @@ name: Deploy Website and Docs
 on:
   pull_request:
   push:
-    branches: [$default-branch]
+    branches: [master]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -52,7 +52,7 @@ jobs:
   deploy:
     # The workflow upto this point is good for generating a preview,
     # but only commit to deploy if we are on the master branch (not a pull request).
-    # if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
