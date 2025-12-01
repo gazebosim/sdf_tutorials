@@ -1,0 +1,72 @@
+#!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
+compile '/**/*.html' do
+  layout '/default.*'
+
+  filter :relativize_paths, type: :html5
+
+  if item.identifier =~ '**/index.*'
+    write item.identifier.to_s
+  else
+    write item.identifier.without_ext + '/index.html'
+  end
+end
+
+passthrough '/tutorials/**/*.png'
+
+compile '/tutorials/**/*.md' do
+  layout item[:content_layout]
+  filter :erb
+  layout '/default.html.erb'
+  filter :erb
+  filter :relativize_paths, type: :html5
+
+  if item.identifier.to_s.end_with?('/index.md')
+    write '/tutorials/index.html'
+  else
+    write item.identifier.without_ext + '/index.html'
+  end
+end
+
+compile '/**/*.js.erb' do
+  filter :erb
+  write item.identifier.without_ext
+end
+
+compile '/**/*.erb' do
+  filter :erb
+  layout '/default.*'
+  filter :relativize_paths, type: :html5
+
+  if item.identifier =~ '**/index.*'
+    write item.identifier.without_ext + '.html'
+  else
+    write item.identifier.without_ext + '/index.html'
+  end
+end
+
+compile '/spec/**/*.spec' do
+  layout '/spec.*'
+  filter :relativize_paths, type: :html5
+  if item.identifier =~ '**/index.*'
+    write item.identifier.without_ext + '.html'
+  else
+    write item.identifier.without_ext + '/index.html'
+  end
+end
+
+compile '/**/*.css.scss' do
+  filter :dart_sass, syntax: 'scss'
+  filter :relativize_paths, type: :css
+  write item.identifier.without_ext
+end
+
+# Leave yaml files out
+ignore '/_data/*.yaml'
+ignore '/_spec_files/*'
+
+passthrough '/**/*'
+
+layout '/**/*', :erb

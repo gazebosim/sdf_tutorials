@@ -1,0 +1,63 @@
+// Script to redirect old sdf_web_app URLs to the statically generated pages. The following examples show the redirection rules:
+// 1. `/spec?ver=1.12&elem=world` to `/spec/1.12/world`
+// 2. `/tutorials?tut=specify_pose&cat=specification` to `/tutorials/specification/specify_pose`
+// 3. `/tutorials?cat=pose_semantics_docs&` to `/tutorials/pose_semantics_docs`
+// 4. `/tutorials?tut=pose_frame_semantics_proposal&ver=1.7&cat=pose_semantics_docs&` to `/tutorials/pose_semantics_docs/pose_frame_semantics_proposal/1.7`
+$(function redirect_old_links() {
+  var url = new URL(window.location);
+  var params = url.searchParams
+
+  const spec_re = /.*\?=spec.*/
+  const tutorials_re = /.*\?tut=.*/
+
+  var new_loc = null
+
+  if (spec_re.test(url.search)) {
+    var ver = params.get('ver');
+    var elem = params.get('elem');
+    if (ver && elem) {
+      new_loc = '/spec/' + ver + '/' + elem;
+    }
+    else {
+      new_loc = "/404/"
+    }
+  } else if (tutorials_re.test(url.search)) {
+    var tut = params.get('tut');
+    var cat = params.get('cat');
+    var ver = params.get('ver');
+
+    if (cat) {
+      new_loc = '/tutorials/' + cat;
+      if (tut) {
+        new_loc += '/' + tut
+        if (ver) {
+          new_loc += '/' + ver
+        }
+      }
+    } else if (tut) {
+      <% tutorial_map = @items.find_all("/tutorials/**/*.md").filter_map { |item|
+        [File.basename(item[:ref]), item[:ref]] if item[:ref]
+      }.to_h %>
+      // If we only have the name of the tutorial without the category, look it up in the dictionary of available tutorials
+      const tutorials = {
+        <% tutorial_map.each do |k, v| %> <%= "'#{k}': '#{v}'," %>
+        <% end %>
+      }
+
+      new_loc = '/tutorials/' + tutorials[tut];
+      if (ver) {
+        new_loc += '/' + ver
+      }
+    } else {
+      new_loc = "/404/"
+    }
+    if (new_loc) {
+      var new_url = new URL('<%= @config[:base_url] %>')
+      new_url.pathname += new_loc
+      new_url.hash = url.hash
+      window.location.href = new_url
+    }
+  }
+
+
+})

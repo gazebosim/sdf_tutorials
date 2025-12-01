@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <world name="default">
+    <physics type="ode">
+      ...
+    </physics>
+    
+    <scene>
+      ...
+    </scene>
+
+    <model name="box">
+      ...
+    </model>
+
+    <model name="sphere">
+      ...
+    </model>
+
+    <light name="spotlight">
+      ...
+    </light>
+
+  </world>
+</sdf>

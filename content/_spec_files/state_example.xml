@@ -1,0 +1,24 @@
+<?xml version='1.0'?>
+<sdf version="1.5">
+  <world name="default">
+
+    <model name='unit_box_1'>
+      ...
+    </model>
+
+    <state world_name='default'>
+      <sim_time>15 517000000</sim_time>
+      <real_time>15 594027395</real_time>
+      <wall_time>1423606992 994698489</wall_time>
+      <model name='unit_box_1'>
+        <pose>-1 -1 0.5 0 -0 0</pose>
+        <link name='link'>
+          <pose>-1 -1 0.5 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 -0 -0 0 -0 0</acceleration>
+          <wrench>0 -0 -0 0 -0 0</wrench>
+        </link>
+      </model>
+    </state>
+  </world>
+</sdf>

@@ -1,0 +1,77 @@
+<!-- Debian download modal -->
+<div class="modal fade" id="binaryModal" tabindex="-1"
+     role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close"
+                data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Download libsdformat</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <p>Please select your operating system to view download instructions.</p>
+          </div>
+        </div>
+        <div class="row">
+
+          <div class="form-group">
+            <label class="col-md-12 control-label">Operating System</label>
+            <div class="col-md-12"  id="osBtn">
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default active">
+                  <input type="radio" onchange="SetOS('linux');" id="linux" >Linux
+                </label>
+                <label class="btn btn-default disabled">
+                  <input type="radio" onchange="SetOS('osx');" id="osx" >OS X
+                </label>
+                <label class="btn btn-default disabled">
+                  <input type="radio" onchange="SetOS('windows');" id="windows" >Windows
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" id="linux" >
+          <div class="col-md-12">
+            <p>Currently, only the Ubuntu distribution is supported.</p>
+
+            <p>To get the lastest version, you'll need to accept software from packages.osrfoundation.org.</p>
+            <div class="well well-sm col-md-5 col-md-offset-1">
+              <small>sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'</small>
+            </div>
+
+            <p>Setup keys</p>
+            <div class="well well-sm col-md-5 col-md-offset-1">
+              <small>wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -</small>
+            </div>
+
+            <p>Run the following command in a terminal to install libsdformat</p>
+            <div class="well well-sm col-md-5 col-md-offset-1">
+              <small>sudo apt-get update && sudo apt-get install libsdformat12-dev</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row hide" id="osx" >
+          <div class="col-md-12">
+            <p>OS X is currently not supported.</p>
+          </div>
+        </div>
+
+        <div class="row hide" id="windows" >
+          <div class="col-md-12">
+            <p>Windows currently not supported.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default"
+                data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+

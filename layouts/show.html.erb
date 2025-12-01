@@ -1,0 +1,94 @@
+<% content_for(:page_title, @item[:page_title]) %>
+<div class="container-fluid">
+<div class='row'>
+  <div class='col-md-12'>
+    <h1>Documentation</h1>
+  </div> <!-- col-md-12 -->
+</div> <!-- row -->
+
+<div class="row">
+  <div class="col-xs-12">
+    <ul class="nav nav-tabs">
+      <li class="active">
+        <a href="#categories" data-toggle="tab">Categories</a>
+      </li>
+      <li>
+        <a href="#browse" data-toggle="tab">Browse</a>
+      </li>
+    </ul>
+  </div> <!-- col-xs-12 -->
+</div> <!-- row -->
+
+<br/>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="tab-content">
+      <div class="tab-pane active" id="categories">
+
+        <div class="col-md-4 max-width-400">
+          <div class='list-group'>
+            <% @item[:cats].each do |cat| %>
+              <a href=<%= "/tutorials/#{cat[:ref]}" %>
+                class='<%="list-group-item #{cat[:active]}"%>'><%= cat[:title] %> <span class='<%="badge alert-#{skillToColor(cat[:skill])}"%>'><%= cat[:skill] %></span></a>
+            <% end %>
+          </div> <!-- list-group -->
+        </div> <!-- col-md-4 -->
+
+        <div class="col-md-8 max-width-800">
+          <h3><%= @item[:current][:title] %></h3>
+          <p><%= markdown.render(@item[:current][:desc]) %></p>
+
+          <div>
+            <% (@item[:current][:tutorials] || []).each do |tut| %>
+              <div class='<%= "panel panel-#{skillToColor(tut[:skill])}" %>'>
+                <div class="panel-heading">
+                  <h3 class="panel-title">
+                    <a href='<%= "/tutorials/#{tut[:ref]}" %>' data-toggle="tooltip" data-placement="top"
+                      title='<%=tut[:title]%>'><%= excerptize tut[:title], :length => 80, :omission => "..."%>
+                      <span
+                        class="badge pull-right"><%=tut[:type]%></span>
+                    </a>
+                  </h3>
+                </div> <!-- panel-heading -->
+
+                <div class="panel-body"><%= tut[:desc] %></div>
+                <div class="panel-footer">
+                  <ul class="version">
+                    <% tut[:versions].each do |ver| %>
+                      <li><a href='<%= "/tutorials/#{tut[:ref]}/#{ver[:safe_version]}" %>'><%= ver[:num] %></a></li>
+                    <%end%> <!-- tut['versions'].each -->
+                  </ul>
+                </div> <!-- panel-footer -->
+              </div> <!-- panel -->
+
+            <% end %> <!-- current['tutorials'].each -->
+          </div> <!-- col-xs-12 -->
+
+        </div> <!-- col-md-8 -->
+      </div>
+
+
+      <div class="tab-pane" id="browse">
+        <% @item[:tuts].each do |tut| %>
+          <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+            <div class='<%= "panel panel-#{skillToColor(tut[:skill])} tutorial" %>'>
+              <div class="panel-heading">
+                <h3 class="panel-title"><a href='<%= "/tutorials/#{tut[:ref]}" %>' data-toggle="tooltip" data-placement="top" title='<%=tut[:title]%>'><%=tut[:title]%><span class="badge pull-right"><%=tut[:type]%></span></a></h3>
+              </div>
+              <div class="panel-body"><%=tut[:desc]%></div>
+              <div class="panel-footer">
+                <ul class="version">
+                  <% tut[:versions].each do |ver| %>
+                    <li><a href='<%= "/tutorials/#{tut[:ref]}/#{ver[:safe_version]}" %>'><%= ver[:num] %></a></li>
+                  <%end%> <!-- tut['versions'].each -->
+                </ul>
+              </div>
+            </div>
+          </div>
+        <%end%>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
