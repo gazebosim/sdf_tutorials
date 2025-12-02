@@ -44,7 +44,7 @@ jobs:
           docker build -t sdf_tutorials .
           docker run --rm -v ${{ github.workspace }}:/usr/src/app sdf_tutorials bundle exec nanoc compile -e $ENV_TYPE
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: output
 
