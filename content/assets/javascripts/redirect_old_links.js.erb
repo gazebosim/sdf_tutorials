@@ -7,12 +7,12 @@ $(function redirect_old_links() {
   var url = new URL(window.location);
   var params = url.searchParams
 
-  const spec_re = /.*\?=spec.*/
+  const spec_re = /.*elem=.*/
   const tutorials_re = /.*\?tut=.*/
 
   var new_loc = null
 
-  if (spec_re.test(url.search)) {
+  if (url.pathname == "/spec/" && spec_re.test(url.search)) {
     var ver = params.get('ver');
     var elem = params.get('elem');
     if (ver && elem) {
@@ -51,13 +51,13 @@ $(function redirect_old_links() {
     } else {
       new_loc = "/404/"
     }
-    if (new_loc) {
-      var new_url = new URL('<%= @config[:base_url] %>')
-      new_url.pathname += new_loc
-      new_url.hash = url.hash
-      window.location.href = new_url
-    }
   }
 
+  if (new_loc) {
+    var new_url = new URL('<%= @config[:base_url] %>')
+    new_url.pathname += new_loc
+    new_url.hash = url.hash
+    window.location.href = new_url
+  }
 
 })
