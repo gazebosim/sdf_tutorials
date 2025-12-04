@@ -12,7 +12,7 @@ $(function redirect_old_links() {
 
   var new_loc = null
 
-  if (url.pathname = "/spec/" && spec_re.test(url.search)) {
+  if (url.pathname == "/spec/" && spec_re.test(url.search)) {
     var ver = params.get('ver');
     var elem = params.get('elem');
     if (ver && elem) {
