@@ -9,7 +9,7 @@ group 'nanoc' do
   gem 'nanoc-live', '~> 1.1'
 end
 
-gem 'nokogiri', '~> 1.16'
+gem 'nokogiri', '~> 1.19'
 gem 'redcarpet', '~> 3.6'
 
 gem "webrick", "~> 1.9"
